@@ -103,6 +103,9 @@ const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábad
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.5.3-.5a.5.5 0 0 0 0-.5c0-.1-.7-1.6-.9-2.2s-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.5 13.5 0 0 0 5.2 4.6c1.9.8 2.7.9 3.6.8a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
 let P = null;
+const SIG = ['', 'El poder de empezar. Tenés las herramientas: confiá en tu capacidad de crear lo que imaginás.','Intuición y saber interior. Tus respuestas llegan en el silencio; escuchá lo que sentís antes de actuar.','Creatividad, abundancia y disfrute. Lo que cuidás florece; permitite recibir.','Estructura y decisión. Construís bases firmes y sabés poner los límites que te sostienen.','Aprendizaje y sentido. Buscás maestras y maestros, y también sos guía para otras personas.','Elecciones del corazón. Cada decisión te acerca a quien realmente sos.','Avance y voluntad. Cuando tenés claro el rumbo, nada te detiene.','Coraje suave. Tu poder está en la calma y en la forma amorosa de enfrentar lo difícil.','Sabiduría y búsqueda interior. Tu luz alumbra tu camino y el de quienes te rodean.','Ciclos y cambios. Aprendés a fluir con lo que llega y a aprovechar cada momento.','Equilibrio y verdad. Tus decisiones claras ordenan tu vida y tu entorno.','Otra mirada. Soltar el control te muestra caminos que antes no veías.','Transformación. Cerrás etapas con valentía para darle lugar a lo nuevo.','Armonía y paciencia. Sabés unir opuestos y sanar a tu ritmo.','Deseo y magnetismo. Reconocer lo que te ata es el primer paso para usar tu poder a favor.','Revelación y liberación. Lo que cae deja lugar a una versión más auténtica de vos.','Esperanza y guía. Tu luz inspira; confiá en que el camino se va revelando.','Sensibilidad y mundo emocional. Tus sueños e intuiciones son mapas valiosos.','Alegría y vitalidad. Irradiás calidez y todo lo que tocás se ilumina.','Llamado y renacimiento. Escuchás tu propósito y te animás a responderle.','Plenitud y logro. Integrás lo vivido y celebrás cada ciclo cumplido.','Libertad y comienzo. Te animás al salto con fe en el camino.'];
+const NOM = ['', 'El Mago','La Sacerdotisa','La Emperatriz','El Emperador','El Hierofante','Los Enamorados','El Carro','La Fuerza','El Ermitaño','La Rueda de la Fortuna','La Justicia','El Colgado','La Muerte','La Templanza','El Diablo','La Torre','La Estrella','La Luna','El Sol','El Juicio','El Mundo','El Loco'];
+function completar(a){ if (!a || !a.n) return a; a.nombre = a.nombre || NOM[+a.n]; a.texto = a.texto || SIG[+a.n]; return a; }
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -118,10 +121,10 @@ async function cargar(){
   try {
     const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(CODIGO));
     const d = await r.json();
-    if (!d.ok) return error('Este enlace no es válido. Pedile el tuyo a Luz Guía.');
-    P = d; pintar();
+    if (!d.ok) return error(d.error === 'Enlace no válido' ? 'Este enlace no es válido. Pedile el tuyo a Luz Guía.' : 'No pudimos abrir tu espacio (' + (d.error || 'error desconocido') + ').');
+    P = d; P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.talleres = P.talleres || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; pintar();
     $('estado').classList.add('oculto'); $('portal').classList.remove('oculto');
-  } catch (e) { error('No pudimos cargar tu espacio. Revisá tu conexión y volvé a intentar.'); }
+  } catch (e) { console.error(e); error('No pudimos conectar con Luz Guía. Revisá tu conexión y volvé a intentar.'); }
 }
 
 function pintar(){

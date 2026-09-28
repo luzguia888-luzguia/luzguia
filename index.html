@@ -539,12 +539,24 @@ function abrirForm(hoja, rec, pre){
   }
   e.campos.forEach((c, i) => { html += campoHTML(c, i, valorInicial(c, rec, pre)); });
   html += '</div>';
+  if (hoja === 'Personas' && rec) {
+    const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']);
+    html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
+      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt"><button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
+      : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
+      + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': rec['ID Persona'] }))}'>Sumar a un taller</button></p>`;
+  }
   modal((rec ? 'Editar ' : 'Agregar ') + e.nombre, html,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="f-guardar">Guardar</button>`);
 
   if ($('np-toggle')) {
     const idxP = e.campos.findIndex(c => c.k === 'ID Persona');
     $('np-toggle').onchange = ev => { $('np-caja').classList.toggle('oculto', !ev.target.checked); $('f' + idxP).closest('label').classList.toggle('oculto', ev.target.checked); };
+  }
+  if (hoja === 'Asistencias') {
+    const iT = e.campos.findIndex(c => c.k === 'ID Taller'), iA = e.campos.findIndex(c => c.k === 'Asistencia');
+    const ajustar = () => { const t = taller($('f' + iT).value); const f = t && fecha(t['Fecha']); if (!rec && f && f < HOY) $('f' + iA).value = 'Asistió'; };
+    $('f' + iT).addEventListener('change', ajustar); ajustar();
   }
   if (hoja === 'Ventas') {
     const iP = e.campos.findIndex(c => c.k === 'Producto'), iPr = e.campos.findIndex(c => c.k === 'Precio unitario');
@@ -800,7 +812,7 @@ function tablaPersonas(ps){
     { t:'Cumple', f: p => { const f = fecha(p['Fecha de nacimiento']); return f ? ddmm(f) : ''; } },
     { t:'Talleres', k:'Talleres asistidos', num:1 }, { t:'Invertido', k:'Total invertido', num:1 },
     { t:'Llegó por', k:'Canal de llegada' },
-    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
+    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sumar a un taller" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': p['ID Persona'] }))}'>🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
   ], ps, 'Todavía no hay participantes. Tocá "Nueva persona" para cargar la primera.');
 }
 
@@ -904,7 +916,15 @@ document.addEventListener('click', async e => {
   if (ds.cerrar !== undefined) { $('modal').close(); return; }
   if (ds.vista) { VISTA = ds.vista; pintar(); window.scrollTo(0, 0); return; }
   if (ds.nuevo) { PEDIDO_PEND = ds.cierraPedido || null; abrirForm(ds.nuevo, null, ds.pre ? JSON.parse(ds.pre) : null); return; }
-  if (ds.portal) { const l = linkPortal(persona(ds.portal)); navigator.clipboard.writeText(l).then(() => toast('Enlace copiado')).catch(() => prompt('Copiá el enlace:', l)); return; }
+  if (ds.portal) {
+    const pp = persona(ds.portal), l = linkPortal(pp);
+    modal('Portal de ' + esc(String(pp['Nombre completo']).split(' ')[0]),
+      `<p class="ayuda" style="margin-top:0">Este es su enlace personal. Podés copiarlo, abrirlo para ver cómo le queda, o mandárselo por WhatsApp.</p><input class="campo" id="lk" readonly value="${esc(l)}">`,
+      `<button class="btn-sec" type="button" id="lk-copiar">Copiar</button><a class="btn-sec" href="${esc(l)}" target="_blank" rel="noopener">Abrir</a><button class="btn" type="button" data-msg="${esc(ds.portal)}|portal||">Mandar por WhatsApp</button>`);
+    $('lk').onfocus = ev => ev.target.select();
+    $('lk-copiar').onclick = () => { $('lk').select(); (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Enlace copiado')).catch(() => { document.execCommand('copy'); toast('Enlace copiado'); }); };
+    return;
+  }
   if (ds.pedido) {
     const [fila, est] = ds.pedido.split('|'); const r = H('Pedidos').find(x => String(x._fila) === fila); if (!r) return;
     t.disabled = true;
