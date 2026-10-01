@@ -182,6 +182,9 @@ tr:hover td{background:rgba(185,138,230,.05)}
 
 /* Modal */
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:0;width:min(620px,94vw);max-height:90vh}
+dialog:has(.multi){width:min(800px,96vw)}
+.multi-fila .forma{width:150px}
+.multi-fila .quien{width:130px}
 dialog::backdrop{background:rgba(10,4,18,.7)}
 .modal-cab{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--linea);position:sticky;top:0;background:var(--ciruela);z-index:1}
 .modal-cab h3{margin:0;color:var(--luna)}
@@ -198,19 +201,25 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
 .variables code{color:var(--oro);background:rgba(212,175,106,.1);padding:1px 5px;border-radius:4px}
 
 .multi{display:grid;gap:0;border:1px solid var(--linea);border-radius:12px;overflow:hidden}
-.multi-fila{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid rgba(185,138,230,.12)}
+.multi-fila{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid rgba(185,138,230,.12)}
 .multi-fila:first-child{border-top:0}
 .multi-fila input[type=checkbox]{accent-color:var(--oro);width:18px;height:18px}
 .multi-fila small{display:block;color:var(--bruma);font-size:.8rem}
 .multi-fila .campo{padding:6px 8px;font-size:.9rem}
 .multi-fila .monto{width:110px}
-.multi-fila.off .monto,.multi-fila.off select,.multi-fila.off .btn-mini{visibility:hidden}
+.multi-fila.off .monto,.multi-fila.off select{visibility:hidden}
+.multi-fila .monto.nada,.multi-fila select.nada{visibility:hidden}
+.multi-fila select{padding:6px 8px;font-size:.88rem}
+.estrellas{color:var(--oro);letter-spacing:2px}
+.testimonio{border:1px solid var(--linea);border-radius:14px;background:var(--ciruela);padding:16px 18px;margin-bottom:12px}
+.testimonio blockquote{margin:8px 0 10px;font-family:var(--serif);font-size:1.25rem;line-height:1.4}
+.testimonio small{color:var(--bruma)}
 .btn-mini{background:none;border:1px solid var(--oro-suave);color:var(--oro);border-radius:6px;padding:4px 8px;font-size:.8rem;cursor:pointer}
 .resumen-pago{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linea);border-radius:12px;overflow:hidden;margin-bottom:16px}
 .resumen-pago div{background:var(--ciruela-2);padding:12px}
 .resumen-pago span{display:block;color:var(--bruma);font-size:.82rem}
 .resumen-pago b{font-size:1.2rem;font-weight:500}
-@media (max-width:640px){ .multi-fila{grid-template-columns:auto 1fr;}.multi-fila .monto,.multi-fila select,.multi-fila .btn-mini{grid-column:2} }
+@media (max-width:640px){ .multi-fila{grid-template-columns:auto 1fr;}.multi-fila .monto,.multi-fila select{grid-column:2} }
 #toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--oro);color:var(--noche);padding:10px 18px;border-radius:10px;font-weight:500;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw}
 #toast.err{background:var(--debe)}
 #cargando{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--bruma);font-family:var(--serif);font-size:1.4rem;font-style:italic}
@@ -269,6 +278,7 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
       <button class="pestana" role="tab" data-vista="cobros">Cobros</button>
       <button class="pestana" role="tab" data-vista="gastos">Gastos</button>
       <button class="pestana" role="tab" data-vista="reventa">Reventa y stock</button>
+      <button class="pestana" role="tab" data-vista="miluz">Mi Luz</button>
       <button class="pestana" role="tab" data-vista="mensajes">Mensajes</button>
       <button class="pestana" role="tab" data-vista="estadisticas">Estadísticas</button>
       <button class="pestana" role="tab" data-vista="historial">Historial</button>
@@ -392,6 +402,7 @@ function contexto(p, t, a){
   return ctx;
 }
 const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => (ctx[k] !== undefined && ctx[k] !== '') ? ctx[k] : '[' + k + ']');
+const optCobro = () => L('Quién cobró').length ? L('Quién cobró') : L('Socias').concat(['Ya repartido']);
 const otraSocia = q => (L('Socias').find(x => x !== q) || (q === 'Belu' ? 'Mey' : 'Belu'));
 const linkPortal = p => p && p['Código portal'] ? (D.params.portal || 'https://luzguia888-luzguia.github.io/luzguia/mi-luz.html') + '?c=' + p['Código portal'] : '';
 const plantilla = clave => H('Plantillas').find(x => x['Clave'] === clave);
@@ -476,8 +487,8 @@ const ESQ = {
   Asistencias: { nombre: 'inscripción', clave: 'ID Taller', etiqueta: 'Nombre', campos: [
     {k:'ID Taller', t:'sel', o:optTalleres, req:1, full:1, lab:'Taller'}, {k:'ID Persona', t:'sel', o:optPersonas, full:1, lab:'Persona'},
     {k:'Fecha inscripción', t:'date', def:'hoy'}, {k:'Descuento', t:'money'},
-    {k:'Seña', t:'money'}, {k:'Cobró seña', t:'sel', o:() => L('Socias'), def:'yo'},
-    {k:'Resto pagado', t:'money'}, {k:'Cobró resto', t:'sel', o:() => L('Socias')},
+    {k:'Seña', t:'money', lab:'Primer pago (seña o total)'}, {k:'Cobró seña', t:'sel', o:optCobro, def:'yo', lab:'Lo cobró'},
+    {k:'Resto pagado', t:'money', lab:'Segundo pago'}, {k:'Cobró resto', t:'sel', o:optCobro, lab:'Lo cobró'},
     {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Asistencia', t:'sel', o:() => L('Asistencia'), def:'Confirmada'},
     {k:'Motivo de ausencia', t:'sel', o:() => L('Motivos de ausencia'), aus:1}, {k:'Detalle del motivo', t:'text', aus:1, ph:'Contá qué pasó (opcional)'},
     {k:'PDF enviado', t:'check'}, {k:'Fecha envío PDF', t:'date'}, {k:'Tarjetita', t:'check'}, {k:'Yagra', t:'check'},
@@ -490,7 +501,7 @@ const ESQ = {
     {k:'Comprobante', t:'foto', full:1}, {k:'Notas', t:'area', full:1}]},
   Ventas: { nombre: 'venta', clave: 'Producto', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'Producto', t:'sel', o:() => H('Productos').map(p => p['Producto']), req:1},
-    {k:'Cantidad', t:'num', def:1}, {k:'Precio unitario', t:'money', req:1}, {k:'Cobró', t:'sel', o:() => L('Socias'), def:'yo', req:1},
+    {k:'Cantidad', t:'num', def:1}, {k:'Precio unitario', t:'money', req:1}, {k:'Cobró', t:'sel', o:optCobro, def:'yo', req:1},
     {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Comprador/a', t:'text'}, {k:'ID Taller (opcional)', t:'sel', o:optTalleres, lab:'Taller (opcional)'}, {k:'Notas', t:'area', full:1}]},
   Productos: { nombre: 'producto', clave: 'Producto', campos: [
     {k:'Producto', t:'text', req:1, full:1}, {k:'Categoría', t:'sel', o:() => L('Categorías producto')}, {k:'Costo de compra', t:'money'},
@@ -510,8 +521,15 @@ const ESQ = {
     {k:'Título', t:'text', req:1, full:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de evento'), req:1}, {k:'Fecha', t:'date', req:1},
     {k:'Hasta', t:'date', lab:'Hasta (si dura varios días)'}, {k:'Detalle', t:'area', full:1}]},
   Pagos: { nombre: 'pago', clave: 'ID Persona', campos: [
-    {k:'Fecha', t:'date', req:1}, {k:'Monto', t:'money', req:1}, {k:'Cobró', t:'sel', o:() => L('Socias'), req:1},
+    {k:'Fecha', t:'date', req:1}, {k:'Monto', t:'money', req:1}, {k:'Cobró', t:'sel', o:optCobro, req:1},
     {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Notas', t:'text', full:1}]},
+  Promociones: { nombre: 'promoción', clave: 'Título', campos: [
+    {k:'Título', t:'text', req:1, full:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de promoción'), req:1}, {k:'Orden', t:'num', lab:'Orden (1 aparece primero)'},
+    {k:'Frase', t:'area', req:1, full:1, filas:2}, {k:'Imagen', t:'foto', full:1, publica:1},
+    {k:'Texto del botón', t:'text', ph:'Quiero saber más'}, {k:'Activa', t:'check', lab:'Se muestra en Mi Luz', def:true},
+    {k:'Mensaje de WhatsApp', t:'area', full:1, filas:2, lab:'Mensaje que les llega a ustedes por WhatsApp (opcional)'}]},
+  Testimonios: { nombre: 'testimonio', clave: 'Nombre', etiqueta: 'Taller', campos: [
+    {k:'Comentario', t:'area', full:1, filas:4}, {k:'Se puede publicar', t:'check', lab:'Autorizó publicarlo'}, {k:'Destacado', t:'check', lab:'Destacado'}]},
   Pedidos: { nombre: 'pedido', clave: 'Nombre', etiqueta: 'Qué', campos: [
     {k:'Estado', t:'sel', o:() => L('Estados pedido'), req:1}, {k:'Mensaje', t:'area', full:1}]},
   Plantillas: { nombre: 'plantilla', clave: 'Clave', etiqueta: 'Nombre', campos: [
@@ -541,7 +559,7 @@ function campoHTML(c, i, v){
     if (v && !ops.some(o => String(o[0]) === String(v))) ops.unshift([v, v]);
     return `<label${cl}>${lab}<select class="campo" id="${id}"><option value=""></option>${ops.map(o => `<option value="${esc(o[0])}"${String(o[0]) === String(v) ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select></label>`;
   }
-  if (c.t === 'foto') return `<label class="full">Comprobante (foto o enlace de Drive)
+  if (c.t === 'foto') return `<label class="full">${c.publica ? 'Imagen (se verá en Mi Luz)' : 'Comprobante (foto o enlace de Drive)'}
       <input class="campo" type="file" id="${id}-archivo" accept="image/*,application/pdf" capture="environment">
       <input class="campo" type="text" id="${id}" value="${esc(v)}" placeholder="…o pegá acá el enlace de Drive">
       ${v ? `<button class="btn-sec" type="button" data-foto="${esc(v)}" style="align-self:flex-start">Ver comprobante actual</button>` : ''}</label>`;
@@ -569,7 +587,7 @@ function abrirForm(hoja, rec, pre){
     html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
       ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}<button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
-      + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': rec['ID Persona'] }))}'>Sumar a un taller</button></p>`;
+      + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-entalleres="${esc(rec['ID Persona'])}">Sumar a talleres</button></p>`;
   }
   modal((rec ? 'Editar ' : 'Agregar ') + e.nombre, html,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="f-guardar">Guardar</button>`);
@@ -608,7 +626,7 @@ function abrirForm(hoja, rec, pre){
       const iF = e.campos.findIndex(c => c.t === 'foto');
       if (iF > -1) {
         const arch = $('f' + iF + '-archivo').files[0];
-        if (arch) { btn.textContent = 'Subiendo foto…'; datos[e.campos[iF].k] = await subirFoto(arch); }
+        if (arch) { btn.textContent = 'Subiendo foto…'; datos[e.campos[iF].k] = await subirFoto(arch, e.campos[iF].publica); }
       }
       if ($('np-toggle') && $('np-toggle').checked) {
         const nom = $('np-nombre').value.trim();
@@ -624,7 +642,7 @@ function abrirForm(hoja, rec, pre){
   };
 }
 
-async function subirFoto(arch){
+async function subirFoto(arch, publica){
   let base64, mime = arch.type || 'image/jpeg', nombre = arch.name;
   if (/^image\//.test(mime)) {
     const img = await new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = URL.createObjectURL(arch); });
@@ -635,7 +653,7 @@ async function subirFoto(arch){
   } else {
     base64 = await new Promise(ok => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.readAsDataURL(arch); });
   }
-  const d = await enviar({ accion: 'foto', base64, mime, nombre: 'comprobante-' + iso(HOY) + '-' + nombre });
+  const d = await enviar({ accion: 'foto', base64, mime, publica: !!publica, nombre: (publica ? 'promo-' : 'comprobante-') + iso(HOY) + '-' + nombre });
   return d.id;
 }
 async function verFoto(ref){
@@ -685,7 +703,7 @@ function abrirPago(a){
     `<p class="ayuda" style="margin-top:0">${esc(a['Taller'])}</p>
      <div class="resumen-pago"><div><span>Precio</span><b>${esc(a['Precio'] || '—')}</b></div><div><span>Pagado</span><b>${esc(a['Total pagado'] || '$0')}</b></div><div><span>Falta</span><b style="color:${falta > 0 ? 'var(--oro)' : 'var(--ok)'}">${falta > 0 ? esc(a['Pendiente']) : 'Nada ✓'}</b></div></div>
      <div class="form"><label>Monto que pagó ahora *<input class="campo" type="number" id="pg-monto" min="0" step="100" inputmode="numeric" value="${falta || ''}"></label>
-     <label>Lo cobró<select class="campo" id="pg-quien">${L('Socias').map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
+     <label>Lo cobró<select class="campo" id="pg-quien">${optCobro().map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
      <label>Medio de pago<select class="campo" id="pg-medio"><option></option>${L('Medios de pago').map(x => `<option>${esc(x)}</option>`).join('')}</select></label>
      <label>Fecha<input class="campo" type="date" id="pg-fecha" value="${iso(HOY)}"></label></div>
      ${hist.length ? '<h3 style="margin:22px 0 8px">Pagos anteriores</h3><ul class="tareas">' + hist.map(h2 => `<li class="tarea"><div class="txt">${esc(h2.m)} · ${esc(h2.t)}<small>${esc(h2.f || '')}${h2.q ? ' · cobró ' + esc(h2.q) : ''}</small></div>${h2.r ? `<div class="bt">${acciones('Pagos', h2.r)}</div>` : ''}</li>`).join('') + '</ul>' : ''}`,
@@ -703,6 +721,58 @@ function abrirPago(a){
 }
 const btnPago = a => num(a['Pendiente']) > 0 ? `<button class="ic" type="button" title="Registrar pago" data-pago="${a._fila}">💰</button>` : '';
 
+function filaPago(o){
+  // o: { pid, tid, titulo, sub, precio, pasado }
+  const pago = o.pasado ? 'todo' : 'sena';
+  const cobro = o.pasado ? 'Ya repartido' : QUIEN;
+  return `<label class="multi-fila off" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-precio="${o.precio || ''}">
+    <input type="checkbox" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-pasado="${o.pasado ? 1 : ''}">
+    <span>${esc(o.titulo)}<small>${o.sub}</small></span>
+    <select class="campo forma" aria-label="Cómo pagó"><option value="todo"${pago === 'todo' ? ' selected' : ''}>Pagó todo</option><option value="sena"${pago === 'sena' ? ' selected' : ''}>Dejó seña / parte</option><option value="debe">Debe todo</option></select>
+    <input class="campo monto" type="number" min="0" step="100" inputmode="numeric" placeholder="Monto $" value="${pago === 'todo' && o.precio ? o.precio : ''}" aria-label="Monto pagado">
+    <select class="campo quien" aria-label="Quién cobró">${optCobro().map(x => `<option${x === cobro ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`;
+}
+function activarFilas(caja, alContar){
+  caja.addEventListener('change', ev => {
+    const f = ev.target.closest('.multi-fila'); if (!f) return;
+    if (ev.target.type === 'checkbox') { f.classList.toggle('off', !ev.target.checked); alContar(); }
+    if (ev.target.classList.contains('forma')) {
+      const m = f.querySelector('.monto'), q = f.querySelector('.quien'), v = ev.target.value;
+      m.classList.toggle('nada', v === 'debe'); q.classList.toggle('nada', v === 'debe');
+      if (v === 'todo') m.value = f.dataset.precio || m.value; else if (v === 'sena') { m.value = ''; m.focus(); }
+    }
+  });
+}
+function leerFilas(caja){
+  return [...caja.querySelectorAll('input[type=checkbox]:checked')].map(c => {
+    const f = c.closest('.multi-fila'); const forma = f.querySelector('.forma').value;
+    const m = forma === 'debe' ? '' : (Number(f.querySelector('.monto').value) || '');
+    return { 'ID Taller': c.dataset.tid, 'ID Persona': c.dataset.pid, 'Fecha inscripción': iso(HOY), 'Seña': m, 'Cobró seña': m ? f.querySelector('.quien').value : '', 'Asistencia': c.dataset.pasado ? 'Asistió' : 'Confirmada' };
+  });
+}
+async function guardarLote(filas, btn){
+  if (!filas.length) { toast('Tildá al menos uno', true); return; }
+  btn.disabled = true; btn.textContent = 'Guardando…';
+  try { await enviar({ accion: 'lote', hoja: 'Asistencias', filas }); $('modal').close(); toast(filas.length === 1 ? 'Inscripción guardada ✓' : filas.length + ' inscripciones guardadas ✓'); await cargar(true); }
+  catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'Guardar'; }
+}
+const AYUDA_PAGO = '<p class="ayuda" style="margin-top:0">Si no recordás los detalles de un evento anterior, dejá "Pagó todo" y "Ya repartido": cuenta como ingreso del taller pero no altera las cuentas entre ustedes, porque esa plata ya se repartió.</p>';
+
+// Una persona → varios talleres
+function abrirTalleresDePersona(pid){
+  const p = persona(pid); if (!p) return;
+  const ya = new Set(H('Asistencias').filter(a => a['ID Persona'] === pid).map(a => a['ID Taller']));
+  const ts = H('Talleres').filter(t => !ya.has(t['ID Taller']) && t['Estado'] !== 'Cancelado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0));
+  modal('Talleres de ' + esc(String(p['Nombre completo']).split(' ')[0]),
+    `<p class="ayuda" style="margin-top:0">Tildá todos los talleres a los que fue (o va a ir) y elegí cómo pagó cada uno.</p>${AYUDA_PAGO}
+     <div class="multi" id="mt-lista">${ts.length ? ts.map(t => { const f = fecha(t['Fecha']); return filaPago({ pid, tid: t['ID Taller'], titulo: t['Nombre / temática'], sub: esc(t['Fecha'] || '') + ' · ' + esc(t['Formato'] || '') + (t['Precio por persona'] ? ' · ' + esc(t['Precio por persona']) : ''), precio: num(t['Precio por persona']), pasado: f && f < HOY }); }).join('') : '<div class="vacio">' + (H('Talleres').length ? 'Ya está anotada en todos los talleres cargados.' : 'Todavía no hay talleres cargados. Primero creálos en la pestaña Talleres.') + '</div>'}</div>
+     <p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': pid }))}'>Cargar uno con todos los detalles</button></p>`,
+    `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="mt-ok">Guardar</button>`);
+  const caja = $('mt-lista');
+  activarFilas(caja, () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mt-ok').textContent = n ? 'Guardar ' + n + (n === 1 ? ' taller' : ' talleres') : 'Guardar'; });
+  $('mt-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
+}
+
 function abrirVarias(tid){
   const t = taller(tid); if (!t) return;
   const ya = new Set(H('Asistencias').filter(a => a['ID Taller'] === tid).map(a => a['ID Persona']));
@@ -711,31 +781,15 @@ function abrirVarias(tid){
   const precio = num(t['Precio por persona']);
   const pasado = (fecha(t['Fecha']) || HOY) < HOY;
   modal('Sumar personas a ' + esc(t['Nombre / temática']),
-    `<p class="ayuda" style="margin-top:0">Tildá a quienes vienen (o vinieron). Si ya pagaron algo, escribí cuánto; lo que falte queda como saldo pendiente. Precio: ${esc(t['Precio por persona'] || '—')}. Quedan ${esc(t['Lugares libres'] || '?')} lugares.</p>
+    `<p class="ayuda" style="margin-top:0">Tildá a quienes vienen (o vinieron) y elegí cómo pagó cada una. Lo que falte queda como saldo pendiente. Precio: ${esc(t['Precio por persona'] || '—')}. Quedan ${esc(t['Lugares libres'] || '?')} lugares.</p>${pasado ? AYUDA_PAGO : ''}
      <input class="campo" type="search" id="mv-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">
-     <div class="multi" id="mv-lista">${lista.length ? lista.map(p => `<label class="multi-fila off" data-nombre="${esc(String(p['Nombre completo']).toLowerCase())}">
-        <input type="checkbox" data-pid="${esc(p['ID Persona'])}">
-        <span>${esc(p['Nombre completo'])}<small>${veces[p['ID Persona']] ? veces[p['ID Persona']] + (veces[p['ID Persona']] === 1 ? ' taller' : ' talleres') : 'Primera vez'}${p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''}</small></span>
-        <input class="campo monto" type="number" min="0" step="100" inputmode="numeric" placeholder="Pagó $">
-        <button type="button" class="btn-mini" data-total="${precio}">Total</button>
-        <select class="campo">${L('Socias').map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`).join('') : '<div class="vacio">Todas las personas cargadas ya están en este taller.</div>'}</div>
+     <div class="multi" id="mv-lista">${lista.length ? lista.map(p => { const v = veces[p['ID Persona']]; return filaPago({ pid: p['ID Persona'], tid, titulo: p['Nombre completo'], sub: (v ? v + (v === 1 ? ' taller' : ' talleres') : 'Primera vez') + (p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''), precio, pasado }); }).join('') : '<div class="vacio">Todas las personas cargadas ya están en este taller.</div>'}</div>
      <p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Taller': tid }))}'>Es alguien nuevo</button></p>`,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="mv-ok">Inscribir</button>`);
   const caja = $('mv-lista');
-  const contar2 = () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mv-ok').textContent = n ? 'Inscribir ' + n + (n === 1 ? ' persona' : ' personas') : 'Inscribir'; };
-  caja.addEventListener('change', ev => { if (ev.target.type === 'checkbox') { ev.target.closest('.multi-fila').classList.toggle('off', !ev.target.checked); contar2(); } });
-  caja.addEventListener('click', ev => { const b = ev.target.closest('[data-total]'); if (b) { ev.preventDefault(); b.parentNode.querySelector('.monto').value = b.dataset.total || ''; } });
+  activarFilas(caja, () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mv-ok').textContent = n ? 'Inscribir ' + n + (n === 1 ? ' persona' : ' personas') : 'Inscribir'; });
   $('mv-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
-  $('mv-ok').onclick = async ev => {
-    const filas = [...caja.querySelectorAll('input[type=checkbox]:checked')].map(c => {
-      const f = c.closest('.multi-fila'); const m = Number(f.querySelector('.monto').value) || '';
-      return { 'ID Taller': tid, 'ID Persona': c.dataset.pid, 'Fecha inscripción': iso(HOY), 'Seña': m, 'Cobró seña': m ? f.querySelector('select').value : '', 'Asistencia': pasado ? 'Asistió' : 'Confirmada' };
-    });
-    if (!filas.length) { toast('Tildá al menos una persona', true); return; }
-    ev.target.disabled = true; ev.target.textContent = 'Guardando…';
-    try { await enviar({ accion: 'lote', hoja: 'Asistencias', filas }); $('modal').close(); toast(filas.length + (filas.length === 1 ? ' persona inscripta ✓' : ' personas inscriptas ✓')); await cargar(true); }
-    catch (err) { toast(err.message, true); ev.target.disabled = false; contar2(); }
-  };
+  $('mv-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
 }
 
 /* ───── Piezas de vista ───── */
@@ -775,13 +829,14 @@ V.hoy = () => {
   // Tareas del día
   const T = [];
   H('Pedidos').filter(x => x['Estado'] === 'Nuevo').forEach(x => {
-    const esT = x['Tipo'] === 'Taller';
+    const esT = x['Tipo'] === 'Taller', esPromo = x['Tipo'] === 'Promoción';
     const pre = esT ? { 'ID Taller': x['Referencia'], 'ID Persona': x['ID Persona'] } : { 'Producto': x['Referencia'], 'Comprador/a': x['Nombre'] };
     T.push({ ico:'✨', txt: `${esc(x['Nombre'])} pidió desde su portal: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
       bt: btnWA(x['ID Persona'], esT ? 'invitacion' : 'invitacion', esT ? x['Referencia'] : '', '', 'Responderle') +
-        `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>` +
+        (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
         `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button><button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button>` });
   });
+  H('Testimonios').filter(x => { const f = fecha(x['Fecha']); return f && diasEntre(f, HOY) <= 7; }).forEach(x => T.push({ ico:'💬', txt: `${esc(x['Nombre'])} dejó su opinión de ${esc(x['Taller'])} ${'★'.repeat(num(x['Puntaje']))}`, sub: esc(String(x['Comentario'] || '').slice(0, 120)), bt: `<button class="btn-sec" type="button" data-vista="miluz">Ver</button>` }));
   const cumples = cumplesProximos(D.params.cumple);
   cumples.forEach(x => T.push({ ico:'🎂', txt: x.c.dias === 0 ? `Hoy cumple ${esc(x.p['Nombre completo'])}` : `${esc(x.p['Nombre completo'])} cumple ${x.c.dias === 1 ? 'mañana' : 'el ' + lindaFecha(x.c.fecha)}`, sub: `Cumple ${x.c.edad}. Arcano de nacimiento: ${esc(x.p['Arcano nacimiento'] || '—')}`, bt: btnWA(x.p['ID Persona'], 'cumpleanos', '', '', 'Saludo de cumpleaños') }));
   proximosTalleres().filter(t => diasEntre(HOY, fecha(t['Fecha'])) <= 2).forEach(t => {
@@ -923,7 +978,7 @@ function tablaPersonas(ps){
     { t:'Cumple', f: p => { const f = fecha(p['Fecha de nacimiento']); return f ? ddmm(f) : ''; } },
     { t:'Talleres', k:'Talleres asistidos', num:1 }, { t:'Invertido', k:'Total invertido', num:1 },
     { t:'Llegó por', k:'Canal de llegada' },
-    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sumar a un taller" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': p['ID Persona'] }))}'>🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
+    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sumar a talleres" data-entalleres="${esc(p['ID Persona'])}">🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
   ], ps, 'Todavía no hay participantes. Tocá "Nueva persona" para cargar la primera.');
 }
 
@@ -989,6 +1044,26 @@ V.reventa = () => {
     { t:'Proveedor', k:'Proveedor' }, { t:'Actualizado', k:'Actualizado' }, colAcc('Materiales')
   ], H('Materiales'), 'No hay materiales cargados.');
   h += `<p style="margin-top:12px"><button class="btn-sec" type="button" data-nuevo="Materiales">Nuevo material</button></p>`;
+  return h;
+};
+
+V.miluz = () => {
+  const ts = H('Testimonios').slice().reverse();
+  const prom = ts.length ? (ts.reduce((a, x) => a + num(x['Puntaje']), 0) / ts.length).toFixed(1).replace('.', ',') : '—';
+  let h = cabeza('Mi Luz', btnNuevo('Promociones', 'Nueva promoción'));
+  h += '<p class="ayuda">Lo que ven las participantes en su portal personal: las promociones que van rotando y las opiniones que dejan después de cada taller.</p>';
+  h += '<h3 style="margin-top:8px">Promociones</h3><p class="ayuda" style="margin-top:0">Si no subís imagen, se usa una ilustración de Luz Guía según el tipo. Las imágenes ideales son horizontales.</p>';
+  h += tabla([
+    { t:'', f: x => `<span class="estado ${si(x['Activa']) ? 'e-ok' : 'e-neutro'}">${si(x['Activa']) ? 'Activa' : 'Pausada'}</span>` },
+    { t:'Título', f: x => `<b>${esc(x['Título'])}</b><br><small style="color:var(--bruma)">${esc(x['Frase'])}</small>` },
+    { t:'Tipo', k:'Tipo' }, { t:'Orden', k:'Orden', num:1 },
+    { t:'', acc:1, f: x => (x['Imagen'] ? `<button class="ic" type="button" title="Ver imagen" data-foto="${esc(x['Imagen'])}">🖼️</button>` : '') + acciones('Promociones', x) }
+  ], H('Promociones').slice().sort((a, b) => (num(a['Orden']) || 99) - (num(b['Orden']) || 99)), 'No hay promociones. Tocá "Nueva promoción".');
+  h += `<h3>Testimonios</h3><p class="ayuda" style="margin-top:0">${ts.length ? ts.length + ' opiniones · promedio ' + prom + ' ★. Las que autorizaron publicar se pueden copiar para Instagram.' : 'Cuando alguien opine desde su portal, aparece acá.'}</p>`;
+  h += ts.map(x => `<div class="testimonio"><div class="estrellas">${'★'.repeat(num(x['Puntaje']))}${'☆'.repeat(5 - num(x['Puntaje']))}</div>
+    ${x['Comentario'] ? `<blockquote>"${esc(x['Comentario'])}"</blockquote>` : ''}
+    <small>${esc(x['Nombre'])} · ${esc(x['Taller'])} · ${esc(x['Fecha'])} · ${si(x['Se puede publicar']) ? '✓ autorizó publicarlo' : 'no autorizó publicarlo'}${si(x['Destacado']) ? ' · ⭐ destacado' : ''}</small>
+    <div class="herramientas" style="margin:10px 0 0">${si(x['Se puede publicar']) && x['Comentario'] ? `<button class="btn-sec" type="button" data-copiar="${esc('"' + x['Comentario'] + '" — ' + String(x['Nombre']).split(' ')[0] + ', ' + x['Taller'])}">Copiar para Instagram</button>` : ''}${acciones('Testimonios', x)}</div></div>`).join('');
   return h;
 };
 
@@ -1083,8 +1158,10 @@ document.addEventListener('click', async e => {
     try { await guardarCambios('Asistencias', r, datos, nuevo ? 'Marcado ✓' : 'Desmarcado'); } catch (err) { toast(err.message, true); t.disabled = false; }
     return;
   }
+  if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
   if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
   if (ds.varias) { abrirVarias(ds.varias); return; }
+  if (ds.entalleres) { abrirTalleresDePersona(ds.entalleres); return; }
   if (ds.reintegro) {
     const lista = ds.reintegro === 'todos' ? H('Gastos').filter(g => g['Pagó'] && !/Devuelto|No corresponde/.test(g['Reintegro'] || '')) : H('Gastos').filter(g => String(g._fila) === ds.reintegro);
     if (!lista.length) return;
