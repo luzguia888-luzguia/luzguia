@@ -376,6 +376,7 @@ function contexto(p, t, a){
   return ctx;
 }
 const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => (ctx[k] !== undefined && ctx[k] !== '') ? ctx[k] : '[' + k + ']');
+const otraSocia = q => (L('Socias').find(x => x !== q) || (q === 'Belu' ? 'Mey' : 'Belu'));
 const linkPortal = p => p && p['Código portal'] ? (D.params.portal || 'https://luzguia888-luzguia.github.io/luzguia/mi-luz.html') + '?c=' + p['Código portal'] : '';
 const plantilla = clave => H('Plantillas').find(x => x['Clave'] === clave);
 
@@ -461,12 +462,14 @@ const ESQ = {
     {k:'Seña', t:'money'}, {k:'Cobró seña', t:'sel', o:() => L('Socias'), def:'yo'},
     {k:'Resto pagado', t:'money'}, {k:'Cobró resto', t:'sel', o:() => L('Socias')},
     {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Asistencia', t:'sel', o:() => L('Asistencia'), def:'Confirmada'},
+    {k:'Motivo de ausencia', t:'sel', o:() => L('Motivos de ausencia'), aus:1}, {k:'Detalle del motivo', t:'text', aus:1, ph:'Contá qué pasó (opcional)'},
     {k:'PDF enviado', t:'check'}, {k:'Fecha envío PDF', t:'date'}, {k:'Tarjetita', t:'check'}, {k:'Yagra', t:'check'},
     {k:'Señalador', t:'check'}, {k:'Carta pintada', t:'check'}, {k:'Notas', t:'area', full:1}]},
   Gastos: { nombre: 'gasto', clave: 'Ítem', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'Destino (ID taller / GENERAL / REVENTA)', t:'sel', lab:'Destino', req:1, o:() => [['GENERAL','General'],['REVENTA','Compra para reventa']].concat(optTalleres())},
     {k:'Categoría', t:'sel', o:() => L('Categorías gasto'), req:1}, {k:'Ítem', t:'text', req:1},
     {k:'Cantidad', t:'num', def:1}, {k:'Costo unitario', t:'money', req:1}, {k:'Proveedor', t:'text'}, {k:'Pagó', t:'sel', o:() => L('Socias'), def:'yo', req:1},
+    {k:'Reintegro', t:'sel', o:() => L('Estados reintegro'), def:'Pendiente', lab:'¿La otra socia ya devolvió su mitad?'},
     {k:'Comprobante', t:'foto', full:1}, {k:'Notas', t:'area', full:1}]},
   Ventas: { nombre: 'venta', clave: 'Producto', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'Producto', t:'sel', o:() => H('Productos').map(p => p['Producto']), req:1},
@@ -476,10 +479,12 @@ const ESQ = {
     {k:'Producto', t:'text', req:1, full:1}, {k:'Categoría', t:'sel', o:() => L('Categorías producto')}, {k:'Costo de compra', t:'money'},
     {k:'Precio de venta', t:'money'}, {k:'Unidades compradas', t:'num'}, {k:'Stock mínimo', t:'num'}, {k:'Notas', t:'area', full:1}]},
   Insumos: { nombre: 'insumo', clave: 'Insumo', campos: [
-    {k:'Insumo', t:'text', req:1}, {k:'Unidad', t:'text', def:'unidades'}, {k:'Stock actual', t:'num'}, {k:'Stock mínimo', t:'num'},
+    {k:'Insumo', t:'text', req:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de insumo'), def:'Consumible'}, {k:'Unidad', t:'text', def:'unidades'}, {k:'Costo unitario', t:'money'},
+    {k:'Stock actual', t:'num'}, {k:'Stock mínimo', t:'num'},
     {k:'Proveedor', t:'text', full:1}, {k:'Notas', t:'area', full:1}]},
   Materiales: { nombre: 'material', clave: 'Material', campos: [
     {k:'Material', t:'text', req:1, full:1}, {k:'Formato en que se usa', t:'sel', o:() => L('Formatos')}, {k:'Costo unitario', t:'money'},
+    {k:'Se calcula al marcar', t:'sel', o:() => L('Entrega asociada'), lab:'Se suma al costo del taller al marcar'},
     {k:'Proveedor', t:'text'}, {k:'Actualizado', t:'date', def:'hoy'}, {k:'Notas', t:'area', full:1}]},
   Transferencias: { nombre: 'transferencia', clave: 'Monto', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'Monto', t:'money', req:1}, {k:'De', t:'sel', o:() => L('Socias'), def:'yo', req:1}, {k:'Para', t:'sel', o:() => L('Socias'), req:1},
@@ -542,7 +547,7 @@ function abrirForm(hoja, rec, pre){
   if (hoja === 'Personas' && rec) {
     const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']);
     html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
-      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt"><button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
+      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt"><button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
       + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': rec['ID Persona'] }))}'>Sumar a un taller</button></p>`;
   }
@@ -555,8 +560,9 @@ function abrirForm(hoja, rec, pre){
   }
   if (hoja === 'Asistencias') {
     const iT = e.campos.findIndex(c => c.k === 'ID Taller'), iA = e.campos.findIndex(c => c.k === 'Asistencia');
-    const ajustar = () => { const t = taller($('f' + iT).value); const f = t && fecha(t['Fecha']); if (!rec && f && f < HOY) $('f' + iA).value = 'Asistió'; };
-    $('f' + iT).addEventListener('change', ajustar); ajustar();
+    const ajustar = () => { const t = taller($('f' + iT).value); const f = t && fecha(t['Fecha']); if (!rec && f && f < HOY && $('f' + iA).value === 'Confirmada') $('f' + iA).value = 'Asistió'; motivo(); };
+    const motivo = () => { const no = /No vino|Canceló/.test($('f' + iA).value); e.campos.forEach((c, i) => { if (c.aus && $('f' + i)) $('f' + i).closest('label').classList.toggle('oculto', !no); }); };
+    $('f' + iT).addEventListener('change', ajustar); $('f' + iA).addEventListener('change', motivo); ajustar();
   }
   if (hoja === 'Ventas') {
     const iP = e.campos.findIndex(c => c.k === 'Producto'), iPr = e.campos.findIndex(c => c.k === 'Precio unitario');
@@ -619,6 +625,8 @@ async function verFoto(ref){
     const d = await r.json();
     if (!d.ok) throw new Error(d.error);
     const src = 'data:' + d.mime + ';base64,' + d.base64;
+    const idD = (String(ref).match(/[-\w]{25,}/) || [''])[0];
+    $('modal-pie').innerHTML = (idD ? `<a class="btn-sec" href="https://drive.google.com/file/d/${idD}/view" target="_blank" rel="noopener">Abrir en Drive</a>` : '') + '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>';
     $('modal-cuerpo').innerHTML = /pdf$/.test(d.mime)
       ? `<p class="ayuda">Es un PDF.</p><a class="btn" download="comprobante.pdf" href="${src}">Descargar PDF</a>`
       : `<img class="comprobante-img" alt="Comprobante" src="${src}">`;
@@ -629,6 +637,21 @@ function modal(titulo, cuerpo, pie){
   $('modal-titulo').innerHTML = titulo; $('modal-cuerpo').innerHTML = cuerpo; $('modal-pie').innerHTML = pie || '';
   if (!$('modal').open) $('modal').showModal();
 }
+
+/* ───── Costo de materiales entregados ───── */
+function preciosMateriales(){
+  const p = {};
+  H('Materiales').forEach(m => { const k = m['Se calcula al marcar']; if (k) p[k] = (p[k] || 0) + num(m['Costo unitario']); });
+  return p;
+}
+function costoMateriales(t){
+  const precios = preciosMateriales(); let total = 0; const det = {};
+  H('Asistencias').filter(a => a['ID Taller'] === t['ID Taller'] && a['Asistencia'] !== 'Canceló').forEach(a => {
+    Object.keys(precios).forEach(k => { if (si(a[k])) { total += precios[k]; det[k] = (det[k] || 0) + 1; } });
+  });
+  return { total, det };
+}
+const NOMBRE_ENTREGA = { 'Yagra':['yagra','yagras'], 'Tarjetita':['tarjetita','tarjetitas'], 'PDF enviado':['PDF','PDF'], 'Señalador':['señalador','señaladores'], 'Carta pintada':['carta pintada','cartas pintadas'] };
 
 /* ───── Piezas de vista ───── */
 function tabla(cols, datos, vacio){
@@ -769,7 +792,9 @@ V.talleres = () => {
       <div><div class="nombre">${esc(t['Nombre / temática'] || t['ID Taller'])}</div><div class="meta">${esc(t['Formato'])}${t['Fecha'] ? ', ' + esc(t['Fecha']) : ''} <span class="estado e-neutro">${esc(t['Estado'])}</span></div></div>
       <div class="gan"><b>${esc(t['Ganancia neta'] || '$0')}</b><small>${esc(t['Inscriptas'] || 0)} de ${esc(t['Cupo'] || '?')} lugares</small></div></button>
       <div class="taller-detalle${abierto ? '' : ' oculto'}">
-      <div class="mini-cifras">${[['Precio','Precio por persona'],['Cobrado','Cobrado'],['Pendiente','Pendiente de cobro'],['Gastos','Gastos'],['Costo por persona','Costo por persona'],['Parte Belu','Parte Belu'],['Parte Mey','Parte Mey']].map(c => `<div><span>${c[0]}</span> ${esc(t[c[1]] || '—')}</div>`).join('')}</div>
+      <div class="mini-cifras">${[['Precio','Precio por persona'],['Cobrado','Cobrado'],['Pendiente','Pendiente de cobro'],['Gastos','Gastos'],['Parte Belu','Parte Belu'],['Parte Mey','Parte Mey']].map(c => `<div><span>${c[0]}</span> ${esc(t[c[1]] || '—')}</div>`).join('')}</div>
+      ${(() => { const cm = costoMateriales(t); const ins = num(t['Inscriptas']); const det = Object.entries(cm.det).map(([k, n]) => n + ' ' + (NOMBRE_ENTREGA[k] ? NOMBRE_ENTREGA[k][n === 1 ? 0 : 1] : k)).join(', ');
+        return `<div class="mini-cifras"><div><span>Materiales entregados</span> ${pesos(cm.total)}${det ? ' <span>(' + esc(det) + ')</span>' : ''}</div><div><span>Costo real por persona</span> ${ins ? pesos((num(t['Gastos']) + cm.total) / ins) : '—'}</div><div><span>Ganancia descontando materiales</span> ${pesos(num(t['Ganancia neta']) - cm.total)}</div></div>`; })()}
       <div class="herramientas">${btnNuevo('Asistencias', 'Inscribir persona', { 'ID Taller': t['ID Taller'] })}
         <button class="btn-sec" type="button" data-nuevo="Gastos" data-pre='${esc(JSON.stringify({ 'Destino (ID taller / GENERAL / REVENTA)': t['ID Taller'] }))}'>Cargar gasto</button>
         <button class="btn-sec" type="button" data-editar="Talleres|${t._fila}">Editar taller</button>
@@ -835,11 +860,21 @@ V.gastos = () => {
   gs.forEach(g => { const n = num(g['Total']); const c = g['Categoría'] || 'Sin categoría'; porCat[c] = (porCat[c]||0) + n; const t = taller(g[DEST]); const d = t ? t['Nombre / temática'] : (g[DEST] === 'GENERAL' ? 'General' : g[DEST] === 'REVENTA' ? 'Reventa' : g[DEST]); porDest[d] = (porDest[d]||0) + n; });
   const ord = o => Object.entries(o).sort((a, b) => b[1] - a[1]);
   let h = cabeza('Gastos', btnNuevo('Gastos', 'Cargar gasto'));
-  h += '<p class="ayuda">Podés sacarle una foto al ticket al cargarlo: queda guardado y cualquiera de las dos lo ve desde acá, sin entrar al Drive.</p>';
+  h += '<p class="ayuda">Al cargar un gasto podés sacarle una foto al ticket o pegar el enlace de Drive: queda guardado y cualquiera de las dos lo ve con 🧾, sin entrar al Drive.</p>';
+  const soc = L('Socias').length ? L('Socias') : ['Belu','Mey'];
+  const pagado = {}; soc.forEach(x => pagado[x] = 0);
+  gs.forEach(g => { if (g['Pagó']) pagado[g['Pagó']] = (pagado[g['Pagó']] || 0) + num(g['Total']); });
+  const pend = gs.filter(g => g['Pagó'] && !/Devuelto|No corresponde/.test(g['Reintegro'] || ''));
+  const deben = {}; pend.forEach(g => { deben[g['Pagó']] = (deben[g['Pagó']] || 0) + num(g['Total']) / 2; });
+  const [A, B] = soc; const neto = (deben[A] || 0) - (deben[B] || 0);
+  h += '<div class="cifras" style="margin-top:0">' + soc.map(x => `<div class="cifra"><span>Compró ${esc(x)}</span><b>${pesos(pagado[x] || 0)}</b></div>`).join('')
+    + `<div class="cifra"><span>Reintegros pendientes</span><b class="${Math.abs(neto) >= 1 ? 'oro' : ''}">${Math.abs(neto) < 1 ? 'Nada pendiente' : esc(neto > 0 ? B : A) + ' le debe a ' + esc(neto > 0 ? A : B) + ' ' + pesos(Math.abs(neto))}</b></div></div>`;
+  if (pend.length) h += `<p style="margin:12px 0 0"><button class="btn-sec oro" type="button" data-reintegro="todos">Registrar que se devolvió todo lo pendiente (${pend.length} compras)</button></p>`;
   h += `<div class="dos-col"><div><h3>Por categoría</h3>${barras(ord(porCat), pesos)}</div><div><h3>Por destino</h3>${barras(ord(porDest), pesos)}</div></div>`;
   h += '<h3>Detalle</h3>' + tabla([
     { t:'Fecha', k:'Fecha' }, { t:'Destino', f: g => { const t = taller(g[DEST]); return esc(t ? t['Nombre / temática'] : g[DEST]); } }, { t:'Categoría', k:'Categoría' },
     { t:'Ítem', k:'Ítem' }, { t:'Cant.', k:'Cantidad', num:1 }, { t:'Total', k:'Total', num:1 }, { t:'Pagó', k:'Pagó' },
+    { t:'Reintegro', f: g => !g['Pagó'] ? '' : g['Reintegro'] === 'Devuelto' ? '<span class="estado e-ok">Devuelto</span>' : g['Reintegro'] === 'No corresponde' ? '<span class="estado e-neutro">No corresponde</span>' : `<button class="chip" type="button" data-reintegro="${g._fila}" title="Marcar que se devolvió la mitad">Pendiente · ½ ${pesos(num(g['Total']) / 2)}</button>` },
     { t:'', acc:1, f: g => (g['Comprobante'] ? `<button class="ic" type="button" title="Ver comprobante" data-foto="${esc(g['Comprobante'])}">🧾</button>` : '') + acciones('Gastos', g) }
   ], gs.slice().reverse(), 'Todavía no hay gastos cargados.');
   return h;
@@ -860,11 +895,11 @@ V.reventa = () => {
     { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Cobró', k:'Cobró' }, { t:'Comprador/a', k:'Comprador/a' }, colAcc('Ventas')
   ], H('Ventas').slice().reverse(), 'Todavía no hay ventas.');
   h += '<h3>Insumos de talleres</h3>' + tabla([
-    { t:'Insumo', k:'Insumo' }, { t:'Stock', f: i => esc(i['Stock actual'] || 0) + ' ' + esc(i['Unidad']) }, { t:'Mínimo', k:'Stock mínimo', num:1 },
+    { t:'Insumo', k:'Insumo' }, { t:'Tipo', k:'Tipo' }, { t:'Costo unitario', k:'Costo unitario', num:1 }, { t:'Stock', f: i => esc(i['Stock actual'] || 0) + ' ' + esc(i['Unidad']) }, { t:'Mínimo', k:'Stock mínimo', num:1 },
     { t:'', f: i => al(i['Alerta']) }, { t:'Proveedor', k:'Proveedor' }, colAcc('Insumos')
   ], H('Insumos'), 'No hay insumos cargados.');
-  h += '<h3>Costo de materiales personalizados</h3>' + tabla([
-    { t:'Material', k:'Material' }, { t:'Formato', k:'Formato en que se usa' }, { t:'Costo unitario', k:'Costo unitario', num:1 },
+  h += '<h3>Costo de materiales personalizados</h3><p class="ayuda">Cargá el costo de cada uno una sola vez. Cuando en un taller se marca que se entregó (yagra, tarjetita, señalador…), su costo se suma solo al cálculo de ese taller. El PDF enviado por enlace va sin costo.</p>' + tabla([
+    { t:'Material', k:'Material' }, { t:'Formato', k:'Formato en que se usa' }, { t:'Se suma al marcar', k:'Se calcula al marcar' }, { t:'Costo unitario', k:'Costo unitario', num:1 },
     { t:'Proveedor', k:'Proveedor' }, { t:'Actualizado', k:'Actualizado' }, colAcc('Materiales')
   ], H('Materiales'), 'No hay materiales cargados.');
   h += `<p style="margin-top:12px"><button class="btn-sec" type="button" data-nuevo="Materiales">Nuevo material</button></p>`;
@@ -891,9 +926,25 @@ V.estadisticas = () => {
   ts.forEach(t => { const k = t['Formato'] || 'Sin formato'; fm[k] = fm[k] || { n:0, gente:0, gan:0, costo:0 }; fm[k].n++; fm[k].gente += num(t['Inscriptas']); fm[k].gan += num(t['Ganancia neta']); fm[k].costo += num(t['Costo por persona']); });
   const filasFm = Object.entries(fm).map(([k, f]) => ({ 'Formato': k, 'Realizados': f.n, 'Promedio': (f.gente/f.n).toFixed(1).replace('.', ','), 'Ganancia': pesos(f.gan/f.n), 'Costo': pesos(f.costo/f.n) }));
   let h = cabeza('Estadísticas') + '<p class="ayuda">Calculadas sobre los talleres marcados como Realizado.</p>';
+  const DEST = 'Destino (ID taller / GENERAL / REVENTA)';
+  const ganTalleres = H('Talleres').reduce((s2, t) => s2 + num(t['Ganancia neta']), 0);
+  const ganVentas = H('Ventas').reduce((s2, v) => s2 + num(v['Ganancia']), 0);
+  const invStock = H('Gastos').filter(g => g[DEST] === 'REVENTA').reduce((s2, g) => s2 + num(g['Total']), 0);
+  const stockCosto = H('Productos').reduce((s2, p) => s2 + num(p['Stock actual']) * num(p['Costo de compra']), 0);
+  const generales = H('Gastos').filter(g => g[DEST] === 'GENERAL').reduce((s2, g) => s2 + num(g['Total']), 0);
+  h += '<h3 style="margin-top:8px">Ganancias por línea</h3><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Talleres y eventos</span><b class="oro">${pesos(ganTalleres)}</b></div>`
+    + `<div class="cifra"><span>Reventa (ganancia de lo vendido)</span><b class="oro">${pesos(ganVentas)}</b></div>`
+    + `<div class="cifra"><span>Invertido en stock</span><b>${pesos(invStock)}</b></div>`
+    + `<div class="cifra"><span>Stock en mano (a costo)</span><b>${pesos(stockCosto)}</b></div>`
+    + `<div class="cifra"><span>Gastos generales e insumos</span><b>${pesos(generales)}</b></div></div>`;
+  h += '<p class="ayuda" style="margin-top:10px">La ganancia neta total del Resumen es: talleres + ventas − compras de stock − gastos generales. Lo invertido en stock se recupera a medida que se vende.</p>';
+  const porTaller = H('Talleres').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); return { 'Taller': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': t['Inscriptas'], 'Ganancia': t['Ganancia neta'], 'Materiales': pesos(cm.total), 'Real': pesos(num(t['Ganancia neta']) - cm.total) }; });
+  h += '<h3>Por taller</h3>' + tabla([{ t:'Taller', k:'Taller' }, { t:'Fecha', k:'Fecha' }, { t:'Personas', k:'Personas', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Ganancia descontando materiales', k:'Real', num:1 }], porTaller, 'Todavía no hay talleres realizados.');
   h += `<div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro taller</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Talleres realizados</span><b>${ts.length}</b></div></div>`;
   h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de personas', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya talleres realizados, acá vas a ver cuál formato rinde más.');
   h += `<div class="dos-col"><div><h3>Cómo llegan</h3>${barras(contar(ps, 'Canal de llegada'))}</div><div><h3>Arcanos de nacimiento más frecuentes</h3>${barras(contar(ps, 'Arcano nacimiento').slice(0, 8))}</div></div>`;
+  h += `<h3>Por qué no vinieron</h3>${barras(contar(H('Asistencias').filter(a => /No vino|Canceló/.test(a['Asistencia'])), 'Motivo de ausencia'))}`;
   return h;
 };
 
@@ -944,6 +995,25 @@ document.addEventListener('click', async e => {
     if (campo === 'PDF enviado' && nuevo && !r['Fecha envío PDF']) datos['Fecha envío PDF'] = iso(HOY);
     t.disabled = true;
     try { await guardarCambios('Asistencias', r, datos, nuevo ? 'Marcado ✓' : 'Desmarcado'); } catch (err) { toast(err.message, true); t.disabled = false; }
+    return;
+  }
+  if (ds.reintegro) {
+    const lista = ds.reintegro === 'todos' ? H('Gastos').filter(g => g['Pagó'] && !/Devuelto|No corresponde/.test(g['Reintegro'] || '')) : H('Gastos').filter(g => String(g._fila) === ds.reintegro);
+    if (!lista.length) return;
+    const tot = {}; lista.forEach(g => tot[g['Pagó']] = (tot[g['Pagó']] || 0) + num(g['Total']) / 2);
+    const resumen = Object.entries(tot).map(([q, m]) => otraSocia(q) + ' le devolvió ' + pesos(m) + ' a ' + q).join(' y ');
+    if (!confirm('¿Registrar que ' + resumen + '?\n\nSe marca como devuelto y queda anotado como transferencia entre ustedes.')) return;
+    t.disabled = true;
+    try {
+      for (let i = 0; i < lista.length; i++) {
+        toast('Guardando ' + (i + 1) + ' de ' + lista.length + '…');
+        await enviar({ accion: 'editar', hoja: 'Gastos', fila: lista[i]._fila, original: lista[i]['Ítem'], datos: { 'Reintegro': 'Devuelto', 'Fecha reintegro': iso(HOY) } });
+      }
+      for (const [q, m] of Object.entries(tot)) {
+        await enviar({ accion: 'agregar', hoja: 'Transferencias', datos: { 'Fecha': iso(HOY), 'De': otraSocia(q), 'Para': q, 'Monto': Math.round(m), 'Concepto': lista.length === 1 ? 'Reintegro mitad: ' + lista[0]['Ítem'] : 'Reintegro de ' + lista.length + ' compras' } });
+      }
+      toast('Reintegro registrado ✓'); await cargar(true);
+    } catch (err) { toast(err.message, true); t.disabled = false; }
     return;
   }
   if (ds.pdf) {
