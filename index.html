@@ -311,7 +311,20 @@ const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto'
 /* ───── Utilidades ───── */
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function num(s){ if (s == null || s === '') return 0; if (typeof s === 'number') return s; const t = String(s).replace(/[^\d,.\-]/g,'').replace(/\./g,'').replace(',', '.'); const n = parseFloat(t); return isNaN(n) ? 0 : n; }
+// Lee montos en formato argentino ($45.000,50) o inglés ($45,000.50)
+function num(s){
+  if (s == null || s === '') return 0; if (typeof s === 'number') return s;
+  let t = String(s).replace(/[^\d,.\-]/g, ''); if (!t) return 0;
+  const c = t.lastIndexOf(','), d = t.lastIndexOf('.');
+  if (c > -1 && d > -1) { const dec = c > d ? ',' : '.', mil = dec === ',' ? '.' : ','; t = t.split(mil).join('').replace(dec, '.'); }
+  else if (c > -1 || d > -1) { const p = t.split(c > -1 ? ',' : '.'); t = (p.length > 2 || p[p.length - 1].length === 3) ? p.join('') : p.join('.'); }
+  const n = parseFloat(t); return isNaN(n) ? 0 : n;
+}
+// Si escriben 45 queriendo decir 45.000, preguntamos
+function revisarMonto(v, que){
+  if (!(v > 0 && v < 1000)) return v;
+  return confirm((que ? que + ': e' : 'E') + 'scribiste $' + v + '. ¿Quisiste decir ' + pesos(v * 1000) + '?\n\nAceptar: guardar ' + pesos(v * 1000) + '\nCancelar: dejar $' + v) ? v * 1000 : v;
+}
 const pesos = n => '$' + Math.round(n).toLocaleString('es-AR');
 const si = v => v === true || /^(true|verdadero|sí|si)$/i.test(String(v).trim());
 function fecha(s){ const m = String(s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? new Date(+m[3], +m[2]-1, +m[1]) : null; }
@@ -399,6 +412,7 @@ function contexto(p, t, a){
   }
   if (a) ctx.pendiente = a['Pendiente'];
   const ad = arcanoDelDia(); ctx.arcano_dia = ad.nombre + ' (' + ad.n + ')';
+  ctx.instagram = D.params.instagram || '';
   return ctx;
 }
 const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => (ctx[k] !== undefined && ctx[k] !== '') ? ctx[k] : '[' + k + ']');
@@ -585,7 +599,7 @@ function abrirForm(hoja, rec, pre){
   if (hoja === 'Personas' && rec) {
     const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']);
     html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
-      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}<button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
+      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>Pagó ${esc(a['Total pagado'] || '$0')}${num(a['Pendiente']) > 0 ? ', debe ' + esc(a['Pendiente']) : ''} · ${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}<button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
       + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-entalleres="${esc(rec['ID Persona'])}">Sumar a talleres</button></p>`;
   }
@@ -615,7 +629,8 @@ function abrirForm(hoja, rec, pre){
       if (!el) continue;
       let v;
       if (c.t === 'check') v = el.checked;
-      else if (c.t === 'money' || c.t === 'num') v = el.value === '' ? '' : Number(el.value);
+      else if (c.t === 'money') v = el.value === '' ? '' : revisarMonto(Number(el.value), c.lab || c.k);
+      else if (c.t === 'num') v = el.value === '' ? '' : Number(el.value);
       else v = el.value.trim();
       const saltear = c.k === 'ID Persona' && $('np-toggle') && $('np-toggle').checked;
       if (c.req && (v === '' || v === null) && !saltear) { toast('Falta completar: ' + (c.lab || c.k), true); el.focus(); return; }
@@ -709,7 +724,7 @@ function abrirPago(a){
      ${hist.length ? '<h3 style="margin:22px 0 8px">Pagos anteriores</h3><ul class="tareas">' + hist.map(h2 => `<li class="tarea"><div class="txt">${esc(h2.m)} · ${esc(h2.t)}<small>${esc(h2.f || '')}${h2.q ? ' · cobró ' + esc(h2.q) : ''}</small></div>${h2.r ? `<div class="bt">${acciones('Pagos', h2.r)}</div>` : ''}</li>`).join('') + '</ul>' : ''}`,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pg-ok">Guardar pago</button>`);
   $('pg-ok').onclick = async ev => {
-    const m = Number($('pg-monto').value);
+    const m = revisarMonto(Number($('pg-monto').value));
     if (!m) { toast('Escribí el monto', true); return; }
     ev.target.disabled = true; ev.target.textContent = 'Guardando…';
     try {
@@ -746,7 +761,7 @@ function activarFilas(caja, alContar){
 function leerFilas(caja){
   return [...caja.querySelectorAll('input[type=checkbox]:checked')].map(c => {
     const f = c.closest('.multi-fila'); const forma = f.querySelector('.forma').value;
-    const m = forma === 'debe' ? '' : (Number(f.querySelector('.monto').value) || '');
+    const m = forma === 'debe' ? '' : (revisarMonto(Number(f.querySelector('.monto').value) || 0, f.querySelector('span').firstChild.textContent.trim()) || '');
     return { 'ID Taller': c.dataset.tid, 'ID Persona': c.dataset.pid, 'Fecha inscripción': iso(HOY), 'Seña': m, 'Cobró seña': m ? f.querySelector('.quien').value : '', 'Asistencia': c.dataset.pasado ? 'Asistió' : 'Confirmada' };
   });
 }
@@ -959,7 +974,7 @@ V.personas = () => {
   const ab = tallerAbierto();
   const fila = (x, extra, plant) => `<div class="persona-fila"><span>${esc(x.p['Nombre completo'])}<br><small>${extra}</small></span>${btnWA(x.p['ID Persona'], plant, ab ? ab['ID Taller'] : '', '')}</div>`;
   let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona'));
-  h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal y con 🕯️ la sumás a un taller. La cantidad de talleres se cuenta sola a partir de sus inscripciones marcadas como "Asistió".</p>';
+  h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal y con 🕯️ la sumás a un taller. La cantidad de talleres y lo invertido se calculan solos: para corregirlos, tocá el número y editá sus inscripciones con ✎ o 💰.</p>';
   h += '<div class="alertas3">';
   h += `<div class="caja"><h4>Las que más vienen</h4><p>${D.params.frecuente} talleres o más. Ideas para ofrecerles: lugar prioritario en la edición especial, descuento por fidelidad, "traé una amiga" con beneficio para las dos, o 15 minutos extra de lectura.</p>${frec.length ? frec.map(x => fila(x, x.veces + ' talleres', 'frecuente')).join('') : '<small class="ayuda">Todavía nadie llegó a ese número.</small>'}</div>`;
   h += `<div class="caja"><h4>Hace tiempo que no vienen</h4><p>Más de ${D.params.inactiva} días desde su último taller.</p>${inac.length ? inac.slice(0, 12).map(x => fila(x, 'Última vez: ' + ddmm(x.ultima) + '/' + x.ultima.getFullYear(), 'reactivar')).join('') : '<small class="ayuda">Nadie por ahora.</small>'}</div>`;
@@ -976,7 +991,8 @@ function tablaPersonas(ps){
     { t:'Nacimiento', f: p => p['Arcano nacimiento'] ? esc(p['N° arcano nacimiento']) + ' · ' + esc(p['Arcano nacimiento']) : '' },
     { t:'Anual', f: p => p['Arcano anual'] ? esc(p['N° arcano anual']) + ' · ' + esc(p['Arcano anual']) : '' },
     { t:'Cumple', f: p => { const f = fecha(p['Fecha de nacimiento']); return f ? ddmm(f) : ''; } },
-    { t:'Talleres', k:'Talleres asistidos', num:1 }, { t:'Invertido', k:'Total invertido', num:1 },
+    { t:'Talleres', num:1, f: p => `<button class="chip" type="button" data-editar="Personas|${p._fila}" title="Ver y editar sus talleres y pagos">${esc(p['Talleres asistidos'] || 0)}</button>` },
+    { t:'Invertido', num:1, f: p => `<button class="chip" type="button" data-editar="Personas|${p._fila}" title="Ver y editar sus talleres y pagos">${esc(p['Total invertido'] || '$0')}</button>` },
     { t:'Llegó por', k:'Canal de llegada' },
     { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sumar a talleres" data-entalleres="${esc(p['ID Persona'])}">🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
   ], ps, 'Todavía no hay participantes. Tocá "Nueva persona" para cargar la primera.');
@@ -1051,7 +1067,7 @@ V.miluz = () => {
   const ts = H('Testimonios').slice().reverse();
   const prom = ts.length ? (ts.reduce((a, x) => a + num(x['Puntaje']), 0) / ts.length).toFixed(1).replace('.', ',') : '—';
   let h = cabeza('Mi Luz', btnNuevo('Promociones', 'Nueva promoción'));
-  h += '<p class="ayuda">Lo que ven las participantes en su portal personal: las promociones que van rotando y las opiniones que dejan después de cada taller.</p>';
+  h += '<p class="ayuda">Lo que ven las participantes en su portal personal: las promociones que van rotando y las opiniones que dejan después de cada taller. Las respuestas de la encuesta se guardan en la hoja Testimonios y aparecen acá y en Hoy.</p>';
   h += '<h3 style="margin-top:8px">Promociones</h3><p class="ayuda" style="margin-top:0">Si no subís imagen, se usa una ilustración de Luz Guía según el tipo. Las imágenes ideales son horizontales.</p>';
   h += tabla([
     { t:'', f: x => `<span class="estado ${si(x['Activa']) ? 'e-ok' : 'e-neutro'}">${si(x['Activa']) ? 'Activa' : 'Pausada'}</span>` },
@@ -1062,6 +1078,7 @@ V.miluz = () => {
   h += `<h3>Testimonios</h3><p class="ayuda" style="margin-top:0">${ts.length ? ts.length + ' opiniones · promedio ' + prom + ' ★. Las que autorizaron publicar se pueden copiar para Instagram.' : 'Cuando alguien opine desde su portal, aparece acá.'}</p>`;
   h += ts.map(x => `<div class="testimonio"><div class="estrellas">${'★'.repeat(num(x['Puntaje']))}${'☆'.repeat(5 - num(x['Puntaje']))}</div>
     ${x['Comentario'] ? `<blockquote>"${esc(x['Comentario'])}"</blockquote>` : ''}
+    ${x['Para un próximo encuentro'] ? `<p style="margin:0 0 8px"><span style="color:var(--bruma)">Le gustaría para un próximo encuentro:</span> ${esc(x['Para un próximo encuentro'])}</p>` : ''}
     <small>${esc(x['Nombre'])} · ${esc(x['Taller'])} · ${esc(x['Fecha'])} · ${si(x['Se puede publicar']) ? '✓ autorizó publicarlo' : 'no autorizó publicarlo'}${si(x['Destacado']) ? ' · ⭐ destacado' : ''}</small>
     <div class="herramientas" style="margin:10px 0 0">${si(x['Se puede publicar']) && x['Comentario'] ? `<button class="btn-sec" type="button" data-copiar="${esc('"' + x['Comentario'] + '" — ' + String(x['Nombre']).split(' ')[0] + ', ' + x['Taller'])}">Copiar para Instagram</button>` : ''}${acciones('Testimonios', x)}</div></div>`).join('');
   return h;
@@ -1070,7 +1087,7 @@ V.miluz = () => {
 V.mensajes = () => {
   let h = cabeza('Mensajes');
   h += '<p class="ayuda">Estos son los textos base de WhatsApp. Editalos cuando quieras: los cambios se usan en todos los botones de la plataforma. Antes de enviar, siempre podés retocar el mensaje.</p>';
-  h += '<p class="variables">Palabras que se completan solas: <code>{nombre}</code> <code>{nombre_completo}</code> <code>{arcano}</code> <code>{arcano_anual}</code> <code>{taller}</code> <code>{fecha_taller}</code> <code>{hora}</code> <code>{precio}</code> <code>{pendiente}</code> <code>{lugares}</code> <code>{arcano_dia}</code> <code>{link_portal}</code></p>';
+  h += '<p class="variables">Palabras que se completan solas: <code>{nombre}</code> <code>{nombre_completo}</code> <code>{arcano}</code> <code>{arcano_anual}</code> <code>{taller}</code> <code>{fecha_taller}</code> <code>{hora}</code> <code>{precio}</code> <code>{pendiente}</code> <code>{lugares}</code> <code>{arcano_dia}</code> <code>{link_portal}</code> <code>{instagram}</code></p>';
   h += tabla([
     { t:'Mensaje', f: p => `<b>${esc(p['Nombre'])}</b>` },
     { t:'Texto', f: p => `<span style="color:var(--bruma)">${esc(p['Texto'])}</span>` },

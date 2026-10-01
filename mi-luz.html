@@ -67,6 +67,8 @@ h3{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:48px 0 14px;
 .hecho{color:var(--oro);font-weight:500}
 .wa{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:#0b2e17;text-decoration:none;border-radius:10px;padding:11px 18px;font-weight:600}
 .wa svg{width:20px;height:20px}
+.ig{display:inline-flex;align-items:center;gap:8px;color:var(--noche);text-decoration:none;border-radius:10px;padding:11px 18px;font-weight:600;background:linear-gradient(90deg,var(--lila),var(--oro))}
+.ig svg{width:20px;height:20px}
 .contacto{text-align:center;margin-top:48px;color:var(--bruma)}
 .contacto p{margin:0 0 14px}
 .vacio{color:var(--bruma)}
@@ -144,6 +146,7 @@ const API = 'https://script.google.com/macros/s/AKfycbxy_R5kw6Ee6-WWokJQSvab2L2C
 const CODIGO = new URLSearchParams(location.search).get('c') || '';
 const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const IG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>';
 const WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.5.3-.5a.5.5 0 0 0 0-.5c0-.1-.7-1.6-.9-2.2s-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.5 13.5 0 0 0 5.2 4.6c1.9.8 2.7.9 3.6.8a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
 let P = null;
 const SIG = ['', 'El poder de empezar. Tenés las herramientas: confiá en tu capacidad de crear lo que imaginás.','Intuición y saber interior. Tus respuestas llegan en el silencio; escuchá lo que sentís antes de actuar.','Creatividad, abundancia y disfrute. Lo que cuidás florece; permitite recibir.','Estructura y decisión. Construís bases firmes y sabés poner los límites que te sostienen.','Aprendizaje y sentido. Buscás maestras y maestros, y también sos guía para otras personas.','Elecciones del corazón. Cada decisión te acerca a quien realmente sos.','Avance y voluntad. Cuando tenés claro el rumbo, nada te detiene.','Coraje suave. Tu poder está en la calma y en la forma amorosa de enfrentar lo difícil.','Sabiduría y búsqueda interior. Tu luz alumbra tu camino y el de quienes te rodean.','Ciclos y cambios. Aprendés a fluir con lo que llega y a aprovechar cada momento.','Equilibrio y verdad. Tus decisiones claras ordenan tu vida y tu entorno.','Otra mirada. Soltar el control te muestra caminos que antes no veías.','Transformación. Cerrás etapas con valentía para darle lugar a lo nuevo.','Armonía y paciencia. Sabés unir opuestos y sanar a tu ritmo.','Deseo y magnetismo. Reconocer lo que te ata es el primer paso para usar tu poder a favor.','Revelación y liberación. Lo que cae deja lugar a una versión más auténtica de vos.','Esperanza y guía. Tu luz inspira; confiá en que el camino se va revelando.','Sensibilidad y mundo emocional. Tus sueños e intuiciones son mapas valiosos.','Alegría y vitalidad. Irradiás calidez y todo lo que tocás se ilumina.','Llamado y renacimiento. Escuchás tu propósito y te animás a responderle.','Plenitud y logro. Integrás lo vivido y celebrás cada ciclo cumplido.','Libertad y comienzo. Te animás al salto con fe en el camino.'];
@@ -233,7 +236,8 @@ function pintar(){
     h += '<h3>Contanos cómo te fue</h3>';
     h += P.paraOpinar.map(t => `<div class="opinar" data-opinar="${esc(t.id)}"><h4>${esc(t.nombre)}</h4><small style="color:var(--bruma)">${esc(cuando(t.fecha))}</small>
       <div class="estrellas" role="radiogroup" aria-label="Puntaje">${[1,2,3,4,5].map(n => `<button type="button" class="on" data-estrella="${n}" role="radio" aria-checked="${n === 5}" aria-label="${n} estrellas">★</button>`).join('')}</div>
-      <label for="op-${esc(t.id)}" class="oculto">Tu experiencia</label><textarea id="op-${esc(t.id)}" maxlength="800" placeholder="¿Qué te llevaste de este encuentro?"></textarea>
+      <label for="op-${esc(t.id)}" style="display:block;color:var(--bruma);font-size:.92rem;margin-bottom:6px">¿Qué te llevaste de este encuentro?</label><textarea id="op-${esc(t.id)}" maxlength="800"></textarea>
+      <label for="px-${esc(t.id)}" style="display:block;color:var(--bruma);font-size:.92rem;margin:12px 0 6px">¿Qué te gustaría vivir en un próximo encuentro? (opcional)</label><textarea id="px-${esc(t.id)}" class="proximo" maxlength="400" style="min-height:60px"></textarea>
       <label class="check"><input type="checkbox" checked> Pueden compartir mi opinión en sus redes, solo con mi nombre de pila.</label>
       <button class="btn" type="button" data-enviar-op="${esc(t.id)}">Enviar</button></div>`).join('');
   }
@@ -246,7 +250,9 @@ function pintar(){
     }).join('') + '</div>';
   }
 
-  if (P.telLuz) h += `<div class="contacto"><p>¿Tenés alguna pregunta?</p><a class="wa" href="${waLuz('Hola! Soy ' + P.nombre + ', les escribo desde mi espacio de Luz Guía 🌙')}" target="_blank" rel="noopener">${WA_SVG} Escribinos</a></div>`;
+  if (P.telLuz || P.instagram) h += `<div class="contacto"><p>¿Tenés alguna pregunta? Escribinos o seguinos para enterarte de todo.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    ${P.telLuz ? `<a class="wa" href="${waLuz('Hola! Soy ' + P.nombre + ', les escribo desde mi espacio de Luz Guía 🌙')}" target="_blank" rel="noopener">${WA_SVG} Escribinos</a>` : ''}
+    ${P.instagram ? `<a class="ig" href="${esc(P.instagram)}" target="_blank" rel="noopener">${IG_SVG} @${esc((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [,'luzguia'])[1])}</a>` : ''}</div></div>`;
   h += '<footer>Belu y Mey · Luz Guía</footer>';
   $('portal').innerHTML = h;
 }
@@ -309,7 +315,7 @@ document.addEventListener('click', async e => {
     const puntaje = +(caja.querySelector('.estrellas').dataset.valor || 5);
     b.disabled = true; b.textContent = 'Enviando…';
     try {
-      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'testimonio', codigo: CODIGO, taller: b.dataset.enviarOp, puntaje, comentario: caja.querySelector('textarea').value.trim(), publicar: caja.querySelector('input[type=checkbox]').checked }) });
+      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'testimonio', codigo: CODIGO, taller: b.dataset.enviarOp, puntaje, comentario: caja.querySelector('textarea').value.trim(), proximo: caja.querySelector('textarea.proximo').value.trim(), publicar: caja.querySelector('input[type=checkbox]').checked }) });
       const d = await r.json(); if (!d.ok) throw new Error(d.error);
       caja.innerHTML = '<h4>¡Gracias por contarnos! 💜</h4><p style="color:var(--bruma);margin:0">Tu opinión nos ayuda a seguir creando encuentros con sentido.</p>';
     } catch (err) { b.disabled = false; b.textContent = 'Probar de nuevo'; }
