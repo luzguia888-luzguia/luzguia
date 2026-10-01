@@ -220,6 +220,43 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
 .resumen-pago span{display:block;color:var(--bruma);font-size:.82rem}
 .resumen-pago b{font-size:1.2rem;font-weight:500}
 @media (max-width:640px){ .multi-fila{grid-template-columns:auto 1fr;}.multi-fila .monto,.multi-fila select{grid-column:2} }
+/* Efectos */
+.btn,.btn-sec,.ic,.chip,.pestana,.cifra,.taller,.tarea,.caja,.dia,td{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .2s ease,transform .18s ease}
+.btn:hover:not(:disabled){box-shadow:0 0 0 3px rgba(212,175,106,.18),0 6px 18px rgba(212,175,106,.25);transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:translateY(0) scale(.98)}
+.btn-sec:hover{box-shadow:0 0 14px rgba(212,175,106,.18)}
+.ic:hover{transform:scale(1.12);background:rgba(185,138,230,.08)}
+.ic.wa:hover{box-shadow:0 0 12px rgba(37,211,102,.35)}
+.chip:hover{box-shadow:0 0 10px rgba(212,175,106,.25)}
+.taller:hover{border-color:var(--oro-suave);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.cifra:hover{background:var(--ciruela-2)}
+.caja:hover{border-color:var(--oro-suave)}
+.tarea:hover{background:rgba(185,138,230,.05)}
+.pestana{position:relative}
+.pestana::after{content:"";position:absolute;left:50%;right:50%;bottom:-1px;height:2px;background:var(--lila);transition:left .2s ease,right .2s ease}
+.pestana:hover::after{left:11px;right:11px}
+.pestana[aria-selected="true"]::after{display:none}
+.dia:hover .n{color:var(--oro)}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} .btn:hover,.ic:hover{transform:none} }
+
+/* Gráficos */
+.graf{border:1px solid var(--linea);border-radius:14px;background:var(--ciruela);padding:14px 12px 10px}
+.graf svg{width:100%;height:auto;display:block}
+.graf .gv{fill:var(--luna);font-size:12px;font-family:var(--sans)}
+.graf .gl{fill:var(--bruma);font-size:11px;font-family:var(--sans)}
+.graf .eje{stroke:rgba(185,138,230,.3)}
+.graf rect,.graf circle.seg{transition:opacity .2s ease}
+.graf svg:hover rect,.graf svg:hover circle.seg{opacity:.55}
+.graf svg rect:hover,.graf svg circle.seg:hover{opacity:1}
+.leyenda-g{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;color:var(--bruma);margin-top:8px;padding:0 4px}
+.leyenda-g i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.dona{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:center}
+@media (max-width:640px){ .dona{grid-template-columns:1fr} .dona svg{max-width:220px;margin:auto} }
+details.explica{margin:18px auto 0;max-width:640px;text-align:left;border:1px solid var(--linea);border-radius:12px;padding:10px 16px;background:var(--ciruela)}
+details.explica summary{cursor:pointer;color:var(--lila)}
+details.explica dl{margin:10px 0 4px}
+details.explica dt{color:var(--oro);margin-top:8px}
+details.explica dd{margin:2px 0 0;color:var(--bruma)}
 #toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--oro);color:var(--noche);padding:10px 18px;border-radius:10px;font-weight:500;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw}
 #toast.err{background:var(--debe)}
 #cargando{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--bruma);font-family:var(--serif);font-size:1.4rem;font-style:italic}
@@ -416,7 +453,7 @@ function contexto(p, t, a){
   return ctx;
 }
 const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => (ctx[k] !== undefined && ctx[k] !== '') ? ctx[k] : '[' + k + ']');
-const optCobro = () => L('Quién cobró').length ? L('Quién cobró') : L('Socias').concat(['Ya repartido']);
+const optCobro = () => L('Quién cobró').length ? L('Quién cobró') : L('Socias');
 const otraSocia = q => (L('Socias').find(x => x !== q) || (q === 'Belu' ? 'Mey' : 'Belu'));
 const linkPortal = p => p && p['Código portal'] ? (D.params.portal || 'https://luzguia888-luzguia.github.io/luzguia/mi-luz.html') + '?c=' + p['Código portal'] : '';
 const plantilla = clave => H('Plantillas').find(x => x['Clave'] === clave);
@@ -769,7 +806,7 @@ async function guardarLote(filas, btn){
   if (!filas.length) { toast('Tildá al menos uno', true); return; }
   btn.disabled = true; btn.textContent = 'Guardando…';
   try { await enviar({ accion: 'lote', hoja: 'Asistencias', filas }); $('modal').close(); toast(filas.length === 1 ? 'Inscripción guardada ✓' : filas.length + ' inscripciones guardadas ✓'); await cargar(true); }
-  catch (err) { toast(err.message, true); btn.disabled = false; btn.textContent = 'Guardar'; }
+  catch (err) { $('modal').close(); toast(err.message, true); await cargar(true); }
 }
 const AYUDA_PAGO = '<p class="ayuda" style="margin-top:0">Si no recordás los detalles de un evento anterior, dejá "Pagó todo" y "Ya repartido": cuenta como ingreso del taller pero no altera las cuentas entre ustedes, porque esa plata ya se repartió.</p>';
 
@@ -805,6 +842,42 @@ function abrirVarias(tid){
   activarFilas(caja, () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mv-ok').textContent = n ? 'Inscribir ' + n + (n === 1 ? ' persona' : ' personas') : 'Inscribir'; });
   $('mv-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
   $('mv-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
+}
+
+/* ───── Gráficos ───── */
+const PALETA = ['#D4AF6A','#B98AE6','#8FD3A8','#EE9A92','#7FB3E6','#F0C96B','#C08BD9','#6FCFC0','#E8A0C8','#9AA5F0'];
+const DEFS_G = '<defs><linearGradient id="gOro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3DCA0"/><stop offset="1" stop-color="#B8893E"/></linearGradient><linearGradient id="gLila" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9B8FF"/><stop offset="1" stop-color="#7B4BB0"/></linearGradient><linearGradient id="gRojo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4B6AF"/><stop offset="1" stop-color="#C0625A"/></linearGradient></defs>';
+const corto = v => { const a = Math.abs(v), sg = v < 0 ? '-' : ''; return sg + '$' + (a >= 1e6 ? (a / 1e6).toFixed(1).replace('.', ',') + 'M' : a >= 1e3 ? Math.round(a / 1e3) + 'k' : Math.round(a)); };
+const recortar = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
+function grafColumnas(datos, opt){
+  if (!datos.length) return '<p class="ayuda">Todavía no hay datos para el gráfico.</p>';
+  const W = 640, H = 250, pad = 30, base = H - 46;
+  const max = Math.max(1, ...datos.map(d => Math.max(Math.abs(d.v), Math.abs(d.v2 || 0))));
+  const ancho = (W - pad * 2) / datos.length, b = Math.min(opt.doble ? 26 : 52, ancho * (opt.doble ? .36 : .62));
+  const alto = v => Math.max(2, Math.abs(v) / max * (base - 26));
+  let g = '';
+  datos.forEach((d, i) => {
+    const x = pad + ancho * i + ancho / 2;
+    const barra = (v, dx, fill, nombre) => `<rect x="${x + dx - b / 2}" y="${base - alto(v)}" width="${b}" height="${alto(v)}" rx="5" fill="${v < 0 ? 'url(#gRojo)' : fill}"><title>${esc(d.l)}${nombre ? ' · ' + nombre : ''}: ${pesos(v)}</title></rect>`;
+    if (opt.doble) g += barra(d.v, -b / 2 - 2, 'url(#gOro)', opt.n1) + barra(d.v2, b / 2 + 2, 'url(#gLila)', opt.n2);
+    else g += barra(d.v, 0, 'url(#gOro)') + `<text x="${x}" y="${base - alto(d.v) - 7}" text-anchor="middle" class="gv">${corto(d.v)}</text>`;
+    g += `<text x="${x}" y="${base + 17}" text-anchor="middle" class="gl">${esc(recortar(d.l, datos.length > 6 ? 9 : 16))}</text>`;
+    if (d.l2) g += `<text x="${x}" y="${base + 31}" text-anchor="middle" class="gl">${esc(d.l2)}</text>`;
+  });
+  const ley = opt.doble ? `<div class="leyenda-g"><span><i style="background:#D4AF6A"></i>${esc(opt.n1)}</span><span><i style="background:#B98AE6"></i>${esc(opt.n2)}</span></div>` : '';
+  return `<div class="graf"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.titulo)}">${DEFS_G}<line x1="${pad}" x2="${W - pad}" y1="${base}" y2="${base}" class="eje"/>${g}</svg>${ley}</div>`;
+}
+function grafDona(pares, titulo){
+  const tot = pares.reduce((a, p) => a + p[1], 0);
+  if (!tot) return '<p class="ayuda">Todavía no hay datos para el gráfico.</p>';
+  const R = 70, C = 2 * Math.PI * R; let off = 0, segs = '';
+  pares.forEach((p, i) => {
+    const l = p[1] / tot * C;
+    segs += `<circle class="seg" cx="100" cy="100" r="${R}" fill="none" stroke="${PALETA[i % PALETA.length]}" stroke-width="28" stroke-dasharray="${l} ${C - l}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${esc(p[0])}: ${pesos(p[1])} (${Math.round(p[1] / tot * 100)}%)</title></circle>`;
+    off += l;
+  });
+  return `<div class="graf dona"><svg viewBox="0 0 200 200" role="img" aria-label="${esc(titulo)}">${segs}<text x="100" y="96" text-anchor="middle" class="gl">Total</text><text x="100" y="116" text-anchor="middle" class="gv" style="font-size:15px">${corto(tot)}</text></svg>
+    <div class="leyenda-g" style="flex-direction:column;gap:6px">${pares.map((p, i) => `<span><i style="background:${PALETA[i % PALETA.length]}"></i>${esc(p[0])} · ${pesos(p[1])} (${Math.round(p[1] / tot * 100)}%)</span>`).join('')}</div></div>`;
 }
 
 /* ───── Piezas de vista ───── */
@@ -884,7 +957,13 @@ V.hoy = () => {
   h += `<section class="balanza" aria-label="Reparto de ganancias"><div class="neta">Ganancia neta<strong>${esc(r['GANANCIA NETA'] || '$0')}</strong></div>
     <div class="platillos"><div class="platillo"><div class="quien">Belu</div><div class="monto">${esc(r['Parte Belu'] || '$0')}</div><div class="detalle">Tiene en mano ${esc(r['Belu tiene en mano'] || '$0')}</div></div>
     <div class="eje"></div><div class="platillo"><div class="quien">Mey</div><div class="monto">${esc(r['Parte Mey'] || '$0')}</div><div class="detalle">Tiene en mano ${esc(r['Mey tiene en mano'] || '$0')}</div></div></div>
-    <div class="a-mano"><span>${esc(r['PARA QUEDAR A MANO'] || 'Están a mano ✓')}</span><button class="btn-sec" type="button" data-nuevo="Transferencias">Registrar transferencia</button></div></section>`;
+    <div class="a-mano"><span>${esc(r['PARA QUEDAR A MANO'] || 'Están a mano ✓')}</span><button class="btn-sec" type="button" data-nuevo="Transferencias">Registrar transferencia</button></div>
+    <details class="explica"><summary>¿Qué significa cada número?</summary><dl>
+      <dt>Ganancia neta</dt><dd>Todo lo que entró (talleres y ventas) menos todo lo que se gastó (compras de stock, insumos, comida, materiales).</dd>
+      <dt>Parte de Belu / Parte de Mey</dt><dd>La mitad exacta de la ganancia neta: lo que le corresponde a cada una.</dd>
+      <dt>Tiene en mano</dt><dd>Lo que cada una cobró, menos lo que cada una pagó de su bolsillo, más o menos las transferencias entre ustedes. Si da negativo, puso más plata de la que cobró.</dd>
+      <dt>Para quedar a mano</dt><dd>La diferencia entre lo que cada una tiene en mano y lo que le corresponde. Cuando hagan esa transferencia, regístrenla y vuelve a cero.</dd>
+    </dl></details></section>`;
   h += '<div class="cifras">' + [['Ingresos por talleres'],['Ventas de productos'],['Gastos totales'],['Pendiente de cobro',1],['Talleres realizados'],['Personas registradas']]
     .map(c => `<div class="cifra"><span>${c[0]}</span><b${c[1] && num(r[c[0]]) > 0 ? ' class="oro"' : ''}>${esc(r[c[0]] || '0')}</b></div>`).join('') + '</div>';
   return h;
@@ -1117,9 +1196,25 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Stock en mano (a costo)</span><b>${pesos(stockCosto)}</b></div>`
     + `<div class="cifra"><span>Gastos generales e insumos</span><b>${pesos(generales)}</b></div></div>`;
   h += '<p class="ayuda" style="margin-top:10px">La ganancia neta total del Resumen es: talleres + ventas − compras de stock − gastos generales. Lo invertido en stock se recupera a medida que se vende.</p>';
-  const porTaller = H('Talleres').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); return { 'Taller': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': t['Inscriptas'], 'Ganancia': t['Ganancia neta'], 'Materiales': pesos(cm.total), 'Real': pesos(num(t['Ganancia neta']) - cm.total) }; });
-  h += '<h3>Por taller</h3>' + tabla([{ t:'Taller', k:'Taller' }, { t:'Fecha', k:'Fecha' }, { t:'Personas', k:'Personas', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Ganancia descontando materiales', k:'Real', num:1 }], porTaller, 'Todavía no hay talleres realizados.');
-  h += `<div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro taller</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Talleres realizados</span><b>${ts.length}</b></div></div>`;
+  const neta = num(D.res['GANANCIA NETA']);
+  h += '<h3>Lo que le corresponde a cada una</h3><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Ganancia neta total</span><b class="oro">${pesos(neta)}</b></div>`
+    + `<div class="cifra"><span>Belu</span><b>${pesos(neta / 2)}</b></div><div class="cifra"><span>Mey</span><b>${pesos(neta / 2)}</b></div>`
+    + `<div class="cifra"><span>Para quedar a mano</span><b style="font-size:1rem">${esc(D.res['PARA QUEDAR A MANO'] || '—')}</b></div></div>`;
+  const realizados = H('Talleres').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(a['Fecha'])||0) - (fecha(b['Fecha'])||0)).slice(-12);
+  h += '<h3>Ganancia por taller</h3>' + grafColumnas(realizados.map(t => ({ l: t['Nombre / temática'], l2: t['Fecha'] ? ddmm(fecha(t['Fecha'])) : '', v: num(t['Ganancia neta']) })), { titulo: 'Ganancia por taller' });
+  const meses = {};
+  const sumar = (f, k, v) => { if (!f) return; const c = f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0'); meses[c] = meses[c] || { e: 0, g: 0 }; meses[c][k] += v; };
+  H('Asistencias').forEach(a => { const t = taller(a['ID Taller']); sumar(t && fecha(t['Fecha']), 'e', num(a['Total pagado'])); });
+  H('Ventas').forEach(v => sumar(fecha(v['Fecha']), 'e', num(v['Total'])));
+  H('Gastos').forEach(g => sumar(fecha(g['Fecha']), 'g', num(g['Total'])));
+  const mk = Object.keys(meses).sort().slice(-8);
+  h += '<h3>Ingresos y gastos por mes</h3>' + grafColumnas(mk.map(k => ({ l: MESES[+k.slice(5) - 1].slice(0, 3) + ' ' + k.slice(2, 4), v: meses[k].e, v2: meses[k].g })), { doble: 1, n1: 'Ingresos', n2: 'Gastos', titulo: 'Ingresos y gastos por mes' });
+  const cats = {}; H('Gastos').forEach(g => { const c = g['Categoría'] || 'Sin categoría'; cats[c] = (cats[c] || 0) + num(g['Total']); });
+  h += '<h3>En qué se gasta</h3>' + grafDona(Object.entries(cats).sort((a, b) => b[1] - a[1]), 'Gastos por categoría');
+  const porTaller = H('Talleres').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); const gn = num(t['Ganancia neta']); return { 'Taller': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': t['Inscriptas'], 'Cobrado': pesos(num(t['Cobrado'])), 'Gastos': pesos(num(t['Gastos'])), 'Ganancia': pesos(gn), 'Belu': pesos(gn / 2), 'Mey': pesos(gn / 2), 'Materiales': pesos(cm.total), 'Real': pesos(gn - cm.total) }; });
+  h += '<h3>Detalle por taller</h3>' + tabla([{ t:'Taller', k:'Taller' }, { t:'Fecha', k:'Fecha' }, { t:'Personas', k:'Personas', num:1 }, { t:'Cobrado', k:'Cobrado', num:1 }, { t:'Gastos', k:'Gastos', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Belu', k:'Belu', num:1 }, { t:'Mey', k:'Mey', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Descontando materiales', k:'Real', num:1 }], porTaller, 'Todavía no hay talleres realizados.');
+  h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro taller</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Talleres realizados</span><b>${ts.length}</b></div></div>`;
   h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de personas', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya talleres realizados, acá vas a ver cuál formato rinde más.');
   h += `<div class="dos-col"><div><h3>Cómo llegan</h3>${barras(contar(ps, 'Canal de llegada'))}</div><div><h3>Arcanos de nacimiento más frecuentes</h3>${barras(contar(ps, 'Arcano nacimiento').slice(0, 8))}</div></div>`;
   h += `<h3>Por qué no vinieron</h3>${barras(contar(H('Asistencias').filter(a => /No vino|Canceló/.test(a['Asistencia'])), 'Motivo de ausencia'))}`;
