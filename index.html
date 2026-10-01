@@ -197,6 +197,20 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
 .variables{font-size:.85rem;color:var(--bruma);margin-top:8px}
 .variables code{color:var(--oro);background:rgba(212,175,106,.1);padding:1px 5px;border-radius:4px}
 
+.multi{display:grid;gap:0;border:1px solid var(--linea);border-radius:12px;overflow:hidden}
+.multi-fila{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid rgba(185,138,230,.12)}
+.multi-fila:first-child{border-top:0}
+.multi-fila input[type=checkbox]{accent-color:var(--oro);width:18px;height:18px}
+.multi-fila small{display:block;color:var(--bruma);font-size:.8rem}
+.multi-fila .campo{padding:6px 8px;font-size:.9rem}
+.multi-fila .monto{width:110px}
+.multi-fila.off .monto,.multi-fila.off select,.multi-fila.off .btn-mini{visibility:hidden}
+.btn-mini{background:none;border:1px solid var(--oro-suave);color:var(--oro);border-radius:6px;padding:4px 8px;font-size:.8rem;cursor:pointer}
+.resumen-pago{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--linea);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.resumen-pago div{background:var(--ciruela-2);padding:12px}
+.resumen-pago span{display:block;color:var(--bruma);font-size:.82rem}
+.resumen-pago b{font-size:1.2rem;font-weight:500}
+@media (max-width:640px){ .multi-fila{grid-template-columns:auto 1fr;}.multi-fila .monto,.multi-fila select,.multi-fila .btn-mini{grid-column:2} }
 #toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--oro);color:var(--noche);padding:10px 18px;border-radius:10px;font-weight:500;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw}
 #toast.err{background:var(--debe)}
 #cargando{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--bruma);font-family:var(--serif);font-size:1.4rem;font-style:italic}
@@ -326,6 +340,8 @@ function construir(raw){
   return { h, res, listas: raw.listas || {}, params: raw.params || {inactiva:90, frecuente:3, cumple:7}, actualizado: raw.actualizado, cab: Object.fromEntries(Object.keys(raw.hojas).map(n => [n, raw.hojas[n].cab])) };
 }
 const taller = id => H('Talleres').find(t => t['ID Taller'] === id);
+const esOrg = p => p && p['Rol'] === 'Organizadora';
+const participantes = () => H('Personas').filter(p => !esOrg(p));
 const persona = id => H('Personas').find(p => p['ID Persona'] === id);
 function proximosTalleres(){
   return H('Talleres').map(t => ({ t, f: fecha(t['Fecha']) }))
@@ -336,7 +352,7 @@ function tallerAbierto(){ const p = proximosTalleres(); return p.find(t => num(t
 
 function perfiles(){
   const out = {};
-  H('Personas').forEach(p => out[p['ID Persona']] = { p, veces: 0, ultima: null });
+  participantes().forEach(p => out[p['ID Persona']] = { p, veces: 0, ultima: null });
   H('Asistencias').forEach(a => {
     const x = out[a['ID Persona']]; if (!x || a['Asistencia'] !== 'Asistió') return;
     x.veces++;
@@ -455,6 +471,7 @@ const ESQ = {
   Personas: { nombre: 'persona', clave: 'ID Persona', etiqueta: 'Nombre completo', campos: [
     {k:'Nombre completo', t:'text', req:1, full:1}, {k:'Fecha de nacimiento', t:'date'}, {k:'Teléfono', t:'tel', ph:'2954 123456'},
     {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text'},
+    {k:'Rol', t:'sel', o:() => L('Roles').length ? L('Roles') : ['Participante','Organizadora'], def:'Participante'},
     {k:'Consentimiento datos', t:'check', lab:'Aceptó que guardemos sus datos'}, {k:'Notas', t:'area', full:1}]},
   Asistencias: { nombre: 'inscripción', clave: 'ID Taller', etiqueta: 'Nombre', campos: [
     {k:'ID Taller', t:'sel', o:optTalleres, req:1, full:1, lab:'Taller'}, {k:'ID Persona', t:'sel', o:optPersonas, full:1, lab:'Persona'},
@@ -492,6 +509,9 @@ const ESQ = {
   Eventos: { nombre: 'evento', clave: 'Título', campos: [
     {k:'Título', t:'text', req:1, full:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de evento'), req:1}, {k:'Fecha', t:'date', req:1},
     {k:'Hasta', t:'date', lab:'Hasta (si dura varios días)'}, {k:'Detalle', t:'area', full:1}]},
+  Pagos: { nombre: 'pago', clave: 'ID Persona', campos: [
+    {k:'Fecha', t:'date', req:1}, {k:'Monto', t:'money', req:1}, {k:'Cobró', t:'sel', o:() => L('Socias'), req:1},
+    {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Notas', t:'text', full:1}]},
   Pedidos: { nombre: 'pedido', clave: 'Nombre', etiqueta: 'Qué', campos: [
     {k:'Estado', t:'sel', o:() => L('Estados pedido'), req:1}, {k:'Mensaje', t:'area', full:1}]},
   Plantillas: { nombre: 'plantilla', clave: 'Clave', etiqueta: 'Nombre', campos: [
@@ -547,7 +567,7 @@ function abrirForm(hoja, rec, pre){
   if (hoja === 'Personas' && rec) {
     const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']);
     html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
-      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt"><button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
+      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}<button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
       + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Persona': rec['ID Persona'] }))}'>Sumar a un taller</button></p>`;
   }
@@ -653,6 +673,71 @@ function costoMateriales(t){
 }
 const NOMBRE_ENTREGA = { 'Yagra':['yagra','yagras'], 'Tarjetita':['tarjetita','tarjetitas'], 'PDF enviado':['PDF','PDF'], 'Señalador':['señalador','señaladores'], 'Carta pintada':['carta pintada','cartas pintadas'] };
 
+/* ───── Pagos en cuotas ───── */
+function abrirPago(a){
+  const pagos = H('Pagos').filter(x => x['ID Taller'] === a['ID Taller'] && x['ID Persona'] === a['ID Persona']);
+  const falta = num(a['Pendiente']);
+  const hist = [];
+  if (num(a['Seña'])) hist.push({ f: a['Fecha inscripción'], m: a['Seña'], q: a['Cobró seña'], t: 'Seña' });
+  if (num(a['Resto pagado'])) hist.push({ f: '', m: a['Resto pagado'], q: a['Cobró resto'], t: 'Pago' });
+  pagos.forEach(x => hist.push({ f: x['Fecha'], m: x['Monto'], q: x['Cobró'], t: 'Pago', r: x }));
+  modal('Registrar pago de ' + esc(String(a['Nombre']).split(' ')[0]),
+    `<p class="ayuda" style="margin-top:0">${esc(a['Taller'])}</p>
+     <div class="resumen-pago"><div><span>Precio</span><b>${esc(a['Precio'] || '—')}</b></div><div><span>Pagado</span><b>${esc(a['Total pagado'] || '$0')}</b></div><div><span>Falta</span><b style="color:${falta > 0 ? 'var(--oro)' : 'var(--ok)'}">${falta > 0 ? esc(a['Pendiente']) : 'Nada ✓'}</b></div></div>
+     <div class="form"><label>Monto que pagó ahora *<input class="campo" type="number" id="pg-monto" min="0" step="100" inputmode="numeric" value="${falta || ''}"></label>
+     <label>Lo cobró<select class="campo" id="pg-quien">${L('Socias').map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
+     <label>Medio de pago<select class="campo" id="pg-medio"><option></option>${L('Medios de pago').map(x => `<option>${esc(x)}</option>`).join('')}</select></label>
+     <label>Fecha<input class="campo" type="date" id="pg-fecha" value="${iso(HOY)}"></label></div>
+     ${hist.length ? '<h3 style="margin:22px 0 8px">Pagos anteriores</h3><ul class="tareas">' + hist.map(h2 => `<li class="tarea"><div class="txt">${esc(h2.m)} · ${esc(h2.t)}<small>${esc(h2.f || '')}${h2.q ? ' · cobró ' + esc(h2.q) : ''}</small></div>${h2.r ? `<div class="bt">${acciones('Pagos', h2.r)}</div>` : ''}</li>`).join('') + '</ul>' : ''}`,
+    `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pg-ok">Guardar pago</button>`);
+  $('pg-ok').onclick = async ev => {
+    const m = Number($('pg-monto').value);
+    if (!m) { toast('Escribí el monto', true); return; }
+    ev.target.disabled = true; ev.target.textContent = 'Guardando…';
+    try {
+      await enviar({ accion: 'agregar', hoja: 'Pagos', datos: { 'Fecha': $('pg-fecha').value, 'ID Taller': a['ID Taller'], 'ID Persona': a['ID Persona'], 'Monto': m, 'Cobró': $('pg-quien').value, 'Medio de pago': $('pg-medio').value } });
+      $('modal').close(); toast(m >= falta ? 'Pago registrado: quedó saldado ✓' : 'Pago registrado. Falta ' + pesos(falta - m));
+      await cargar(true);
+    } catch (err) { toast(err.message, true); ev.target.disabled = false; ev.target.textContent = 'Guardar pago'; }
+  };
+}
+const btnPago = a => num(a['Pendiente']) > 0 ? `<button class="ic" type="button" title="Registrar pago" data-pago="${a._fila}">💰</button>` : '';
+
+function abrirVarias(tid){
+  const t = taller(tid); if (!t) return;
+  const ya = new Set(H('Asistencias').filter(a => a['ID Taller'] === tid).map(a => a['ID Persona']));
+  const veces = {}; perfiles().forEach(x => veces[x.p['ID Persona']] = x.veces);
+  const lista = participantes().filter(p => !ya.has(p['ID Persona'])).sort((a, b) => (veces[b['ID Persona']] || 0) - (veces[a['ID Persona']] || 0) || String(a['Nombre completo']).localeCompare(b['Nombre completo']));
+  const precio = num(t['Precio por persona']);
+  const pasado = (fecha(t['Fecha']) || HOY) < HOY;
+  modal('Sumar personas a ' + esc(t['Nombre / temática']),
+    `<p class="ayuda" style="margin-top:0">Tildá a quienes vienen (o vinieron). Si ya pagaron algo, escribí cuánto; lo que falte queda como saldo pendiente. Precio: ${esc(t['Precio por persona'] || '—')}. Quedan ${esc(t['Lugares libres'] || '?')} lugares.</p>
+     <input class="campo" type="search" id="mv-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">
+     <div class="multi" id="mv-lista">${lista.length ? lista.map(p => `<label class="multi-fila off" data-nombre="${esc(String(p['Nombre completo']).toLowerCase())}">
+        <input type="checkbox" data-pid="${esc(p['ID Persona'])}">
+        <span>${esc(p['Nombre completo'])}<small>${veces[p['ID Persona']] ? veces[p['ID Persona']] + (veces[p['ID Persona']] === 1 ? ' taller' : ' talleres') : 'Primera vez'}${p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''}</small></span>
+        <input class="campo monto" type="number" min="0" step="100" inputmode="numeric" placeholder="Pagó $">
+        <button type="button" class="btn-mini" data-total="${precio}">Total</button>
+        <select class="campo">${L('Socias').map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`).join('') : '<div class="vacio">Todas las personas cargadas ya están en este taller.</div>'}</div>
+     <p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Taller': tid }))}'>Es alguien nuevo</button></p>`,
+    `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="mv-ok">Inscribir</button>`);
+  const caja = $('mv-lista');
+  const contar2 = () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mv-ok').textContent = n ? 'Inscribir ' + n + (n === 1 ? ' persona' : ' personas') : 'Inscribir'; };
+  caja.addEventListener('change', ev => { if (ev.target.type === 'checkbox') { ev.target.closest('.multi-fila').classList.toggle('off', !ev.target.checked); contar2(); } });
+  caja.addEventListener('click', ev => { const b = ev.target.closest('[data-total]'); if (b) { ev.preventDefault(); b.parentNode.querySelector('.monto').value = b.dataset.total || ''; } });
+  $('mv-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
+  $('mv-ok').onclick = async ev => {
+    const filas = [...caja.querySelectorAll('input[type=checkbox]:checked')].map(c => {
+      const f = c.closest('.multi-fila'); const m = Number(f.querySelector('.monto').value) || '';
+      return { 'ID Taller': tid, 'ID Persona': c.dataset.pid, 'Fecha inscripción': iso(HOY), 'Seña': m, 'Cobró seña': m ? f.querySelector('select').value : '', 'Asistencia': pasado ? 'Asistió' : 'Confirmada' };
+    });
+    if (!filas.length) { toast('Tildá al menos una persona', true); return; }
+    ev.target.disabled = true; ev.target.textContent = 'Guardando…';
+    try { await enviar({ accion: 'lote', hoja: 'Asistencias', filas }); $('modal').close(); toast(filas.length + (filas.length === 1 ? ' persona inscripta ✓' : ' personas inscriptas ✓')); await cargar(true); }
+    catch (err) { toast(err.message, true); ev.target.disabled = false; contar2(); }
+  };
+}
+
 /* ───── Piezas de vista ───── */
 function tabla(cols, datos, vacio){
   if (!datos.length) return '<div class="tabla-caja"><div class="vacio">' + esc(vacio) + '</div></div>';
@@ -705,7 +790,7 @@ V.hoy = () => {
   });
   H('Asistencias').filter(a => (a['Estado de pago'] === 'Debe' || a['Estado de pago'] === 'Señado')).forEach(a => {
     const t = taller(a['ID Taller']); const ft = t && fecha(t['Fecha']);
-    if (ft && diasEntre(HOY, ft) <= 7) T.push({ ico:'💰', txt: `${esc(a['Nombre'])} debe ${esc(a['Pendiente'])}`, sub: esc(a['Taller']), bt: btnWA(a['ID Persona'], 'cobro', a['ID Taller'], a._fila, 'Recordar saldo') + `<button class="btn-sec" type="button" data-editar="Asistencias|${a._fila}">Registrar pago</button>` });
+    if (ft && diasEntre(HOY, ft) <= 7) T.push({ ico:'💰', txt: `${esc(a['Nombre'])} debe ${esc(a['Pendiente'])}`, sub: esc(a['Taller']) + (ft < HOY ? ' (ya pasó)' : ''), bt: btnWA(a['ID Persona'], 'cobro', a['ID Taller'], a._fila, 'Recordar saldo') + `<button class="btn-sec" type="button" data-pago="${a._fila}">Registrar pago</button>` });
   });
   H('Asistencias').filter(a => a['Asistencia'] === 'Asistió' && !si(a['PDF enviado'])).forEach(a => {
     const t = taller(a['ID Taller']); if (!t || !/Noche/i.test(t['Formato'])) return;
@@ -795,7 +880,7 @@ V.talleres = () => {
       <div class="mini-cifras">${[['Precio','Precio por persona'],['Cobrado','Cobrado'],['Pendiente','Pendiente de cobro'],['Gastos','Gastos'],['Parte Belu','Parte Belu'],['Parte Mey','Parte Mey']].map(c => `<div><span>${c[0]}</span> ${esc(t[c[1]] || '—')}</div>`).join('')}</div>
       ${(() => { const cm = costoMateriales(t); const ins = num(t['Inscriptas']); const det = Object.entries(cm.det).map(([k, n]) => n + ' ' + (NOMBRE_ENTREGA[k] ? NOMBRE_ENTREGA[k][n === 1 ? 0 : 1] : k)).join(', ');
         return `<div class="mini-cifras"><div><span>Materiales entregados</span> ${pesos(cm.total)}${det ? ' <span>(' + esc(det) + ')</span>' : ''}</div><div><span>Costo real por persona</span> ${ins ? pesos((num(t['Gastos']) + cm.total) / ins) : '—'}</div><div><span>Ganancia descontando materiales</span> ${pesos(num(t['Ganancia neta']) - cm.total)}</div></div>`; })()}
-      <div class="herramientas">${btnNuevo('Asistencias', 'Inscribir persona', { 'ID Taller': t['ID Taller'] })}
+      <div class="herramientas"><button class="btn" type="button" data-varias="${esc(t['ID Taller'])}">Sumar personas</button>
         <button class="btn-sec" type="button" data-nuevo="Gastos" data-pre='${esc(JSON.stringify({ 'Destino (ID taller / GENERAL / REVENTA)': t['ID Taller'] }))}'>Cargar gasto</button>
         <button class="btn-sec" type="button" data-editar="Talleres|${t._fila}">Editar taller</button>
         <button class="btn-sec" type="button" data-borrar="Talleres|${t._fila}">Borrar</button></div>`;
@@ -803,7 +888,7 @@ V.talleres = () => {
       { t:'Nombre', k:'Nombre' }, { t:'Arcano', k:'Arcano nacimiento' },
       { t:'Pago', f: a => estadoPago(a['Estado de pago']) }, { t:'Pagado', k:'Total pagado', num:1 }, { t:'Falta', k:'Pendiente', num:1 },
       { t:'Materiales', f: a => '<div class="chips">' + mats.map(m => `<button type="button" class="chip${si(a[m]) ? ' si' : ''}" data-toggle="${a._fila}|${m}" aria-pressed="${si(a[m])}">${si(a[m]) ? '✓ ' : ''}${esc(m.replace(' enviado',''))}</button>`).join('') + '</div>' },
-      { t:'', acc:1, f: a => btnWA(a['ID Persona'], 'recordatorio', t['ID Taller'], a._fila) + acciones('Asistencias', a) }
+      { t:'', acc:1, f: a => btnPago(a) + btnWA(a['ID Persona'], 'recordatorio', t['ID Taller'], a._fila) + acciones('Asistencias', a) }
     ], gente, 'Nadie inscripto todavía.');
     if (t['Notas']) h += `<p class="ayuda" style="margin:14px 0 0">${esc(t['Notas'])}</p>`;
     h += '</div></article>';
@@ -819,7 +904,7 @@ V.personas = () => {
   const ab = tallerAbierto();
   const fila = (x, extra, plant) => `<div class="persona-fila"><span>${esc(x.p['Nombre completo'])}<br><small>${extra}</small></span>${btnWA(x.p['ID Persona'], plant, ab ? ab['ID Taller'] : '', '')}</div>`;
   let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona'));
-  h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal: ahí ve su arcano, la energía de su año y puede reservar talleres o productos.</p>';
+  h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal y con 🕯️ la sumás a un taller. La cantidad de talleres se cuenta sola a partir de sus inscripciones marcadas como "Asistió".</p>';
   h += '<div class="alertas3">';
   h += `<div class="caja"><h4>Las que más vienen</h4><p>${D.params.frecuente} talleres o más. Ideas para ofrecerles: lugar prioritario en la edición especial, descuento por fidelidad, "traé una amiga" con beneficio para las dos, o 15 minutos extra de lectura.</p>${frec.length ? frec.map(x => fila(x, x.veces + ' talleres', 'frecuente')).join('') : '<small class="ayuda">Todavía nadie llegó a ese número.</small>'}</div>`;
   h += `<div class="caja"><h4>Hace tiempo que no vienen</h4><p>Más de ${D.params.inactiva} días desde su último taller.</p>${inac.length ? inac.slice(0, 12).map(x => fila(x, 'Última vez: ' + ddmm(x.ultima) + '/' + x.ultima.getFullYear(), 'reactivar')).join('') : '<small class="ayuda">Nadie por ahora.</small>'}</div>`;
@@ -830,8 +915,9 @@ V.personas = () => {
   return h;
 };
 function tablaPersonas(ps){
+  ps = ps.slice().sort((a, b) => (esOrg(b) - esOrg(a)) || String(a['Nombre completo']).localeCompare(b['Nombre completo']));
   return tabla([
-    { t:'Nombre', k:'Nombre completo' },
+    { t:'Nombre', f: p => esc(p['Nombre completo']) + (esOrg(p) ? ' <span class="estado e-sena">Organizadora</span>' : '') },
     { t:'Nacimiento', f: p => p['Arcano nacimiento'] ? esc(p['N° arcano nacimiento']) + ' · ' + esc(p['Arcano nacimiento']) : '' },
     { t:'Anual', f: p => p['Arcano anual'] ? esc(p['N° arcano anual']) + ' · ' + esc(p['Arcano anual']) : '' },
     { t:'Cumple', f: p => { const f = fecha(p['Fecha de nacimiento']); return f ? ddmm(f) : ''; } },
@@ -845,11 +931,11 @@ V.cobros = () => {
   const pend = H('Asistencias').filter(a => a['Estado de pago'] === 'Debe' || a['Estado de pago'] === 'Señado');
   const total = pend.reduce((s, a) => s + num(a['Pendiente']), 0);
   let h = cabeza('Cobros pendientes');
-  h += `<p class="ayuda">${pend.length ? 'Falta cobrar ' + pesos(total) + ' en ' + pend.length + (pend.length === 1 ? ' inscripción.' : ' inscripciones.') + ' Tocá ✎ para registrar el pago.' : 'No hay nada pendiente de cobro.'}</p>`;
+  h += `<p class="ayuda">${pend.length ? 'Falta cobrar ' + pesos(total) + ' en ' + pend.length + (pend.length === 1 ? ' inscripción.' : ' inscripciones.') + ' Tocá 💰 para registrar un pago: el saldo baja solo.' : 'No hay nada pendiente de cobro.'}</p>`;
   h += tabla([
     { t:'Nombre', k:'Nombre' }, { t:'Taller', k:'Taller' }, { t:'Estado', f: a => estadoPago(a['Estado de pago']) },
     { t:'Pagado', k:'Total pagado', num:1 }, { t:'Falta', k:'Pendiente', num:1 }, { t:'Seña cobrada por', k:'Cobró seña' },
-    { t:'', acc:1, f: a => btnWA(a['ID Persona'], 'cobro', a['ID Taller'], a._fila, 'Recordar saldo') + `<button class="ic" type="button" title="Registrar pago" data-editar="Asistencias|${a._fila}">✎</button>` }
+    { t:'', acc:1, f: a => btnPago(a) + btnWA(a['ID Persona'], 'cobro', a['ID Taller'], a._fila, 'Recordar saldo') + `<button class="ic" type="button" title="Editar inscripción" data-editar="Asistencias|${a._fila}">✎</button>` }
   ], pend, 'Todas las inscripciones están pagas.');
   return h;
 };
@@ -919,7 +1005,7 @@ V.mensajes = () => {
 };
 
 V.estadisticas = () => {
-  const ps = H('Personas'), pf = perfiles();
+  const ps = participantes(), pf = perfiles();
   const ts = H('Talleres').filter(t => t['Estado'] === 'Realizado');
   const repiten = pf.filter(x => x.veces >= 2).length;
   const fm = {};
@@ -997,6 +1083,8 @@ document.addEventListener('click', async e => {
     try { await guardarCambios('Asistencias', r, datos, nuevo ? 'Marcado ✓' : 'Desmarcado'); } catch (err) { toast(err.message, true); t.disabled = false; }
     return;
   }
+  if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
+  if (ds.varias) { abrirVarias(ds.varias); return; }
   if (ds.reintegro) {
     const lista = ds.reintegro === 'todos' ? H('Gastos').filter(g => g['Pagó'] && !/Devuelto|No corresponde/.test(g['Reintegro'] || '')) : H('Gastos').filter(g => String(g._fila) === ds.reintegro);
     if (!lista.length) return;
