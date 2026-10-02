@@ -1711,7 +1711,7 @@ document.addEventListener('click', async e => {
     $('lk-probar').onclick = async () => {
       const out = document.createElement('p'); out.className = 'ayuda'; out.textContent = 'Probando…'; $('modal-cuerpo').appendChild(out);
       try {
-        const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(pp['Código portal']));
+        const r = await fetch(API + '?accion=portal&codigo=' + encodeURIComponent(pp['Código portal']));
         const t = await r.text(); let d; try { d = JSON.parse(t); } catch (x) { out.textContent = 'El script respondió algo que no son datos: ' + t.slice(0, 160); return; }
         out.textContent = d.ok ? '✓ El portal responde bien: ' + (d.encuentros || []).length + ' encuentros próximos, ' + (d.productos || []).length + ' productos, ' + (d.promos || []).length + ' promociones.' : '✗ El script respondió con un error: ' + d.error;
       } catch (e) { out.textContent = '✗ No hubo respuesta del script (' + (e.message || e) + '). Revisá que la implementación tenga acceso "Cualquier usuario".'; }

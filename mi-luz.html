@@ -280,13 +280,13 @@ async function cargar(){
   if (!CODIGO) return error('Este enlace está incompleto. Pedile el tuyo a Luz Guía.');
   let d, detalle = '';
   try {
-    const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(CODIGO));
+    const r = await fetch(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO));
     const txt = await r.text();
     try { d = JSON.parse(txt); } catch (x) { detalle = 'respuesta no válida'; }
   } catch (e) { detalle = String(e.message || e); }
   // Si el primer camino falla, probamos el segundo (JSONP)
   if (!d) {
-    try { d = await jsonp(API + '?accion=portal&c=' + encodeURIComponent(CODIGO)); }
+    try { d = await jsonp(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO)); }
     catch (e) { console.error(detalle, e); return error('No pudimos conectar con Luz Guía (' + detalle + ' / ' + (e.message || e) + '). Avisales a Belu o Mey.'); }
   }
   try {
