@@ -185,16 +185,20 @@ dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela
 dialog:has(.multi),dialog:has(#tg-lista){width:min(800px,96vw)}
 .multi-fila .forma{width:150px}
 .multi-fila .falta{width:100px}
-#as-lista .multi-fila{grid-template-columns:auto minmax(0,1fr) 120px 150px 100px 125px}
+#as-lista .multi-fila{grid-template-columns:auto minmax(0,1fr) 120px 150px 110px 125px}
 #as-lista .asis{width:120px}
+.cel-monto{display:flex;flex-direction:column;gap:2px;width:110px}
+.cel-monto .campo{width:100%;border-color:var(--oro)}
+.cel-monto small{font-size:.75rem;color:var(--oro);white-space:nowrap}
+.cel-monto.invisible{visibility:hidden}
 #as-lista .forma{width:150px}
 #as-lista .quien{width:125px}
 .motivo-linea{grid-column:2/-1;display:grid;grid-template-columns:200px 1fr;gap:8px}
 .motivo-linea.oculto{display:none}
 dialog:has(#as-lista){width:min(940px,97vw)}
-@media (max-width:640px){ #as-lista .multi-fila{grid-template-columns:auto 1fr} #as-lista .multi-fila>select,#as-lista .multi-fila>input.falta{grid-column:2;width:100%} .motivo-linea{grid-template-columns:1fr} }
+@media (max-width:640px){ #as-lista .multi-fila{grid-template-columns:auto 1fr} #as-lista .multi-fila>select,#as-lista .multi-fila>.cel-monto{grid-column:2;width:100%} .motivo-linea{grid-template-columns:1fr} }
 .multi-fila .invisible{visibility:hidden}
-.multi-cab{display:grid;grid-template-columns:auto minmax(0,1fr) 120px 150px 100px 125px;gap:10px;padding:8px 12px;font-size:.8rem;color:var(--oro);background:var(--violeta)}
+.multi-cab{display:grid;grid-template-columns:auto minmax(0,1fr) 120px 150px 110px 125px;gap:10px;padding:8px 12px;font-size:.8rem;color:var(--oro);background:var(--violeta)}
 .multi-cab span:first-child{width:18px}
 .ya{display:inline-block;font-size:.72rem;padding:0 7px;border-radius:99px;margin-left:6px;background:rgba(185,138,230,.18);color:var(--lila);vertical-align:middle}
 .ya.rojo{background:rgba(238,154,146,.18);color:var(--debe)}
@@ -927,14 +931,14 @@ function filaAsis(o){
   const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '', motivo, detalle };
   const opAsis = (L('Asistencia').length ? L('Asistencia') : ['Confirmada', 'Asistió', 'No vino', 'Canceló']);
   const marca = a ? `<span class="ya${o.dup > 1 ? ' rojo' : ''}">${o.dup > 1 ? 'repetida ×' + o.dup : (est || 'anotada') + (pagado ? ' · pagó ' + pesos(pagado) : '') + (falta > 0 ? ' · debe ' + pesos(falta) : '')}</span>` : '';
-  return `<label class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Encuentro']) : ''}" data-precio="${precio || 0}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
-    <input type="checkbox"${fue ? ' checked' : ''} aria-label="Anotada">
+  return `<div class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Encuentro']) : ''}" data-precio="${precio || 0}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
+    <input type="checkbox"${fue ? ' checked' : ''} aria-label="Anotada en ${esc(o.titulo)}">
     <span>${esc(o.titulo)}${marca}<small>${o.sub}</small></span>
     <select class="campo asis" aria-label="Asistencia">${opAsis.map(x => `<option${x === asis ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
     <select class="campo forma" aria-label="Pago"><option value="completo"${forma === 'completo' ? ' selected' : ''}>Pagó completo</option><option value="parte"${forma === 'parte' ? ' selected' : ''}>Pagó una parte</option><option value="nada"${forma === 'nada' ? ' selected' : ''}>No pagó todavía</option></select>
-    <input class="campo falta${forma === 'parte' ? '' : ' invisible'}" type="number" min="0" step="100" inputmode="numeric" placeholder="Falta $" value="${forma === 'parte' && falta ? falta : ''}" aria-label="Cuánto falta">
+    <div class="cel-monto${forma === 'parte' ? '' : ' invisible'}"><input class="campo pagado" type="number" min="0" step="100" inputmode="numeric" placeholder="Pagó $" value="${forma === 'parte' && pagado ? pagado : ''}" aria-label="Cuánto pagó en total"><small class="resta">${forma === 'parte' && falta > 0 ? 'falta ' + pesos(falta) : ''}</small></div>
     <select class="campo quien${forma === 'nada' ? ' invisible' : ''}" aria-label="Quién cobró">${opc.map(x => `<option${x === quien ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
-    <div class="motivo-linea${ausente ? '' : ' oculto'}"><select class="campo motivo" aria-label="Motivo"><option value="">¿Por qué no vino?</option>${L('Motivos de ausencia').map(x => `<option${x === motivo ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select><input class="campo detalle" placeholder="Detalle (opcional)" value="${esc(detalle)}" aria-label="Detalle del motivo"></div></label>`;
+    <div class="motivo-linea${ausente ? '' : ' oculto'}"><select class="campo motivo" aria-label="Motivo"><option value="">¿Por qué no vino?</option>${L('Motivos de ausencia').map(x => `<option${x === motivo ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select><input class="campo detalle" placeholder="Detalle (opcional)" value="${esc(detalle)}" aria-label="Detalle del motivo"></div></div>`;
 }
 function abrirAsistencias(modo, id){
   let filas = '', titulo = '', buscador = false;
@@ -957,9 +961,9 @@ function abrirAsistencias(modo, id){
       filas += filaAsis({ pid: p['ID Persona'], tid: id, titulo: p['Nombre completo'], sub: (v ? v + (v === 1 ? ' encuentro' : ' encuentros') : 'Primera vez') + (p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''), precio, pasado, a: x.a, dup: x.dup }); });
   }
   modal(titulo,
-    `<p class="ayuda" style="margin-top:0">El tilde indica que ${modo === 'persona' ? 'estaba anotada en ese encuentro' : 'esa persona estaba anotada'}. En cada fila elegí por separado si <b>vino o no</b> (y por qué) y <b>cómo pagó</b>: alguien puede no haber venido y haber pagado todo o solo la seña. Si destildás una inscripción que ya existía, se borra. Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
+    `<p class="ayuda" style="margin-top:0">El tilde indica que ${modo === 'persona' ? 'estaba anotada en ese encuentro' : 'esa persona estaba anotada'}. En cada fila elegí por separado si <b>vino o no</b> (y por qué) y <b>cómo pagó</b>: alguien puede no haber venido y haber pagado todo o solo la seña. Con "Pagó una parte" escribís <b>cuánto pagó en total</b> y lo que falta se calcula solo. Si destildás una inscripción que ya existía, se borra. Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
      ${buscador ? '<input class="campo" type="search" id="as-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">' : ''}
-     <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Encuentro' : 'Persona'}</span><span>Asistencia</span><span>Pago</span><span>Falta</span><span>Lo cobró</span></div>${filas}</div>
+     <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Encuentro' : 'Persona'}</span><span>Asistencia</span><span>Pago</span><span>Pagó $</span><span>Lo cobró</span></div>${filas}</div>
      ${modo === 'persona' ? '' : `<p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Encuentro': id }))}'>Es alguien nuevo</button></p>`}`,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="as-ok">Guardar cambios</button>`);
   const caja = $('as-lista');
@@ -973,26 +977,32 @@ function abrirAsistencias(modo, id){
     }
     if (ev.target.classList.contains('forma')) {
       const v = ev.target.value;
-      f.querySelector('.falta').classList.toggle('invisible', v !== 'parte');
+      f.querySelector('.cel-monto').classList.toggle('invisible', v !== 'parte');
       f.querySelector('.quien').classList.toggle('invisible', v === 'nada');
-      if (v === 'parte') f.querySelector('.falta').focus();
+      if (v === 'parte') f.querySelector('.pagado').focus();
     }
+  });
+  caja.addEventListener('input', ev => {
+    if (!ev.target.classList.contains('pagado')) return;
+    const f = ev.target.closest('.multi-fila'), precio = Number(f.dataset.precio) || 0, p = Number(ev.target.value) || 0;
+    f.querySelector('.resta').textContent = precio && p ? (p >= precio ? 'pagó todo' : 'falta ' + pesos(precio - p)) : '';
   });
   if ($('as-buscar')) $('as-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
   $('as-ok').onclick = async ev => {
-    const ops = [];
+    const ops = [], faltanMontos = [];
     caja.querySelectorAll('.multi-fila').forEach(f => {
       const d = f.dataset, marcado = f.querySelector('input[type=checkbox]').checked;
       if (!d.fila && !marcado) return;
       if (d.fila && !marcado) { ops.push({ tipo: 'borrar', fila: Number(d.fila), original: d.original, quien: f.querySelector('span').firstChild.textContent.trim() }); return; }
       const forma = f.querySelector('.forma').value, quien = f.querySelector('.quien').value;
       const precio = Number(d.precio) || 0, otros = Number(d.otros) || 0;
-      const falta = forma === 'parte' ? revisarMonto(Number(f.querySelector('.falta').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
+      if (forma === 'parte' && !(Number(f.querySelector('.pagado').value) > 0)) { faltanMontos.push(f.querySelector('span').firstChild.textContent.trim()); return; }
+      const pagoTotal = forma === 'parte' ? revisarMonto(Number(f.querySelector('.pagado').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
       const asis = f.querySelector('.asis').value;
       const aus = /No vino|Canceló/.test(asis);
       const datos = { 'Asistencia': asis, 'Motivo de ausencia': aus ? f.querySelector('.motivo').value : '', 'Detalle del motivo': aus ? f.querySelector('.detalle').value.trim() : '' };
       if (precio > 0) {
-        const sena = forma === 'completo' ? Math.max(0, precio - otros) : forma === 'parte' ? Math.max(0, precio - otros - falta) : 0;
+        const sena = forma === 'completo' ? Math.max(0, precio - otros) : forma === 'parte' ? Math.max(0, pagoTotal - otros) : 0;
         datos['Seña'] = sena || ''; datos['Cobró seña'] = sena ? quien : '';
       }
       if (!d.fila) {
@@ -1003,6 +1013,7 @@ function abrirAsistencias(modo, id){
         if (cambio) ops.push({ tipo: 'editar', fila: Number(d.fila), original: d.original, datos });
       }
     });
+    if (faltanMontos.length) { toast('Escribí cuánto pagó en: ' + faltanMontos.join(', '), true); return; }
     if (!ops.length) { toast('No hay cambios para guardar'); return; }
     const borra = ops.filter(o => o.tipo === 'borrar');
     if (borra.length && !confirm('Vas a borrar ' + (borra.length === 1 ? 'la inscripción de ' : borra.length + ' inscripciones: ') + borra.map(o => o.quien).join(', ') + '.\n\nSi solo querés marcar que no vino, dejala tildada y elegí "No vino". ¿Borrar igual?')) return;
@@ -1264,7 +1275,7 @@ V.encuentros = () => {
     const abierto = CAL.encuentroAbierto === t['ID Encuentro'];
     h += `<article class="encuentro"><button type="button" aria-expanded="${abierto}" data-abrir="${esc(t['ID Encuentro'])}">
       <div><div class="nombre">${esc(t['Nombre / temática'] || t['ID Encuentro'])}</div><div class="meta">${esc(t['Formato'])}${t['Fecha'] ? ', ' + esc(t['Fecha']) : ''} <span class="estado e-neutro">${esc(t['Estado'])}</span></div></div>
-      <div class="gan"><b>${esc(t['Ganancia neta'] || '$0')}</b><small>${esc(t['Inscriptas'] || 0)} de ${esc(t['Cupo'] || '?')} lugares</small></div></button>
+      <div class="gan"><b>${esc(t['Ganancia neta'] || '$0')}</b><small>${(() => { const l = H('Asistencias').filter(a => a['ID Encuentro'] === t['ID Encuentro']); const vin = l.filter(a => a['Asistencia'] === 'Asistió').length, no = l.filter(a => a['Asistencia'] === 'No vino').length; return (fecha(t['Fecha']) && fecha(t['Fecha']) < HOY) ? vin + (vin === 1 ? ' vino' : ' vinieron') + (no ? ' · ' + no + ' no ' + (no === 1 ? 'vino' : 'vinieron') : '') : esc(t['Inscriptas'] || 0) + ' de ' + esc(t['Cupo'] || '?') + ' lugares'; })()}</small></div></button>
       <div class="encuentro-detalle${abierto ? '' : ' oculto'}">
       <div class="mini-cifras">${[['Precio','Precio por persona'],['Cobrado','Cobrado'],['Pendiente','Pendiente de cobro'],['Gastos','Gastos'],['Parte Belu','Parte Belu'],['Parte Mey','Parte Mey']].map(c => `<div><span>${c[0]}</span> ${esc(t[c[1]] || '—')}</div>`).join('')}</div>
       ${(() => { const cm = costoMateriales(t); const ins = num(t['Inscriptas']); const det = Object.entries(cm.det).map(([k, n]) => n + ' ' + (NOMBRE_ENTREGA[k] ? NOMBRE_ENTREGA[k][n === 1 ? 0 : 1] : k)).join(', ');
@@ -1423,7 +1434,7 @@ V.estadisticas = () => {
   const ts = H('Encuentros').filter(t => t['Estado'] === 'Realizado');
   const repiten = pf.filter(x => x.veces >= 2).length;
   const fm = {};
-  ts.forEach(t => { const k = t['Formato'] || 'Sin formato'; fm[k] = fm[k] || { n:0, gente:0, gan:0, costo:0 }; fm[k].n++; fm[k].gente += num(t['Inscriptas']); fm[k].gan += num(t['Ganancia neta']); fm[k].costo += num(t['Costo por persona']); });
+  ts.forEach(t => { const k = t['Formato'] || 'Sin formato'; fm[k] = fm[k] || { n:0, gente:0, gan:0, costo:0 }; fm[k].n++; fm[k].gente += H('Asistencias').filter(a => a['ID Encuentro'] === t['ID Encuentro'] && a['Asistencia'] === 'Asistió').length; fm[k].gan += num(t['Ganancia neta']); fm[k].costo += num(t['Costo por persona']); });
   const filasFm = Object.entries(fm).map(([k, f]) => ({ 'Formato': k, 'Realizados': f.n, 'Promedio': (f.gente/f.n).toFixed(1).replace('.', ','), 'Ganancia': pesos(f.gan/f.n), 'Costo': pesos(f.costo/f.n) }));
   let h = cabeza('Estadísticas') + '<p class="ayuda">Calculadas sobre los encuentros marcados como Realizado.</p>';
   const DEST = 'Destino (ID encuentro / GENERAL / REVENTA)';
@@ -1457,15 +1468,24 @@ V.estadisticas = () => {
   h += '<h3>Ingresos y gastos por mes</h3>' + grafColumnas(mk.map(k => ({ l: MESES[+k.slice(5) - 1].slice(0, 3) + ' ' + k.slice(2, 4), v: meses[k].e, v2: meses[k].g })), { doble: 1, n1: 'Ingresos', n2: 'Gastos', titulo: 'Ingresos y gastos por mes' });
   const cats = {}; H('Gastos').forEach(g => { const c = g['Categoría'] || 'Sin categoría'; cats[c] = (cats[c] || 0) + num(g['Total']); });
   h += '<h3>En qué se gasta</h3>' + grafDona(Object.entries(cats).sort((a, b) => b[1] - a[1]), 'Gastos por categoría');
-  const porEncuentro = H('Encuentros').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); const gn = num(t['Ganancia neta']); return { 'Encuentro': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': t['Inscriptas'], 'Cobrado': pesos(num(t['Cobrado'])), 'Gastos': pesos(num(t['Gastos'])), 'Ganancia': pesos(gn), 'Belu': pesos(gn / 2), 'Mey': pesos(gn / 2), 'Materiales': pesos(cm.total), 'Real': pesos(gn - cm.total) }; });
-  h += '<h3>Detalle por encuentro</h3>' + tabla([{ t:'Encuentro', k:'Encuentro' }, { t:'Fecha', k:'Fecha' }, { t:'Personas', k:'Personas', num:1 }, { t:'Cobrado', k:'Cobrado', num:1 }, { t:'Gastos', k:'Gastos', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Belu', k:'Belu', num:1 }, { t:'Mey', k:'Mey', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Descontando materiales', k:'Real', num:1 }], porEncuentro, 'Todavía no hay encuentros realizados.');
+  const porEncuentro = H('Encuentros').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); const gn = num(t['Ganancia neta']); return { 'Encuentro': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': H('Asistencias').filter(a => a['ID Encuentro'] === t['ID Encuentro'] && a['Asistencia'] === 'Asistió').length, 'Cobrado': pesos(num(t['Cobrado'])), 'Gastos': pesos(num(t['Gastos'])), 'Ganancia': pesos(gn), 'Belu': pesos(gn / 2), 'Mey': pesos(gn / 2), 'Materiales': pesos(cm.total), 'Real': pesos(gn - cm.total) }; });
+  h += '<h3>Detalle por encuentro</h3>' + tabla([{ t:'Encuentro', k:'Encuentro' }, { t:'Fecha', k:'Fecha' }, { t:'Vinieron', k:'Personas', num:1 }, { t:'Cobrado', k:'Cobrado', num:1 }, { t:'Gastos', k:'Gastos', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Belu', k:'Belu', num:1 }, { t:'Mey', k:'Mey', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Descontando materiales', k:'Real', num:1 }], porEncuentro, 'Todavía no hay encuentros realizados.');
   const asis = H('Asistencias');
   h += '<h3>Control de carga</h3><p class="ayuda" style="margin-top:0">Para verificar que lo cargado coincide con la realidad de cada encuentro.</p>';
   h += grafColumnas(H('Encuentros').filter(t => t['Estado'] !== 'Cancelado' && fecha(t['Fecha'])).sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha'])).slice(-12).map(t => ({ l: t['Nombre / temática'], l2: ddmm(fecha(t['Fecha'])), v: asis.filter(a => a['ID Encuentro'] === t['ID Encuentro'] && a['Asistencia'] === 'Asistió').length })), { titulo: 'Personas que asistieron por encuentro', fmt: n => n + (n === 1 ? ' persona' : ' personas') });
   h += '<div style="margin-top:14px">' + tabla([{ t:'Encuentro', k:'n' }, { t:'Fecha', k:'f' }, { t:'Anotadas', k:'an', num:1 }, { t:'Asistieron', k:'si', num:1 }, { t:'No vinieron / cancelaron', k:'no', num:1 }, { t:'Cupo', k:'cu', num:1 }, { t:'Cobrado', k:'co', num:1 }],
     H('Encuentros').slice().sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const l = asis.filter(a => a['ID Encuentro'] === t['ID Encuentro']); return { n: t['Nombre / temática'], f: t['Fecha'], an: l.length, si: l.filter(a => a['Asistencia'] === 'Asistió').length, no: l.filter(a => /No vino|Canceló/.test(a['Asistencia'])).length, cu: t['Cupo'], co: t['Cobrado'] }; }), 'No hay encuentros cargados.') + '</div>';
+  const ausentes = asis.filter(a => a['Asistencia'] === 'No vino'), cancel = asis.filter(a => a['Asistencia'] === 'Canceló');
+  const plataAus = ausentes.concat(cancel).reduce((x, a) => x + num(a['Total pagado']), 0);
+  h += '<h3>Asistencia</h3><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Asistencias</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div>`
+    + `<div class="cifra"><span>No vinieron</span><b>${ausentes.length}</b></div>`
+    + `<div class="cifra"><span>Cancelaron</span><b>${cancel.length}</b></div>`
+    + `<div class="cifra"><span>Pagaron todo sin venir</span><b>${ausentes.concat(cancel).filter(a => num(a['Total pagado']) > 0 && num(a['Pendiente']) <= 0).length}</b></div>`
+    + `<div class="cifra"><span>Cobrado a quienes no vinieron</span><b class="oro">${pesos(plataAus)}</b></div></div>`
+    + '<p class="ayuda" style="margin-top:10px">Lo que pagaron quienes no vinieron cuenta en lo cobrado y en la ganancia, pero no en la cantidad de personas de cada encuentro.</p>';
   h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro encuentro</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Encuentros realizados</span><b>${ts.length}</b></div><div class="cifra"><span>Asistencias en total</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div></div>`;
-  h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de personas', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya encuentros realizados, acá vas a ver cuál formato rinde más.');
+  h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de asistentes', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya encuentros realizados, acá vas a ver cuál formato rinde más.');
   h += `<div class="dos-col"><div><h3>Cómo llegan</h3>${barras(contar(ps, 'Canal de llegada'))}</div><div><h3>Arcanos de nacimiento más frecuentes</h3>${barras(contar(ps, 'Arcano nacimiento').slice(0, 8))}</div></div>`;
   h += `<h3>Por qué no vinieron</h3>${barras(contar(H('Asistencias').filter(a => /No vino|Canceló/.test(a['Asistencia'])), 'Motivo de ausencia'))}`;
   return h;
