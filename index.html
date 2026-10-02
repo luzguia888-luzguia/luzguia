@@ -184,6 +184,13 @@ tr:hover td{background:rgba(185,138,230,.05)}
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:0;width:min(620px,94vw);max-height:90vh}
 dialog:has(.multi),dialog:has(#tg-lista){width:min(800px,96vw)}
 .multi-fila .forma{width:150px}
+.multi-fila .falta{width:110px}
+.multi-fila .invisible{visibility:hidden}
+.multi-cab{display:grid;grid-template-columns:auto minmax(0,1fr) 150px 110px 130px;gap:10px;padding:8px 12px;font-size:.8rem;color:var(--oro);background:var(--violeta)}
+.multi-cab span:first-child{width:18px}
+.ya{display:inline-block;font-size:.72rem;padding:0 7px;border-radius:99px;margin-left:6px;background:rgba(185,138,230,.18);color:var(--lila);vertical-align:middle}
+.ya.rojo{background:rgba(238,154,146,.18);color:var(--debe)}
+@media (max-width:640px){ .multi-cab{display:none} }
 .multi-fila .quien{width:130px}
 dialog::backdrop{background:rgba(10,4,18,.7)}
 .modal-cab{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--linea);position:sticky;top:0;background:var(--ciruela);z-index:1}
@@ -390,7 +397,7 @@ const diasEntre = (a, b) => Math.round((b - a) / 86400000);
 function leerLS(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
 function guardarLS(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
 function borrarLS(k){ try { localStorage.removeItem(k); } catch(e){} }
-function toast(msg, err){ const t = $('toast'); t.textContent = msg; t.className = err ? 'err' : ''; clearTimeout(t._t); t._t = setTimeout(() => t.className = 'oculto', 3800); }
+function toast(msg, err){ if (err && String(msg).length > 70) { alert(msg); return; } const t = $('toast'); t.textContent = msg; t.className = err ? 'err' : ''; clearTimeout(t._t); t._t = setTimeout(() => t.className = 'oculto', 3800); }
 function reducir(digitos){ let s = digitos.split('').reduce((a, c) => a + (+c || 0), 0); if (s > 22) s = String(s).split('').reduce((a, c) => a + +c, 0); return s; }
 function arcanoDelDia(){ const s = reducir(String(HOY.getDate()).padStart(2,'0') + String(HOY.getMonth()+1).padStart(2,'0') + HOY.getFullYear()); return { n: s, nombre: ARCANOS[s] }; }
 
@@ -667,7 +674,7 @@ function abrirForm(hoja, rec, pre){
     html += `<h3 style="margin:24px 0 8px">Sus talleres</h3><p class="ayuda" style="margin:0 0 10px">Vino a ${vino}${falto ? ' · faltó a ' + falto : ''}${hist.length - vino - falto > 0 ? ' · ' + (hist.length - vino - falto) + ' por venir' : ''}.</p>` + (hist.length
       ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>Pagó ${esc(a['Total pagado'] || '$0')}${num(a['Pendiente']) > 0 ? ', debe ' + esc(a['Pendiente']) : ''} · ${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}${acciones('Asistencias', a)}</div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
-      + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-entalleres="${esc(rec['ID Persona'])}">Sumar a talleres</button></p>`;
+      + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-entalleres="${esc(rec['ID Persona'])}">Asistencia y pagos de todos sus talleres</button></p>`;
   }
   modal((rec ? 'Editar ' : 'Agregar ') + e.nombre, html,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="f-guardar">Guardar</button>`);
@@ -874,7 +881,7 @@ async function guardarLote(filas, btn){
   try { await enviar({ accion: 'lote', hoja: 'Asistencias', filas }); $('modal').close(); toast(filas.length === 1 ? 'Inscripción guardada ✓' : filas.length + ' inscripciones guardadas ✓'); await cargar(true); }
   catch (err) { $('modal').close(); toast(err.message, true); await cargar(true); }
 }
-const AYUDA_PAGO = '<p class="ayuda" style="margin-top:0">Si no recordás los detalles de un evento anterior, dejá "Pagó todo" y "Ya repartido": cuenta como ingreso del taller pero no altera las cuentas entre ustedes, porque esa plata ya se repartió.</p>';
+const AYUDA_PAGO = '<p class="ayuda" style="margin-top:0">Si no recordás los detalles de un evento anterior, dejá "Pagó completo" y "Ya repartido": cuenta como ingreso del taller pero no altera las cuentas entre ustedes, porque esa plata ya se repartió.</p>';
 
 // Una persona → varios talleres
 function abrirTalleresDePersona(pid){
@@ -889,6 +896,94 @@ function abrirTalleresDePersona(pid){
   const caja = $('mt-lista');
   activarFilas(caja, () => { const n = caja.querySelectorAll('input[type=checkbox]:checked').length; $('mt-ok').textContent = n ? 'Guardar ' + n + (n === 1 ? ' taller' : ' talleres') : 'Guardar'; });
   $('mt-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
+}
+
+/* ───── Asistencia y pagos en bloque ───── */
+function filaAsis(o){
+  const a = o.a;
+  const pagado = a ? num(a['Total pagado']) : 0, falta = a ? num(a['Pendiente']) : 0;
+  const otros = a ? pagado - num(a['Seña']) : 0;
+  const est = a ? a['Asistencia'] : '';
+  const fue = a ? (o.pasado ? !/No vino|Canceló/.test(est) : est !== 'Canceló') : false;
+  const forma = !a ? (o.pasado ? 'completo' : 'nada') : (pagado > 0 && falta <= 0 ? 'completo' : pagado > 0 ? 'parte' : (o.pasado && !est ? 'completo' : 'nada'));
+  const opc = optCobro();
+  let quien = (a && a['Cobró seña']) || (o.pasado ? 'Ya repartido' : QUIEN);
+  if (!opc.includes(quien)) quien = QUIEN;
+  const precio = a ? (num(a['Precio']) - num(a['Descuento'])) : o.precio;
+  const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '' };
+  const marca = a ? `<span class="ya${o.dup > 1 ? ' rojo' : ''}">${o.dup > 1 ? 'repetida ×' + o.dup : (est || 'anotada') + (pagado ? ' · pagó ' + pesos(pagado) : '') + (falta > 0 ? ' · debe ' + pesos(falta) : '')}</span>` : '';
+  return `<label class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Taller']) : ''}" data-precio="${precio || 0}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
+    <input type="checkbox"${fue ? ' checked' : ''} aria-label="${o.pasado ? 'Vino' : 'Viene'}">
+    <span>${esc(o.titulo)}${marca}<small>${o.sub}</small></span>
+    <select class="campo forma" aria-label="Pago"><option value="completo"${forma === 'completo' ? ' selected' : ''}>Pagó completo</option><option value="parte"${forma === 'parte' ? ' selected' : ''}>Pagó una parte</option><option value="nada"${forma === 'nada' ? ' selected' : ''}>No pagó todavía</option></select>
+    <input class="campo falta${forma === 'parte' ? '' : ' invisible'}" type="number" min="0" step="100" inputmode="numeric" placeholder="Falta $" value="${forma === 'parte' && falta ? falta : ''}" aria-label="Cuánto falta">
+    <select class="campo quien${forma === 'nada' ? ' invisible' : ''}" aria-label="Quién cobró">${opc.map(x => `<option${x === quien ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`;
+}
+function abrirAsistencias(modo, id){
+  let filas = '', titulo = '', buscador = false;
+  const par = (pid, tid) => { const l = H('Asistencias').filter(x => x['ID Persona'] === pid && x['ID Taller'] === tid); return { a: l[0] || null, dup: l.length }; };
+  if (modo === 'persona') {
+    const p = persona(id); if (!p) return;
+    titulo = 'Talleres de ' + esc(String(p['Nombre completo']).split(' ')[0]);
+    const ts = H('Talleres').filter(t => t['Estado'] !== 'Cancelado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0));
+    if (!ts.length) filas = '<div class="vacio">Todavía no hay talleres cargados. Primero creálos en la pestaña Talleres.</div>';
+    ts.forEach(t => { const f = fecha(t['Fecha']); const x = par(id, t['ID Taller']);
+      filas += filaAsis({ pid: id, tid: t['ID Taller'], titulo: t['Nombre / temática'], sub: esc(t['Fecha'] || '') + ' · ' + esc(t['Formato'] || '') + (t['Precio por persona'] ? ' · ' + esc(t['Precio por persona']) : ''), precio: num(t['Precio por persona']), pasado: f && f < HOY, a: x.a, dup: x.dup }); });
+  } else {
+    const t = taller(id); if (!t) return;
+    titulo = 'Asistencia de ' + esc(t['Nombre / temática']); buscador = true;
+    const f = fecha(t['Fecha']), pasado = f && f < HOY, precio = num(t['Precio por persona']);
+    const veces = {}; perfiles().forEach(x => veces[x.p['ID Persona']] = x.veces);
+    const lista = participantes().map(p => ({ p, x: par(p['ID Persona'], id) }))
+      .sort((A, B) => (!!B.x.a - !!A.x.a) || (veces[B.p['ID Persona']] || 0) - (veces[A.p['ID Persona']] || 0) || String(A.p['Nombre completo']).localeCompare(B.p['Nombre completo']));
+    lista.forEach(({ p, x }) => { const v = veces[p['ID Persona']];
+      filas += filaAsis({ pid: p['ID Persona'], tid: id, titulo: p['Nombre completo'], sub: (v ? v + (v === 1 ? ' taller' : ' talleres') : 'Primera vez') + (p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''), precio, pasado, a: x.a, dup: x.dup }); });
+  }
+  modal(titulo,
+    `<p class="ayuda" style="margin-top:0">Tildá ${modo === 'persona' ? 'a qué talleres vino (o va a venir)' : 'quiénes vinieron (o vienen)'} y elegí cómo pagó cada una. Si destildás una inscripción que ya existía, queda como "No vino" (o "Canceló" si el taller todavía no pasó). Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
+     ${buscador ? '<input class="campo" type="search" id="as-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">' : ''}
+     <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Taller' : 'Persona'}</span><span>Pago</span><span>Falta</span><span>Lo cobró</span></div>${filas}</div>
+     ${modo === 'persona' ? '' : `<p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Taller': id }))}'>Es alguien nuevo</button></p>`}`,
+    `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="as-ok">Guardar cambios</button>`);
+  const caja = $('as-lista');
+  caja.addEventListener('change', ev => {
+    const f = ev.target.closest('.multi-fila'); if (!f) return;
+    if (ev.target.type === 'checkbox') f.classList.toggle('off', !ev.target.checked);
+    if (ev.target.classList.contains('forma')) {
+      const v = ev.target.value;
+      f.querySelector('.falta').classList.toggle('invisible', v !== 'parte');
+      f.querySelector('.quien').classList.toggle('invisible', v === 'nada');
+      if (v === 'parte') f.querySelector('.falta').focus();
+    }
+  });
+  if ($('as-buscar')) $('as-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
+  $('as-ok').onclick = async ev => {
+    const ops = [];
+    caja.querySelectorAll('.multi-fila').forEach(f => {
+      const d = f.dataset, marcado = f.querySelector('input[type=checkbox]').checked;
+      if (!d.fila && !marcado) return;
+      const forma = f.querySelector('.forma').value, quien = f.querySelector('.quien').value;
+      const precio = Number(d.precio) || 0, otros = Number(d.otros) || 0;
+      const falta = forma === 'parte' ? revisarMonto(Number(f.querySelector('.falta').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
+      const asis = marcado ? (d.pasado ? 'Asistió' : 'Confirmada') : (d.pasado ? 'No vino' : 'Canceló');
+      const datos = { 'Asistencia': asis };
+      if (precio > 0) {
+        const sena = forma === 'completo' ? Math.max(0, precio - otros) : forma === 'parte' ? Math.max(0, precio - otros - falta) : 0;
+        datos['Seña'] = sena || ''; datos['Cobró seña'] = sena ? quien : '';
+      }
+      if (!d.fila) {
+        ops.push({ tipo: 'agregar', datos: Object.assign({ 'ID Taller': d.tid, 'ID Persona': d.pid, 'Fecha inscripción': iso(HOY) }, datos) });
+      } else {
+        const sn = JSON.parse(d.snap);
+        const cambio = sn.asis !== datos['Asistencia'] || ('Seña' in datos && (sn.sena !== (Number(datos['Seña']) || 0) || sn.quien !== datos['Cobró seña']));
+        if (cambio) ops.push({ tipo: 'editar', fila: Number(d.fila), original: d.original, datos });
+      }
+    });
+    if (!ops.length) { toast('No hay cambios para guardar'); return; }
+    const b = ev.target; b.disabled = true; b.textContent = 'Guardando ' + ops.length + '…';
+    try { await enviar({ accion: 'lote2', hoja: 'Asistencias', ops }); $('modal').close(); toast(ops.length === 1 ? 'Guardado ✓' : ops.length + ' cambios guardados ✓'); await cargar(true); }
+    catch (err) { $('modal').close(); toast(err.message, true); await cargar(true); }
+  };
 }
 
 function abrirVarias(tid){
@@ -932,6 +1027,10 @@ async function limpiarRepetidas(btn){
     toast(borrar2.length === 1 ? 'Listo: se eliminó 1 repetida ✓' : 'Listo: se eliminaron ' + borrar2.length + ' repetidas ✓'); await cargar(true);
   } catch (err) { toast(err.message, true); await cargar(true); }
 }
+const avisoFormulas = () => {
+  const mal = Object.values(D.res).concat(H('Talleres').map(t => t['Ganancia neta']), H('Asistencias').map(a => a['Total pagado'])).some(v => /^#/.test(String(v || '')));
+  return mal ? '<div class="aviso"><p><b>El Sheet tiene fórmulas con error</b>, por eso algunos montos aparecen en $0 o con #ERROR. Pegá el Code.gs nuevo y corré 🌙 Luz Guía → Actualizar estructura: se reparan solas.</p></div>' : '';
+};
 const avisoRepetidas = () => { const n = repetidas().reduce((a, g) => a + g.length - 1, 0); return n ? `<div class="aviso"><p><b>${n === 1 ? 'Hay 1 inscripción repetida' : 'Hay ' + n + ' inscripciones repetidas'}</b> (la misma persona anotada más de una vez en el mismo taller). Inflan lo cobrado y los talleres de cada una.</p><button class="btn" type="button" data-limpiar>Eliminar repetidas</button></div>` : ''; };
 
 function matrizAsistencia(){
@@ -951,7 +1050,7 @@ function matrizAsistencia(){
       const tip = t['Nombre / temática'] + ': ' + est + (a['Motivo de ausencia'] ? ' (' + a['Motivo de ausencia'] + (a['Detalle del motivo'] ? ': ' + a['Detalle del motivo'] : '') + ')' : '') + ' · pagó ' + (a['Total pagado'] || '$0') + (l.length > 1 ? ' · ¡repetida ' + l.length + ' veces!' : '');
       return `<td><button type="button" class="celda ${cl}${l.length > 1 ? ' dup' : ''}" title="${esc(tip)}" data-editar="Asistencias|${a._fila}">${ico}${l.length > 1 ? '×' + l.length : ''}</button></td>`;
     }).join('');
-    return `<tr><td>${esc(p['Nombre completo'])}</td>${celdas}<td class="num"><b>${vino}</b></td></tr>`;
+    return `<tr><td><button class="chip" type="button" data-entalleres="${esc(p['ID Persona'])}" title="Marcar asistencia y pagos de todos sus talleres">${esc(p['Nombre completo'])}</button></td>${celdas}<td class="num"><b>${vino}</b></td></tr>`;
   }).join('');
   return `<div class="tabla-caja"><table class="matriz"><thead><tr><th>Persona</th>${ts.map(t => `<th title="${esc(t['Nombre / temática'])}">${ddmm(fecha(t['Fecha']))}<small>${esc(recortar(t['Nombre / temática'], 14))}</small></th>`).join('')}<th>Vino a</th></tr></thead><tbody>${filas}</tbody></table></div>
     <div class="leyenda" style="margin-top:10px"><span>✓ asistió</span><span>✗ no vino</span><span>⊘ canceló</span><span>○ confirmada</span><span>· no anotada (tocá para anotarla)</span></div>`;
@@ -1020,7 +1119,7 @@ V.hoy = () => {
   const r = D.res;
   const prox = proximosTalleres()[0];
   const f = prox && fecha(prox['Fecha']);
-  let h = '<section class="proximo">';
+  let h = avisoFormulas() + '<section class="proximo">';
   if (prox) {
     const libres = num(prox['Lugares libres']);
     h += `<small>Próximo encuentro</small><div class="titulo">${esc(prox['Nombre / temática'])}</div><div class="cuando">${esc(lindaFecha(f))}${prox['Hora'] ? ', ' + esc(prox['Hora']) + ' h' : ''}</div>
@@ -1128,7 +1227,7 @@ V.calendario = () => {
 
 V.talleres = () => {
   const ts = H('Talleres').slice().sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0));
-  let h = cabeza('Talleres', btnNuevo('Talleres', 'Nuevo taller')) + avisoRepetidas();
+  let h = cabeza('Talleres', btnNuevo('Talleres', 'Nuevo taller')) + avisoFormulas() + avisoRepetidas();
   h += '<p class="ayuda">Tocá un taller para ver quiénes vienen, cómo pagaron y qué materiales ya se entregaron. Los materiales se marcan tocándolos.</p>';
   if (!ts.length) return h + '<div class="tabla-caja"><div class="vacio">Todavía no hay talleres. Tocá "Nuevo taller" para cargar el primero.</div></div>';
   ts.forEach((t, i) => {
@@ -1145,7 +1244,7 @@ V.talleres = () => {
         return `<div class="mini-cifras"><div><span>Materiales entregados</span> ${pesos(cm.total)}${det ? ' <span>(' + esc(det) + ')</span>' : ''}</div><div><span>Costo real por persona</span> ${ins ? pesos((num(t['Gastos']) + cm.total) / ins) : '—'}</div><div><span>Ganancia descontando materiales</span> ${pesos(num(t['Ganancia neta']) - cm.total)}</div></div>`; })()}
       ${(() => { const gs = H('Gastos').filter(g => g['Destino (ID taller / GENERAL / REVENTA)'] === t['ID Taller']); if (!gs.length) return ''; const ins = num(t['Inscriptas']);
         return `<div class="mini-cifras">${gs.map(g => `<div><span>${esc(g['Ítem'])}</span> ${esc(g['Total'])}${ins ? ' <span>(' + pesos(num(g['Total']) / ins) + ' c/u)</span>' : ''}</div>`).join('')}</div>`; })()}
-      <div class="herramientas"><button class="btn" type="button" data-varias="${esc(t['ID Taller'])}">Sumar personas</button>
+      <div class="herramientas"><button class="btn" type="button" data-varias="${esc(t['ID Taller'])}">Asistencia y pagos</button>
         <button class="btn-sec" type="button" data-nuevo="Gastos" data-pre='${esc(JSON.stringify({ 'Destino (ID taller / GENERAL / REVENTA)': t['ID Taller'] }))}'>Cargar gasto</button>
         <button class="btn-sec" type="button" data-editar="Talleres|${t._fila}">Editar taller</button>
         <button class="btn-sec" type="button" data-borrar="Talleres|${t._fila}">Borrar</button></div>`;
@@ -1168,14 +1267,14 @@ V.personas = () => {
   const cum = cumplesProximos(30);
   const ab = tallerAbierto();
   const fila = (x, extra, plant) => `<div class="persona-fila"><span>${esc(x.p['Nombre completo'])}<br><small>${extra}</small></span>${btnWA(x.p['ID Persona'], plant, ab ? ab['ID Taller'] : '', '')}</div>`;
-  let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona')) + avisoRepetidas();
+  let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona')) + avisoFormulas() + avisoRepetidas();
   h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal y con 🕯️ la sumás a un taller. La cantidad de talleres y lo invertido se calculan solos: para corregirlos, tocá el número y editá sus inscripciones con ✎ o 💰.</p>';
   h += '<div class="alertas3">';
   h += `<div class="caja"><h4>Las que más vienen</h4><p>${D.params.frecuente} talleres o más. Ideas para ofrecerles: lugar prioritario en la edición especial, descuento por fidelidad, "traé una amiga" con beneficio para las dos, o 15 minutos extra de lectura.</p>${frec.length ? frec.map(x => fila(x, x.veces + ' talleres', 'frecuente')).join('') : '<small class="ayuda">Todavía nadie llegó a ese número.</small>'}</div>`;
   h += `<div class="caja"><h4>Hace tiempo que no vienen</h4><p>Más de ${D.params.inactiva} días desde su último taller.</p>${inac.length ? inac.slice(0, 12).map(x => fila(x, 'Última vez: ' + ddmm(x.ultima) + '/' + x.ultima.getFullYear(), 'reactivar')).join('') : '<small class="ayuda">Nadie por ahora.</small>'}</div>`;
   h += `<div class="caja"><h4>Cumpleaños del mes</h4><p>Próximos 30 días.</p>${cum.length ? cum.map(x => fila(x, (x.c.dias === 0 ? 'Hoy' : lindaFecha(x.c.fecha)) + ', cumple ' + x.c.edad, 'cumpleanos')).join('') : '<small class="ayuda">Ninguno en los próximos 30 días.</small>'}</div>`;
   h += '</div>';
-  h += '<h3>Quién vino a cada taller</h3><p class="ayuda" style="margin-top:0">Pasá el mouse por cada casilla para ver el detalle (pago y motivo si no vino). Tocala para editarla.</p>' + matrizAsistencia();
+  h += '<h3>Quién vino a cada taller</h3><p class="ayuda" style="margin-top:0">Tocá un nombre para marcar de una vez a qué talleres vino y cómo pagó. Pasá el mouse por cada casilla para ver el detalle, o tocala para editar solo esa.</p>' + matrizAsistencia();
   h += '<h3>Todas</h3><div class="herramientas"><input class="campo buscador" id="buscar" type="search" placeholder="Buscar por nombre o arcano"></div>';
   h += `<div id="tabla-personas">${tablaPersonas(H('Personas'))}</div>`;
   return h;
@@ -1183,14 +1282,14 @@ V.personas = () => {
 function tablaPersonas(ps){
   ps = ps.slice().sort((a, b) => (esOrg(b) - esOrg(a)) || String(a['Nombre completo']).localeCompare(b['Nombre completo']));
   return tabla([
-    { t:'Nombre', f: p => esc(p['Nombre completo']) + (esOrg(p) ? ' <span class="estado e-sena">Organizadora</span>' : '') },
+    { t:'Nombre', f: p => { const debe = H('Asistencias').filter(a => a['ID Persona'] === p['ID Persona']).reduce((x, a) => x + num(a['Pendiente']), 0); return esc(p['Nombre completo']) + (esOrg(p) ? ' <span class="estado e-sena">Organizadora</span>' : '') + (debe > 0 ? ` <span class="estado e-debe">debe ${pesos(debe)}</span>` : ''); } },
     { t:'Nacimiento', f: p => p['Arcano nacimiento'] ? esc(p['N° arcano nacimiento']) + ' · ' + esc(p['Arcano nacimiento']) : '' },
     { t:'Anual', f: p => p['Arcano anual'] ? esc(p['N° arcano anual']) + ' · ' + esc(p['Arcano anual']) : '' },
     { t:'Cumple', f: p => { const f = fecha(p['Fecha de nacimiento']); return f ? ddmm(f) : ''; } },
     { t:'Talleres', num:1, f: p => `<button class="chip" type="button" data-editar="Personas|${p._fila}" title="Ver y editar sus talleres y pagos">${esc(p['Talleres asistidos'] || 0)}</button>` },
     { t:'Invertido', num:1, f: p => `<button class="chip" type="button" data-editar="Personas|${p._fila}" title="Ver y editar sus talleres y pagos">${esc(p['Total invertido'] || '$0')}</button>` },
     { t:'Llegó por', k:'Canal de llegada' },
-    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sumar a talleres" data-entalleres="${esc(p['ID Persona'])}">🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
+    { t:'', acc:1, f: p => (p['Código portal'] ? `<button class="ic" type="button" title="Copiar enlace de su portal" data-portal="${esc(p['ID Persona'])}">🔗</button>` : '') + `<button class="ic" type="button" title="Sus talleres: asistencia y pagos" data-entalleres="${esc(p['ID Persona'])}">🕯️</button>` + btnWA(p['ID Persona'], 'portal', '', '', 'Mandar mensaje') + acciones('Personas', p) }
   ], ps, 'Todavía no hay participantes. Tocá "Nueva persona" para cargar la primera.');
 }
 
@@ -1314,6 +1413,8 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Gastos generales e insumos</span><b>${pesos(generales)}</b></div></div>`;
   h += '<p class="ayuda" style="margin-top:10px">La ganancia neta total del Resumen es: talleres + ventas − compras de stock − gastos generales. Lo invertido en stock se recupera a medida que se vende.</p>';
   const neta = num(D.res['GANANCIA NETA']);
+  const pend = H('Asistencias').filter(a => num(a['Pendiente']) > 0);
+  if (pend.length) h += `<div class="aviso" style="margin-top:22px;border-color:var(--oro);background:rgba(212,175,106,.08)"><p><b>Falta cobrar ${pesos(pend.reduce((x, a) => x + num(a['Pendiente']), 0))}</b> de ${pend.length} ${pend.length === 1 ? 'inscripción' : 'inscripciones'}.</p><button class="btn" type="button" data-vista="cobros">Ver quiénes deben</button></div>`;
   h += '<h3>Lo que le corresponde a cada una</h3><div class="cifras" style="margin-top:0">'
     + `<div class="cifra"><span>Ganancia neta total</span><b class="oro">${pesos(neta)}</b></div>`
     + `<div class="cifra"><span>Belu</span><b>${pesos(neta / 2)}</b></div><div class="cifra"><span>Mey</span><b>${pesos(neta / 2)}</b></div>`
@@ -1395,8 +1496,8 @@ document.addEventListener('click', async e => {
   if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
   if (ds.limpiar !== undefined) { limpiarRepetidas(t); return; }
   if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
-  if (ds.varias) { abrirVarias(ds.varias); return; }
-  if (ds.entalleres) { abrirTalleresDePersona(ds.entalleres); return; }
+  if (ds.varias) { abrirAsistencias('taller', ds.varias); return; }
+  if (ds.entalleres) { abrirAsistencias('persona', ds.entalleres); return; }
   if (ds.reintegro) {
     const lista = ds.reintegro === 'todos' ? H('Gastos').filter(g => g['Pagó'] && !/Devuelto|No corresponde/.test(g['Reintegro'] || '')) : H('Gastos').filter(g => String(g._fila) === ds.reintegro);
     if (!lista.length) return;
