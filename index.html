@@ -177,6 +177,7 @@ tr:hover td{background:rgba(185,138,230,.05)}
 .ev.encuentro{background:rgba(212,175,106,.2);color:var(--oro)}
 .ev.evento{background:rgba(185,138,230,.2);color:var(--lila)}
 .ev.cumple{background:rgba(143,211,168,.14);color:var(--ok)}
+.ev.luna{background:rgba(154,165,240,.16);color:#B9C1FF}
 .leyenda{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:.85rem;color:var(--bruma)}
 .leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
 
@@ -239,6 +240,25 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
 .resumen-pago span{display:block;color:var(--bruma);font-size:.82rem}
 .resumen-pago b{font-size:1.2rem;font-weight:500}
 @media (max-width:640px){ .multi-fila{grid-template-columns:auto 1fr;}.multi-fila .monto,.multi-fila select{grid-column:2} }
+/* Cielo estrellado (liviano: solo CSS) */
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background-image:radial-gradient(1px 1px at 12% 18%,#fff6dd,transparent),radial-gradient(1px 1px at 27% 72%,#e9dcff,transparent),radial-gradient(1.5px 1.5px at 43% 33%,#fff6dd,transparent),radial-gradient(1px 1px at 58% 84%,#fff,transparent),radial-gradient(1px 1px at 71% 12%,#e9dcff,transparent),radial-gradient(1.5px 1.5px at 86% 46%,#fff6dd,transparent),radial-gradient(1px 1px at 93% 78%,#fff,transparent),radial-gradient(1px 1px at 6% 58%,#fff6dd,transparent),radial-gradient(1px 1px at 35% 92%,#e9dcff,transparent),radial-gradient(1px 1px at 64% 52%,#fff,transparent);opacity:.55}
+body::after{background-image:radial-gradient(1px 1px at 18% 40%,#fff,transparent),radial-gradient(1.5px 1.5px at 52% 8%,#fff6dd,transparent),radial-gradient(1px 1px at 79% 64%,#e9dcff,transparent),radial-gradient(1px 1px at 9% 88%,#fff,transparent),radial-gradient(1.5px 1.5px at 38% 58%,#fff6dd,transparent),radial-gradient(1px 1px at 90% 24%,#fff,transparent);opacity:.3}
+@media (prefers-reduced-motion:no-preference){ body::before{animation:titilar 7s ease-in-out infinite alternate} body::after{animation:titilar 5s ease-in-out 2s infinite alternate-reverse} @keyframes titilar{from{opacity:.15}to{opacity:.6}} }
+.astro{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-top:14px}
+.astro .arcano-dia{margin-top:0;grid-template-columns:auto 1fr;position:relative;overflow:hidden}
+.astro .arcano-dia .bt{grid-column:1/-1}
+.astro .arcano-dia p{margin:4px 0 0;color:var(--bruma);font-size:.92rem}
+.astro .arcano-dia small{color:var(--lila)}
+.astro .arcano-dia::after{content:"";position:absolute;top:0;left:-50%;width:35%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,240,210,.09),transparent);transform:skewX(-18deg)}
+@media (prefers-reduced-motion:no-preference){ .astro .arcano-dia::after{animation:brilloC 5s ease-in-out infinite} .astro .arcano-dia:nth-child(2)::after{animation-delay:2.5s} @keyframes brilloC{0%{left:-50%}55%,100%{left:130%}} }
+.mini-carta{width:56px;height:86px;border:1px solid var(--oro);border-radius:8px;background:linear-gradient(170deg,var(--violeta),var(--ciruela));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 0;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.mini-carta span{font-family:var(--serif);color:var(--oro);font-size:1rem}
+.mini-carta i{font-style:normal;color:var(--oro);font-size:1.3rem}
+.mini-luna{width:62px;height:62px;border-radius:50%;margin:12px 0;background:radial-gradient(circle at 35% 35%,#3a2a55,#1a0f2b 70%);box-shadow:inset -8px -6px 0 rgba(0,0,0,.25),0 0 0 1px var(--oro-suave)}
+.mini-luna.llena{background:radial-gradient(circle at 38% 35%,#fffaf0,#f1dfb0 55%,#c9a764);box-shadow:0 0 18px 4px rgba(243,220,160,.45),0 0 48px 10px rgba(212,175,106,.18)}
+@media (prefers-reduced-motion:no-preference){ .mini-luna.llena{animation:respira 4s ease-in-out infinite} @keyframes respira{50%{box-shadow:0 0 26px 8px rgba(243,220,160,.55),0 0 70px 16px rgba(212,175,106,.22)}} }
+
 /* Efectos */
 .btn,.btn-sec,.ic,.chip,.pestana,.cifra,.encuentro,.tarea,.caja,.dia,td{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .2s ease,transform .18s ease}
 .btn:hover:not(:disabled){box-shadow:0 0 0 3px rgba(212,175,106,.18),0 6px 18px rgba(212,175,106,.25);transform:translateY(-1px)}
@@ -411,6 +431,7 @@ function guardarLS(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
 function borrarLS(k){ try { localStorage.removeItem(k); } catch(e){} }
 function toast(msg, err){ if (err && String(msg).length > 70) { alert(msg); return; } const t = $('toast'); t.textContent = msg; t.className = err ? 'err' : ''; clearTimeout(t._t); t._t = setTimeout(() => t.className = 'oculto', 3800); }
 function reducir(digitos){ let s = digitos.split('').reduce((a, c) => a + (+c || 0), 0); if (s > 22) s = String(s).split('').reduce((a, c) => a + +c, 0); return s; }
+function romanoN(n){ n = +n; if (n === 22 || n === 0) return '0'; let r = ''; [[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']].forEach(([v, x]) => { while (n >= v) { r += x; n -= v; } }); return r; }
 function arcanoDelDia(){ const s = reducir(String(HOY.getDate()).padStart(2,'0') + String(HOY.getMonth()+1).padStart(2,'0') + HOY.getFullYear()); return { n: s, nombre: ARCANOS[s] }; }
 
 function waNum(t){
@@ -468,6 +489,102 @@ function cumplesProximos(dias){
   return H('Personas').map(p => ({ p, c: proximoCumple(p) })).filter(x => x.c && x.c.dias <= dias).sort((a, b) => a.c.dias - b.c.dias);
 }
 
+/* ───── Astrología: lunas y arcano del día ───── */
+// Fases lunares (Meeus, cap. 49) y signo zodiacal (longitud solar)
+const RAD = Math.PI / 180;
+function faseJDE(k, llena){
+  const T = k / 1236.85, T2 = T*T;
+  let jde = 2451550.09766 + 29.530588861*k + 0.00015437*T2 - 0.00000015*T2*T;
+  const E = 1 - 0.002516*T - 0.0000074*T2;
+  const M = (2.5534 + 29.10535670*k - 0.0000014*T2) * RAD;
+  const Mp = (201.5643 + 385.81693528*k + 0.0107582*T2) * RAD;
+  const F = (160.7108 + 390.67050284*k - 0.0016118*T2) * RAD;
+  const O = (124.7746 - 1.56375588*k + 0.0020672*T2) * RAD;
+  const s = Math.sin;
+  const c = llena
+    ? [-0.40614*s(Mp), 0.17302*E*s(M), 0.01614*s(2*Mp), 0.01043*s(2*F), 0.00734*E*s(Mp-M), -0.00515*E*s(Mp+M), 0.00209*E*E*s(2*M), -0.00111*s(Mp-2*F), -0.00057*s(Mp+2*F), 0.00056*E*s(2*Mp+M), -0.00042*s(3*Mp), 0.00042*E*s(M+2*F), 0.00038*E*s(M-2*F), -0.00024*E*s(2*Mp-M), -0.00017*s(O)]
+    : [-0.40720*s(Mp), 0.17241*E*s(M), 0.01608*s(2*Mp), 0.01039*s(2*F), 0.00739*E*s(Mp-M), -0.00514*E*s(Mp+M), 0.00208*E*E*s(2*M), -0.00111*s(Mp-2*F), -0.00057*s(Mp+2*F), 0.00056*E*s(2*Mp+M), -0.00042*s(3*Mp), 0.00042*E*s(M+2*F), 0.00038*E*s(M-2*F), -0.00024*E*s(2*Mp-M), -0.00017*s(O)];
+  return jde + c.reduce((a, b) => a + b, 0);
+}
+function longSol(jd){
+  const T = (jd - 2451545) / 36525;
+  const L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T;
+  const M = (357.52911 + 35999.05029*T - 0.0001537*T*T) * RAD;
+  const C = (1.914602 - 0.004817*T)*Math.sin(M) + (0.019993 - 0.000101*T)*Math.sin(2*M) + 0.000289*Math.sin(3*M);
+  const l = L0 + C - 0.00569 - 0.00478*Math.sin((125.04 - 1934.136*T)*RAD);
+  return ((l % 360) + 360) % 360;
+}
+const SIG = ['Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capricornio','Acuario','Piscis'];
+function lunas(desde, hasta){
+  const out = [], a = desde.getFullYear() + desde.getMonth()/12;
+  for (let k = Math.floor((a - 2000) * 12.3685) - 1; ; k++) {
+    for (const llena of [false, true]) {
+      const jde = faseJDE(k + (llena ? .5 : 0), llena);
+      const f = new Date((jde - 2440587.5) * 86400000 - 69000);
+      if (f > hasta) return out;
+      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; out.push({ fecha: f, llena, signo: SIG[Math.floor(ml / 30)], grado: ml % 30 }); }
+    }
+  }
+}
+
+const DIA = [null,
+ ['Hoy la energía empuja a empezar: tenés más recursos de los que creés.', 'Elegí una sola cosa que venís postergando y dale el primer paso.'],
+ ['Día para escuchar más de lo que hablás: la intuición sabe antes que la mente.', 'Antes de decidir, hacé unos minutos de silencio y prestá atención a lo que sentís.'],
+ ['Energía de abundancia, creatividad y disfrute.', 'Regalate algo que te nutra: una comida rica, un rato al sol o un proyecto creativo.'],
+ ['El día pide orden, límites claros y decisiones firmes.', 'Ordená un área concreta: tus cuentas, tu agenda o un rincón de tu casa.'],
+ ['Día para aprender, buscar guía o compartir lo que sabés.', 'Pedí consejo a alguien que admires, o enseñá algo que domines.'],
+ ['Las elecciones de hoy hablan de valores y de vínculos.', 'Antes de elegir, preguntate: ¿esto me acerca a quien quiero ser?'],
+ ['Energía de avance y determinación: lo que se mueve hoy, llega lejos.', 'Definí hacia dónde vas y no te disperses en mil frentes.'],
+ ['El poder del día está en la calma, no en la imposición.', 'Si algo te desborda, respirá y respondé con suavidad: vas a lograr más.'],
+ ['Día de introspección y búsqueda interior.', 'Regalate un rato a solas, sin pantallas, para escucharte.'],
+ ['Algo gira: cambios, oportunidades y sincronicidades.', 'Estate atenta a las señales y fluí con lo que llega en vez de resistirte.'],
+ ['Equilibrio y verdad: lo justo se acomoda.', 'Revisá un acuerdo o una decisión pendiente y elegí con honestidad.'],
+ ['La energía invita a pausar y mirar desde otro ángulo.', 'Si algo está trabado, soltá el control por hoy: la respuesta llega cuando dejás de forzar.'],
+ ['Transformación: algo termina para que algo nuevo empiece.', 'Identificá qué ya cumplió su ciclo (un hábito, un pensamiento, un objeto) y despedilo con gratitud.'],
+ ['Armonía, paciencia y la medida justa.', 'Buscá el punto medio: ni todo ni nada. Tomate tu tiempo.'],
+ ['Día para mirar los apegos y lo que te quita energía.', 'Preguntate qué te está atando y si podés ponerle un límite amoroso.'],
+ ['Lo que no es auténtico puede caerse, y está bien.', 'Si algo se rompe, mirá qué verdad te muestra: lo que queda en pie es tuyo.'],
+ ['Esperanza, sanación y fe en el camino.', 'Escribí un deseo y dejalo a la vista. Confiá en que se va revelando.'],
+ ['Emociones a flor de piel, sueños intensos e intuición despierta.', 'No tomes decisiones grandes desde el miedo y anotá tus sueños: traen mensajes.'],
+ ['Alegría, claridad y vitalidad.', 'Celebrá algo, por pequeño que sea, y compartí tu luz con alguien.'],
+ ['Un llamado interior y un renacimiento.', 'Escuchá esa voz que te pide un cambio: hoy es buen día para responderle.'],
+ ['Cierre de ciclo, logro y plenitud.', 'Reconocé todo lo que ya recorriste y agradecé antes de empezar lo próximo.'],
+ ['Libertad, espontaneidad y salto de fe.', 'Animate a algo nuevo sin tener todo resuelto: la aventura empieza con un paso.']
+];
+const SIGNOS = {
+ 'Aries': { area: 'la identidad, el coraje y la iniciativa', fav: ['empezar proyectos personales', 'retomar la actividad física', 'animarte a un cambio de look'], ojo: 'las reacciones impulsivas' },
+ 'Tauro': { area: 'el dinero, el cuerpo y el disfrute', fav: ['ordenar las finanzas y ahorrar', 'tratamientos de belleza y cuidado de la piel', 'comprar cosas duraderas'], ojo: 'los gastos por ansiedad' },
+ 'Géminis': { area: 'la comunicación, el aprendizaje y los trámites', fav: ['conversaciones pendientes', 'empezar un curso', 'trámites y papeles simples'], ojo: 'dispersarte en mil cosas' },
+ 'Cáncer': { area: 'el hogar, la familia y las emociones', fav: ['ordenar y limpiar la casa', 'encuentros familiares', 'limpiezas energéticas del hogar'], ojo: 'tomarte todo de forma personal' },
+ 'Leo': { area: 'la creatividad, la autoestima y el disfrute', fav: ['cambios de imagen', 'mostrar tu trabajo', 'celebrar'], ojo: 'depender de la aprobación ajena' },
+ 'Virgo': { area: 'la salud, las rutinas y el trabajo', fav: ['empezar hábitos saludables', 'depurar y hacer detox', 'organizar el trabajo'], ojo: 'la autoexigencia' },
+ 'Libra': { area: 'los vínculos, los acuerdos y la belleza', fav: ['cerrar acuerdos y sociedades', 'tratamientos estéticos', 'reconciliaciones'], ojo: 'postergar decisiones por no incomodar' },
+ 'Escorpio': { area: 'la transformación, la intimidad y los recursos compartidos', fav: ['soltar lo que ya no va', 'procesos terapéuticos profundos', 'revisar deudas y cuentas compartidas'], ojo: 'los celos y el control' },
+ 'Sagitario': { area: 'la expansión, los viajes y el sentido de la vida', fav: ['planear viajes', 'estudiar', 'trámites legales'], ojo: 'prometer de más' },
+ 'Capricornio': { area: 'las metas, el trabajo y la estructura', fav: ['firmar contratos importantes', 'planificar metas a largo plazo', 'presentar propuestas laborales'], ojo: 'la rigidez' },
+ 'Acuario': { area: 'las amistades, la comunidad y lo nuevo', fav: ['proyectos grupales', 'probar algo distinto', 'difundir y conectar en redes'], ojo: 'desconectarte de lo que sentís' },
+ 'Piscis': { area: 'la espiritualidad, la intuición y la sanación', fav: ['meditación y rituales', 'descanso', 'arte y música'], ojo: 'firmar sin leer la letra chica' }
+};
+
+function lunasRango(dias){ const d = new Date(HOY); d.setDate(d.getDate() - 1); const h = new Date(HOY); h.setDate(h.getDate() + dias); return lunas(d, h); }
+function proximaLuna(){ const l = lunasRango(32); return l.find(x => { const f = new Date(x.fecha); f.setHours(0,0,0,0); return f >= HOY; }) || null; }
+const fechaLarga = d => DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()];
+function textoLuna(l){
+  if (!l) return '';
+  const g = SIGNOS[l.signo], hoyEs = new Date(l.fecha).toDateString() === new Date().toDateString();
+  const fav = g.fav.slice(0, -1).join(', ') + ' y ' + g.fav[g.fav.length - 1];
+  return (l.llena ? '🌕 Luna llena en ' : '🌑 Luna nueva en ') + l.signo + (hoyEs ? ' · hoy' : ' · ' + fechaLarga(l.fecha)) + '\n\n'
+    + (l.llena
+      ? 'Esta luna ilumina ' + g.area + '. Es tiempo de culminar, ver con claridad y soltar lo que ya no suma: lo que sembraste en estos meses sale a la luz.'
+      : 'Esta luna abre un nuevo ciclo en ' + g.area + '. Es tiempo de sembrar intenciones y dar los primeros pasos: lo que empieces ahora tiene impulso para crecer.')
+    + '\n\n✨ Buen momento para: ' + fav + '.\n⚠️ Cuidado con: ' + g.ojo + '.'
+    + '\n\n' + (l.llena ? '¿Qué querés soltar en esta luna? Contanos 💜' : '¿Qué querés sembrar en esta luna? Contanos 💜');
+}
+const TEXTO_BASE = {
+  arcano_dia: { nombre: 'Arcano del día (difusión)', texto: '✨ Energía del día: {arcano_dia} ✨\n\n{mensaje_dia}\n\n🌙 Consejo: {consejo_dia}\n\n¿Te resuena? Contanos en qué área de tu vida lo estás sintiendo: vínculos, trabajo, dinero, cuerpo o tu mundo interior 💜{proximo}', clave: '{mensaje_dia}' },
+  luna: { nombre: 'Luna de estos días (difusión)', texto: '{mensaje_luna}{proximo}', clave: '{mensaje_luna}' }
+};
+
 /* ───── Mensajes ───── */
 function contexto(p, t, a){
   const ctx = {};
@@ -486,23 +603,31 @@ function contexto(p, t, a){
   }
   if (a) ctx.pendiente = a['Pendiente'];
   const ad = arcanoDelDia(); ctx.arcano_dia = ad.nombre + ' (' + ad.n + ')';
+  ctx.mensaje_dia = DIA[ad.n][0]; ctx.consejo_dia = DIA[ad.n][1];
+  const lu = proximaLuna(); ctx.mensaje_luna = textoLuna(lu); ctx.luna = lu ? (lu.llena ? 'Luna llena en ' : 'Luna nueva en ') + lu.signo : ''; ctx.fecha_luna = lu ? fechaLarga(lu.fecha) : '';
+  ctx.proximo = ctx.encuentro ? '\n\n📅 Próximo encuentro: ' + ctx.encuentro + ', ' + ctx.fecha_encuentro + '. Escribinos para reservar tu lugar.' : '';
   // nombres anteriores de las variables, por si quedaron en algún mensaje
   ctx['tall' + 'er'] = ctx.encuentro; ctx['fecha_tall' + 'er'] = ctx.fecha_encuentro;
   ctx.instagram = D.params.instagram || '';
   return ctx;
 }
-const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => (ctx[k] !== undefined && ctx[k] !== '') ? ctx[k] : '[' + k + ']');
+const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => ctx[k] !== undefined ? (ctx[k] === '' && k !== 'proximo' ? '[' + k + ']' : ctx[k]) : '[' + k + ']');
 const optCobro = () => L('Quién cobró').length ? L('Quién cobró') : L('Socias');
 const otraSocia = q => (L('Socias').find(x => x !== q) || (q === 'Belu' ? 'Mey' : 'Belu'));
 const linkPortal = p => p && p['Código portal'] ? (D.params.portal || 'https://luzguia888-luzguia.github.io/luzguia/mi-luz.html') + '?c=' + p['Código portal'] : '';
-const plantilla = clave => H('Plantillas').find(x => x['Clave'] === clave);
+function plantilla(clave){
+  const p = H('Plantillas').find(x => x['Clave'] === clave), base = TEXTO_BASE[clave];
+  if (base && (!p || !String(p['Texto']).includes(base.clave))) return { 'Clave': clave, 'Nombre': base.nombre, 'Texto': base.texto };
+  return p;
+}
+const listaPlantillas = () => { const l = H('Plantillas').map(x => x['Clave']); Object.keys(TEXTO_BASE).forEach(k => { if (!l.includes(k)) l.push(k); }); return l.map(plantilla).filter(Boolean); };
 
 function abrirMensaje(pid, clave, tid, afila){
   const p = pid ? persona(pid) : null;
   const t = tid ? encuentro(tid) : null;
   const a = afila ? H('Asistencias').find(x => String(x._fila) === String(afila)) : null;
   const ctx = contexto(p, t, a);
-  const opciones = H('Plantillas').map(x => `<option value="${esc(x['Clave'])}"${x['Clave'] === clave ? ' selected' : ''}>${esc(x['Nombre'])}</option>`).join('');
+  const opciones = listaPlantillas().map(x => `<option value="${esc(x['Clave'])}"${x['Clave'] === clave ? ' selected' : ''}>${esc(x['Nombre'])}</option>`).join('');
   const tel = p && p['Teléfono'];
   modal((p ? 'Mensaje para ' + esc(ctx.nombre) : 'Mensaje para difundir'),
     `<div class="form"><label class="full">Plantilla<select class="campo" id="m-plant">${opciones}</select></label>
@@ -596,7 +721,8 @@ const ESQ = {
     {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Comprador/a', t:'text'}, {k:'ID Encuentro (opcional)', t:'sel', o:optEncuentros, lab:'Encuentro (opcional)'}, {k:'Notas', t:'area', full:1}]},
   Productos: { nombre: 'producto', clave: 'Producto', campos: [
     {k:'Producto', t:'text', req:1, full:1}, {k:'Categoría', t:'sel', o:() => L('Categorías producto')}, {k:'Costo de compra', t:'money'},
-    {k:'Precio de venta', t:'money'}, {k:'Unidades compradas', t:'num'}, {k:'Stock mínimo', t:'num'}, {k:'Notas', t:'area', full:1}]},
+    {k:'Precio de venta', t:'money'}, {k:'Unidades compradas', t:'num'}, {k:'Stock mínimo', t:'num'},
+    {k:'Imagen', t:'foto', full:1, publica:1}, {k:'Notas', t:'area', full:1}]},
   Insumos: { nombre: 'insumo', clave: 'Insumo', campos: [
     {k:'Insumo', t:'text', req:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de insumo'), def:'Consumible'}, {k:'Unidad', t:'text', def:'unidades'}, {k:'Costo unitario', t:'money'},
     {k:'Stock actual', t:'num'}, {k:'Stock mínimo', t:'num'},
@@ -1259,9 +1385,12 @@ V.hoy = () => {
   h += T.length ? '<ul class="tareas">' + T.map(t => `<li class="tarea"><span class="ico" aria-hidden="true">${t.ico}</span><div class="txt">${t.txt}${t.sub ? `<small>${t.sub}</small>` : ''}</div><div class="bt">${t.bt}</div></li>`).join('') + '</ul>'
     : '<p class="ayuda">No hay pendientes para hoy. Buen momento para planear el próximo encuentro.</p>';
 
-  const ad = arcanoDelDia();
-  h += `<div class="arcano-dia"><div class="num">${ad.n}</div><div><div class="nom">${ad.nombre}</div><small>Arcano del día, para compartir en estados o Instagram</small></div>
-    <div class="bt"><button class="btn-sec oro" type="button" data-msg="||${abierto ? esc(abierto['ID Encuentro']) : ''}|" data-plant="arcano_dia">Armar mensaje</button></div></div>`;
+  const ad = arcanoDelDia(), lu = proximaLuna();
+  h += `<div class="astro">
+    <div class="arcano-dia"><div class="mini-carta" aria-hidden="true"><span>${romanoN(ad.n)}</span><i>✦</i></div><div><small>Arcano del día</small><div class="nom">${ad.nombre}</div><p>${esc(DIA[ad.n][0])}</p></div>
+      <div class="bt"><button class="btn-sec oro" type="button" data-msg="||${abierto ? esc(abierto['ID Encuentro']) : ''}|" data-plant="arcano_dia">Armar mensaje</button></div></div>
+    ${lu ? `<div class="arcano-dia"><div class="mini-luna${lu.llena ? ' llena' : ''}" aria-hidden="true"></div><div><small>${new Date(lu.fecha).toDateString() === new Date().toDateString() ? 'Hoy' : fechaLarga(lu.fecha)}</small><div class="nom">${lu.llena ? 'Luna llena' : 'Luna nueva'} en ${lu.signo}</div><p>Buen momento para ${esc(SIGNOS[lu.signo].fav[0])}.</p></div>
+      <div class="bt"><button class="btn-sec oro" type="button" data-msg="||${abierto ? esc(abierto['ID Encuentro']) : ''}|" data-plant="luna">Armar mensaje</button></div></div>` : ''}</div>`;
 
   h += `<section class="balanza" aria-label="Reparto de ganancias"><div class="neta">Ganancia neta<strong>${esc(r['GANANCIA NETA'] || '$0')}</strong></div>
     <div class="platillos"><div class="platillo"><div class="quien">Belu</div><div class="monto">${esc(r['Parte Belu'] || '$0')}</div><div class="detalle">Tiene en mano ${esc(r['Belu tiene en mano'] || '$0')}</div></div>
@@ -1278,15 +1407,18 @@ V.hoy = () => {
   return h;
 };
 
+let CACHE_LUNAS = [];
 function itemsDelDia(d){
   const k = iso(d), out = [];
   H('Encuentros').forEach(t => { const f = fecha(t['Fecha']); if (f && iso(f) === k && t['Estado'] !== 'Cancelado') out.push({ tipo:'encuentro', txt: t['Nombre / temática'] + (t['Hora'] ? ' · ' + t['Hora'] : ''), ref: t }); });
   H('Eventos').forEach(e => { const a = fecha(e['Fecha']); if (!a) return; const b = fecha(e['Hasta']) || a; if (d >= a && d <= b) out.push({ tipo:'evento', txt: e['Título'], sub: e['Tipo'], ref: e }); });
   H('Personas').forEach(p => { const n = fecha(p['Fecha de nacimiento']); if (n && n.getDate() === d.getDate() && n.getMonth() === d.getMonth()) out.push({ tipo:'cumple', txt: '🎂 ' + p['Nombre completo'], ref: p }); });
+  CACHE_LUNAS.forEach(l => { const f = new Date(l.fecha); if (f.getFullYear() === d.getFullYear() && f.getMonth() === d.getMonth() && f.getDate() === d.getDate()) out.push({ tipo:'luna', txt: (l.llena ? '🌕 Luna llena en ' : '🌑 Luna nueva en ') + l.signo, sub: 'Buen momento para ' + SIGNOS[l.signo].fav.join(', '), ref: {} }); });
   return out;
 }
 V.calendario = () => {
   const y = CAL.y, m = CAL.m, primero = new Date(y, m, 1), ini = (primero.getDay() + 6) % 7;
+  CACHE_LUNAS = lunas(new Date(y, m - 1, 20), new Date(y, m + 2, 10));
   let h = cabeza('Calendario', btnNuevo('Eventos', 'Agregar evento o campaña'));
   h += '<p class="ayuda">Encuentros, campañas, fechas especiales y cumpleaños. Tocá un día para ver el detalle.</p>';
   h += `<div class="cal-nav"><button class="btn-sec" type="button" data-cal="-1" aria-label="Mes anterior">‹</button><b>${MESES[m]} ${y}</b><button class="btn-sec" type="button" data-cal="1" aria-label="Mes siguiente">›</button><button class="btn-sec" type="button" data-cal="0">Hoy</button></div>`;
@@ -1298,7 +1430,7 @@ V.calendario = () => {
     const cls = ['dia', d.getMonth() !== m ? 'fuera' : '', iso(d) === iso(HOY) ? 'hoy' : '', CAL.sel === iso(d) ? 'sel' : ''].join(' ');
     h += `<button type="button" class="${cls}" data-dia="${iso(d)}" aria-label="${d.getDate()} de ${MESES[d.getMonth()]}${it.length ? ', ' + it.length + ' eventos' : ''}"><span class="n">${d.getDate()}</span>${it.slice(0,3).map(x => `<span class="ev ${x.tipo}">${esc(x.txt)}</span>`).join('')}${it.length > 3 ? `<span class="ev evento">+${it.length - 3}</span>` : ''}</button>`;
   }
-  h += '</div><div class="leyenda"><span><i style="background:var(--oro)"></i>Encuentros</span><span><i style="background:var(--lila)"></i>Eventos y campañas</span><span><i style="background:var(--ok)"></i>Cumpleaños</span></div>';
+  h += '</div><div class="leyenda"><span><i style="background:var(--oro)"></i>Encuentros</span><span><i style="background:var(--lila)"></i>Eventos y campañas</span><span><i style="background:var(--ok)"></i>Cumpleaños</span><span><i style="background:#9AA5F0"></i>Lunas</span></div>';
 
   if (CAL.sel) {
     const d = new Date(CAL.sel + 'T00:00:00'), it = itemsDelDia(d);
@@ -1308,6 +1440,7 @@ V.calendario = () => {
       if (x.tipo === 'evento') bt = acciones('Eventos', x.ref);
       if (x.tipo === 'encuentro') bt = `<button class="btn-sec" type="button" data-editar="Encuentros|${x.ref._fila}">Editar</button>`;
       if (x.tipo === 'cumple') bt = btnWA(x.ref['ID Persona'], 'cumpleanos', '', '', 'Saludo de cumpleaños');
+      if (x.tipo === 'luna') bt = `<button class="btn-sec oro" type="button" data-msg="|||" data-plant="luna">Armar mensaje</button>`;
       return `<li class="tarea"><div class="txt">${esc(x.txt)}${x.sub ? `<small>${esc(x.sub)}</small>` : ''}${x.ref['Detalle'] ? `<small>${esc(x.ref['Detalle'])}</small>` : ''}</div><div class="bt">${bt}</div></li>`;
     }).join('') + '</ul>' : '<p class="ayuda">Nada agendado ese día.</p>';
     h += `<p style="margin-top:12px">${btnNuevo('Eventos', 'Agregar evento este día', { 'Fecha': CAL.sel })} ${btnNuevo('Encuentros', 'Agendar encuentro este día', { 'Fecha': CAL.sel })}</p>`;
@@ -1315,9 +1448,10 @@ V.calendario = () => {
 
   // Agenda de los próximos 30 días
   const ag = [];
+  CACHE_LUNAS = CACHE_LUNAS.concat(lunasRango(32));
   for (let i = 0; i <= 30; i++) { const d = new Date(HOY.getFullYear(), HOY.getMonth(), HOY.getDate() + i); itemsDelDia(d).forEach(x => ag.push({ d, x })); }
   h += '<h3>Próximos 30 días</h3>';
-  h += ag.length ? '<ul class="tareas">' + ag.map(a => `<li class="tarea"><span class="ico" aria-hidden="true">${a.x.tipo === 'encuentro' ? '🕯️' : a.x.tipo === 'cumple' ? '🎂' : '✦'}</span><div class="txt">${esc(a.x.txt.replace('🎂 ', ''))}<small>${lindaFecha(a.d)}${a.x.sub ? ', ' + esc(a.x.sub) : ''}</small></div></li>`).join('') + '</ul>' : '<p class="ayuda">No hay nada en los próximos 30 días.</p>';
+  h += ag.length ? '<ul class="tareas">' + ag.map(a => `<li class="tarea"><span class="ico" aria-hidden="true">${a.x.tipo === 'encuentro' ? '🕯️' : a.x.tipo === 'cumple' ? '🎂' : a.x.tipo === 'luna' ? '' : '✦'}</span><div class="txt">${esc(a.x.txt.replace('🎂 ', ''))}<small>${lindaFecha(a.d)}${a.x.sub ? ', ' + esc(a.x.sub) : ''}</small></div></li>`).join('') + '</ul>' : '<p class="ayuda">No hay nada en los próximos 30 días.</p>';
   return h;
 };
 

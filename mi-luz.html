@@ -113,6 +113,18 @@ h3{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:48px 0 14px;
 .opinar textarea{width:100%;min-height:80px;border-radius:10px;border:1px solid var(--lila-suave);background:var(--noche);padding:10px 12px;resize:vertical}
 .opinar label.check{display:flex;gap:8px;align-items:flex-start;color:var(--bruma);font-size:.92rem;margin:10px 0 14px}
 .opinar label.check input{accent-color:var(--oro);margin-top:4px}
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background-image:radial-gradient(1px 1px at 12% 18%,#fff6dd,transparent),radial-gradient(1px 1px at 27% 72%,#e9dcff,transparent),radial-gradient(1.5px 1.5px at 43% 33%,#fff6dd,transparent),radial-gradient(1px 1px at 58% 84%,#fff,transparent),radial-gradient(1px 1px at 71% 12%,#e9dcff,transparent),radial-gradient(1.5px 1.5px at 86% 46%,#fff6dd,transparent),radial-gradient(1px 1px at 93% 78%,#fff,transparent),radial-gradient(1px 1px at 6% 58%,#fff6dd,transparent),radial-gradient(1px 1px at 35% 92%,#e9dcff,transparent),radial-gradient(1px 1px at 64% 52%,#fff,transparent);opacity:.6}
+body::after{background-image:radial-gradient(1px 1px at 18% 40%,#fff,transparent),radial-gradient(1.5px 1.5px at 52% 8%,#fff6dd,transparent),radial-gradient(1px 1px at 79% 64%,#e9dcff,transparent),radial-gradient(1px 1px at 9% 88%,#fff,transparent),radial-gradient(1.5px 1.5px at 38% 58%,#fff6dd,transparent),radial-gradient(1px 1px at 90% 24%,#fff,transparent);opacity:.35}
+@media (prefers-reduced-motion:no-preference){ body::before{animation:titilar 7s ease-in-out infinite alternate} body::after{animation:titilar 5s ease-in-out 2s infinite alternate-reverse} @keyframes titilar{from{opacity:.15}to{opacity:.65}} }
+.luna-caja{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;border:1px solid var(--linea);border-radius:16px;padding:18px;background:var(--ciruela)}
+.luna-caja small{color:var(--lila)}
+.luna-caja h4{font-family:var(--serif);font-size:1.45rem;margin:2px 0 6px}
+.luna-caja p{margin:0 0 8px;color:var(--bruma);font-size:.95rem}
+.luna-caja b{color:var(--oro);font-weight:500}
+.luna-dibujo{width:74px;height:74px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a2a55,#1a0f2b 70%);box-shadow:inset -10px -8px 0 rgba(0,0,0,.25),0 0 0 1px var(--oro-suave)}
+.luna-dibujo.llena{background:radial-gradient(circle at 38% 35%,#fffaf0,#f1dfb0 55%,#c9a764);box-shadow:0 0 22px 6px rgba(243,220,160,.45),0 0 60px 14px rgba(212,175,106,.18)}
+@media (prefers-reduced-motion:no-preference){ .luna-dibujo.llena{animation:respira 4s ease-in-out infinite} @keyframes respira{50%{box-shadow:0 0 30px 10px rgba(243,220,160,.55),0 0 80px 20px rgba(212,175,106,.24)}} }
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -162,7 +174,73 @@ const ARTE = {
   'Producto': `<svg viewBox="0 0 200 120" aria-hidden="true">${G}<g stroke="#F3DCA0" stroke-width="1.2"><path d="M80 108l12-62 14 62z" fill="url(#li)"/><path d="M98 108l14-78 16 78z" fill="url(#li)"/><path d="M66 108l9-38 10 38z" fill="url(#li)"/><path d="M122 108l10-44 11 44z" fill="url(#li)"/></g><rect x="56" y="106" width="96" height="6" rx="3" fill="url(#go)"/><path d="M150 30l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="url(#go)"/></svg>`
 };
 ARTE['Otro'] = ARTE['Nuevas fechas'];
+ARTE['Instagram'] = `<svg viewBox="0 0 200 120" aria-hidden="true">${G}<rect x="70" y="20" width="60" height="80" rx="16" fill="none" stroke="url(#go)" stroke-width="5"/><circle cx="100" cy="60" r="16" fill="none" stroke="url(#go)" stroke-width="5"/><circle cx="118" cy="34" r="4" fill="#F3DCA0"/><g fill="#D9B8FF"><path d="M40 40l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><path d="M160 78l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></g></svg>`;
+function artePara(tipo, i){ return (ARTE[tipo] || ARTE.Otro).replace(/id="(go|li)"/g, 'id="$1' + i + '"').replace(/url\(#(go|li)\)/g, 'url(#$1' + i + ')'); }
 function chispas(n){ let h = ''; for (let i = 0; i < n; i++) h += `<span class="chispa" style="left:${(i * 37 + 11) % 95}%;top:${(i * 53 + 7) % 80}%;animation-delay:${(i * .7) % 3}s"></span>`; return h; }
+
+// Fases lunares (Meeus, cap. 49) y signo zodiacal (longitud solar)
+const RAD = Math.PI / 180;
+function faseJDE(k, llena){
+  const T = k / 1236.85, T2 = T*T;
+  let jde = 2451550.09766 + 29.530588861*k + 0.00015437*T2 - 0.00000015*T2*T;
+  const E = 1 - 0.002516*T - 0.0000074*T2;
+  const M = (2.5534 + 29.10535670*k - 0.0000014*T2) * RAD;
+  const Mp = (201.5643 + 385.81693528*k + 0.0107582*T2) * RAD;
+  const F = (160.7108 + 390.67050284*k - 0.0016118*T2) * RAD;
+  const O = (124.7746 - 1.56375588*k + 0.0020672*T2) * RAD;
+  const s = Math.sin;
+  const c = llena
+    ? [-0.40614*s(Mp), 0.17302*E*s(M), 0.01614*s(2*Mp), 0.01043*s(2*F), 0.00734*E*s(Mp-M), -0.00515*E*s(Mp+M), 0.00209*E*E*s(2*M), -0.00111*s(Mp-2*F), -0.00057*s(Mp+2*F), 0.00056*E*s(2*Mp+M), -0.00042*s(3*Mp), 0.00042*E*s(M+2*F), 0.00038*E*s(M-2*F), -0.00024*E*s(2*Mp-M), -0.00017*s(O)]
+    : [-0.40720*s(Mp), 0.17241*E*s(M), 0.01608*s(2*Mp), 0.01039*s(2*F), 0.00739*E*s(Mp-M), -0.00514*E*s(Mp+M), 0.00208*E*E*s(2*M), -0.00111*s(Mp-2*F), -0.00057*s(Mp+2*F), 0.00056*E*s(2*Mp+M), -0.00042*s(3*Mp), 0.00042*E*s(M+2*F), 0.00038*E*s(M-2*F), -0.00024*E*s(2*Mp-M), -0.00017*s(O)];
+  return jde + c.reduce((a, b) => a + b, 0);
+}
+function longSol(jd){
+  const T = (jd - 2451545) / 36525;
+  const L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T;
+  const M = (357.52911 + 35999.05029*T - 0.0001537*T*T) * RAD;
+  const C = (1.914602 - 0.004817*T)*Math.sin(M) + (0.019993 - 0.000101*T)*Math.sin(2*M) + 0.000289*Math.sin(3*M);
+  const l = L0 + C - 0.00569 - 0.00478*Math.sin((125.04 - 1934.136*T)*RAD);
+  return ((l % 360) + 360) % 360;
+}
+const ZOD = ['Aries','Tauro','Géminis','Cáncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capricornio','Acuario','Piscis'];
+function lunas(desde, hasta){
+  const out = [], a = desde.getFullYear() + desde.getMonth()/12;
+  for (let k = Math.floor((a - 2000) * 12.3685) - 1; ; k++) {
+    for (const llena of [false, true]) {
+      const jde = faseJDE(k + (llena ? .5 : 0), llena);
+      const f = new Date((jde - 2440587.5) * 86400000 - 69000);
+      if (f > hasta) return out;
+      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; out.push({ fecha: f, llena, signo: ZOD[Math.floor(ml / 30)], grado: ml % 30 }); }
+    }
+  }
+}
+
+const SIGNOS = {
+ 'Aries': { area: 'la identidad, el coraje y la iniciativa', fav: ['empezar proyectos personales', 'retomar la actividad física', 'animarte a un cambio de look'], ojo: 'las reacciones impulsivas' },
+ 'Tauro': { area: 'el dinero, el cuerpo y el disfrute', fav: ['ordenar las finanzas y ahorrar', 'tratamientos de belleza y cuidado de la piel', 'comprar cosas duraderas'], ojo: 'los gastos por ansiedad' },
+ 'Géminis': { area: 'la comunicación, el aprendizaje y los trámites', fav: ['conversaciones pendientes', 'empezar un curso', 'trámites y papeles simples'], ojo: 'dispersarte en mil cosas' },
+ 'Cáncer': { area: 'el hogar, la familia y las emociones', fav: ['ordenar y limpiar la casa', 'encuentros familiares', 'limpiezas energéticas del hogar'], ojo: 'tomarte todo de forma personal' },
+ 'Leo': { area: 'la creatividad, la autoestima y el disfrute', fav: ['cambios de imagen', 'mostrar tu trabajo', 'celebrar'], ojo: 'depender de la aprobación ajena' },
+ 'Virgo': { area: 'la salud, las rutinas y el trabajo', fav: ['empezar hábitos saludables', 'depurar y hacer detox', 'organizar el trabajo'], ojo: 'la autoexigencia' },
+ 'Libra': { area: 'los vínculos, los acuerdos y la belleza', fav: ['cerrar acuerdos y sociedades', 'tratamientos estéticos', 'reconciliaciones'], ojo: 'postergar decisiones por no incomodar' },
+ 'Escorpio': { area: 'la transformación, la intimidad y los recursos compartidos', fav: ['soltar lo que ya no va', 'procesos terapéuticos profundos', 'revisar deudas y cuentas compartidas'], ojo: 'los celos y el control' },
+ 'Sagitario': { area: 'la expansión, los viajes y el sentido de la vida', fav: ['planear viajes', 'estudiar', 'trámites legales'], ojo: 'prometer de más' },
+ 'Capricornio': { area: 'las metas, el trabajo y la estructura', fav: ['firmar contratos importantes', 'planificar metas a largo plazo', 'presentar propuestas laborales'], ojo: 'la rigidez' },
+ 'Acuario': { area: 'las amistades, la comunidad y lo nuevo', fav: ['proyectos grupales', 'probar algo distinto', 'difundir y conectar en redes'], ojo: 'desconectarte de lo que sentís' },
+ 'Piscis': { area: 'la espiritualidad, la intuición y la sanación', fav: ['meditación y rituales', 'descanso', 'arte y música'], ojo: 'firmar sin leer la letra chica' }
+};
+
+function proximaLuna(){ const hoy = new Date(); hoy.setHours(0,0,0,0); const h = new Date(hoy); h.setDate(h.getDate() + 32); const d = new Date(hoy); d.setDate(d.getDate() - 1); return lunas(d, h).find(x => { const f = new Date(x.fecha); f.setHours(0,0,0,0); return f >= hoy; }) || null; }
+
+// Novedades: promociones cargadas + próximos encuentros + productos con foto + Instagram
+let SLIDES = [];
+function armarSlides(){
+  const L2 = P.promos.map(x => Object.assign({ accion: x.tipo === 'Nuevas fechas' ? 'fechas' : 'promo' }, x));
+  P.encuentros.filter(e => !e.inscripta && !P.pedidos.includes(e.id)).slice(0, 2).forEach(e => L2.push({ titulo: e.nombre, frase: cuando(e.fecha) + (e.hora ? ', ' + e.hora + ' h' : '') + (e.lugares <= 3 ? ' · ¡quedan ' + e.lugares + (e.lugares === 1 ? ' lugar!' : ' lugares!') : ''), tipo: 'Nuevas fechas', boton: 'Quiero mi lugar', accion: 'reservar', ref: e.id }));
+  P.productos.filter(x => x.imagen && !P.pedidos.includes(x.nombre)).slice(0, 3).forEach(x => L2.push({ titulo: x.nombre, frase: (x.categoria ? x.categoria + ' · ' : '') + x.precio, tipo: 'Producto', imagen: x.imagen, boton: 'Me interesa', accion: 'producto', ref: x.nombre }));
+  if (P.instagram) L2.push({ titulo: 'Seguinos en Instagram', frase: 'Lecturas del día, lunas, fechas nuevas y todo lo que pasa en Luz Guía.', tipo: 'Instagram', boton: '@' + ((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [, 'luzguia'])[1]), accion: 'link', ref: P.instagram });
+  return L2;
+}
 
 function completar(a){ if (!a || !a.n) return a; a.nombre = a.nombre || NOM[+a.n]; a.texto = a.texto || SIG[+a.n]; return a; }
 
@@ -177,13 +255,18 @@ function error(msg){ $('estado').className = ''; $('estado').innerHTML = `<img d
 
 async function cargar(){
   if (!CODIGO) return error('Este enlace está incompleto. Pedile el tuyo a Luz Guía.');
+  let d;
   try {
     const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(CODIGO));
-    const d = await r.json();
+    const txt = await r.text();
+    try { d = JSON.parse(txt); } catch (x) { console.error(txt); return error('Luz Guía respondió algo inesperado. Avisales a Belu o Mey para que lo revisen.'); }
+  } catch (e) { console.error(e); return error('No pudimos conectar con Luz Guía. Revisá tu conexión y volvé a intentar.'); }
+  try {
     if (!d.ok) return error(d.error === 'Enlace no válido' ? 'Este enlace no es válido. Pedile el tuyo a Luz Guía.' : 'No pudimos abrir tu espacio (' + (d.error || 'error desconocido') + ').');
-    P = d; setTimeout(auto, 50); P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; pintar();
+    P = d; P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; P.promos = P.promos || []; P.paraOpinar = P.paraOpinar || [];
+    pintar(); setTimeout(auto, 50);
     $('estado').classList.add('oculto'); $('portal').classList.remove('oculto');
-  } catch (e) { console.error(e); error('No pudimos conectar con Luz Guía. Revisá tu conexión y volvé a intentar.'); }
+  } catch (e) { console.error(e); error('Hubo un problema al mostrar tu espacio (' + (e.message || e) + '). Avisales a Belu o Mey.'); }
 }
 
 function pintar(){
@@ -213,13 +296,23 @@ function pintar(){
       <p class="ciclo-txt">${anio} es un año universal ${u}. Tu arcano de nacimiento es la raíz; el del año es la estación que estás atravesando.</p>`;
   }
 
-  if (P.promos && P.promos.length) {
-    h += `<h3>Novedades</h3><div class="carrusel" id="carrusel" aria-roledescription="carrusel">${P.promos.map((x, i) => `
-      <article class="slide${i === 0 ? ' activa' : ''}" aria-label="${i + 1} de ${P.promos.length}">
-        <div class="arte">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(ARTE['${esc(x.tipo)}'] || ARTE.Otro))">` : (ARTE[x.tipo] || ARTE.Otro)}${chispas(7)}</div>
+  const lu = proximaLuna();
+  if (lu) {
+    const g = SIGNOS[lu.signo], f = new Date(lu.fecha), esHoy = f.toDateString() === new Date().toDateString();
+    h += `<h3>La luna de estos días</h3><div class="luna-caja"><div class="luna-dibujo${lu.llena ? ' llena' : ''}" aria-hidden="true"></div><div>
+      <small>${esHoy ? 'Hoy' : DIAS[f.getDay()] + ' ' + f.getDate() + ' de ' + MESES[f.getMonth()]}</small>
+      <h4>${lu.llena ? 'Luna llena' : 'Luna nueva'} en ${lu.signo}</h4>
+      <p>${lu.llena ? 'Ilumina ' + g.area + ': tiempo de culminar, ver con claridad y soltar lo que ya no suma.' : 'Abre un nuevo ciclo en ' + g.area + ': tiempo de sembrar intenciones y empezar.'}</p>
+      <p><b>Buen momento para:</b> ${g.fav.join(', ')}.<br><b>Cuidado con:</b> ${g.ojo}.</p></div></div>`;
+  }
+  SLIDES = armarSlides();
+  if (SLIDES.length) {
+    h += `<h3>Novedades</h3><div class="carrusel" id="carrusel" aria-roledescription="carrusel">${SLIDES.map((x, i) => `
+      <article class="slide${i === 0 ? ' activa' : ''}" aria-label="${i + 1} de ${SLIDES.length}">
+        <div class="arte">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(artePara('${esc(x.tipo)}', ${i})))">` : artePara(x.tipo, i)}${chispas(7)}</div>
         <div class="cuerpo"><h4>${esc(x.titulo)}</h4><p>${esc(x.frase)}</p>
         <button class="btn" type="button" data-promo="${i}">${esc(x.boton || (x.tipo === 'Nuevas fechas' ? 'Ver fechas' : 'Quiero saber más'))}</button></div></article>`).join('')}
-      ${P.promos.length > 1 ? `<div class="puntos">${P.promos.map((x, i) => `<button type="button" data-ir="${i}" aria-label="Novedad ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div>` : ''}</div>`;
+      ${SLIDES.length > 1 ? `<div class="puntos">${SLIDES.map((x, i) => `<button type="button" data-ir="${i}" aria-label="Novedad ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div>` : ''}</div>`;
   }
 
   h += '<h3 id="encuentros">Próximos encuentros</h3>';
@@ -292,7 +385,7 @@ function irA(i){
   sl.forEach((x, k) => x.classList.toggle('activa', k === SL));
   c.querySelectorAll('.puntos button').forEach((x, k) => x.setAttribute('aria-current', k === SL ? 'true' : 'false'));
 }
-function auto(){ clearInterval(TIMER); if (P && P.promos && P.promos.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) TIMER = setInterval(() => irA(SL + 1), 6500); }
+function auto(){ clearInterval(TIMER); if (SLIDES.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) TIMER = setInterval(() => irA(SL + 1), 6500); }
 let tx = null;
 document.addEventListener('touchstart', e => { if (e.target.closest('#carrusel')) tx = e.touches[0].clientX; }, { passive: true });
 document.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(d) > 40) { irA(SL + (d < 0 ? 1 : -1)); auto(); } });
@@ -301,8 +394,11 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.ir !== undefined) { irA(+b.dataset.ir); auto(); return; }
   if (b.dataset.promo !== undefined) {
-    const x = P.promos[+b.dataset.promo];
-    if (x.tipo === 'Nuevas fechas') { $('encuentros').scrollIntoView({ behavior: 'smooth' }); return; }
+    const x = SLIDES[+b.dataset.promo];
+    if (x.accion === 'fechas') { $('encuentros').scrollIntoView({ behavior: 'smooth' }); return; }
+    if (x.accion === 'reservar') { const en = P.encuentros.find(e => e.id === x.ref); pedir('Encuentro', en.id, en.nombre + ' (' + cuando(en.fecha) + ')'); return; }
+    if (x.accion === 'producto') { pedir('Producto', x.ref, x.ref); return; }
+    if (x.accion === 'link') { window.open(x.ref, '_blank', 'noopener'); return; }
     pedir('Promoción', x.titulo, x.titulo); return;
   }
   if (b.dataset.estrella) {
