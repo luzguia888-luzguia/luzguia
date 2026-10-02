@@ -797,18 +797,27 @@ async function subirFoto(arch, publica){
   return d.id;
 }
 async function verFoto(ref){
-  modal('Comprobante', '<p class="ayuda">Cargando…</p>', '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
-  try {
-    const r = await fetch(API + '?clave=' + encodeURIComponent(CLAVE) + '&accion=foto&id=' + encodeURIComponent(ref));
-    const d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-    const src = 'data:' + d.mime + ';base64,' + d.base64;
-    const idD = (String(ref).match(/[-\w]{25,}/) || [''])[0];
-    $('modal-pie').innerHTML = (idD ? `<a class="btn-sec" href="https://drive.google.com/file/d/${idD}/view" target="_blank" rel="noopener">Abrir en Drive</a>` : '') + '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>';
-    $('modal-cuerpo').innerHTML = /pdf$/.test(d.mime)
-      ? `<p class="ayuda">Es un PDF.</p><a class="btn" download="comprobante.pdf" href="${src}">Descargar PDF</a>`
-      : `<img class="comprobante-img" alt="Comprobante" src="${src}">`;
-  } catch (e) { $('modal-cuerpo').innerHTML = `<p class="error">${esc(e.message || 'No se pudo abrir el comprobante.')}</p>`; }
+  const id = (String(ref).match(/[-\w]{25,}/) || [''])[0];
+  const pie = (id ? `<a class="btn-sec" href="https://drive.google.com/file/d/${id}/view" target="_blank" rel="noopener">Abrir en Drive</a>` : '') + '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>';
+  if (/\/folders\//.test(ref)) { modal('Comprobante', '<p class="error">Ese enlace es de una carpeta, no de un ticket. Abrí el ticket en Drive, tocá "Compartir → Copiar enlace" y pegá ese enlace en el gasto.</p>', pie); return; }
+  if (!id) { modal('Comprobante', '<p class="error">El enlace guardado no es válido. Editá el gasto y pegá de nuevo el enlace del ticket.</p>', pie); return; }
+  modal('Comprobante', '<p class="ayuda" id="foto-estado">Cargando…</p><img class="comprobante-img oculto" id="foto-img" alt="Comprobante">', pie);
+  const img = $('foto-img');
+  // 1) Directo desde Drive (funciona si el archivo o su carpeta se comparten con "cualquiera con el enlace")
+  img.onload = () => { img.classList.remove('oculto'); $('foto-estado').remove(); };
+  img.onerror = async () => {
+    img.onerror = null;
+    // 2) Si no, se lo pedimos al script (sirve aunque sea privado)
+    try {
+      const r = await fetch(API + '?clave=' + encodeURIComponent(CLAVE) + '&accion=foto&id=' + encodeURIComponent(id));
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error);
+      const src = 'data:' + d.mime + ';base64,' + d.base64;
+      if (/pdf$/.test(d.mime)) $('modal-cuerpo').innerHTML = `<p class="ayuda">Es un PDF.</p><a class="btn" download="comprobante.pdf" href="${src}">Descargar PDF</a>`;
+      else { img.src = src; }
+    } catch (e) { if ($('foto-estado')) $('foto-estado').outerHTML = `<p class="error">${esc(e.message || 'No se pudo abrir el comprobante.')}</p><p class="ayuda">Probá con "Abrir en Drive".</p>`; }
+  };
+  img.src = 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600';
 }
 
 function modal(titulo, cuerpo, pie){
