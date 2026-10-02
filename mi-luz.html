@@ -69,6 +69,8 @@ h3{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:48px 0 14px;
 .wa svg{width:20px;height:20px}
 .ig{display:inline-flex;align-items:center;gap:8px;color:var(--noche);text-decoration:none;border-radius:10px;padding:11px 18px;font-weight:600;background:linear-gradient(90deg,var(--lila),var(--oro))}
 .ig svg{width:20px;height:20px}
+.ayuda-ig{color:var(--oro);font-size:.9rem;text-align:center;margin:10px 0 0}
+dialog .ig{border:0;cursor:pointer;font:inherit}
 .contacto{text-align:center;margin-top:48px;color:var(--bruma)}
 .contacto p{margin:0 0 14px}
 .vacio{color:var(--bruma)}
@@ -180,8 +182,9 @@ const ARTE = {
   'Producto': `<svg viewBox="0 0 200 120" aria-hidden="true">${G}<g stroke="#F3DCA0" stroke-width="1.2"><path d="M80 108l12-62 14 62z" fill="url(#li)"/><path d="M98 108l14-78 16 78z" fill="url(#li)"/><path d="M66 108l9-38 10 38z" fill="url(#li)"/><path d="M122 108l10-44 11 44z" fill="url(#li)"/></g><rect x="56" y="106" width="96" height="6" rx="3" fill="url(#go)"/><path d="M150 30l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="url(#go)"/></svg>`
 };
 ARTE['Otro'] = ARTE['Nuevas fechas'];
+ARTE['Akáshicos'] = `<svg viewBox="0 0 200 120" aria-hidden="true">${G}<path d="M100 96c-16-8-34-10-52-8V30c18-2 36 0 52 8z" fill="url(#li)" stroke="#F3DCA0" stroke-width="1.5"/><path d="M100 96c16-8 34-10 52-8V30c-18-2-36 0-52 8z" fill="url(#li)" stroke="#F3DCA0" stroke-width="1.5"/><path d="M100 38v58" stroke="#F3DCA0" stroke-width="1.5"/><g stroke="#F3DCA0" stroke-width="1" opacity=".7"><path d="M60 46c12-1 24 1 32 5M60 56c12-1 24 1 32 5M60 66c12-1 24 1 32 5M108 51c8-4 20-6 32-5M108 61c8-4 20-6 32-5M108 71c8-4 20-6 32-5"/></g><path d="M100 8l4 12 12 4-12 4-4 12-4-12-12-4 12-4z" fill="url(#go)"/><g fill="#F3DCA0"><circle cx="58" cy="18" r="1.8"/><circle cx="146" cy="16" r="1.5"/><circle cx="168" cy="60" r="1.4"/></g></svg>`;
 ARTE['Instagram'] = `<svg viewBox="0 0 200 120" aria-hidden="true">${G}<rect x="70" y="20" width="60" height="80" rx="16" fill="none" stroke="url(#go)" stroke-width="5"/><circle cx="100" cy="60" r="16" fill="none" stroke="url(#go)" stroke-width="5"/><circle cx="118" cy="34" r="4" fill="#F3DCA0"/><g fill="#D9B8FF"><path d="M40 40l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><path d="M160 78l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></g></svg>`;
-function artePara(tipo, i){ return (ARTE[tipo] || ARTE.Otro).replace(/id="(go|li)"/g, 'id="$1' + i + '"').replace(/url\(#(go|li)\)/g, 'url(#$1' + i + ')'); }
+function artePara(tipo, i, titulo){ if (/ak[aá]shic/i.test(titulo || '')) tipo = 'Akáshicos'; return (ARTE[tipo] || ARTE.Otro).replace(/id="(go|li)"/g, 'id="$1' + i + '"').replace(/url\(#(go|li)\)/g, 'url(#$1' + i + ')'); }
 function chispas(n){ let h = ''; for (let i = 0; i < n; i++) h += `<span class="chispa" style="left:${(i * 37 + 11) % 95}%;top:${(i * 53 + 7) % 80}%;animation-delay:${(i * .7) % 3}s"></span>`; return h; }
 
 // Fases lunares (Meeus, cap. 49) y signo zodiacal (longitud solar)
@@ -263,6 +266,8 @@ const waLuz = msg => P.telLuz ? 'https://wa.me/' + waNum(P.telLuz) + '?text=' + 
 
 function error(msg){ $('estado').className = ''; $('estado').innerHTML = `<img data-logo alt="" src="${document.querySelector('link[rel=icon]').href}">${esc(msg)}`; }
 
+const usuarioIG = () => P && P.instagram ? ((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1] || '') : '';
+
 function jsonp(url){
   return new Promise((ok, mal) => {
     const nombre = 'luzguia_cb_' + Date.now();
@@ -337,7 +342,7 @@ function pintar(){
   if (SLIDES.length) {
     h += `<h3>Novedades</h3><div class="carrusel" id="carrusel" aria-roledescription="carrusel">${SLIDES.map((x, i) => `
       <article class="slide${i === 0 ? ' activa' : ''}" aria-label="${i + 1} de ${SLIDES.length}">
-        <div class="arte">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(artePara('${esc(x.tipo)}', ${i})))">` : artePara(x.tipo, i)}${chispas(7)}</div>
+        <div class="arte">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(artePara('${esc(x.tipo)}', ${i}, '${esc(x.titulo).replace(/'/g, '')}')))">` : artePara(x.tipo, i, x.titulo)}${chispas(7)}</div>
         <div class="cuerpo"><h4>${esc(x.titulo)}</h4><p>${esc(x.frase)}</p>
         <button class="btn" type="button" data-promo="${i}">${esc(x.boton || (x.tipo === 'Nuevas fechas' ? 'Ver fechas' : 'Quiero saber más'))}</button></div></article>`).join('')}
       ${SLIDES.length > 1 ? `<div class="puntos">${SLIDES.map((x, i) => `<button type="button" data-ir="${i}" aria-label="Novedad ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div>` : ''}</div>`;
@@ -396,7 +401,17 @@ function pedir(tipo, ref, que){
       const wa = waLuz('Hola! Soy ' + P.nombre + '. Acabo de pedir desde mi espacio: ' + que + (mensaje ? '. ' + mensaje : '') + ' 🌙');
       $('dlg-titulo').textContent = '¡Listo! ✨';
       $('dlg-texto').textContent = 'Belu y Mey ya recibieron tu pedido y te van a escribir para confirmarlo.';
-      $('dlg-cuerpo').innerHTML = `<div class="fila-bt">${wa ? `<a class="wa" href="${wa}" target="_blank" rel="noopener">${WA_SVG} Avisarles por WhatsApp</a>` : ''}<button class="btn-sec" type="button" id="dlg-ok">Cerrar</button></div>`;
+      const ig = usuarioIG();
+      $('dlg-texto').textContent = 'Belu y Mey ya recibieron tu pedido y te van a escribir para confirmarlo. Si querés, avisales también por donde prefieras:';
+      $('dlg-cuerpo').innerHTML = `<div class="fila-bt" style="justify-content:center">${wa ? `<a class="wa" href="${wa}" target="_blank" rel="noopener">${WA_SVG} WhatsApp</a>` : ''}${ig ? `<button class="ig" type="button" id="dlg-ig">${IG_SVG} Instagram</button>` : ''}</div>
+        <p class="ayuda-ig oculto" id="dlg-ig-ok">Copiamos tu mensaje: pegalo en el chat de Instagram que se acaba de abrir ✨</p>
+        <div class="fila-bt"><button class="btn-sec" type="button" id="dlg-ok">Cerrar</button></div>`;
+      if (ig) $('dlg-ig').onclick = async () => {
+        const texto = 'Hola! Soy ' + P.nombre + '. Pedí desde mi espacio de Luz Guía: ' + que + (mensaje ? '. ' + mensaje : '') + ' 🌙';
+        try { await navigator.clipboard.writeText(texto); } catch (e) {}
+        $('dlg-ig-ok').classList.remove('oculto');
+        window.open('https://ig.me/m/' + ig, '_blank', 'noopener');
+      };
       $('dlg-ok').onclick = () => $('dlg').close();
     } catch (e) {
       b.disabled = false; b.textContent = 'Enviar pedido';
