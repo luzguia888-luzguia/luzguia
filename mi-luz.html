@@ -235,7 +235,7 @@ function proximaLuna(){ const hoy = new Date(); hoy.setHours(0,0,0,0); const h =
 // Novedades: promociones cargadas + próximos encuentros + productos con foto + Instagram
 let SLIDES = [];
 function armarSlides(){
-  const L2 = P.promos.map(x => Object.assign({ accion: x.tipo === 'Nuevas fechas' ? 'fechas' : 'promo' }, x));
+  const L2 = P.promos.map(x => Object.assign({ accion: x.tipo === 'Nuevas fechas' ? 'fechas' : x.tipo === 'Producto' && P.productos.length ? 'productos' : 'promo' }, x));
   P.encuentros.filter(e => !e.inscripta && !P.pedidos.includes(e.id)).slice(0, 2).forEach(e => L2.push({ titulo: e.nombre, frase: cuando(e.fecha) + (e.hora ? ', ' + e.hora + ' h' : '') + (e.lugares <= 3 ? ' · ¡quedan ' + e.lugares + (e.lugares === 1 ? ' lugar!' : ' lugares!') : ''), tipo: 'Nuevas fechas', boton: 'Quiero mi lugar', accion: 'reservar', ref: e.id }));
   P.productos.filter(x => x.imagen && !P.pedidos.includes(x.nombre)).slice(0, 3).forEach(x => L2.push({ titulo: x.nombre, frase: (x.categoria ? x.categoria + ' · ' : '') + x.precio, tipo: 'Producto', imagen: x.imagen, boton: 'Me interesa', accion: 'producto', ref: x.nombre }));
   if (P.instagram) L2.push({ titulo: 'Seguinos en Instagram', frase: 'Lecturas del día, lunas, fechas nuevas y todo lo que pasa en Luz Guía.', tipo: 'Instagram', boton: '@' + ((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [, 'luzguia'])[1]), accion: 'link', ref: P.instagram });
@@ -336,7 +336,7 @@ function pintar(){
   }
 
   if (P.productos.length) {
-    h += '<h3>Para llevarte</h3><div>';
+    h += '<h3 id="productos">Para llevarte</h3><div>';
     h += P.productos.map(x => {
       const pedido = P.pedidos.includes(x.nombre);
       return `<div class="producto"><div>${esc(x.nombre)}<small>${esc(x.categoria || '')}${x.categoria ? ' · ' : ''}${esc(x.precio)}</small></div>${pedido ? '<span class="hecho">Pedido ✓</span>' : `<button class="btn-sec" type="button" data-producto="${esc(x.nombre)}">Me interesa</button>`}</div>`;
@@ -396,6 +396,7 @@ document.addEventListener('click', async e => {
   if (b.dataset.promo !== undefined) {
     const x = SLIDES[+b.dataset.promo];
     if (x.accion === 'fechas') { $('encuentros').scrollIntoView({ behavior: 'smooth' }); return; }
+    if (x.accion === 'productos') { $('productos').scrollIntoView({ behavior: 'smooth' }); return; }
     if (x.accion === 'reservar') { const en = P.encuentros.find(e => e.id === x.ref); pedir('Encuentro', en.id, en.nombre + ' (' + cuando(en.fecha) + ')'); return; }
     if (x.accion === 'producto') { pedir('Producto', x.ref, x.ref); return; }
     if (x.accion === 'link') { window.open(x.ref, '_blank', 'noopener'); return; }
