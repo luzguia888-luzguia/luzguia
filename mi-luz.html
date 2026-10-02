@@ -181,7 +181,7 @@ async function cargar(){
     const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(CODIGO));
     const d = await r.json();
     if (!d.ok) return error(d.error === 'Enlace no válido' ? 'Este enlace no es válido. Pedile el tuyo a Luz Guía.' : 'No pudimos abrir tu espacio (' + (d.error || 'error desconocido') + ').');
-    P = d; setTimeout(auto, 50); P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.talleres = P.talleres || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; pintar();
+    P = d; setTimeout(auto, 50); P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; pintar();
     $('estado').classList.add('oculto'); $('portal').classList.remove('oculto');
   } catch (e) { console.error(e); error('No pudimos conectar con Luz Guía. Revisá tu conexión y volvé a intentar.'); }
 }
@@ -223,11 +223,11 @@ function pintar(){
   }
 
   h += '<h3 id="encuentros">Próximos encuentros</h3>';
-  h += P.talleres.length ? P.talleres.map(t => {
+  h += P.encuentros.length ? P.encuentros.map(t => {
     const pedido = P.pedidos.includes(t.id);
     const accion = t.inscripta ? '<span class="hecho">✓ Ya tenés tu lugar</span>'
       : pedido ? '<span class="hecho">Pedido enviado. Te escribimos pronto ✨</span>'
-      : `<button class="btn" type="button" data-taller="${esc(t.id)}">Quiero mi lugar</button>`;
+      : `<button class="btn" type="button" data-encuentro="${esc(t.id)}">Quiero mi lugar</button>`;
     return `<article class="encuentro"><h4>${esc(t.nombre)}</h4><div class="cuando">${esc(cuando(t.fecha))}${t.hora ? ', ' + esc(t.hora) + ' h' : ''}</div>
       <div class="datos">${esc(t.formato)}${t.precio ? ' · ' + esc(t.precio) : ''}${!t.inscripta ? ' · ' + (t.lugares === 1 ? 'queda 1 lugar' : 'quedan ' + t.lugares + ' lugares') : ''}</div>${accion}</article>`;
   }).join('') : '<p class="vacio">Pronto anunciamos nuevos encuentros. Te avisamos 🌙</p>';
@@ -258,7 +258,7 @@ function pintar(){
 }
 
 function pedir(tipo, ref, que){
-  $('dlg-titulo').textContent = tipo === 'Taller' ? 'Reservar tu lugar' : 'Me interesa';
+  $('dlg-titulo').textContent = tipo === 'Encuentro' ? 'Reservar tu lugar' : 'Me interesa';
   $('dlg-texto').textContent = que + '. Si querés, dejanos un mensaje.';
   $('dlg-cuerpo').innerHTML = `<label for="dlg-msg" class="oculto">Mensaje</label><textarea id="dlg-msg" maxlength="500" placeholder="Opcional"></textarea>
     <div class="fila-bt"><button class="btn-sec" type="button" id="dlg-cancelar">Cancelar</button><button class="btn" type="button" id="dlg-enviar">Enviar pedido</button></div>`;
@@ -315,13 +315,13 @@ document.addEventListener('click', async e => {
     const puntaje = +(caja.querySelector('.estrellas').dataset.valor || 5);
     b.disabled = true; b.textContent = 'Enviando…';
     try {
-      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'testimonio', codigo: CODIGO, taller: b.dataset.enviarOp, puntaje, comentario: caja.querySelector('textarea').value.trim(), proximo: caja.querySelector('textarea.proximo').value.trim(), publicar: caja.querySelector('input[type=checkbox]').checked }) });
+      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'testimonio', codigo: CODIGO, encuentro: b.dataset.enviarOp, puntaje, comentario: caja.querySelector('textarea').value.trim(), proximo: caja.querySelector('textarea.proximo').value.trim(), publicar: caja.querySelector('input[type=checkbox]').checked }) });
       const d = await r.json(); if (!d.ok) throw new Error(d.error);
       caja.innerHTML = '<h4>¡Gracias por contarnos! 💜</h4><p style="color:var(--bruma);margin:0">Tu opinión nos ayuda a seguir creando encuentros con sentido.</p>';
     } catch (err) { b.disabled = false; b.textContent = 'Probar de nuevo'; }
     return;
   }
-  if (b.dataset.taller) { const t = P.talleres.find(x => x.id === b.dataset.taller); pedir('Taller', t.id, t.nombre + ' (' + cuando(t.fecha) + ')'); }
+  if (b.dataset.encuentro) { const t = P.encuentros.find(x => x.id === b.dataset.encuentro); pedir('Encuentro', t.id, t.nombre + ' (' + cuando(t.fecha) + ')'); }
   if (b.dataset.producto) pedir('Producto', b.dataset.producto, b.dataset.producto);
 });
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
