@@ -399,7 +399,7 @@ function revisarMonto(v, que){
   if (!(v > 0 && v < 1000)) return v;
   return confirm((que ? que + ': e' : 'E') + 'scribiste $' + v + '. ¿Quisiste decir ' + pesos(v * 1000) + '?\n\nAceptar: guardar ' + pesos(v * 1000) + '\nCancelar: dejar $' + v) ? v * 1000 : v;
 }
-const pesos = n => '$' + Math.round(n).toLocaleString('es-AR');
+const pesos = n => (n < 0 ? '-$' : '$') + Math.abs(Math.round(n)).toLocaleString('es-AR');
 const si = v => v === true || /^(true|verdadero|sí|si)$/i.test(String(v).trim());
 function fecha(s){ const m = String(s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? new Date(+m[3], +m[2]-1, +m[1]) : null; }
 const iso = d => d ? d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') : '';
@@ -746,6 +746,8 @@ function abrirForm(hoja, rec, pre){
       else v = el.value.trim();
       const saltear = c.k === 'ID Persona' && $('np-toggle') && $('np-toggle').checked;
       if (c.req && (v === '' || v === null) && !saltear) { toast('Falta completar: ' + (c.lab || c.k), true); el.focus(); return; }
+      const parCobro = { 'Seña': 'Cobró seña', 'Resto pagado': 'Cobró resto' }[c.k];
+      if (parCobro && v > 0) { const iq = e.campos.findIndex(x => x.k === parCobro); if (iq > -1 && !$('f' + iq).value) { toast('Indicá quién cobró ' + (c.lab || c.k).toLowerCase() + ' (o "Ya repartido")', true); $('f' + iq).focus(); return; } }
       datos[c.k] = v;
     }
     btn.disabled = true; btn.textContent = 'Guardando…';
@@ -1052,6 +1054,52 @@ function abrirVarias(tid){
   $('mv-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
 }
 
+/* ───── Cálculo entre socias, paso a paso ───── */
+function movimientosCobro(){
+  const L2 = [];
+  H('Asistencias').forEach(a => {
+    if (num(a['Seña'])) L2.push({ quien: a['Cobró seña'] || '', monto: num(a['Seña']), txt: a['Nombre'] + ' · ' + a['Encuentro'], fila: a._fila, hoja: 'Asistencias' });
+    if (num(a['Resto pagado'])) L2.push({ quien: a['Cobró resto'] || '', monto: num(a['Resto pagado']), txt: a['Nombre'] + ' · ' + a['Encuentro'] + ' (segundo pago)', fila: a._fila, hoja: 'Asistencias' });
+  });
+  H('Pagos').forEach(p => { const pp = persona(p['ID Persona']), t = taller(p['ID Encuentro']); L2.push({ quien: p['Cobró'] || '', monto: num(p['Monto']), txt: (pp ? pp['Nombre completo'] : '') + ' · ' + (t ? t['Nombre / temática'] : '') + ' (pago)', fila: p._fila, hoja: 'Pagos' }); });
+  H('Ventas').forEach(v => L2.push({ quien: v['Cobró'] || '', monto: num(v['Total']), txt: 'Venta: ' + v['Producto'], fila: v._fila, hoja: 'Ventas' }));
+  return L2;
+}
+function calculoSocias(){
+  const soc = L('Socias').length ? L('Socias') : ['Belu', 'Mey'];
+  const mov = movimientosCobro();
+  const cobro = {}, pago = {}, trEnv = {}, trRec = {};
+  soc.forEach(x => { cobro[x] = 0; pago[x] = 0; trEnv[x] = 0; trRec[x] = 0; });
+  let rep2 = 0, sin = 0;
+  mov.forEach(m => { if (m.quien === 'Ya repartido') rep2 += m.monto; else if (soc.includes(m.quien)) cobro[m.quien] += m.monto; else sin += m.monto; });
+  H('Gastos').forEach(g => { if (soc.includes(g['Pagó'])) pago[g['Pagó']] += num(g['Total']); });
+  H('Transferencias').forEach(t => { if (soc.includes(t['De'])) trEnv[t['De']] += num(t['Monto']); if (soc.includes(t['Para'])) trRec[t['Para']] += num(t['Monto']); });
+  const ingresos = mov.reduce((x, m) => x + m.monto, 0), gastos = H('Gastos').reduce((x, g) => x + num(g['Total']), 0);
+  const neta = ingresos - gastos, parte = neta / 2;
+  const mano = {}; soc.forEach(x => mano[x] = cobro[x] - pago[x] - trEnv[x] + trRec[x] + rep2 / 2);
+  return { soc, mov, cobro, pago, trEnv, trRec, rep2, sin, ingresos, gastos, neta, parte, mano };
+}
+function abrirCalculo(){
+  const c = calculoSocias(), [A, B] = c.soc;
+  const d = c.mano[A] - c.parte;
+  const fila = (t, v, cl) => `<li class="tarea"><div class="txt">${t}</div><div class="bt"><b${cl ? ` style="color:var(--${cl})"` : ''}>${v}</b></div></li>`;
+  const lista = (titulo, items, editar) => items.length ? `<h3 style="margin:20px 0 8px">${titulo}</h3><ul class="tareas">` + items.map(m => `<li class="tarea"><div class="txt">${esc(m.txt)}</div><div class="bt"><b>${pesos(m.monto)}</b>${editar ? `<button class="ic" type="button" title="Editar" data-editar="${m.hoja}|${m.fila}">✎</button>` : ''}</div></li>`).join('') + '</ul>' : '';
+  let h = '<p class="ayuda" style="margin-top:0">Así se calcula quién le debe a quién. "Ya repartido" es plata que ya dividieron en su momento, por eso no cambia la cuenta.</p><ul class="tareas">';
+  h += fila('Todo lo que entró (encuentros y ventas)', pesos(c.ingresos));
+  h += fila('Todo lo que se gastó', '− ' + pesos(c.gastos));
+  h += fila('<b>Ganancia neta</b> → mitad para cada una', pesos(c.neta) + ' → ' + pesos(c.parte), 'oro');
+  h += '</ul><h3 style="margin:20px 0 8px">Cuánta plata tiene cada una</h3><ul class="tareas">';
+  c.soc.forEach(x => {
+    h += fila(`<b>${esc(x)}</b><small>cobró ${pesos(c.cobro[x])} · pagó gastos ${pesos(c.pago[x])}${c.trEnv[x] ? ' · transfirió ' + pesos(c.trEnv[x]) : ''}${c.trRec[x] ? ' · recibió ' + pesos(c.trRec[x]) : ''}${c.rep2 ? ' · mitad de lo ya repartido ' + pesos(c.rep2 / 2) : ''}</small>`, pesos(c.mano[x]));
+  });
+  if (c.sin) h += fila(`<b>Sin asignar</b><small>Pagos cargados sin indicar quién los cobró: cuentan como ingreso pero nadie los "tiene", y eso infla lo que una le debe a la otra.</small>`, pesos(c.sin), 'debe');
+  h += '</ul>';
+  h += `<div class="aviso" style="margin-top:18px;border-color:var(--oro);background:rgba(212,175,106,.08)"><p><b>${Math.abs(d) < 1 ? 'Están a mano ✓' : (d > 0 ? A + ' le transfiere a ' + B : B + ' le transfiere a ' + A) + ' ' + pesos(Math.abs(d))}</b><br><small style="color:var(--bruma)">Es la diferencia entre lo que ${esc(A)} tiene (${pesos(c.mano[A])}) y lo que le corresponde (${pesos(c.parte)}).</small></p></div>`;
+  h += lista('⚠ Pagos sin "Lo cobró" (corregilos)', c.mov.filter(m => !c.soc.includes(m.quien) && m.quien !== 'Ya repartido'), true);
+  c.soc.forEach(x => { h += lista('Lo que figura cobrado por ' + esc(x), c.mov.filter(m => m.quien === x), true); });
+  modal('El cálculo, paso a paso', h, '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
+}
+
 /* ───── Inscripciones repetidas ───── */
 function repetidas(){
   const g = {};
@@ -1166,7 +1214,8 @@ V.hoy = () => {
   const r = D.res;
   const prox = proximosEncuentros()[0];
   const f = prox && fecha(prox['Fecha']);
-  let h = avisoFormulas() + '<section class="proximo">';
+  const sinA = calculoSocias().sin;
+  let h = avisoFormulas() + (sinA ? `<div class="aviso"><p><b>Hay ${pesos(sinA)} cobrados sin indicar quién los tiene.</b> Eso cambia el "para quedar a mano". Si ya lo repartieron, poné "Ya repartido".</p><button class="btn" type="button" data-calculo>Revisar</button></div>` : '') + '<section class="proximo">';
   if (prox) {
     const libres = num(prox['Lugares libres']);
     h += `<small>Próximo encuentro</small><div class="titulo">${esc(prox['Nombre / temática'])}</div><div class="cuando">${esc(lindaFecha(f))}${prox['Hora'] ? ', ' + esc(prox['Hora']) + ' h' : ''}</div>
@@ -1217,7 +1266,7 @@ V.hoy = () => {
   h += `<section class="balanza" aria-label="Reparto de ganancias"><div class="neta">Ganancia neta<strong>${esc(r['GANANCIA NETA'] || '$0')}</strong></div>
     <div class="platillos"><div class="platillo"><div class="quien">Belu</div><div class="monto">${esc(r['Parte Belu'] || '$0')}</div><div class="detalle">Tiene en mano ${esc(r['Belu tiene en mano'] || '$0')}</div></div>
     <div class="eje"></div><div class="platillo"><div class="quien">Mey</div><div class="monto">${esc(r['Parte Mey'] || '$0')}</div><div class="detalle">Tiene en mano ${esc(r['Mey tiene en mano'] || '$0')}</div></div></div>
-    <div class="a-mano"><span>${esc(r['PARA QUEDAR A MANO'] || 'Están a mano ✓')}</span><button class="btn-sec" type="button" data-nuevo="Transferencias">Registrar transferencia</button></div>
+    <div class="a-mano"><span>${esc(r['PARA QUEDAR A MANO'] || 'Están a mano ✓')}</span><button class="btn-sec" type="button" data-nuevo="Transferencias">Registrar transferencia</button><button class="btn-sec oro" type="button" data-calculo>Ver el cálculo paso a paso</button></div>
     <details class="explica"><summary>¿Qué significa cada número?</summary><dl>
       <dt>Ganancia neta</dt><dd>Todo lo que entró (encuentros y ventas) menos todo lo que se gastó (compras de stock, insumos, comida, materiales).</dd>
       <dt>Parte de Belu / Parte de Mey</dt><dd>La mitad exacta de la ganancia neta: lo que le corresponde a cada una.</dd>
@@ -1465,7 +1514,7 @@ V.estadisticas = () => {
   h += '<h3>Lo que le corresponde a cada una</h3><div class="cifras" style="margin-top:0">'
     + `<div class="cifra"><span>Ganancia neta total</span><b class="oro">${pesos(neta)}</b></div>`
     + `<div class="cifra"><span>Belu</span><b>${pesos(neta / 2)}</b></div><div class="cifra"><span>Mey</span><b>${pesos(neta / 2)}</b></div>`
-    + `<div class="cifra"><span>Para quedar a mano</span><b style="font-size:1rem">${esc(D.res['PARA QUEDAR A MANO'] || '—')}</b></div></div>`;
+    + `<div class="cifra"><span>Para quedar a mano</span><b style="font-size:1rem">${esc(D.res['PARA QUEDAR A MANO'] || '—')}</b><button class="btn-sec oro" type="button" data-calculo style="margin-top:8px">Ver el cálculo</button></div></div>`;
   const realizados = H('Encuentros').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(a['Fecha'])||0) - (fecha(b['Fecha'])||0)).slice(-12);
   h += '<h3>Ganancia por encuentro</h3>' + grafColumnas(realizados.map(t => ({ l: t['Nombre / temática'], l2: t['Fecha'] ? ddmm(fecha(t['Fecha'])) : '', v: num(t['Ganancia neta']) })), { titulo: 'Ganancia por encuentro' });
   const meses = {};
@@ -1550,6 +1599,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
+  if (ds.calculo !== undefined) { abrirCalculo(); return; }
   if (ds.limpiar !== undefined) { limpiarRepetidas(t); return; }
   if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
   if (ds.varias) { abrirAsistencias('encuentro', ds.varias); return; }
