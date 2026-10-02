@@ -184,9 +184,17 @@ tr:hover td{background:rgba(185,138,230,.05)}
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:0;width:min(620px,94vw);max-height:90vh}
 dialog:has(.multi),dialog:has(#tg-lista){width:min(800px,96vw)}
 .multi-fila .forma{width:150px}
-.multi-fila .falta{width:110px}
+.multi-fila .falta{width:100px}
+#as-lista .multi-fila{grid-template-columns:auto minmax(0,1fr) 120px 150px 100px 125px}
+#as-lista .asis{width:120px}
+#as-lista .forma{width:150px}
+#as-lista .quien{width:125px}
+.motivo-linea{grid-column:2/-1;display:grid;grid-template-columns:200px 1fr;gap:8px}
+.motivo-linea.oculto{display:none}
+dialog:has(#as-lista){width:min(940px,97vw)}
+@media (max-width:640px){ #as-lista .multi-fila{grid-template-columns:auto 1fr} #as-lista .multi-fila>select,#as-lista .multi-fila>input.falta{grid-column:2;width:100%} .motivo-linea{grid-template-columns:1fr} }
 .multi-fila .invisible{visibility:hidden}
-.multi-cab{display:grid;grid-template-columns:auto minmax(0,1fr) 150px 110px 130px;gap:10px;padding:8px 12px;font-size:.8rem;color:var(--oro);background:var(--violeta)}
+.multi-cab{display:grid;grid-template-columns:auto minmax(0,1fr) 120px 150px 100px 125px;gap:10px;padding:8px 12px;font-size:.8rem;color:var(--oro);background:var(--violeta)}
 .multi-cab span:first-child{width:18px}
 .ya{display:inline-block;font-size:.72rem;padding:0 7px;border-radius:99px;margin-left:6px;background:rgba(185,138,230,.18);color:var(--lila);vertical-align:middle}
 .ya.rojo{background:rgba(238,154,146,.18);color:var(--debe)}
@@ -907,20 +915,26 @@ function filaAsis(o){
   const pagado = a ? num(a['Total pagado']) : 0, falta = a ? num(a['Pendiente']) : 0;
   const otros = a ? pagado - num(a['Seña']) : 0;
   const est = a ? a['Asistencia'] : '';
-  const fue = a ? (o.pasado ? !/No vino|Canceló/.test(est) : est !== 'Canceló') : false;
+  const fue = !!a;
+  const asis = est || (o.pasado ? 'Asistió' : 'Confirmada');
+  const ausente = /No vino|Canceló/.test(asis);
+  const motivo = a ? (a['Motivo de ausencia'] || '') : '', detalle = a ? (a['Detalle del motivo'] || '') : '';
   const forma = !a ? (o.pasado ? 'completo' : 'nada') : (pagado > 0 && falta <= 0 ? 'completo' : pagado > 0 ? 'parte' : (o.pasado && !est ? 'completo' : 'nada'));
   const opc = optCobro();
   let quien = (a && a['Cobró seña']) || (o.pasado ? 'Ya repartido' : QUIEN);
   if (!opc.includes(quien)) quien = QUIEN;
   const precio = a ? (num(a['Precio']) - num(a['Descuento'])) : o.precio;
-  const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '' };
+  const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '', motivo, detalle };
+  const opAsis = (L('Asistencia').length ? L('Asistencia') : ['Confirmada', 'Asistió', 'No vino', 'Canceló']);
   const marca = a ? `<span class="ya${o.dup > 1 ? ' rojo' : ''}">${o.dup > 1 ? 'repetida ×' + o.dup : (est || 'anotada') + (pagado ? ' · pagó ' + pesos(pagado) : '') + (falta > 0 ? ' · debe ' + pesos(falta) : '')}</span>` : '';
   return `<label class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Encuentro']) : ''}" data-precio="${precio || 0}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
-    <input type="checkbox"${fue ? ' checked' : ''} aria-label="${o.pasado ? 'Vino' : 'Viene'}">
+    <input type="checkbox"${fue ? ' checked' : ''} aria-label="Anotada">
     <span>${esc(o.titulo)}${marca}<small>${o.sub}</small></span>
+    <select class="campo asis" aria-label="Asistencia">${opAsis.map(x => `<option${x === asis ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
     <select class="campo forma" aria-label="Pago"><option value="completo"${forma === 'completo' ? ' selected' : ''}>Pagó completo</option><option value="parte"${forma === 'parte' ? ' selected' : ''}>Pagó una parte</option><option value="nada"${forma === 'nada' ? ' selected' : ''}>No pagó todavía</option></select>
     <input class="campo falta${forma === 'parte' ? '' : ' invisible'}" type="number" min="0" step="100" inputmode="numeric" placeholder="Falta $" value="${forma === 'parte' && falta ? falta : ''}" aria-label="Cuánto falta">
-    <select class="campo quien${forma === 'nada' ? ' invisible' : ''}" aria-label="Quién cobró">${opc.map(x => `<option${x === quien ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`;
+    <select class="campo quien${forma === 'nada' ? ' invisible' : ''}" aria-label="Quién cobró">${opc.map(x => `<option${x === quien ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
+    <div class="motivo-linea${ausente ? '' : ' oculto'}"><select class="campo motivo" aria-label="Motivo"><option value="">¿Por qué no vino?</option>${L('Motivos de ausencia').map(x => `<option${x === motivo ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select><input class="campo detalle" placeholder="Detalle (opcional)" value="${esc(detalle)}" aria-label="Detalle del motivo"></div></label>`;
 }
 function abrirAsistencias(modo, id){
   let filas = '', titulo = '', buscador = false;
@@ -943,15 +957,20 @@ function abrirAsistencias(modo, id){
       filas += filaAsis({ pid: p['ID Persona'], tid: id, titulo: p['Nombre completo'], sub: (v ? v + (v === 1 ? ' encuentro' : ' encuentros') : 'Primera vez') + (p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''), precio, pasado, a: x.a, dup: x.dup }); });
   }
   modal(titulo,
-    `<p class="ayuda" style="margin-top:0">Tildá ${modo === 'persona' ? 'a qué encuentros vino (o va a venir)' : 'quiénes vinieron (o vienen)'} y elegí cómo pagó cada una. Si destildás una inscripción que ya existía, queda como "No vino" (o "Canceló" si el encuentro todavía no pasó). Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
+    `<p class="ayuda" style="margin-top:0">El tilde indica que ${modo === 'persona' ? 'estaba anotada en ese encuentro' : 'esa persona estaba anotada'}. En cada fila elegí por separado si <b>vino o no</b> (y por qué) y <b>cómo pagó</b>: alguien puede no haber venido y haber pagado todo o solo la seña. Si destildás una inscripción que ya existía, se borra. Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
      ${buscador ? '<input class="campo" type="search" id="as-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">' : ''}
-     <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Encuentro' : 'Persona'}</span><span>Pago</span><span>Falta</span><span>Lo cobró</span></div>${filas}</div>
+     <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Encuentro' : 'Persona'}</span><span>Asistencia</span><span>Pago</span><span>Falta</span><span>Lo cobró</span></div>${filas}</div>
      ${modo === 'persona' ? '' : `<p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Encuentro': id }))}'>Es alguien nuevo</button></p>`}`,
     `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="as-ok">Guardar cambios</button>`);
   const caja = $('as-lista');
   caja.addEventListener('change', ev => {
     const f = ev.target.closest('.multi-fila'); if (!f) return;
     if (ev.target.type === 'checkbox') f.classList.toggle('off', !ev.target.checked);
+    if (ev.target.classList.contains('asis')) {
+      const no = /No vino|Canceló/.test(ev.target.value);
+      f.querySelector('.motivo-linea').classList.toggle('oculto', !no);
+      if (no) f.querySelector('.motivo').focus();
+    }
     if (ev.target.classList.contains('forma')) {
       const v = ev.target.value;
       f.querySelector('.falta').classList.toggle('invisible', v !== 'parte');
@@ -965,11 +984,13 @@ function abrirAsistencias(modo, id){
     caja.querySelectorAll('.multi-fila').forEach(f => {
       const d = f.dataset, marcado = f.querySelector('input[type=checkbox]').checked;
       if (!d.fila && !marcado) return;
+      if (d.fila && !marcado) { ops.push({ tipo: 'borrar', fila: Number(d.fila), original: d.original, quien: f.querySelector('span').firstChild.textContent.trim() }); return; }
       const forma = f.querySelector('.forma').value, quien = f.querySelector('.quien').value;
       const precio = Number(d.precio) || 0, otros = Number(d.otros) || 0;
       const falta = forma === 'parte' ? revisarMonto(Number(f.querySelector('.falta').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
-      const asis = marcado ? (d.pasado ? 'Asistió' : 'Confirmada') : (d.pasado ? 'No vino' : 'Canceló');
-      const datos = { 'Asistencia': asis };
+      const asis = f.querySelector('.asis').value;
+      const aus = /No vino|Canceló/.test(asis);
+      const datos = { 'Asistencia': asis, 'Motivo de ausencia': aus ? f.querySelector('.motivo').value : '', 'Detalle del motivo': aus ? f.querySelector('.detalle').value.trim() : '' };
       if (precio > 0) {
         const sena = forma === 'completo' ? Math.max(0, precio - otros) : forma === 'parte' ? Math.max(0, precio - otros - falta) : 0;
         datos['Seña'] = sena || ''; datos['Cobró seña'] = sena ? quien : '';
@@ -978,11 +999,14 @@ function abrirAsistencias(modo, id){
         ops.push({ tipo: 'agregar', datos: Object.assign({ 'ID Encuentro': d.tid, 'ID Persona': d.pid, 'Fecha inscripción': iso(HOY) }, datos) });
       } else {
         const sn = JSON.parse(d.snap);
-        const cambio = sn.asis !== datos['Asistencia'] || ('Seña' in datos && (sn.sena !== (Number(datos['Seña']) || 0) || sn.quien !== datos['Cobró seña']));
+        const cambio = sn.asis !== datos['Asistencia'] || sn.motivo !== datos['Motivo de ausencia'] || sn.detalle !== datos['Detalle del motivo'] || ('Seña' in datos && (sn.sena !== (Number(datos['Seña']) || 0) || sn.quien !== datos['Cobró seña']));
         if (cambio) ops.push({ tipo: 'editar', fila: Number(d.fila), original: d.original, datos });
       }
     });
     if (!ops.length) { toast('No hay cambios para guardar'); return; }
+    const borra = ops.filter(o => o.tipo === 'borrar');
+    if (borra.length && !confirm('Vas a borrar ' + (borra.length === 1 ? 'la inscripción de ' : borra.length + ' inscripciones: ') + borra.map(o => o.quien).join(', ') + '.\n\nSi solo querés marcar que no vino, dejala tildada y elegí "No vino". ¿Borrar igual?')) return;
+    borra.forEach(o => delete o.quien);
     const b = ev.target; b.disabled = true; b.textContent = 'Guardando ' + ops.length + '…';
     try { await enviar({ accion: 'lote2', hoja: 'Asistencias', ops }); $('modal').close(); toast(ops.length === 1 ? 'Guardado ✓' : ops.length + ' cambios guardados ✓'); await cargar(true); }
     catch (err) { $('modal').close(); toast(err.message, true); await cargar(true); }
