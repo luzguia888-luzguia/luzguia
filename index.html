@@ -182,7 +182,7 @@ tr:hover td{background:rgba(185,138,230,.05)}
 
 /* Modal */
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:0;width:min(620px,94vw);max-height:90vh}
-dialog:has(.multi){width:min(800px,96vw)}
+dialog:has(.multi),dialog:has(#tg-lista){width:min(800px,96vw)}
 .multi-fila .forma{width:150px}
 .multi-fila .quien{width:130px}
 dialog::backdrop{background:rgba(10,4,18,.7)}
@@ -238,6 +238,24 @@ dialog::backdrop{background:rgba(10,4,18,.7)}
 .pestana[aria-selected="true"]::after{display:none}
 .dia:hover .n{color:var(--oro)}
 @media (prefers-reduced-motion:reduce){ *{transition:none!important} .btn:hover,.ic:hover{transform:none} }
+
+/* Matriz de asistencia */
+.matriz td,.matriz th{text-align:center;padding:6px 6px}
+.matriz th{white-space:normal;font-size:.8rem;line-height:1.2;min-width:62px}
+.matriz th small{display:block;color:var(--lila);font-weight:400}
+.matriz td:first-child,.matriz th:first-child{text-align:left;white-space:nowrap;position:sticky;left:0;background:var(--ciruela);z-index:1}
+.matriz th:first-child{background:var(--violeta)}
+.celda{width:34px;height:30px;border-radius:8px;border:1px solid transparent;background:none;cursor:pointer;font-size:1rem;color:var(--lila-suave)}
+.celda:hover{border-color:var(--oro-suave);transform:scale(1.1)}
+.celda.si{background:rgba(143,211,168,.16);color:var(--ok)}
+.celda.no{background:rgba(238,154,146,.16);color:var(--debe)}
+.celda.conf{background:rgba(212,175,106,.14);color:var(--oro)}
+.celda.dup{outline:2px solid var(--debe);font-size:.75rem}
+.aviso{border:1px solid var(--debe);background:rgba(238,154,146,.08);border-radius:14px;padding:14px 18px;margin:0 0 22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.aviso p{margin:0;flex:1;min-width:240px}
+.gasto-fila{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) 70px 110px 100px 32px;gap:8px;align-items:center;margin-bottom:8px}
+.gasto-fila .campo{padding:8px 10px;font-size:.9rem}
+@media (max-width:640px){ .gasto-fila{grid-template-columns:1fr 1fr} .gasto-fila .campo:first-child{grid-column:1/-1} }
 
 /* Gráficos */
 .graf{border:1px solid var(--linea);border-radius:14px;background:var(--ciruela);padding:14px 12px 10px}
@@ -621,7 +639,17 @@ function campoHTML(c, i, v){
 
 function abrirForm(hoja, rec, pre){
   const e = ESQ[hoja];
-  let html = '<div class="form">';
+  let html = '<div class="form">', extraT = '';
+  if (hoja === 'Talleres') {
+    const ya = rec ? H('Gastos').filter(g => g['Destino (ID taller / GENERAL / REVENTA)'] === rec['ID Taller']) : [];
+    extraT = `<div class="full"><h3 style="margin:8px 0 4px">Inversión de este taller</h3>
+      <p class="ayuda" style="margin:0 0 10px">Comida, bebida, piedras, yagra, bolsitas, velas… Cargalo acá y queda como gasto del taller, con quién lo pagó.</p>
+      ${ya.length ? '<ul class="tareas" style="margin-bottom:10px">' + ya.map(g => `<li class="tarea"><div class="txt">${esc(g['Ítem'])}<small>${esc(g['Categoría'] || '')} · ${esc(g['Total'])} · pagó ${esc(g['Pagó'] || '—')}</small></div></li>`).join('') + '</ul>' : ''}
+      <div id="tg-lista"></div>
+      <button class="btn-sec" type="button" id="tg-mas">+ Agregar gasto</button>
+      <p id="tg-total" class="ayuda" style="margin:10px 0 0"></p></div>`;
+  }
+
   if (hoja === 'Asistencias' && !rec) {
     html += `<label class="check full"><input type="checkbox" id="np-toggle"> Es una persona nueva (la cargo ahora)</label>
       <div class="nueva-persona oculto" id="np-caja">
@@ -632,11 +660,12 @@ function abrirForm(hoja, rec, pre){
       </div>`;
   }
   e.campos.forEach((c, i) => { html += campoHTML(c, i, valorInicial(c, rec, pre)); });
-  html += '</div>';
+  html += extraT + '</div>';
   if (hoja === 'Personas' && rec) {
-    const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']);
-    html += `<h3 style="margin:24px 0 8px">Sus talleres</h3>` + (hist.length
-      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>Pagó ${esc(a['Total pagado'] || '$0')}${num(a['Pendiente']) > 0 ? ', debe ' + esc(a['Pendiente']) : ''} · ${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}<button class="ic" type="button" title="Editar" data-editar="Asistencias|${a._fila}">✎</button></div></li>`).join('') + '</ul>'
+    const hist = H('Asistencias').filter(a => a['ID Persona'] === rec['ID Persona']).sort((a, b) => ((taller(b['ID Taller']) && fecha(taller(b['ID Taller'])['Fecha'])) || 0) - ((taller(a['ID Taller']) && fecha(taller(a['ID Taller'])['Fecha'])) || 0));
+    const vino = hist.filter(a => a['Asistencia'] === 'Asistió').length, falto = hist.filter(a => /No vino|Canceló/.test(a['Asistencia'])).length;
+    html += `<h3 style="margin:24px 0 8px">Sus talleres</h3><p class="ayuda" style="margin:0 0 10px">Vino a ${vino}${falto ? ' · faltó a ' + falto : ''}${hist.length - vino - falto > 0 ? ' · ' + (hist.length - vino - falto) + ' por venir' : ''}.</p>` + (hist.length
+      ? '<ul class="tareas">' + hist.map(a => `<li class="tarea"><div class="txt">${esc(a['Taller'])}<small>Pagó ${esc(a['Total pagado'] || '$0')}${num(a['Pendiente']) > 0 ? ', debe ' + esc(a['Pendiente']) : ''} · ${esc(a['Asistencia'] || '')}${a['Motivo de ausencia'] ? ' (' + esc(a['Motivo de ausencia']) + (a['Detalle del motivo'] ? ': ' + esc(a['Detalle del motivo']) : '') + ')' : ''}${a['Estado de pago'] ? ' · ' + esc(a['Estado de pago']) : ''}</small></div><div class="bt">${btnPago(a)}${acciones('Asistencias', a)}</div></li>`).join('') + '</ul>'
       : '<p class="ayuda" style="margin:0 0 8px">Todavía no está anotada en ningún taller.</p>')
       + `<p style="margin:10px 0 0"><button class="btn-sec oro" type="button" data-entalleres="${esc(rec['ID Persona'])}">Sumar a talleres</button></p>`;
   }
@@ -652,6 +681,30 @@ function abrirForm(hoja, rec, pre){
     const ajustar = () => { const t = taller($('f' + iT).value); const f = t && fecha(t['Fecha']); if (!rec && f && f < HOY && $('f' + iA).value === 'Confirmada') $('f' + iA).value = 'Asistió'; motivo(); };
     const motivo = () => { const no = /No vino|Canceló/.test($('f' + iA).value); e.campos.forEach((c, i) => { if (c.aus && $('f' + i)) $('f' + i).closest('label').classList.toggle('oculto', !no); }); };
     $('f' + iT).addEventListener('change', ajustar); $('f' + iA).addEventListener('change', motivo); ajustar();
+  }
+  if (hoja === 'Talleres') {
+    const yaTot = rec ? H('Gastos').filter(g => g['Destino (ID taller / GENERAL / REVENTA)'] === rec['ID Taller']).reduce((a, g) => a + num(g['Total']), 0) : 0;
+    const iCupo = e.campos.findIndex(c => c.k === 'Cupo');
+    const nuevaFila = () => {
+      const d = document.createElement('div'); d.className = 'gasto-fila';
+      d.innerHTML = `<input class="campo tg-item" placeholder="Qué (ej. bolsitas de yagra)" aria-label="Ítem">
+        <select class="campo tg-cat" aria-label="Categoría">${L('Categorías gasto').map(x => `<option>${esc(x)}</option>`).join('')}</select>
+        <input class="campo tg-cant" type="number" min="1" value="1" aria-label="Cantidad">
+        <input class="campo tg-costo" type="number" min="0" step="100" placeholder="$ c/u" aria-label="Costo por unidad">
+        <select class="campo tg-pago" aria-label="Pagó">${L('Socias').map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
+        <button class="ic" type="button" title="Quitar" aria-label="Quitar">✕</button>`;
+      d.querySelector('.ic').onclick = () => { d.remove(); total(); };
+      d.addEventListener('input', total);
+      $('tg-lista').appendChild(d);
+    };
+    const total = () => {
+      let t = yaTot; document.querySelectorAll('#tg-lista .gasto-fila').forEach(f => t += (Number(f.querySelector('.tg-cant').value) || 1) * (Number(f.querySelector('.tg-costo').value) || 0));
+      const cupo = Number($('f' + iCupo).value) || num(rec && rec['Inscriptas']) || 0;
+      $('tg-total').textContent = t ? 'Inversión total: ' + pesos(t) + (cupo ? ' · por persona (' + cupo + '): ' + pesos(t / cupo) : '') : '';
+    };
+    $('tg-mas').onclick = () => { nuevaFila(); total(); };
+    if (!rec) nuevaFila();
+    total();
   }
   if (hoja === 'Ventas') {
     const iP = e.campos.findIndex(c => c.k === 'Producto'), iPr = e.campos.findIndex(c => c.k === 'Precio unitario');
@@ -686,7 +739,20 @@ function abrirForm(hoja, rec, pre){
         const r = await enviar({ accion: 'agregar', hoja: 'Personas', datos: { 'Nombre completo': nom, 'Fecha de nacimiento': $('np-nac').value, 'Teléfono': $('np-tel').value.trim(), 'Canal de llegada': $('np-canal').value } });
         datos['ID Persona'] = r.id;
       } else if (hoja === 'Asistencias' && !datos['ID Persona']) { toast('Elegí una persona o marcá "persona nueva"', true); btn.disabled = false; btn.textContent = 'Guardar'; return; }
-      await guardarCambios(hoja, rec, datos);
+      const filasG = hoja === 'Talleres' ? [...document.querySelectorAll('#tg-lista .gasto-fila')].filter(f => f.querySelector('.tg-item').value.trim() && Number(f.querySelector('.tg-costo').value)).map(f => ({
+        'Categoría': f.querySelector('.tg-cat').value, 'Ítem': f.querySelector('.tg-item').value.trim(),
+        'Cantidad': Number(f.querySelector('.tg-cant').value) || 1, 'Costo unitario': revisarMonto(Number(f.querySelector('.tg-costo').value), f.querySelector('.tg-item').value.trim()),
+        'Pagó': f.querySelector('.tg-pago').value, 'Reintegro': 'Pendiente' })) : [];
+      if (filasG.length) {
+        const conf = ESQ[hoja];
+        const r = await enviar(rec ? { accion: 'editar', hoja, fila: rec._fila, original: rec[conf.clave], datos } : { accion: 'agregar', hoja, datos });
+        const tid = rec ? rec['ID Taller'] : r.id;
+        filasG.forEach(g => { g['Fecha'] = datos['Fecha'] || iso(HOY); g['Destino (ID taller / GENERAL / REVENTA)'] = tid; });
+        btn.textContent = 'Guardando gastos…';
+        await enviar({ accion: 'lote', hoja: 'Gastos', filas: filasG });
+        toast('Taller y ' + filasG.length + (filasG.length === 1 ? ' gasto guardados ✓' : ' gastos guardados ✓'));
+        await cargar(true);
+      } else await guardarCambios(hoja, rec, datos);
       if (PEDIDO_PEND && !rec) { const pr = H('Pedidos').find(x => String(x._fila) === String(PEDIDO_PEND)); if (pr && pr['Estado'] === 'Nuevo') await guardarCambios('Pedidos', pr, { 'Estado': 'Atendido' }, 'Pedido atendido ✓'); }
       PEDIDO_PEND = null;
       $('modal').close();
@@ -844,6 +910,53 @@ function abrirVarias(tid){
   $('mv-ok').onclick = ev => guardarLote(leerFilas(caja), ev.target);
 }
 
+/* ───── Inscripciones repetidas ───── */
+function repetidas(){
+  const g = {};
+  H('Asistencias').forEach(a => { const k = a['ID Taller'] + '|' + a['ID Persona']; (g[k] = g[k] || []).push(a); });
+  return Object.values(g).filter(x => x.length > 1);
+}
+async function limpiarRepetidas(btn){
+  const grupos = repetidas();
+  const valor = a => (a['Cobró seña'] ? 4 : 0) + (num(a['Total pagado']) > 0 ? 2 : 0) + (a['Asistencia'] === 'Asistió' ? 1 : 0);
+  const borrar2 = [];
+  grupos.forEach(gr => { const orden = gr.slice().sort((a, b) => valor(b) - valor(a) || a._fila - b._fila); borrar2.push(...orden.slice(1)); });
+  if (!borrar2.length) return;
+  if (!confirm('Voy a eliminar ' + borrar2.length + ' inscripciones repetidas y dejar una sola por persona y taller (la que tenga más datos de pago). ¿Sigo?')) return;
+  btn.disabled = true;
+  try {
+    for (let i = 0; i < borrar2.length; i++) {
+      toast('Eliminando ' + (i + 1) + ' de ' + borrar2.length + '…');
+      await enviar({ accion: 'borrar', hoja: 'Asistencias', fila: borrar2[i]._fila, original: borrar2[i]['ID Taller'] });
+    }
+    toast(borrar2.length === 1 ? 'Listo: se eliminó 1 repetida ✓' : 'Listo: se eliminaron ' + borrar2.length + ' repetidas ✓'); await cargar(true);
+  } catch (err) { toast(err.message, true); await cargar(true); }
+}
+const avisoRepetidas = () => { const n = repetidas().reduce((a, g) => a + g.length - 1, 0); return n ? `<div class="aviso"><p><b>${n === 1 ? 'Hay 1 inscripción repetida' : 'Hay ' + n + ' inscripciones repetidas'}</b> (la misma persona anotada más de una vez en el mismo taller). Inflan lo cobrado y los talleres de cada una.</p><button class="btn" type="button" data-limpiar>Eliminar repetidas</button></div>` : ''; };
+
+function matrizAsistencia(){
+  const ts = H('Talleres').filter(t => t['Estado'] !== 'Cancelado' && fecha(t['Fecha'])).sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha'])).slice(-10);
+  const ps = participantes().slice().sort((a, b) => String(a['Nombre completo']).localeCompare(b['Nombre completo']));
+  if (!ts.length || !ps.length) return '<p class="ayuda">Cuando haya talleres y personas cargadas, acá vas a ver quién vino a cada uno.</p>';
+  const idx = {}; H('Asistencias').forEach(a => { const k = a['ID Persona'] + '|' + a['ID Taller']; (idx[k] = idx[k] || []).push(a); });
+  const filas = ps.map(p => {
+    let vino = 0;
+    const celdas = ts.map(t => {
+      const l = idx[p['ID Persona'] + '|' + t['ID Taller']];
+      if (!l) return `<td><button type="button" class="celda" title="${esc(p['Nombre completo'])} no está anotada en ${esc(t['Nombre / temática'])}. Tocá para anotarla." data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Taller': t['ID Taller'], 'ID Persona': p['ID Persona'] }))}'>·</button></td>`;
+      const a = l[0], est = a['Asistencia'];
+      if (est === 'Asistió') vino++;
+      const cl = est === 'Asistió' ? 'si' : /No vino|Canceló/.test(est) ? 'no' : 'conf';
+      const ico = est === 'Asistió' ? '✓' : est === 'Canceló' ? '⊘' : est === 'No vino' ? '✗' : '○';
+      const tip = t['Nombre / temática'] + ': ' + est + (a['Motivo de ausencia'] ? ' (' + a['Motivo de ausencia'] + (a['Detalle del motivo'] ? ': ' + a['Detalle del motivo'] : '') + ')' : '') + ' · pagó ' + (a['Total pagado'] || '$0') + (l.length > 1 ? ' · ¡repetida ' + l.length + ' veces!' : '');
+      return `<td><button type="button" class="celda ${cl}${l.length > 1 ? ' dup' : ''}" title="${esc(tip)}" data-editar="Asistencias|${a._fila}">${ico}${l.length > 1 ? '×' + l.length : ''}</button></td>`;
+    }).join('');
+    return `<tr><td>${esc(p['Nombre completo'])}</td>${celdas}<td class="num"><b>${vino}</b></td></tr>`;
+  }).join('');
+  return `<div class="tabla-caja"><table class="matriz"><thead><tr><th>Persona</th>${ts.map(t => `<th title="${esc(t['Nombre / temática'])}">${ddmm(fecha(t['Fecha']))}<small>${esc(recortar(t['Nombre / temática'], 14))}</small></th>`).join('')}<th>Vino a</th></tr></thead><tbody>${filas}</tbody></table></div>
+    <div class="leyenda" style="margin-top:10px"><span>✓ asistió</span><span>✗ no vino</span><span>⊘ canceló</span><span>○ confirmada</span><span>· no anotada (tocá para anotarla)</span></div>`;
+}
+
 /* ───── Gráficos ───── */
 const PALETA = ['#D4AF6A','#B98AE6','#8FD3A8','#EE9A92','#7FB3E6','#F0C96B','#C08BD9','#6FCFC0','#E8A0C8','#9AA5F0'];
 const DEFS_G = '<defs><linearGradient id="gOro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3DCA0"/><stop offset="1" stop-color="#B8893E"/></linearGradient><linearGradient id="gLila" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9B8FF"/><stop offset="1" stop-color="#7B4BB0"/></linearGradient><linearGradient id="gRojo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4B6AF"/><stop offset="1" stop-color="#C0625A"/></linearGradient></defs>';
@@ -858,9 +971,10 @@ function grafColumnas(datos, opt){
   let g = '';
   datos.forEach((d, i) => {
     const x = pad + ancho * i + ancho / 2;
-    const barra = (v, dx, fill, nombre) => `<rect x="${x + dx - b / 2}" y="${base - alto(v)}" width="${b}" height="${alto(v)}" rx="5" fill="${v < 0 ? 'url(#gRojo)' : fill}"><title>${esc(d.l)}${nombre ? ' · ' + nombre : ''}: ${pesos(v)}</title></rect>`;
+    const f1 = opt.fmt || pesos;
+    const barra = (v, dx, fill, nombre) => `<rect x="${x + dx - b / 2}" y="${base - alto(v)}" width="${b}" height="${alto(v)}" rx="5" fill="${v < 0 ? 'url(#gRojo)' : fill}"><title>${esc(d.l)}${nombre ? ' · ' + nombre : ''}: ${f1(v)}</title></rect>`;
     if (opt.doble) g += barra(d.v, -b / 2 - 2, 'url(#gOro)', opt.n1) + barra(d.v2, b / 2 + 2, 'url(#gLila)', opt.n2);
-    else g += barra(d.v, 0, 'url(#gOro)') + `<text x="${x}" y="${base - alto(d.v) - 7}" text-anchor="middle" class="gv">${corto(d.v)}</text>`;
+    else g += barra(d.v, 0, 'url(#gOro)') + `<text x="${x}" y="${base - alto(d.v) - 7}" text-anchor="middle" class="gv">${(opt.fmt || corto)(d.v)}</text>`;
     g += `<text x="${x}" y="${base + 17}" text-anchor="middle" class="gl">${esc(recortar(d.l, datos.length > 6 ? 9 : 16))}</text>`;
     if (d.l2) g += `<text x="${x}" y="${base + 31}" text-anchor="middle" class="gl">${esc(d.l2)}</text>`;
   });
@@ -1014,7 +1128,7 @@ V.calendario = () => {
 
 V.talleres = () => {
   const ts = H('Talleres').slice().sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0));
-  let h = cabeza('Talleres', btnNuevo('Talleres', 'Nuevo taller'));
+  let h = cabeza('Talleres', btnNuevo('Talleres', 'Nuevo taller')) + avisoRepetidas();
   h += '<p class="ayuda">Tocá un taller para ver quiénes vienen, cómo pagaron y qué materiales ya se entregaron. Los materiales se marcan tocándolos.</p>';
   if (!ts.length) return h + '<div class="tabla-caja"><div class="vacio">Todavía no hay talleres. Tocá "Nuevo taller" para cargar el primero.</div></div>';
   ts.forEach((t, i) => {
@@ -1029,6 +1143,8 @@ V.talleres = () => {
       <div class="mini-cifras">${[['Precio','Precio por persona'],['Cobrado','Cobrado'],['Pendiente','Pendiente de cobro'],['Gastos','Gastos'],['Parte Belu','Parte Belu'],['Parte Mey','Parte Mey']].map(c => `<div><span>${c[0]}</span> ${esc(t[c[1]] || '—')}</div>`).join('')}</div>
       ${(() => { const cm = costoMateriales(t); const ins = num(t['Inscriptas']); const det = Object.entries(cm.det).map(([k, n]) => n + ' ' + (NOMBRE_ENTREGA[k] ? NOMBRE_ENTREGA[k][n === 1 ? 0 : 1] : k)).join(', ');
         return `<div class="mini-cifras"><div><span>Materiales entregados</span> ${pesos(cm.total)}${det ? ' <span>(' + esc(det) + ')</span>' : ''}</div><div><span>Costo real por persona</span> ${ins ? pesos((num(t['Gastos']) + cm.total) / ins) : '—'}</div><div><span>Ganancia descontando materiales</span> ${pesos(num(t['Ganancia neta']) - cm.total)}</div></div>`; })()}
+      ${(() => { const gs = H('Gastos').filter(g => g['Destino (ID taller / GENERAL / REVENTA)'] === t['ID Taller']); if (!gs.length) return ''; const ins = num(t['Inscriptas']);
+        return `<div class="mini-cifras">${gs.map(g => `<div><span>${esc(g['Ítem'])}</span> ${esc(g['Total'])}${ins ? ' <span>(' + pesos(num(g['Total']) / ins) + ' c/u)</span>' : ''}</div>`).join('')}</div>`; })()}
       <div class="herramientas"><button class="btn" type="button" data-varias="${esc(t['ID Taller'])}">Sumar personas</button>
         <button class="btn-sec" type="button" data-nuevo="Gastos" data-pre='${esc(JSON.stringify({ 'Destino (ID taller / GENERAL / REVENTA)': t['ID Taller'] }))}'>Cargar gasto</button>
         <button class="btn-sec" type="button" data-editar="Talleres|${t._fila}">Editar taller</button>
@@ -1052,13 +1168,14 @@ V.personas = () => {
   const cum = cumplesProximos(30);
   const ab = tallerAbierto();
   const fila = (x, extra, plant) => `<div class="persona-fila"><span>${esc(x.p['Nombre completo'])}<br><small>${extra}</small></span>${btnWA(x.p['ID Persona'], plant, ab ? ab['ID Taller'] : '', '')}</div>`;
-  let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona'));
+  let h = cabeza('Participantes', btnNuevo('Personas', 'Nueva persona')) + avisoRepetidas();
   h += '<p class="ayuda">Cargá el teléfono con código de área, sin 0 ni 15 (por ejemplo 2954 123456) para que funcione el botón de WhatsApp. Con 🔗 copiás el enlace a su portal personal y con 🕯️ la sumás a un taller. La cantidad de talleres y lo invertido se calculan solos: para corregirlos, tocá el número y editá sus inscripciones con ✎ o 💰.</p>';
   h += '<div class="alertas3">';
   h += `<div class="caja"><h4>Las que más vienen</h4><p>${D.params.frecuente} talleres o más. Ideas para ofrecerles: lugar prioritario en la edición especial, descuento por fidelidad, "traé una amiga" con beneficio para las dos, o 15 minutos extra de lectura.</p>${frec.length ? frec.map(x => fila(x, x.veces + ' talleres', 'frecuente')).join('') : '<small class="ayuda">Todavía nadie llegó a ese número.</small>'}</div>`;
   h += `<div class="caja"><h4>Hace tiempo que no vienen</h4><p>Más de ${D.params.inactiva} días desde su último taller.</p>${inac.length ? inac.slice(0, 12).map(x => fila(x, 'Última vez: ' + ddmm(x.ultima) + '/' + x.ultima.getFullYear(), 'reactivar')).join('') : '<small class="ayuda">Nadie por ahora.</small>'}</div>`;
   h += `<div class="caja"><h4>Cumpleaños del mes</h4><p>Próximos 30 días.</p>${cum.length ? cum.map(x => fila(x, (x.c.dias === 0 ? 'Hoy' : lindaFecha(x.c.fecha)) + ', cumple ' + x.c.edad, 'cumpleanos')).join('') : '<small class="ayuda">Ninguno en los próximos 30 días.</small>'}</div>`;
   h += '</div>';
+  h += '<h3>Quién vino a cada taller</h3><p class="ayuda" style="margin-top:0">Pasá el mouse por cada casilla para ver el detalle (pago y motivo si no vino). Tocala para editarla.</p>' + matrizAsistencia();
   h += '<h3>Todas</h3><div class="herramientas"><input class="campo buscador" id="buscar" type="search" placeholder="Buscar por nombre o arcano"></div>';
   h += `<div id="tabla-personas">${tablaPersonas(H('Personas'))}</div>`;
   return h;
@@ -1214,7 +1331,12 @@ V.estadisticas = () => {
   h += '<h3>En qué se gasta</h3>' + grafDona(Object.entries(cats).sort((a, b) => b[1] - a[1]), 'Gastos por categoría');
   const porTaller = H('Talleres').filter(t => t['Estado'] === 'Realizado').sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const cm = costoMateriales(t); const gn = num(t['Ganancia neta']); return { 'Taller': t['Nombre / temática'], 'Fecha': t['Fecha'], 'Personas': t['Inscriptas'], 'Cobrado': pesos(num(t['Cobrado'])), 'Gastos': pesos(num(t['Gastos'])), 'Ganancia': pesos(gn), 'Belu': pesos(gn / 2), 'Mey': pesos(gn / 2), 'Materiales': pesos(cm.total), 'Real': pesos(gn - cm.total) }; });
   h += '<h3>Detalle por taller</h3>' + tabla([{ t:'Taller', k:'Taller' }, { t:'Fecha', k:'Fecha' }, { t:'Personas', k:'Personas', num:1 }, { t:'Cobrado', k:'Cobrado', num:1 }, { t:'Gastos', k:'Gastos', num:1 }, { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Belu', k:'Belu', num:1 }, { t:'Mey', k:'Mey', num:1 }, { t:'Materiales', k:'Materiales', num:1 }, { t:'Descontando materiales', k:'Real', num:1 }], porTaller, 'Todavía no hay talleres realizados.');
-  h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro taller</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Talleres realizados</span><b>${ts.length}</b></div></div>`;
+  const asis = H('Asistencias');
+  h += '<h3>Control de carga</h3><p class="ayuda" style="margin-top:0">Para verificar que lo cargado coincide con la realidad de cada taller.</p>';
+  h += grafColumnas(H('Talleres').filter(t => t['Estado'] !== 'Cancelado' && fecha(t['Fecha'])).sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha'])).slice(-12).map(t => ({ l: t['Nombre / temática'], l2: ddmm(fecha(t['Fecha'])), v: asis.filter(a => a['ID Taller'] === t['ID Taller'] && a['Asistencia'] === 'Asistió').length })), { titulo: 'Personas que asistieron por taller', fmt: n => n + (n === 1 ? ' persona' : ' personas') });
+  h += '<div style="margin-top:14px">' + tabla([{ t:'Taller', k:'n' }, { t:'Fecha', k:'f' }, { t:'Anotadas', k:'an', num:1 }, { t:'Asistieron', k:'si', num:1 }, { t:'No vinieron / cancelaron', k:'no', num:1 }, { t:'Cupo', k:'cu', num:1 }, { t:'Cobrado', k:'co', num:1 }],
+    H('Talleres').slice().sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => { const l = asis.filter(a => a['ID Taller'] === t['ID Taller']); return { n: t['Nombre / temática'], f: t['Fecha'], an: l.length, si: l.filter(a => a['Asistencia'] === 'Asistió').length, no: l.filter(a => /No vino|Canceló/.test(a['Asistencia'])).length, cu: t['Cupo'], co: t['Cobrado'] }; }), 'No hay talleres cargados.') + '</div>';
+  h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro taller</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Talleres realizados</span><b>${ts.length}</b></div><div class="cifra"><span>Asistencias en total</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div></div>`;
   h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de personas', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya talleres realizados, acá vas a ver cuál formato rinde más.');
   h += `<div class="dos-col"><div><h3>Cómo llegan</h3>${barras(contar(ps, 'Canal de llegada'))}</div><div><h3>Arcanos de nacimiento más frecuentes</h3>${barras(contar(ps, 'Arcano nacimiento').slice(0, 8))}</div></div>`;
   h += `<h3>Por qué no vinieron</h3>${barras(contar(H('Asistencias').filter(a => /No vino|Canceló/.test(a['Asistencia'])), 'Motivo de ausencia'))}`;
@@ -1271,6 +1393,7 @@ document.addEventListener('click', async e => {
     return;
   }
   if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
+  if (ds.limpiar !== undefined) { limpiarRepetidas(t); return; }
   if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
   if (ds.varias) { abrirVarias(ds.varias); return; }
   if (ds.entalleres) { abrirTalleresDePersona(ds.entalleres); return; }
