@@ -125,6 +125,12 @@ body::after{background-image:radial-gradient(1px 1px at 18% 40%,#fff,transparent
 .luna-dibujo{width:74px;height:74px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a2a55,#1a0f2b 70%);box-shadow:inset -10px -8px 0 rgba(0,0,0,.25),0 0 0 1px var(--oro-suave)}
 .luna-dibujo.llena{background:radial-gradient(circle at 38% 35%,#fffaf0,#f1dfb0 55%,#c9a764);box-shadow:0 0 22px 6px rgba(243,220,160,.45),0 0 60px 14px rgba(212,175,106,.18)}
 @media (prefers-reduced-motion:no-preference){ .luna-dibujo.llena{animation:respira 4s ease-in-out infinite} @keyframes respira{50%{box-shadow:0 0 30px 10px rgba(243,220,160,.55),0 0 80px 20px rgba(212,175,106,.24)}} }
+.carta.con-img{padding:6px}
+.carta.con-img .carta-in{display:none}
+.carta-foto{width:100%;height:100%;object-fit:cover;border-radius:10px;display:block}
+.anual .mini.con-img{padding:3px;overflow:hidden}
+.anual .mini.con-img img{width:100%;height:100%;object-fit:cover;border-radius:5px;display:block}
+.anual .mini.con-img span{display:none}
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -242,6 +248,10 @@ function armarSlides(){
   return L2;
 }
 
+// Imágenes de las cartas subidas al repositorio (Rider-Waite 1909, dominio público)
+const ARCHIVO_CARTA = ['', '01_Magician', '02_High_Priestess', '03_Empress', '04_Emperor', '05_Hierophant', '06_Lovers', '07_Chariot', '08_Strength', '09_Hermit', '10_Wheel_of_Fortune', '11_Justice', '12_Hanged_Man', '13_Death', '14_Temperance', '15_Devil', '16_Tower', '17_Star', '18_Moon', '19_Sun', '20_Judgement', '21_World', '00_Fool'];
+const cartaSrc = n => 'RWS_Tarot_' + ARCHIVO_CARTA[+n] + '.jpg';
+
 function completar(a){ if (!a || !a.n) return a; a.nombre = a.nombre || NOM[+a.n]; a.texto = a.texto || SIG[+a.n]; return a; }
 
 const $ = id => document.getElementById(id);
@@ -253,14 +263,32 @@ const waLuz = msg => P.telLuz ? 'https://wa.me/' + waNum(P.telLuz) + '?text=' + 
 
 function error(msg){ $('estado').className = ''; $('estado').innerHTML = `<img data-logo alt="" src="${document.querySelector('link[rel=icon]').href}">${esc(msg)}`; }
 
+function jsonp(url){
+  return new Promise((ok, mal) => {
+    const nombre = 'luzguia_cb_' + Date.now();
+    const sc = document.createElement('script');
+    const fin = () => { delete window[nombre]; sc.remove(); };
+    const t = setTimeout(() => { fin(); mal(new Error('sin respuesta')); }, 25000);
+    window[nombre] = data => { clearTimeout(t); fin(); ok(data); };
+    sc.onerror = () => { clearTimeout(t); fin(); mal(new Error('el script no respondió')); };
+    sc.src = url + '&callback=' + nombre;
+    document.head.appendChild(sc);
+  });
+}
+
 async function cargar(){
   if (!CODIGO) return error('Este enlace está incompleto. Pedile el tuyo a Luz Guía.');
-  let d;
+  let d, detalle = '';
   try {
     const r = await fetch(API + '?accion=portal&c=' + encodeURIComponent(CODIGO));
     const txt = await r.text();
-    try { d = JSON.parse(txt); } catch (x) { console.error(txt); return error('Luz Guía respondió algo inesperado. Avisales a Belu o Mey para que lo revisen.'); }
-  } catch (e) { console.error(e); return error('No pudimos conectar con Luz Guía. Revisá tu conexión y volvé a intentar.'); }
+    try { d = JSON.parse(txt); } catch (x) { detalle = 'respuesta no válida'; }
+  } catch (e) { detalle = String(e.message || e); }
+  // Si el primer camino falla, probamos el segundo (JSONP)
+  if (!d) {
+    try { d = await jsonp(API + '?accion=portal&c=' + encodeURIComponent(CODIGO)); }
+    catch (e) { console.error(detalle, e); return error('No pudimos conectar con Luz Guía (' + detalle + ' / ' + (e.message || e) + '). Avisales a Belu o Mey.'); }
+  }
   try {
     if (!d.ok) return error(d.error === 'Enlace no válido' ? 'Este enlace no es válido. Pedile el tuyo a Luz Guía.' : 'No pudimos abrir tu espacio (' + (d.error || 'error desconocido') + ').');
     P = d; P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; P.promos = P.promos || []; P.paraOpinar = P.paraOpinar || [];
@@ -277,13 +305,13 @@ function pintar(){
 
   if (P.arcano && P.arcano.nombre) {
     h += `<section class="lectura"><small>Tu arcano de nacimiento</small>
-      <div class="carta" role="img" aria-label="Carta ${esc(P.arcano.nombre)}"><div class="carta-in"><span class="romano">${romano(P.arcano.n)}</span><img class="simbolo" src="${logo}" alt=""><span class="nombre">${esc(P.arcano.nombre)}</span></div></div>
+      <div class="carta con-img" role="img" aria-label="Carta ${esc(P.arcano.nombre)}"><img class="carta-foto" src="${cartaSrc(P.arcano.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><div class="carta-in"><span class="romano">${romano(P.arcano.n)}</span><img class="simbolo" src="${logo}" alt=""><span class="nombre">${esc(P.arcano.nombre)}</span></div></div>
       <p class="texto">${esc(P.arcano.texto)}</p></section>`;
   } else {
     h += `<section class="lectura"><p class="texto">Todavía no tenemos tu fecha de nacimiento. Pasánosla y te calculamos tu arcano.</p></section>`;
   }
   if (P.anual && P.anual.nombre) {
-    h += `<section class="anual"><div class="mini" aria-hidden="true">${romano(P.anual.n)}</div><div><small>La energía de tu ${esc(P.anio)}</small><h2>${esc(P.anual.nombre)}</h2><p>${esc(P.anual.texto)}</p></div></section>`;
+    h += `<section class="anual"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(P.anual.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(P.anual.n)}</span></div><div><small>La energía de tu ${esc(P.anio)}</small><h2>${esc(P.anual.nombre)}</h2><p>${esc(P.anual.texto)}</p></div></section>`;
   }
 
   const anio = +P.anio || new Date().getFullYear();
