@@ -158,6 +158,38 @@ h3.con-deco{display:flex;align-items:center;gap:8px}
 .deco-vela{position:absolute;left:-6px;bottom:-6px;width:70px;opacity:.8}
 .deco-luna-c{position:absolute;right:-6px;top:-6px;width:70px;opacity:.85}
 @media (max-width:420px){ .deco-lav-i,.deco-lav-d{width:62px} .deco-luna{width:64px} }
+/* ── Cielo mágico ── */
+body{background:#140720}
+body::before,body::after{display:none}
+#cielo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:radial-gradient(140% 90% at 50% -10%,#3a1766 0%,#22103d 38%,#140720 70%,#0b0414 100%)}
+.nebulosa{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;mix-blend-mode:screen}
+.n1{width:70vmax;height:50vmax;left:-25vmax;top:8vh;background:radial-gradient(closest-side,rgba(185,138,230,.55),transparent)}
+.n2{width:60vmax;height:45vmax;right:-25vmax;top:35vh;background:radial-gradient(closest-side,rgba(110,90,220,.45),transparent)}
+.n3{width:55vmax;height:40vmax;left:15vw;bottom:-20vmax;background:radial-gradient(closest-side,rgba(212,175,106,.28),transparent)}
+.halo-luna{position:absolute;top:-18vmax;right:-10vmax;width:46vmax;height:46vmax;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,244,214,.22),rgba(243,220,160,.08) 45%,transparent 70%)}
+.capa-estrellas{position:absolute;inset:0}
+.capa-estrellas::before{content:"";position:absolute;width:1px;height:1px;border-radius:50%;background:transparent;box-shadow:var(--sombras)}
+.cerca::before{width:2px;height:2px}
+.polvo span{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:#f3dca0;box-shadow:0 0 8px 2px rgba(243,220,160,.6);opacity:0}
+.fugaz{position:absolute;width:140px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,246,221,0),rgba(255,246,221,.95));
+  box-shadow:0 0 10px rgba(255,240,200,.7);transform:rotate(-28deg);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .n1{animation:derivar 48s ease-in-out infinite alternate}
+  .n2{animation:derivar 62s ease-in-out infinite alternate-reverse}
+  .n3{animation:derivar 55s ease-in-out infinite alternate}
+  @keyframes derivar{to{transform:translate(6vw,4vh) scale(1.12)}}
+  .halo-luna{animation:respiraLuna 9s ease-in-out infinite}
+  @keyframes respiraLuna{50%{opacity:.75;transform:scale(1.04)}}
+  .lejos{animation:titilaCapa 6s ease-in-out infinite alternate}
+  .cerca{animation:titilaCapa 4s ease-in-out 1.5s infinite alternate-reverse}
+  @keyframes titilaCapa{from{opacity:.35}to{opacity:1}}
+  .polvo span{animation:subir linear infinite}
+  @keyframes subir{0%{transform:translateY(0) translateX(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-105vh) translateX(30px);opacity:0}}
+  .fugaz{animation:fugaz 1.3s ease-out forwards}
+  @keyframes fugaz{0%{opacity:0;transform:rotate(-28deg) translateX(0)}15%{opacity:1}100%{opacity:0;transform:rotate(-28deg) translateX(-55vw)}}
+}
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -177,6 +209,12 @@ dialog textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid v
 </style>
 </head>
 <body>
+<div id="cielo" aria-hidden="true">
+  <div class="nebulosa n1"></div><div class="nebulosa n2"></div><div class="nebulosa n3"></div>
+  <div class="halo-luna"></div>
+  <div class="capa-estrellas lejos"></div><div class="capa-estrellas cerca"></div>
+  <div class="polvo"></div>
+</div>
 <div id="estado" class="cargando"><img data-logo alt="">Buscando tu carta…</div>
 <main id="portal" class="oculto"></main>
 
@@ -510,6 +548,25 @@ document.addEventListener('click', async e => {
   if (b.dataset.encuentro) { const t = P.encuentros.find(x => x.id === b.dataset.encuentro); pedir('Encuentro', t.id, t.nombre + ' (' + cuando(t.fecha) + ')'); }
   if (b.dataset.producto) pedir('Producto', b.dataset.producto, b.dataset.producto);
 });
+(function cielo(){
+  const sombras = (n, maxTam) => Array.from({ length: n }, () => {
+    const x = (Math.random() * 100).toFixed(2) + 'vw', y = (Math.random() * 100).toFixed(2) + 'vh';
+    const c = Math.random() < .25 ? '#f3dca0' : Math.random() < .5 ? '#e9dcff' : '#ffffff';
+    return x + ' ' + y + ' ' + (Math.random() * maxTam).toFixed(1) + 'px ' + c;
+  }).join(',');
+  document.querySelector('.lejos').style.setProperty('--sombras', sombras(160, .6));
+  document.querySelector('.cerca').style.setProperty('--sombras', sombras(45, 1.2));
+  const polvo = document.querySelector('.polvo');
+  for (let i = 0; i < 14; i++) { const p = document.createElement('span'); p.style.left = (Math.random() * 100) + 'vw'; p.style.animationDuration = (14 + Math.random() * 16) + 's'; p.style.animationDelay = (-Math.random() * 30) + 's'; polvo.appendChild(p); }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const lanzar = () => {
+    const f = document.createElement('div'); f.className = 'fugaz';
+    f.style.left = (50 + Math.random() * 50) + 'vw'; f.style.top = (Math.random() * 45) + 'vh';
+    document.getElementById('cielo').appendChild(f); setTimeout(() => f.remove(), 1500);
+    setTimeout(lanzar, 7000 + Math.random() * 9000);
+  };
+  setTimeout(lanzar, 2500);
+})();
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
 </script>
