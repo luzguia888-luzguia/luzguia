@@ -133,6 +133,31 @@ body::after{background-image:radial-gradient(1px 1px at 18% 40%,#fff,transparent
 .anual .mini.con-img{padding:3px;overflow:hidden}
 .anual .mini.con-img img{width:100%;height:100%;object-fit:cover;border-radius:5px;display:block}
 .anual .mini.con-img span{display:none}
+/* Adornos */
+.deco{pointer-events:none;user-select:none}
+.saludo{position:relative}
+.deco-luna{position:absolute;top:-14px;right:2%;width:84px;opacity:.9;filter:drop-shadow(0 0 14px rgba(243,220,160,.35))}
+.lectura{position:relative}
+.deco-lav-i,.deco-lav-d{position:absolute;bottom:90px;width:88px;opacity:.85;z-index:0}
+.deco-lav-i{left:2%;transform:rotate(-14deg) scaleX(-1)}
+.deco-lav-d{right:2%;transform:rotate(14deg)}
+.lectura .carta{position:relative;z-index:1}
+.deco-centro{text-align:center;margin-top:10px}
+.deco-cristales{width:120px;opacity:.95;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+h3.con-deco{display:flex;align-items:center;gap:8px}
+.deco-vela-h{width:34px}
+.cumple-caja{position:relative;margin:26px 0 0;border:1px solid var(--oro);border-radius:18px;padding:22px 20px 18px;text-align:center;overflow:hidden;
+  background:radial-gradient(120% 80% at 50% 0%,rgba(212,175,106,.18),transparent 60%),var(--ciruela);box-shadow:0 0 40px rgba(212,175,106,.12)}
+.cumple-caja small{color:var(--oro);letter-spacing:.04em}
+.cumple-caja h2{font-family:var(--script);font-weight:400;font-size:2.4rem;margin:4px 0 10px;color:var(--luna)}
+.cumple-caja p{margin:0 0 10px;color:var(--luna);line-height:1.55}
+.cumple-caja b{color:var(--oro);font-weight:500}
+.cumple-caja .ritual{border-top:1px solid var(--oro-suave);margin-top:14px;padding-top:12px}
+.cumple-caja .ritual p{color:var(--bruma);font-size:.95rem}
+.cumple-caja .firma{font-family:var(--serif);font-style:italic;color:var(--lila)}
+.deco-vela{position:absolute;left:-6px;bottom:-6px;width:70px;opacity:.8}
+.deco-luna-c{position:absolute;right:-6px;top:-6px;width:70px;opacity:.85}
+@media (max-width:420px){ .deco-lav-i,.deco-lav-d{width:62px} .deco-luna{width:64px} }
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -268,6 +293,16 @@ function error(msg){ $('estado').className = ''; $('estado').innerHTML = `<img d
 
 const usuarioIG = () => P && P.instagram ? ((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [])[1] || '') : '';
 
+function diasDesdeCumple(){
+  const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m) return null;
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  let c = new Date(hoy.getFullYear(), +m[2] - 1, +m[1]);
+  if (c > hoy) c = new Date(hoy.getFullYear() - 1, +m[2] - 1, +m[1]);
+  return Math.round((hoy - c) / 86400000);
+}
+// Adornos subidos al repositorio (si faltan, simplemente no se muestran)
+const deco = (nombre, clase) => `<img class="deco ${clase}" src="${nombre}.png" alt="" aria-hidden="true" onerror="this.remove()">`;
+
 function jsonp(url){
   return new Promise((ok, mal) => {
     const nombre = 'luzguia_cb_' + Date.now();
@@ -305,11 +340,21 @@ async function cargar(){
 function pintar(){
   const logo = document.querySelector('link[rel=icon]').href;
   let h = `<div class="marca"><img src="${logo}" alt="">Luz Guía</div>`;
-  h += `<section class="saludo"><h1>Hola,<span class="nombre-script">${esc(P.nombre)}</span></h1><p>Este es tu espacio personal en Luz Guía.</p></section>`;
-  if (P.esCumple) h += `<div class="cumple">¡Feliz cumpleaños! 🎂 Que tu nuevo ciclo llegue lleno de luz.</div>`;
+  h += `<section class="saludo">${deco('luna', 'deco-luna')}<h1>Hola,<span class="nombre-script">${esc(P.nombre)}</span></h1><p>Este es tu espacio personal en Luz Guía.</p></section>`;
+  const dc = diasDesdeCumple();
+  if (dc !== null && dc <= 7) {
+    h += `<section class="cumple-caja">${deco('vela', 'deco-vela')}${deco('luna', 'deco-luna-c')}
+      <small>${dc === 0 ? 'Hoy es tu día' : 'Tu nuevo ciclo empezó hace ' + dc + (dc === 1 ? ' día' : ' días')}</small>
+      <h2>¡Feliz cumpleaños, ${esc(P.nombre)}! 🎂</h2>
+      <p>Empieza una nueva vuelta al sol, y en Luz Guía queremos acompañarte con un mensaje para este ciclo.</p>
+      ${P.arcano ? `<p>Tu arcano de nacimiento, <b>${esc(P.arcano.nombre)}</b>, te recuerda tu esencia: ${esc(String(P.arcano.texto || '').charAt(0).toLowerCase() + String(P.arcano.texto || '').slice(1))}</p>` : ''}
+      ${P.anual ? `<p>Y este año te acompaña <b>${esc(P.anual.nombre)}</b>: ${esc(String(P.anual.texto || '').charAt(0).toLowerCase() + String(P.anual.texto || '').slice(1))}</p>` : ''}
+      <div class="ritual"><b>Un pequeño ritual para tu cumpleaños</b><p>Encendé una vela y escribí tres cosas que querés soltar y tres que querés invitar a tu vida. Leelas en voz alta, apagá la vela con gratitud y guardá el papel hasta tu próximo cumpleaños.</p></div>
+      <p class="firma">Con cariño, Belu y Mey 💜</p></section>`;
+  }
 
   if (P.arcano && P.arcano.nombre) {
-    h += `<section class="lectura"><small>Tu arcano de nacimiento</small>
+    h += `<section class="lectura">${deco('lavanda', 'deco-lav-i')}${deco('lavanda', 'deco-lav-d')}<small>Tu arcano de nacimiento</small>
       <div class="carta con-img" role="img" aria-label="Carta ${esc(P.arcano.nombre)}"><img class="carta-foto" src="${cartaSrc(P.arcano.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><div class="carta-in"><span class="romano">${romano(P.arcano.n)}</span><img class="simbolo" src="${logo}" alt=""><span class="nombre">${esc(P.arcano.nombre)}</span></div></div>
       <p class="texto">${esc(P.arcano.texto)}</p></section>`;
   } else {
@@ -326,7 +371,8 @@ function pintar(){
       <div><small>De dónde venís · ${anio - 1}</small><b>${romano(ant)}</b><span>${esc(NOM[ant])}</span></div>
       <div><small>Hoy transitás · ${anio}</small><b>${P.anual ? romano(P.anual.n) : '—'}</b><span>${P.anual ? esc(P.anual.nombre) : ''}</span></div>
       <div><small>Hacia dónde vas · ${anio + 1}</small><b>${romano(sig)}</b><span>${esc(NOM[sig])}</span></div></div>
-      <p class="ciclo-txt">${anio} es un año universal ${u}. Tu arcano de nacimiento es la raíz; el del año es la estación que estás atravesando.</p>`;
+      <p class="ciclo-txt">${anio} es un año universal ${u}. Tu arcano de nacimiento es la raíz; el del año es la estación que estás atravesando.</p>
+      <div class="deco-centro">${deco('cristales', 'deco-cristales')}</div>`;
   }
 
   const lu = proximaLuna();
@@ -359,7 +405,7 @@ function pintar(){
   }).join('') : '<p class="vacio">Pronto anunciamos nuevos encuentros. Te avisamos 🌙</p>';
 
   if (P.paraOpinar && P.paraOpinar.length) {
-    h += '<h3>Contanos cómo te fue</h3>';
+    h += '<h3 class="con-deco">Contanos cómo te fue ' + deco('vela', 'deco-vela-h') + '</h3>';
     h += P.paraOpinar.map(t => `<div class="opinar" data-opinar="${esc(t.id)}"><h4>${esc(t.nombre)}</h4><small style="color:var(--bruma)">${esc(cuando(t.fecha))}</small>
       <div class="estrellas" role="radiogroup" aria-label="Puntaje">${[1,2,3,4,5].map(n => `<button type="button" class="on" data-estrella="${n}" role="radio" aria-checked="${n === 5}" aria-label="${n} estrellas">★</button>`).join('')}</div>
       <label for="op-${esc(t.id)}" style="display:block;color:var(--bruma);font-size:.92rem;margin-bottom:6px">¿Qué te llevaste de este encuentro?</label><textarea id="op-${esc(t.id)}" maxlength="800"></textarea>

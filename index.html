@@ -582,7 +582,8 @@ function textoLuna(l){
 }
 const TEXTO_BASE = {
   arcano_dia: { nombre: 'Arcano del día (difusión)', texto: '✨ Energía del día: {arcano_dia} ✨\n\n{mensaje_dia}\n\n🌙 Consejo: {consejo_dia}\n\n¿Te resuena? Contanos en qué área de tu vida lo estás sintiendo: vínculos, trabajo, dinero, cuerpo o tu mundo interior 💜{proximo}', clave: '{mensaje_dia}' },
-  luna: { nombre: 'Luna de estos días (difusión)', texto: '{mensaje_luna}{proximo}', clave: '{mensaje_luna}' }
+  luna: { nombre: 'Luna de estos días (difusión)', texto: '{mensaje_luna}{proximo}', clave: '{mensaje_luna}' },
+  cumpleanos: { nombre: 'Cumpleaños (con su regalo en Mi Luz)', texto: '¡Feliz cumpleaños, {nombre}! 🎂🌙\n\nQue este nuevo ciclo te encuentre con la energía de {arcano_anual}. Te preparamos un regalito: en tu espacio de Luz Guía te espera un mensaje especial para tu nueva vuelta al sol ✨\n\n{link_portal}\n\nCon cariño, Belu y Mey', clave: '{link_portal}' }
 };
 
 /* ───── Mensajes ───── */
@@ -984,7 +985,12 @@ function abrirPago(a){
      <label>Medio de pago<select class="campo" id="pg-medio"><option></option>${L('Medios de pago').map(x => `<option>${esc(x)}</option>`).join('')}</select></label>
      <label>Fecha<input class="campo" type="date" id="pg-fecha" value="${iso(HOY)}"></label></div>
      ${hist.length ? '<h3 style="margin:22px 0 8px">Pagos anteriores</h3><ul class="tareas">' + hist.map(h2 => `<li class="tarea"><div class="txt">${esc(h2.m)} · ${esc(h2.t)}<small>${esc(h2.f || '')}${h2.q ? ' · cobró ' + esc(h2.q) : ''}</small></div>${h2.r ? `<div class="bt">${acciones('Pagos', h2.r)}</div>` : ''}</li>`).join('') + '</ul>' : ''}`,
-    `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pg-ok">Guardar pago</button>`);
+    `${falta > 0 ? '<button class="btn-sec" type="button" id="pg-perdonar">No le cobramos el resto</button>' : ''}<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pg-ok">Guardar pago</button>`);
+  if ($('pg-perdonar')) $('pg-perdonar').onclick = async ev => {
+    if (!confirm('¿Dar por saldado lo que falta (' + pesos(falta) + ')? Queda registrado como descuento y deja de figurar como deuda.')) return;
+    ev.target.disabled = true;
+    try { await guardarCambios('Asistencias', a, { 'Descuento': num(a['Descuento']) + falta }, 'Listo: ya no debe nada ✓'); } catch (err) { toast(err.message, true); ev.target.disabled = false; }
+  };
   $('pg-ok').onclick = async ev => {
     const m = revisarMonto(Number($('pg-monto').value));
     if (!m) { toast('Escribí el monto', true); return; }
@@ -1060,20 +1066,21 @@ function filaAsis(o){
   const asis = est || (o.pasado ? 'Asistió' : 'Confirmada');
   const ausente = /No vino|Canceló/.test(asis);
   const motivo = a ? (a['Motivo de ausencia'] || '') : '', detalle = a ? (a['Detalle del motivo'] || '') : '';
-  const forma = !a ? (o.pasado ? 'completo' : 'nada') : (pagado > 0 && falta <= 0 ? 'completo' : pagado > 0 ? 'parte' : (o.pasado && !est ? 'completo' : 'nada'));
+  const base = a ? (num(a['Precio']) || o.precio) : o.precio, desc = a ? num(a['Descuento']) : 0;
+  const forma = !a ? (o.pasado ? 'completo' : 'nada') : (pagado > 0 && falta <= 0 && desc > 0 && pagado < base ? 'cerrado' : pagado > 0 && falta <= 0 ? 'completo' : pagado > 0 ? 'parte' : (o.pasado && !est ? 'completo' : 'nada'));
   const opc = optCobro();
   let quien = (a && a['Cobró seña']) || (o.pasado ? 'Ya repartido' : QUIEN);
   if (!opc.includes(quien)) quien = QUIEN;
   const precio = a ? (num(a['Precio']) - num(a['Descuento'])) : o.precio;
-  const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '', motivo, detalle };
+  const snap = { asis: est, sena: a ? num(a['Seña']) : 0, quien: a ? (a['Cobró seña'] || '') : '', motivo, detalle, desc, forma };
   const opAsis = (L('Asistencia').length ? L('Asistencia') : ['Confirmada', 'Asistió', 'No vino', 'Canceló']);
   const marca = a ? `<span class="ya${o.dup > 1 ? ' rojo' : ''}">${o.dup > 1 ? 'repetida ×' + o.dup : (est || 'anotada') + (pagado ? ' · pagó ' + pesos(pagado) : '') + (falta > 0 ? ' · debe ' + pesos(falta) : '')}</span>` : '';
-  return `<div class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Encuentro']) : ''}" data-precio="${precio || 0}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
+  return `<div class="multi-fila${fue ? '' : ' off'}" data-nombre="${esc(String(o.titulo).toLowerCase())}" data-pid="${esc(o.pid)}" data-tid="${esc(o.tid)}" data-fila="${a ? a._fila : ''}" data-original="${a ? esc(a['ID Encuentro']) : ''}" data-precio="${precio || 0}" data-base="${base || 0}" data-desc="${desc}" data-otros="${otros}" data-pasado="${o.pasado ? 1 : ''}" data-snap='${esc(JSON.stringify(snap))}'>
     <input type="checkbox"${fue ? ' checked' : ''} aria-label="Anotada en ${esc(o.titulo)}">
     <span>${esc(o.titulo)}${marca}<small>${o.sub}</small></span>
     <select class="campo asis" aria-label="Asistencia">${opAsis.map(x => `<option${x === asis ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
-    <select class="campo forma" aria-label="Pago"><option value="completo"${forma === 'completo' ? ' selected' : ''}>Pagó completo</option><option value="parte"${forma === 'parte' ? ' selected' : ''}>Pagó una parte</option><option value="nada"${forma === 'nada' ? ' selected' : ''}>No pagó todavía</option></select>
-    <div class="cel-monto${forma === 'parte' ? '' : ' invisible'}"><input class="campo pagado" type="number" min="0" step="100" inputmode="numeric" placeholder="Pagó $" value="${forma === 'parte' && pagado ? pagado : ''}" aria-label="Cuánto pagó en total"><small class="resta">${forma === 'parte' && falta > 0 ? 'falta ' + pesos(falta) : ''}</small></div>
+    <select class="campo forma" aria-label="Pago"><option value="completo"${forma === 'completo' ? ' selected' : ''}>Pagó completo</option><option value="parte"${forma === 'parte' ? ' selected' : ''}>Pagó una parte (debe el resto)</option><option value="cerrado"${forma === 'cerrado' ? ' selected' : ''}>Pagó una parte (no debe más)</option><option value="nada"${forma === 'nada' ? ' selected' : ''}>No pagó todavía</option></select>
+    <div class="cel-monto${/parte|cerrado/.test(forma) ? '' : ' invisible'}"><input class="campo pagado" type="number" min="0" step="100" inputmode="numeric" placeholder="Pagó $" value="${/parte|cerrado/.test(forma) && pagado ? pagado : ''}" aria-label="Cuánto pagó en total"><small class="resta">${forma === 'parte' && falta > 0 ? 'falta ' + pesos(falta) : forma === 'cerrado' ? 'no debe más' : ''}</small></div>
     <select class="campo quien${forma === 'nada' ? ' invisible' : ''}" aria-label="Quién cobró">${opc.map(x => `<option${x === quien ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select>
     <div class="motivo-linea${ausente ? '' : ' oculto'}"><select class="campo motivo" aria-label="Motivo"><option value="">¿Por qué no vino?</option>${L('Motivos de ausencia').map(x => `<option${x === motivo ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select><input class="campo detalle" placeholder="Detalle (opcional)" value="${esc(detalle)}" aria-label="Detalle del motivo"></div></div>`;
 }
@@ -1098,7 +1105,7 @@ function abrirAsistencias(modo, id){
       filas += filaAsis({ pid: p['ID Persona'], tid: id, titulo: p['Nombre completo'], sub: (v ? v + (v === 1 ? ' encuentro' : ' encuentros') : 'Primera vez') + (p['Arcano nacimiento'] ? ' · ' + esc(p['Arcano nacimiento']) : ''), precio, pasado, a: x.a, dup: x.dup }); });
   }
   modal(titulo,
-    `<p class="ayuda" style="margin-top:0">El tilde indica que ${modo === 'persona' ? 'estaba anotada en ese encuentro' : 'esa persona estaba anotada'}. En cada fila elegí por separado si <b>vino o no</b> (y por qué) y <b>cómo pagó</b>: alguien puede no haber venido y haber pagado todo o solo la seña. Con "Pagó una parte" escribís <b>cuánto pagó en total</b> y lo que falta se calcula solo. Si destildás una inscripción que ya existía, se borra. Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
+    `<p class="ayuda" style="margin-top:0">El tilde indica que ${modo === 'persona' ? 'estaba anotada en ese encuentro' : 'esa persona estaba anotada'}. En cada fila elegí por separado si <b>vino o no</b> (y por qué) y <b>cómo pagó</b>: alguien puede no haber venido y haber pagado todo o solo la seña. Con "Pagó una parte" escribís <b>cuánto pagó en total</b>: si debe el resto, queda como saldo pendiente; si eligen no reclamarlo (por ejemplo, dejó la seña y no vino), usá <b>"no debe más"</b>. Si destildás una inscripción que ya existía, se borra. Lo que falte pagar aparece solo en Cobros, en Hoy y en Estadísticas.</p>${AYUDA_PAGO}
      ${buscador ? '<input class="campo" type="search" id="as-buscar" placeholder="Buscar por nombre" style="margin-bottom:10px">' : ''}
      <div class="multi" id="as-lista"><div class="multi-cab"><span></span><span>${modo === 'persona' ? 'Encuentro' : 'Persona'}</span><span>Asistencia</span><span>Pago</span><span>Pagó $</span><span>Lo cobró</span></div>${filas}</div>
      ${modo === 'persona' ? '' : `<p style="margin:12px 0 0"><button class="btn-sec" type="button" data-nuevo="Asistencias" data-pre='${esc(JSON.stringify({ 'ID Encuentro': id }))}'>Es alguien nuevo</button></p>`}`,
@@ -1114,14 +1121,16 @@ function abrirAsistencias(modo, id){
     }
     if (ev.target.classList.contains('forma')) {
       const v = ev.target.value;
-      f.querySelector('.cel-monto').classList.toggle('invisible', v !== 'parte');
+      f.querySelector('.cel-monto').classList.toggle('invisible', !/parte|cerrado/.test(v));
       f.querySelector('.quien').classList.toggle('invisible', v === 'nada');
-      if (v === 'parte') f.querySelector('.pagado').focus();
+      f.querySelector('.resta').textContent = v === 'cerrado' ? 'no debe más' : '';
+      if (/parte|cerrado/.test(v)) f.querySelector('.pagado').focus();
     }
   });
   caja.addEventListener('input', ev => {
     if (!ev.target.classList.contains('pagado')) return;
     const f = ev.target.closest('.multi-fila'), precio = Number(f.dataset.precio) || 0, p = Number(ev.target.value) || 0;
+    if (f.querySelector('.forma').value === 'cerrado') { f.querySelector('.resta').textContent = 'no debe más'; return; }
     f.querySelector('.resta').textContent = precio && p ? (p >= precio ? 'pagó todo' : 'falta ' + pesos(precio - p)) : '';
   });
   if ($('as-buscar')) $('as-buscar').oninput = ev => { const q = ev.target.value.toLowerCase().trim(); caja.querySelectorAll('.multi-fila').forEach(f => f.classList.toggle('oculto', q && !f.dataset.nombre.includes(q))); };
@@ -1133,20 +1142,26 @@ function abrirAsistencias(modo, id){
       if (d.fila && !marcado) { ops.push({ tipo: 'borrar', fila: Number(d.fila), original: d.original, quien: f.querySelector('span').firstChild.textContent.trim() }); return; }
       const forma = f.querySelector('.forma').value, quien = f.querySelector('.quien').value;
       const precio = Number(d.precio) || 0, otros = Number(d.otros) || 0;
-      if (forma === 'parte' && !(Number(f.querySelector('.pagado').value) > 0)) { faltanMontos.push(f.querySelector('span').firstChild.textContent.trim()); return; }
-      const pagoTotal = forma === 'parte' ? revisarMonto(Number(f.querySelector('.pagado').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
+      if (/parte|cerrado/.test(forma) && !(Number(f.querySelector('.pagado').value) > 0)) { faltanMontos.push(f.querySelector('span').firstChild.textContent.trim()); return; }
+      const pagoTotal = /parte|cerrado/.test(forma) ? revisarMonto(Number(f.querySelector('.pagado').value) || 0, f.querySelector('span').firstChild.textContent.trim()) : 0;
       const asis = f.querySelector('.asis').value;
       const aus = /No vino|Canceló/.test(asis);
       const datos = { 'Asistencia': asis, 'Motivo de ausencia': aus ? f.querySelector('.motivo').value : '', 'Detalle del motivo': aus ? f.querySelector('.detalle').value.trim() : '' };
       if (precio > 0) {
-        const sena = forma === 'completo' ? Math.max(0, precio - otros) : forma === 'parte' ? Math.max(0, pagoTotal - otros) : 0;
+        const sn0 = d.snap ? JSON.parse(d.snap) : {};
+        const base = Number(d.base) || precio;
+        // Si antes estaba "no debe más", ese descuento se quita al cambiar de opción
+        const descQueda = sn0.forma === 'cerrado' ? 0 : (Number(d.desc) || 0);
+        const efectivo = base - descQueda;
+        const sena = forma === 'completo' ? Math.max(0, efectivo - otros) : /parte|cerrado/.test(forma) ? Math.max(0, pagoTotal - otros) : 0;
         datos['Seña'] = sena || ''; datos['Cobró seña'] = sena ? quien : '';
+        datos['Descuento'] = forma === 'cerrado' ? Math.max(0, base - pagoTotal) : (descQueda || '');
       }
       if (!d.fila) {
         ops.push({ tipo: 'agregar', datos: Object.assign({ 'ID Encuentro': d.tid, 'ID Persona': d.pid, 'Fecha inscripción': iso(HOY) }, datos) });
       } else {
         const sn = JSON.parse(d.snap);
-        const cambio = sn.asis !== datos['Asistencia'] || sn.motivo !== datos['Motivo de ausencia'] || sn.detalle !== datos['Detalle del motivo'] || ('Seña' in datos && (sn.sena !== (Number(datos['Seña']) || 0) || sn.quien !== datos['Cobró seña']));
+        const cambio = sn.asis !== datos['Asistencia'] || sn.motivo !== datos['Motivo de ausencia'] || sn.detalle !== datos['Detalle del motivo'] || ('Seña' in datos && (sn.sena !== (Number(datos['Seña']) || 0) || sn.quien !== datos['Cobró seña'] || (Number(sn.desc) || 0) !== (Number(datos['Descuento']) || 0)));
         if (cambio) ops.push({ tipo: 'editar', fila: Number(d.fila), original: d.original, datos });
       }
     });
@@ -1187,7 +1202,7 @@ function movimientosCobro(){
     if (num(a['Seña'])) L2.push({ quien: a['Cobró seña'] || '', monto: num(a['Seña']), txt: a['Nombre'] + ' · ' + a['Encuentro'], fila: a._fila, hoja: 'Asistencias' });
     if (num(a['Resto pagado'])) L2.push({ quien: a['Cobró resto'] || '', monto: num(a['Resto pagado']), txt: a['Nombre'] + ' · ' + a['Encuentro'] + ' (segundo pago)', fila: a._fila, hoja: 'Asistencias' });
   });
-  H('Pagos').forEach(p => { const pp = persona(p['ID Persona']), t = taller(p['ID Encuentro']); L2.push({ quien: p['Cobró'] || '', monto: num(p['Monto']), txt: (pp ? pp['Nombre completo'] : '') + ' · ' + (t ? t['Nombre / temática'] : '') + ' (pago)', fila: p._fila, hoja: 'Pagos' }); });
+  H('Pagos').forEach(p => { const pp = persona(p['ID Persona']), t = encuentro(p['ID Encuentro']); L2.push({ quien: p['Cobró'] || '', monto: num(p['Monto']), txt: (pp ? pp['Nombre completo'] : '') + ' · ' + (t ? t['Nombre / temática'] : '') + ' (pago)', fila: p._fila, hoja: 'Pagos' }); });
   H('Ventas').forEach(v => L2.push({ quien: v['Cobró'] || '', monto: num(v['Total']), txt: 'Venta: ' + v['Producto'], fila: v._fila, hoja: 'Ventas' }));
   return L2;
 }
@@ -1224,6 +1239,133 @@ function abrirCalculo(){
   h += lista('⚠ Pagos sin "Lo cobró" (corregilos)', c.mov.filter(m => !c.soc.includes(m.quien) && m.quien !== 'Ya repartido'), true);
   c.soc.forEach(x => { h += lista('Lo que figura cobrado por ' + esc(x), c.mov.filter(m => m.quien === x), true); });
   modal('El cálculo, paso a paso', h, '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
+}
+
+/* ───── Reportes para descargar (Excel) ───── */
+async function cargarXLSX(){
+  if (window.XLSX) return;
+  await new Promise((ok, mal) => { const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; sc.onload = ok; sc.onerror = () => mal(new Error('No se pudo cargar el generador de Excel. Revisá la conexión.')); document.head.appendChild(sc); });
+}
+function rangoReporte(op){
+  const y = HOY.getFullYear(), m = HOY.getMonth();
+  if (op === 'mes') return [new Date(y, m, 1), new Date(y, m + 1, 0)];
+  if (op === 'mesant') return [new Date(y, m - 1, 1), new Date(y, m, 0)];
+  if (op === 'anio') return [new Date(y, 0, 1), new Date(y, 11, 31)];
+  if (op === 'custom') { const a = $('rp-desde').value, b = $('rp-hasta').value; return [a ? new Date(a + 'T00:00:00') : new Date(2000, 0, 1), b ? new Date(b + 'T23:59:59') : new Date(2100, 0, 1)]; }
+  return [new Date(2000, 0, 1), new Date(2100, 0, 1)];
+}
+const enR = (f, r) => f && f >= r[0] && f <= r[1];
+const fTxt = f => f ? String(f.getDate()).padStart(2, '0') + '/' + String(f.getMonth() + 1).padStart(2, '0') + '/' + f.getFullYear() : '';
+const mesTxt = f => MESES[f.getMonth()] + ' ' + f.getFullYear();
+function hojaXLS(filas, anchos){ const ws = XLSX.utils.aoa_to_sheet(filas); ws['!cols'] = (anchos || filas[0].map(() => 18)).map(w => ({ wch: w })); return ws; }
+
+function datosReporte(r){
+  const enc = H('Encuentros'), asis = H('Asistencias');
+  const fEnc = id => { const t = encuentro(id); return t && fecha(t['Fecha']); };
+  const ingresos = [];
+  asis.forEach(a => { const f = fEnc(a['ID Encuentro']); if (!enR(f, r)) return; const t = encuentro(a['ID Encuentro']);
+    if (num(a['Seña'])) ingresos.push([f, 'Encuentro: ' + t['Nombre / temática'], a['Nombre'], 'Seña / primer pago', num(a['Seña']), a['Medio de pago'] || '', a['Cobró seña'] || 'Sin asignar']);
+    if (num(a['Resto pagado'])) ingresos.push([f, 'Encuentro: ' + t['Nombre / temática'], a['Nombre'], 'Segundo pago', num(a['Resto pagado']), a['Medio de pago'] || '', a['Cobró resto'] || 'Sin asignar']); });
+  H('Pagos').forEach(p => { const f = fecha(p['Fecha']); if (!enR(f, r)) return; const t = encuentro(p['ID Encuentro']), pp = persona(p['ID Persona']);
+    ingresos.push([f, 'Encuentro: ' + (t ? t['Nombre / temática'] : ''), pp ? pp['Nombre completo'] : '', 'Pago posterior', num(p['Monto']), p['Medio de pago'] || '', p['Cobró'] || 'Sin asignar']); });
+  H('Ventas').forEach(v => { const f = fecha(v['Fecha']); if (!enR(f, r)) return; ingresos.push([f, 'Venta: ' + v['Producto'] + ' x' + (v['Cantidad'] || 1), v['Comprador/a'] || '', 'Venta de producto', num(v['Total']), v['Medio de pago'] || '', v['Cobró'] || 'Sin asignar']); });
+  ingresos.sort((a, b) => a[0] - b[0]);
+  const DEST = 'Destino (ID encuentro / GENERAL / REVENTA)';
+  const egresos = H('Gastos').filter(g => enR(fecha(g['Fecha']), r)).map(g => { const t = encuentro(g[DEST]); const id = (String(g['Comprobante'] || '').match(/[-\w]{25,}/) || [''])[0];
+    return [fecha(g['Fecha']), t ? 'Encuentro: ' + t['Nombre / temática'] : (g[DEST] === 'REVENTA' ? 'Compra para reventa' : 'General'), g['Categoría'] || '', g['Ítem'] || '', num(g['Cantidad']) || 1, num(g['Costo unitario']), num(g['Total']), g['Pagó'] || '', g['Reintegro'] || '', id ? 'https://drive.google.com/file/d/' + id + '/view' : '']; }).sort((a, b) => a[0] - b[0]);
+  const encR = enc.filter(t => enR(fecha(t['Fecha']), r) && t['Estado'] !== 'Cancelado').sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha']));
+  const totIng = ingresos.reduce((x, i) => x + i[4], 0), totEgr = egresos.reduce((x, e) => x + e[6], 0);
+  const porMes = {};
+  ingresos.forEach(i => { const k = i[0].getFullYear() * 100 + i[0].getMonth(); porMes[k] = porMes[k] || { f: i[0], i: 0, e: 0 }; porMes[k].i += i[4]; });
+  egresos.forEach(e => { const k = e[0].getFullYear() * 100 + e[0].getMonth(); porMes[k] = porMes[k] || { f: e[0], i: 0, e: 0 }; porMes[k].e += e[6]; });
+  const asisR = asis.filter(a => enR(fEnc(a['ID Encuentro']), r));
+  const vinieron = asisR.filter(a => a['Asistencia'] === 'Asistió');
+  return { ingresos, egresos, encR, totIng, totEgr, porMes, asisR, vinieron, DEST };
+}
+
+async function generarReporte(tipo){
+  const op = $('rp-periodo').value, r = rangoReporte(op);
+  const etiqueta = op === 'todo' ? 'todo el historial' : fTxt(r[0]) + ' al ' + fTxt(r[1]);
+  try { await cargarXLSX(); } catch (e) { toast(e.message, true); return; }
+  const d = datosReporte(r), wb = XLSX.utils.book_new();
+  const cabeceraR = (titulo) => [['LUZ GUÍA · ' + titulo], ['Período: ' + etiqueta], ['Generado el ' + fTxt(new Date()) + ' por ' + (QUIEN || 'el CRM')], []];
+  const meses = Object.values(d.porMes).sort((a, b) => a.f - b.f).map(m => [mesTxt(m.f), m.i, m.e, m.i - m.e]);
+  const ingSheet = () => hojaXLS([['Fecha', 'Concepto', 'Persona / comprador', 'Tipo', 'Monto', 'Medio de pago', 'Lo cobró']].concat(d.ingresos.map(i => [fTxt(i[0])].concat(i.slice(1)))), [12, 38, 26, 18, 12, 16, 14]);
+  const egrSheet = () => hojaXLS([['Fecha', 'Destino', 'Categoría', 'Ítem', 'Cantidad', 'Costo unitario', 'Total', 'Pagó', 'Reintegro', 'Comprobante']].concat(d.egresos.map(e => [fTxt(e[0])].concat(e.slice(1)))), [12, 30, 20, 30, 9, 13, 12, 10, 12, 50]);
+  const porFormato = {};
+  d.encR.forEach(t => { const k = t['Formato'] || 'Sin formato'; const vin = d.vinieron.filter(a => a['ID Encuentro'] === t['ID Encuentro']).length;
+    porFormato[k] = porFormato[k] || { n: 0, vin: 0, cupo: 0, cob: 0, gas: 0 }; const p = porFormato[k]; p.n++; p.vin += vin; p.cupo += num(t['Cupo']); p.cob += num(t['Cobrado']); p.gas += num(t['Gastos']); });
+  const encSheet = () => hojaXLS([['Encuentro', 'Fecha', 'Formato', 'Precio', 'Cupo', 'Anotadas', 'Vinieron', 'No vinieron', 'Ocupación %', 'Cobrado', 'Gastos', 'Ganancia', 'Ganancia por asistente', 'Puntaje promedio']].concat(d.encR.map(t => {
+    const l = d.asisR.filter(a => a['ID Encuentro'] === t['ID Encuentro']); const vin = l.filter(a => a['Asistencia'] === 'Asistió').length; const no = l.filter(a => /No vino|Canceló/.test(a['Asistencia'])).length;
+    const ts = H('Testimonios').filter(x => x['ID Encuentro'] === t['ID Encuentro']); const pr = ts.length ? ts.reduce((x, y) => x + num(y['Puntaje']), 0) / ts.length : '';
+    return [t['Nombre / temática'], t['Fecha'], t['Formato'], num(t['Precio por persona']), num(t['Cupo']), l.length, vin, no, num(t['Cupo']) ? Math.round(vin / num(t['Cupo']) * 100) : '', num(t['Cobrado']), num(t['Gastos']), num(t['Ganancia neta']), vin ? Math.round(num(t['Ganancia neta']) / vin) : '', pr ? Math.round(pr * 10) / 10 : ''];
+  })), [32, 12, 22, 10, 7, 9, 9, 11, 11, 12, 12, 12, 14, 10]);
+
+  if (tipo === 'contable') {
+    const soc = L('Socias').length ? L('Socias') : ['Belu', 'Mey'];
+    const porSocia = soc.map(x => [x, d.ingresos.filter(i => i[6] === x).reduce((a, i) => a + i[4], 0), d.egresos.filter(e => e[7] === x).reduce((a, e) => a + e[6], 0)]);
+    const medios = {}; d.ingresos.forEach(i => { const k = i[5] || 'Sin indicar'; medios[k] = (medios[k] || 0) + i[4]; });
+    XLSX.utils.book_append_sheet(wb, hojaXLS(cabeceraR('Reporte contable').concat([
+      ['Indicador', 'Monto'], ['Ingresos totales', d.totIng], ['Egresos totales', d.totEgr], ['Resultado', d.totIng - d.totEgr], [],
+      ['Ingresos y egresos por mes', '', '', ''], ['Mes', 'Ingresos', 'Egresos', 'Resultado']], meses, [[], ['Por socia', 'Cobró', 'Pagó gastos']], porSocia,
+      [[], ['Ingresos por medio de pago', 'Monto']], Object.entries(medios),
+      [[], ['Notas'], ['Las cifras surgen de lo cargado en el CRM. "Ya repartido" corresponde a cobros de eventos anteriores ya divididos entre las socias.'], ['Este reporte organiza la información, pero no reemplaza el criterio de un contador.']]), [34, 16, 16, 16]), 'Resumen');
+    XLSX.utils.book_append_sheet(wb, ingSheet(), 'Ingresos');
+    XLSX.utils.book_append_sheet(wb, egrSheet(), 'Egresos');
+    XLSX.utils.book_append_sheet(wb, hojaXLS([['Fecha', 'De', 'Para', 'Monto', 'Concepto']].concat(H('Transferencias').filter(t => enR(fecha(t['Fecha']), r)).map(t => [t['Fecha'], t['De'], t['Para'], num(t['Monto']), t['Concepto']])), [12, 10, 10, 12, 36]), 'Transferencias');
+  }
+
+  if (tipo === 'redes' || tipo === 'proyecto') {
+    const primera = {}; H('Asistencias').filter(a => a['Asistencia'] === 'Asistió').forEach(a => { const f = (encuentro(a['ID Encuentro']) && fecha(encuentro(a['ID Encuentro'])['Fecha'])); if (f && (!primera[a['ID Persona']] || f < primera[a['ID Persona']])) primera[a['ID Persona']] = f; });
+    const nuevas = participantes().filter(p => enR(primera[p['ID Persona']], r));
+    const unicas = new Set(d.vinieron.map(a => a['ID Persona']));
+    const recurrentes = [...unicas].filter(id => H('Asistencias').filter(a => a['ID Persona'] === id && a['Asistencia'] === 'Asistió').length >= 2).length;
+    const canales = {}; (nuevas.length ? nuevas : participantes()).forEach(p => { const k = p['Canal de llegada'] || 'Sin indicar'; canales[k] = (canales[k] || 0) + 1; });
+    const ocup = d.encR.length ? Math.round(d.encR.reduce((x, t) => x + (num(t['Cupo']) ? d.vinieron.filter(a => a['ID Encuentro'] === t['ID Encuentro']).length / num(t['Cupo']) : 0), 0) / d.encR.length * 100) : '';
+    const tests = H('Testimonios').filter(x => enR(fecha(x['Fecha']), r));
+    const ped = H('Pedidos').filter(x => enR(fecha(x['Fecha']), r));
+    const pedTipo = {}; ped.forEach(x => { pedTipo[x['Tipo']] = (pedTipo[x['Tipo']] || 0) + 1; });
+    const ausMot = {}; d.asisR.filter(a => /No vino|Canceló/.test(a['Asistencia'])).forEach(a => { const k = a['Motivo de ausencia'] || 'Sin indicar'; ausMot[k] = (ausMot[k] || 0) + 1; });
+    XLSX.utils.book_append_sheet(wb, hojaXLS(cabeceraR(tipo === 'redes' ? 'Reporte de comunidad y redes' : 'Reporte del proyecto').concat([
+      ['Indicador', 'Valor'], ['Encuentros realizados', d.encR.length], ['Asistencias', d.vinieron.length], ['Personas distintas que vinieron', unicas.size], ['Personas nuevas (primera vez)', nuevas.length],
+      ['Volvieron a otro encuentro (%)', unicas.size ? Math.round(recurrentes / unicas.size * 100) : ''], ['Ocupación promedio (%)', ocup], ['Ausentismo (%)', d.asisR.length ? Math.round(d.asisR.filter(a => /No vino|Canceló/.test(a['Asistencia'])).length / d.asisR.length * 100) : ''],
+      ['Opiniones recibidas', tests.length], ['Puntaje promedio', tests.length ? Math.round(tests.reduce((x, y) => x + num(y['Puntaje']), 0) / tests.length * 10) / 10 : ''], ['Pedidos desde Mi Luz', ped.length],
+      [], ['Cómo llegaron' + (nuevas.length ? ' (personas nuevas)' : ''), 'Personas']], Object.entries(canales).sort((a, b) => b[1] - a[1]),
+      [[], ['Pedidos desde Mi Luz por tipo', 'Cantidad']], Object.entries(pedTipo), [[], ['Motivos de ausencia', 'Cantidad']], Object.entries(ausMot)), [40, 14]), 'Comunidad');
+    XLSX.utils.book_append_sheet(wb, encSheet(), 'Encuentros');
+    XLSX.utils.book_append_sheet(wb, hojaXLS([['Fecha', 'Nombre', 'Encuentro', 'Puntaje', 'Comentario', 'Le gustaría para un próximo encuentro', 'Se puede publicar']].concat(tests.map(x => [x['Fecha'], String(x['Nombre']).split(' ')[0], x['Encuentro'], num(x['Puntaje']), x['Comentario'], x['Para un próximo encuentro'] || '', si(x['Se puede publicar']) ? 'Sí' : 'No'])), [12, 14, 28, 9, 60, 40, 12]), 'Opiniones');
+  }
+
+  if (tipo === 'proyecto') {
+    const asistentes = d.vinieron.length, cobEnc = d.encR.reduce((x, t) => x + num(t['Cobrado']), 0);
+    const ventas = d.ingresos.filter(i => i[3] === 'Venta de producto').reduce((x, i) => x + i[4], 0);
+    const deuda = H('Asistencias').reduce((x, a) => x + num(a['Pendiente']), 0);
+    const stock = H('Productos').reduce((x, p) => x + num(p['Stock actual']) * num(p['Costo de compra']), 0);
+    XLSX.utils.book_append_sheet(wb, hojaXLS(cabeceraR('Números del proyecto').concat([
+      ['Indicador', 'Valor'], ['Ingresos totales', d.totIng], ['Egresos totales', d.totEgr], ['Resultado', d.totIng - d.totEgr], ['Margen (%)', d.totIng ? Math.round((d.totIng - d.totEgr) / d.totIng * 100) : ''],
+      ['Cobrado en encuentros', cobEnc], ['Ventas de productos', ventas], ['Ingreso promedio por asistente', asistentes ? Math.round(cobEnc / asistentes) : ''], ['Saldo pendiente de cobro (hoy)', deuda], ['Stock en mano a costo (hoy)', stock],
+      [], ['Por formato', 'Encuentros', 'Asistentes promedio', 'Ocupación %', 'Cobrado', 'Gastos', 'Ganancia promedio']],
+      Object.entries(porFormato).map(([k, p]) => [k, p.n, Math.round(p.vin / p.n * 10) / 10, p.cupo ? Math.round(p.vin / p.cupo * 100) : '', p.cob, p.gas, Math.round((p.cob - p.gas) / p.n)]),
+      [[], ['Mes', 'Ingresos', 'Egresos', 'Resultado']], meses), [34, 14, 18, 13, 13, 13, 16]), 'Negocio');
+    XLSX.utils.book_append_sheet(wb, ingSheet(), 'Ingresos');
+    XLSX.utils.book_append_sheet(wb, egrSheet(), 'Egresos');
+    XLSX.utils.book_append_sheet(wb, hojaXLS([['Producto', 'Categoría', 'Costo', 'Precio de venta', 'Margen %', 'Vendidas', 'Stock']].concat(H('Productos').map(p => [p['Producto'], p['Categoría'], num(p['Costo de compra']), num(p['Precio de venta']), num(p['Margen %']), num(p['Vendidas']), num(p['Stock actual'])])), [28, 14, 11, 14, 10, 10, 8]), 'Productos');
+  }
+  if (tipo === 'proyecto') { wb.SheetNames.splice(wb.SheetNames.indexOf('Negocio'), 1); wb.SheetNames.unshift('Negocio'); }
+  const nombre = { contable: 'contable', redes: 'comunidad-redes', proyecto: 'proyecto-completo' }[tipo];
+  XLSX.writeFile(wb, 'LuzGuia-reporte-' + nombre + '-' + (op === 'todo' ? 'historico' : iso(r[0]) + '_' + iso(r[1])) + '.xlsx');
+  toast('Reporte descargado ✓');
+}
+function abrirReporte(){
+  modal('Descargar reporte', `<p class="ayuda" style="margin-top:0">Genera un archivo Excel listo para compartir. Elegí el período y para quién es.</p>
+    <div class="form"><label class="full">Período<select class="campo" id="rp-periodo"><option value="mes">Este mes</option><option value="mesant">Mes anterior</option><option value="anio" selected>Este año</option><option value="todo">Todo el historial</option><option value="custom">Elegir fechas…</option></select></label>
+    <label class="oculto rp-c">Desde<input class="campo" type="date" id="rp-desde"></label><label class="oculto rp-c">Hasta<input class="campo" type="date" id="rp-hasta"></label></div>
+    <ul class="tareas" style="margin-top:16px">
+      <li class="tarea"><span class="ico">🧾</span><div class="txt"><b>Para el contador</b><small>Todos los ingresos y egresos con fecha, medio de pago, quién cobró, quién pagó y enlace al comprobante. Totales por mes y por socia.</small></div><div class="bt"><button class="btn" type="button" data-rep="contable">Descargar</button></div></li>
+      <li class="tarea"><span class="ico">📣</span><div class="txt"><b>Para redes y comunidad</b><small>Asistencia, personas nuevas, cuántas vuelven, cómo llegan, ocupación, opiniones y pedidos desde Mi Luz. Sin teléfonos ni datos personales.</small></div><div class="bt"><button class="btn" type="button" data-rep="redes">Descargar</button></div></li>
+      <li class="tarea"><span class="ico">✨</span><div class="txt"><b>Proyecto completo</b><small>Para alguien que impulse el proyecto: números del negocio, rentabilidad por formato, evolución mensual, productos, comunidad y opiniones.</small></div><div class="bt"><button class="btn" type="button" data-rep="proyecto">Descargar</button></div></li>
+    </ul>`, '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
+  $('rp-periodo').onchange = ev => document.querySelectorAll('.rp-c').forEach(x => x.classList.toggle('oculto', ev.target.value !== 'custom'));
 }
 
 /* ───── Inscripciones repetidas ───── */
@@ -1628,7 +1770,7 @@ V.estadisticas = () => {
   const fm = {};
   ts.forEach(t => { const k = t['Formato'] || 'Sin formato'; fm[k] = fm[k] || { n:0, gente:0, gan:0, costo:0 }; fm[k].n++; fm[k].gente += H('Asistencias').filter(a => a['ID Encuentro'] === t['ID Encuentro'] && a['Asistencia'] === 'Asistió').length; fm[k].gan += num(t['Ganancia neta']); fm[k].costo += num(t['Costo por persona']); });
   const filasFm = Object.entries(fm).map(([k, f]) => ({ 'Formato': k, 'Realizados': f.n, 'Promedio': (f.gente/f.n).toFixed(1).replace('.', ','), 'Ganancia': pesos(f.gan/f.n), 'Costo': pesos(f.costo/f.n) }));
-  let h = cabeza('Estadísticas') + '<p class="ayuda">Calculadas sobre los encuentros marcados como Realizado.</p>';
+  let h = cabeza('Estadísticas', '<button class="btn" type="button" data-reporte>Descargar reporte</button>') + '<p class="ayuda">Calculadas sobre los encuentros marcados como Realizado.</p>';
   const DEST = 'Destino (ID encuentro / GENERAL / REVENTA)';
   const ganEncuentros = H('Encuentros').reduce((s2, t) => s2 + num(t['Ganancia neta']), 0);
   const ganVentas = H('Ventas').reduce((s2, v) => s2 + num(v['Ganancia']), 0);
@@ -1742,6 +1884,8 @@ document.addEventListener('click', async e => {
   }
   if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
   if (ds.calculo !== undefined) { abrirCalculo(); return; }
+  if (ds.reporte !== undefined) { abrirReporte(); return; }
+  if (ds.rep) { t.disabled = true; t.textContent = 'Generando…'; await generarReporte(ds.rep); t.disabled = false; t.textContent = 'Descargar'; return; }
   if (ds.limpiar !== undefined) { limpiarRepetidas(t); return; }
   if (ds.pago) { const a = H('Asistencias').find(x => String(x._fila) === ds.pago); if (a) abrirPago(a); return; }
   if (ds.varias) { abrirAsistencias('encuentro', ds.varias); return; }
