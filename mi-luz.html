@@ -190,6 +190,36 @@ body::before,body::after{display:none}
   .fugaz{animation:fugaz 1.3s ease-out forwards}
   @keyframes fugaz{0%{opacity:0;transform:rotate(-28deg) translateX(0)}15%{opacity:1}100%{opacity:0;transform:rotate(-28deg) translateX(-55vw)}}
 }
+/* Agenda mágica */
+.ag-hoy{border:1px solid var(--oro-suave);border-radius:16px;padding:16px 18px;background:radial-gradient(120% 90% at 0% 0%,rgba(212,175,106,.12),transparent 60%),var(--ciruela)}
+.ag-hoy small,.ag-ritual small{color:var(--lila)}
+.ag-hoy h4{font-family:var(--serif);font-size:1.35rem;margin:2px 0 8px}
+.ag-personal{margin:0 0 8px;color:var(--bruma);font-size:.95rem}
+.ag-personal b{color:var(--oro);font-weight:500}
+.ag-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.ag-chips span{font-size:.82rem;border:1px solid var(--lila-suave);border-radius:99px;padding:2px 10px}
+.ag-ritual{border:1px solid var(--linea);border-radius:14px;padding:14px 16px;margin-top:12px;background:rgba(39,16,64,.7)}
+.ag-ritual b{display:block;font-family:var(--serif);font-size:1.15rem;color:var(--oro);font-weight:600}
+.ag-ritual p{margin:4px 0 0;color:var(--bruma);font-size:.93rem}
+.ag-caja{margin-top:14px;border:1px solid var(--linea);border-radius:16px;padding:14px;background:rgba(39,16,64,.75)}
+.ag-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ag-nav b{font-family:var(--serif);font-size:1.3rem;font-weight:600;text-transform:capitalize}
+.ag-nav .btn-sec{padding:4px 12px}
+.ag-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.ag-dsem{text-align:center;font-size:.75rem;color:var(--oro)}
+.ag-dia{min-width:0;aspect-ratio:1/1.1;border:1px solid rgba(185,138,230,.15);border-radius:10px;background:rgba(28,11,46,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px 2px;cursor:pointer;color:var(--luna)}
+.ag-dia .n{font-size:.85rem}
+.ag-dia .ic{font-size:.7rem;line-height:1.1;letter-spacing:-1px;white-space:nowrap;overflow:hidden;max-width:100%}
+.ag-dia.hoy{border-color:var(--oro);box-shadow:0 0 12px rgba(212,175,106,.35)}
+.ag-dia.sel{background:rgba(212,175,106,.16);border-color:var(--oro)}
+.ag-dia:hover{border-color:var(--lila)}
+.ag-ley{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;color:var(--bruma);margin:10px 0 0}
+.ag-detalle{margin-top:12px;border-top:1px solid var(--linea);padding-top:12px}
+.ag-detalle h4{font-family:var(--serif);font-size:1.2rem;margin:0 0 6px}
+.ag-detalle ul{list-style:none;padding:0;margin:0}
+.ag-detalle li{display:flex;gap:8px;padding:5px 0;color:var(--bruma);font-size:.93rem}
+.ag-detalle li b{color:var(--luna);font-weight:500}
+.ag-ayuda{color:var(--lila-suave);font-size:.82rem;margin:10px 0 0}
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -282,7 +312,7 @@ function lunas(desde, hasta){
       const jde = faseJDE(k + (llena ? .5 : 0), llena);
       const f = new Date((jde - 2440587.5) * 86400000 - 69000);
       if (f > hasta) return out;
-      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; out.push({ fecha: f, llena, signo: ZOD[Math.floor(ml / 30)], grado: ml % 30 }); }
+      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; const Fk = (160.7108 + 390.67050284 * (k + (llena ? .5 : 0))) * RAD; out.push({ fecha: f, llena, signo: ZOD[Math.floor(ml / 30)], grado: ml % 30, eclipse: Math.abs(Math.sin(Fk)) < 0.30 }); }
     }
   }
 }
@@ -303,6 +333,150 @@ const SIGNOS = {
 };
 
 function proximaLuna(){ const hoy = new Date(); hoy.setHours(0,0,0,0); const h = new Date(hoy); h.setDate(h.getDate() + 32); const d = new Date(hoy); d.setDate(d.getDate() - 1); return lunas(d, h).find(x => { const f = new Date(x.fecha); f.setHours(0,0,0,0); return f >= hoy; }) || null; }
+
+// Luna diaria (Meeus cap. 47, términos principales) y Mercurio (elementos keplerianos JPL, 1800-2050)
+const R2 = Math.PI / 180;
+const norm = x => ((x % 360) + 360) % 360;
+function jdDe(fecha){ return fecha.getTime() / 86400000 + 2440587.5; }
+function longLuna(jd){
+  const T = (jd - 2451545) / 36525;
+  const L = 218.3164477 + 481267.88123421*T, D = (297.8501921 + 445267.1114034*T)*R2, M = (357.5291092 + 35999.0502909*T)*R2;
+  const Mp = (134.9633964 + 477198.8675055*T)*R2, F = (93.2720950 + 483202.0175233*T)*R2, s = Math.sin;
+  return norm(L + 6.289*s(Mp) + 1.274*s(2*D - Mp) + 0.658*s(2*D) + 0.214*s(2*Mp) - 0.186*s(M) - 0.114*s(2*F)
+    + 0.059*s(2*D - 2*Mp) + 0.057*s(2*D - M - Mp) + 0.053*s(2*D + Mp) + 0.046*s(2*D - M) + 0.041*s(Mp - M) - 0.035*s(D) - 0.030*s(Mp + M));
+}
+function longSolar(jd){
+  const T = (jd - 2451545) / 36525, M = (357.52911 + 35999.05029*T)*R2;
+  return norm(280.46646 + 36000.76983*T + (1.914602 - 0.004817*T)*Math.sin(M) + 0.019993*Math.sin(2*M) + 0.000289*Math.sin(3*M));
+}
+function posKepler(el, T){
+  const a = el[0] + el[1]*T, e = el[2] + el[3]*T, I = (el[4] + el[5]*T)*R2, L = el[6] + el[7]*T, w = el[8] + el[9]*T, O = el[10] + el[11]*T;
+  const M = norm(L - w)*R2, om = (w - O)*R2, Or = O*R2;
+  let E = M; for (let i = 0; i < 8; i++) E = E - (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
+  const x = a*(Math.cos(E) - e), y = a*Math.sqrt(1 - e*e)*Math.sin(E);
+  const co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Or), sO = Math.sin(Or), cI = Math.cos(I), sI = Math.sin(I);
+  return [(co*cO - so*sO*cI)*x + (-so*cO - co*sO*cI)*y, (co*sO + so*cO*cI)*x + (-so*sO + co*cO*cI)*y];
+}
+const EL_MER = [0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081];
+const EL_TIE = [1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0, 0];
+function longMercurio(jd){ const T = (jd - 2451545) / 36525, m = posKepler(EL_MER, T), t = posKepler(EL_TIE, T); return norm(Math.atan2(m[1] - t[1], m[0] - t[0]) / R2); }
+function mercurioRetro(jd){ let d = longMercurio(jd + .5) - longMercurio(jd - .5); if (d > 180) d -= 360; if (d < -180) d += 360; return d < 0; }
+
+const DIA = [null,
+ ['Hoy la energía empuja a empezar: tenés más recursos de los que creés.', 'Elegí una sola cosa que venís postergando y dale el primer paso.'],
+ ['Día para escuchar más de lo que hablás: la intuición sabe antes que la mente.', 'Antes de decidir, hacé unos minutos de silencio y prestá atención a lo que sentís.'],
+ ['Energía de abundancia, creatividad y disfrute.', 'Regalate algo que te nutra: una comida rica, un rato al sol o un proyecto creativo.'],
+ ['El día pide orden, límites claros y decisiones firmes.', 'Ordená un área concreta: tus cuentas, tu agenda o un rincón de tu casa.'],
+ ['Día para aprender, buscar guía o compartir lo que sabés.', 'Pedí consejo a alguien que admires, o enseñá algo que domines.'],
+ ['Las elecciones de hoy hablan de valores y de vínculos.', 'Antes de elegir, preguntate: ¿esto me acerca a quien quiero ser?'],
+ ['Energía de avance y determinación: lo que se mueve hoy, llega lejos.', 'Definí hacia dónde vas y no te disperses en mil frentes.'],
+ ['El poder del día está en la calma, no en la imposición.', 'Si algo te desborda, respirá y respondé con suavidad: vas a lograr más.'],
+ ['Día de introspección y búsqueda interior.', 'Regalate un rato a solas, sin pantallas, para escucharte.'],
+ ['Algo gira: cambios, oportunidades y sincronicidades.', 'Estate atenta a las señales y fluí con lo que llega en vez de resistirte.'],
+ ['Equilibrio y verdad: lo justo se acomoda.', 'Revisá un acuerdo o una decisión pendiente y elegí con honestidad.'],
+ ['La energía invita a pausar y mirar desde otro ángulo.', 'Si algo está trabado, soltá el control por hoy: la respuesta llega cuando dejás de forzar.'],
+ ['Transformación: algo termina para que algo nuevo empiece.', 'Identificá qué ya cumplió su ciclo (un hábito, un pensamiento, un objeto) y despedilo con gratitud.'],
+ ['Armonía, paciencia y la medida justa.', 'Buscá el punto medio: ni todo ni nada. Tomate tu tiempo.'],
+ ['Día para mirar los apegos y lo que te quita energía.', 'Preguntate qué te está atando y si podés ponerle un límite amoroso.'],
+ ['Lo que no es auténtico puede caerse, y está bien.', 'Si algo se rompe, mirá qué verdad te muestra: lo que queda en pie es tuyo.'],
+ ['Esperanza, sanación y fe en el camino.', 'Escribí un deseo y dejalo a la vista. Confiá en que se va revelando.'],
+ ['Emociones a flor de piel, sueños intensos e intuición despierta.', 'No tomes decisiones grandes desde el miedo y anotá tus sueños: traen mensajes.'],
+ ['Alegría, claridad y vitalidad.', 'Celebrá algo, por pequeño que sea, y compartí tu luz con alguien.'],
+ ['Un llamado interior y un renacimiento.', 'Escuchá esa voz que te pide un cambio: hoy es buen día para responderle.'],
+ ['Cierre de ciclo, logro y plenitud.', 'Reconocé todo lo que ya recorriste y agradecé antes de empezar lo próximo.'],
+ ['Libertad, espontaneidad y salto de fe.', 'Animate a algo nuevo sin tener todo resuelto: la aventura empieza con un paso.']
+];
+
+/* ── Agenda mágica: se calcula sola para cualquier fecha ── */
+const RITUALES = {
+  nueva: ['Ritual de intenciones', 'Escribí tres deseos en presente ("Elijo…", "Me permito…"). Encendé una vela blanca, leelos en voz alta y guardá el papel hasta la luna llena.'],
+  creciente: ['Ritual de impulso', 'Elegí un paso concreto hacia tu intención y hacelo hoy. Dejá un cristal o una moneda junto a tu papel de deseos como ancla.'],
+  llena: ['Ritual de soltar y agradecer', 'Escribí lo que querés soltar, leelo y rompelo o quemalo con cuidado. Dejá tus cristales a la luz de la luna para cargarlos y agradecé tres cosas de este ciclo.'],
+  menguante: ['Limpieza energética', 'Ventilá tu casa, pasá un sahumerio de adentro hacia afuera y despejá un rincón o un cajón. Lo que se va deja lugar a lo nuevo.'],
+  inicio: ['Apertura del mes', 'Escribí tu intención para este mes y una acción por semana. Guardá una moneda en tu billetera como símbolo de abundancia.'],
+  fin: ['Cierre y gratitud', 'Anotá tres cosas que aprendiste este mes y tres que agradecés. Ordená tu espacio para recibir el mes nuevo.'],
+  eclipse: ['Día de eclipse', 'Energía intensa de cambios: mejor observar que decidir. Meditá, escribí lo que sentís y evitá rituales de manifestación ese día.']
+};
+const SIGNO_DE = l => ZOD[Math.floor(l / 30)];
+function diaAstral(f){
+  const jd = jdDe(new Date(f.getFullYear(), f.getMonth(), f.getDate(), 12));
+  const lu = longLuna(jd), so = longSolar(jd), el = norm(lu - so);
+  const elAnt = norm(longLuna(jd - .5) - longSolar(jd - .5)), elSig = norm(longLuna(jd + .5) - longSolar(jd + .5));
+  const cruza = g => elAnt < g && elSig >= g;
+  const lunaHoy = LUNAS_MES.find(x => { const d = new Date(x.fecha); return d.getFullYear() === f.getFullYear() && d.getMonth() === f.getMonth() && d.getDate() === f.getDate(); });
+  const ultimo = new Date(f.getFullYear(), f.getMonth() + 1, 0).getDate() === f.getDate();
+  const fase = lunaHoy ? (lunaHoy.llena ? 'llena' : 'nueva') : cruza(90) ? 'creciente' : cruza(270) ? 'menguante' : '';
+  const crec = el < 180, signo = SIGNO_DE(lu), retro = mercurioRetro(jd);
+  const eclipse = LUNAS_MES.some(x => x.eclipse && Math.abs(new Date(x.fecha) - f) < 1.5 * 86400000);
+  const corte = /Leo|Virgo|Tauro|Capricornio/.test(signo) && !eclipse, corteNo = /Cáncer|Piscis/.test(signo);
+  const estetica = /Libra|Tauro|Leo/.test(signo) && !eclipse && !/llena|nueva/.test(fase);
+  const firmaNo = retro || eclipse, firmaSi = !firmaNo && crec && /Capricornio|Tauro|Virgo|Libra/.test(signo);
+  const ritual = eclipse && lunaHoy ? 'eclipse' : fase || (f.getDate() === 1 ? 'inicio' : ultimo ? 'fin' : '');
+  return { f, signo, crec, fase, retro, eclipse, corte, corteNo, estetica, firmaSi, firmaNo, ritual, el };
+}
+let LUNAS_MES = [], AG = null;
+function iconosDia(d){
+  const i = [];
+  if (d.fase === 'nueva') i.push('🌑'); else if (d.fase === 'llena') i.push('🌕'); else if (d.fase === 'creciente') i.push('🌓'); else if (d.fase === 'menguante') i.push('🌗');
+  if (d.corte) i.push('✂️'); if (d.estetica) i.push('💄'); if (d.firmaSi) i.push('📝'); if (d.firmaNo) i.push('⚠️'); if (d.ritual && !d.fase) i.push('🕯️');
+  if (d.personal) i.push('⭐');
+  return i;
+}
+function arcanoPersonalDe(f){ const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m) return null; return reducirN(m[1] + m[2] + String(f.getDate()).padStart(2, '0') + String(f.getMonth() + 1).padStart(2, '0') + f.getFullYear()); }
+function detalleDia(d){
+  const fecha = DIAS[d.f.getDay()].charAt(0).toUpperCase() + DIAS[d.f.getDay()].slice(1) + ' ' + d.f.getDate() + ' de ' + MESES[d.f.getMonth()];
+  const L2 = [];
+  L2.push(`<li><span>🌙</span>Luna ${d.crec ? 'creciente' : 'menguante'} en <b>${d.signo}</b>${d.fase === 'nueva' ? ' · <b>Luna nueva</b>' : d.fase === 'llena' ? ' · <b>Luna llena</b>' : d.fase === 'creciente' ? ' · cuarto creciente' : d.fase === 'menguante' ? ' · cuarto menguante' : ''}${d.eclipse ? ' · <b>eclipse</b>' : ''}</li>`);
+  if (d.corte) L2.push(`<li><span>✂️</span>${d.crec ? 'Buen día para cortarte el pelo si querés que <b>crezca rápido y con fuerza</b>.' : 'Buen día para cortarte el pelo si querés que el corte <b>dure más</b> y fortalecerlo.'}</li>`);
+  else if (d.corteNo) L2.push(`<li><span>✂️</span>Poco favorable para cortes de pelo: mejor esperar unos días.</li>`);
+  if (d.estetica) L2.push(`<li><span>💄</span>Favorable para tratamientos estéticos: ${d.crec ? 'hidratación, nutrición y tratamientos que buscan sumar.' : 'depilación y limpiezas (el vello tarda más en volver).'}</li>`);
+  if (d.firmaSi) L2.push(`<li><span>📝</span>Buen día para firmar, presentar papeles o cerrar acuerdos.</li>`);
+  if (d.firmaNo) L2.push(`<li><span>⚠️</span>Poco favorable para firmas y papeles importantes${d.retro ? ' (Mercurio retrógrado: malentendidos y demoras; si no podés postergar, leé dos veces la letra chica)' : ''}${d.eclipse ? ' (eclipse: días de cambios bruscos)' : ''}.</li>`);
+  if (d.personal) L2.push(`<li><span>⭐</span>Día de tu arcano: tu energía de nacimiento está potenciada. Ideal para algo importante para vos.</li>`);
+  const r = d.ritual && RITUALES[d.ritual];
+  return `<div class="ag-detalle"><h4>${fecha}</h4><ul>${L2.map(x => x.replace(/^<li><span>(.*?)<\/span>([\s\S]*)<\/li>$/, '<li><span>$1</span><div>$2</div></li>')).join('')}</ul>${r ? `<div class="ag-ritual"><b>🕯️ ${r[0]}</b><p>${r[1]}</p></div>` : ''}</div>`;
+}
+function pintarAgenda(){
+  const c = $('agenda'); if (!c || !AG) return;
+  const y = AG.y, m = AG.m, primero = new Date(y, m, 1), ini = (primero.getDay() + 6) % 7, dias = new Date(y, m + 1, 0).getDate();
+  LUNAS_MES = lunas(new Date(y, m - 1, 25), new Date(y, m + 1, 5));
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const arcN = P.arcano ? +P.arcano.n : 0;
+  let g = ['lu','ma','mi','ju','vi','sá','do'].map(x => `<div class="ag-dsem">${x}</div>`).join('');
+  for (let i = 0; i < ini; i++) g += '<div></div>';
+  for (let n = 1; n <= dias; n++) {
+    const f = new Date(y, m, n), d = diaAstral(f); d.personal = arcN && arcanoPersonalDe(f) === arcN;
+    const ic = iconosDia(d);
+    g += `<button type="button" class="ag-dia${f.getTime() === hoy.getTime() ? ' hoy' : ''}${AG.sel === n ? ' sel' : ''}" data-agdia="${n}" aria-label="${n} de ${MESES[m]}"><span class="n">${n}</span><span class="ic">${ic.slice(0, 3).join('')}${ic.length > 3 ? '·' : ''}</span></button>`;
+  }
+  const sel = AG.sel ? diaAstral(new Date(y, m, AG.sel)) : null; if (sel) sel.personal = arcN && arcanoPersonalDe(sel.f) === arcN;
+  c.innerHTML = `<div class="ag-nav"><button type="button" class="btn-sec" data-agmes="-1" aria-label="Mes anterior">‹</button><b>${MESES[m]} ${y}</b><button type="button" class="btn-sec" data-agmes="1" aria-label="Mes siguiente">›</button></div>
+    <div class="ag-grid">${g}</div>
+    <div class="ag-ley"><span>🌑🌕 lunas</span><span>✂️ corte de pelo</span><span>💄 estética</span><span>📝 firmas</span><span>⚠️ evitar firmas</span><span>🕯️ ritual</span>${arcN ? '<span>⭐ día de tu arcano</span>' : ''}</div>
+    ${sel ? detalleDia(sel) : '<p class="ag-ayuda">Tocá un día para ver qué favorece y su ritual.</p>'}`;
+}
+function seccionAgenda(){
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  LUNAS_MES = lunas(new Date(hoy.getFullYear(), hoy.getMonth() - 1, 25), new Date(hoy.getFullYear(), hoy.getMonth() + 2, 5));
+  const d = diaAstral(hoy); const arcN = P.arcano ? +P.arcano.n : 0; d.personal = arcN && arcanoPersonalDe(hoy) === arcN;
+  const ap = arcanoPersonalDe(hoy);
+  // Ritual destacado: la próxima luna nueva o llena (o el de hoy si corresponde)
+  const prox = LUNAS_MES.find(x => new Date(x.fecha) >= hoy);
+  const rk = d.ritual || (prox ? (prox.eclipse ? 'eclipse' : prox.llena ? 'llena' : 'nueva') : 'inicio');
+  const rf = d.ritual ? 'hoy' : prox ? DIAS[new Date(prox.fecha).getDay()] + ' ' + new Date(prox.fecha).getDate() + ' de ' + MESES[new Date(prox.fecha).getMonth()] : '';
+  const consejos = [];
+  if (d.corte) consejos.push('✂️ corte de pelo'); if (d.estetica) consejos.push('💄 estética'); if (d.firmaSi) consejos.push('📝 firmas'); if (d.firmaNo) consejos.push('⚠️ evitá firmar');
+  AG = AG || { y: hoy.getFullYear(), m: hoy.getMonth(), sel: hoy.getDate() };
+  return `<h3>Tu agenda mágica</h3>
+    <div class="ag-hoy"><small>Hoy, ${DIAS[hoy.getDay()]} ${hoy.getDate()} de ${MESES[hoy.getMonth()]}</small>
+      <h4>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}${d.retro ? ' · Mercurio retrógrado' : ''}</h4>
+      ${ap ? `<p class="ag-personal"><b>Tu energía personal de hoy: ${esc(NOM[ap])} (${romano(ap)})</b><br>${esc(DIA[ap][0])} ${esc(DIA[ap][1])}</p>` : ''}
+      ${consejos.length ? `<p class="ag-chips">${consejos.map(x => `<span>${x}</span>`).join('')}</p>` : ''}
+    </div>
+    <div class="ag-ritual destacado"><small>Ritual ${rf === 'hoy' ? 'de hoy' : 'para el ' + rf}</small><b>🕯️ ${RITUALES[rk][0]}</b><p>${RITUALES[rk][1]}</p></div>
+    <div id="agenda" class="ag-caja"></div>
+    <p class="ag-ayuda">Se basa en la astrología lunar tradicional: tomalo como guía, no como regla.</p>`;
+}
 
 // Novedades: promociones cargadas + próximos encuentros + productos con foto + Instagram
 let SLIDES = [];
@@ -370,7 +544,7 @@ async function cargar(){
   try {
     if (!d.ok) return error(d.error === 'Enlace no válido' ? 'Este enlace no es válido. Pedile el tuyo a Luz Guía.' : 'No pudimos abrir tu espacio (' + (d.error || 'error desconocido') + ').');
     P = d; P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; P.promos = P.promos || []; P.paraOpinar = P.paraOpinar || [];
-    pintar(); setTimeout(auto, 50);
+    pintar(); pintarAgenda(); setTimeout(auto, 50);
     $('estado').classList.add('oculto'); $('portal').classList.remove('oculto');
   } catch (e) { console.error(e); error('Hubo un problema al mostrar tu espacio (' + (e.message || e) + '). Avisales a Belu o Mey.'); }
 }
@@ -422,6 +596,7 @@ function pintar(){
       <p>${lu.llena ? 'Ilumina ' + g.area + ': tiempo de culminar, ver con claridad y soltar lo que ya no suma.' : 'Abre un nuevo ciclo en ' + g.area + ': tiempo de sembrar intenciones y empezar.'}</p>
       <p><b>Buen momento para:</b> ${g.fav.join(', ')}.<br><b>Cuidado con:</b> ${g.ojo}.</p></div></div>`;
   }
+  h += seccionAgenda();
   SLIDES = armarSlides();
   if (SLIDES.length) {
     h += `<h3>Novedades</h3><div class="carrusel" id="carrusel" aria-roledescription="carrusel">${SLIDES.map((x, i) => `
@@ -481,7 +656,7 @@ function pedir(tipo, ref, que){
       const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'pedido', codigo: CODIGO, tipo, ref, que, mensaje }) });
       const d = await r.json();
       if (!d.ok) throw new Error(d.error);
-      P.pedidos.push(ref); pintar();
+      P.pedidos.push(ref); pintar(); pintarAgenda();
       const wa = waLuz('Hola! Soy ' + P.nombre + '. Acabo de pedir desde mi espacio: ' + que + (mensaje ? '. ' + mensaje : '') + ' 🌙');
       $('dlg-titulo').textContent = '¡Listo! ✨';
       $('dlg-texto').textContent = 'Belu y Mey ya recibieron tu pedido y te van a escribir para confirmarlo.';
@@ -520,6 +695,8 @@ document.addEventListener('touchend', e => { if (tx === null) return; const d = 
 document.addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.ir !== undefined) { irA(+b.dataset.ir); auto(); return; }
+  if (b.dataset.agdia) { AG.sel = AG.sel === +b.dataset.agdia ? null : +b.dataset.agdia; pintarAgenda(); return; }
+  if (b.dataset.agmes) { const d = new Date(AG.y, AG.m + +b.dataset.agmes, 1); AG.y = d.getFullYear(); AG.m = d.getMonth(); const hoy = new Date(); AG.sel = (AG.y === hoy.getFullYear() && AG.m === hoy.getMonth()) ? hoy.getDate() : null; pintarAgenda(); return; }
   if (b.dataset.promo !== undefined) {
     const x = SLIDES[+b.dataset.promo];
     if (x.accion === 'fechas') { $('encuentros').scrollIntoView({ behavior: 'smooth' }); return; }
