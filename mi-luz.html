@@ -216,11 +216,15 @@ body::before,body::after{display:none}
 .ag-ley{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;color:var(--bruma);margin:10px 0 0}
 .ag-detalle{margin-top:12px;border-top:1px solid var(--linea);padding-top:12px}
 .ag-detalle h4{font-family:var(--serif);font-size:1.2rem;margin:0 0 6px}
-.ag-detalle ul{list-style:none;padding:0;margin:0}
-.ag-detalle li{display:flex;gap:8px;padding:5px 0;color:var(--bruma);font-size:.93rem}
-.ag-detalle li b{color:var(--luna);font-weight:500}
 .ag-ayuda{color:var(--lila-suave);font-size:.82rem;margin:10px 0 0}
-footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
+.ag-dia.retro{background:linear-gradient(180deg,rgba(28,11,46,.6),rgba(185,138,230,.12))}
+.ley-retro{display:inline-block;width:10px;height:10px;border-radius:3px;background:rgba(185,138,230,.35);margin-right:4px;vertical-align:middle}
+.ag-cielo{border:1px solid var(--oro-suave);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:rgba(212,175,106,.06)}
+.ag-cielo > b{font-family:var(--serif);color:var(--oro);font-size:1.1rem;font-weight:600}
+.ag-cielo ul,.ag-detalle ul{list-style:none;padding:0;margin:6px 0 0}
+.ag-cielo li,.ag-detalle li{display:flex;gap:8px;padding:4px 0;color:var(--bruma);font-size:.9rem}
+.ag-cielo li > span,.ag-detalle li > span{flex:none;width:22px;text-align:center}
+.ag-cielo li b,footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
 dialog::backdrop{background:rgba(10,4,18,.72)}
@@ -387,7 +391,60 @@ const DIA = [null,
  ['Libertad, espontaneidad y salto de fe.', 'Animate a algo nuevo sin tener todo resuelto: la aventura empieza con un paso.']
 ];
 
-/* ── Agenda mágica: se calcula sola para cualquier fecha ── */
+// Elementos keplerianos JPL (Standish, válidos 1800–2050): a, a', e, e', I, I', L, L', ϖ, ϖ', Ω, Ω'
+const EL = {
+  Mercurio: [0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081],
+  Venus: [0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418],
+  Tierra: [1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0, 0],
+  Marte: [1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343],
+  Júpiter: [5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106],
+  Saturno: [9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794],
+  Urano: [19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589],
+  Neptuno: [30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664],
+  Plutón: [39.48211675, -0.00031596, 0.24882730, 0.00005170, 17.14001206, 0.00004818, 238.92903833, 145.20780515, 224.06891629, -0.04062942, 110.30393684, -0.01183482]
+};
+const RP = Math.PI / 180, nrm = x => ((x % 360) + 360) % 360;
+function helio(el, T){
+  const a = el[0] + el[1]*T, e = el[2] + el[3]*T, I = (el[4] + el[5]*T)*RP, L = el[6] + el[7]*T, w = el[8] + el[9]*T, O = el[10] + el[11]*T;
+  const M = nrm(L - w)*RP, om = (w - O)*RP, Or = O*RP;
+  let E = M; for (let i = 0; i < 10; i++) E = E - (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
+  const x = a*(Math.cos(E) - e), y = a*Math.sqrt(1 - e*e)*Math.sin(E);
+  const co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Or), sO = Math.sin(Or), cI = Math.cos(I);
+  return [(co*cO - so*sO*cI)*x + (-so*cO - co*sO*cI)*y, (co*sO + so*cO*cI)*x + (-so*sO + co*cO*cI)*y];
+}
+function longPlaneta(nombre, jd){ const T = (jd - 2451545) / 36525, p = helio(EL[nombre], T), t = helio(EL.Tierra, T); return nrm(Math.atan2(p[1] - t[1], p[0] - t[0]) / RP); }
+function retrogrado(nombre, jd){ let d = longPlaneta(nombre, jd + .5) - longPlaneta(nombre, jd - .5); if (d > 180) d -= 360; if (d < -180) d += 360; return d < 0; }
+const PLANETAS = ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno', 'Urano', 'Neptuno', 'Plutón'];
+
+// Luna fuera de curso: desde su último aspecto mayor (0,60,90,120,180) a Sol..Plutón hasta que cambia de signo
+function lunaFueraDeCurso(desde, hasta, longLuna, longSolar, longPlaneta, PLANETAS){
+  const jd0 = desde.getTime() / 86400000 + 2440587.5, jd1 = hasta.getTime() / 86400000 + 2440587.5;
+  const sig = jd => Math.floor(longLuna(jd) / 30);
+  const ingresos = [];
+  for (let jd = jd0 - 3; jd < jd1 + 1; jd += 1/24) {
+    if (sig(jd) !== sig(jd + 1/24)) { let a = jd, b = jd + 1/24; for (let i = 0; i < 12; i++) { const m = (a + b) / 2; if (sig(m) === sig(a)) a = m; else b = m; } ingresos.push(b); }
+  }
+  const asp = [0, 60, 90, 120, 180, 240, 270, 300];
+  const dif = (jd) => { const l = longLuna(jd); const cuerpos = [longSolar(jd)].concat(PLANETAS.map(p => longPlaneta(p, jd))); return cuerpos.map(c => asp.map(A => ((l - c - A) % 360 + 540) % 360 - 180)); };
+  const ventanas = [];
+  for (let i = 1; i < ingresos.length; i++) {
+    const tIn = ingresos[i], tPrev = ingresos[i - 1], paso = 1/96;
+    let inicio = tPrev, sigD = dif(tIn - 1e-4);
+    for (let t = tIn - paso; t > tPrev; t -= paso) {
+      const d = dif(t);
+      let cruce = false;
+      for (let c = 0; c < d.length && !cruce; c++) for (let k = 0; k < asp.length; k++) { const x = d[c][k], y = sigD[c][k]; if (Math.abs(x) < 10 && Math.abs(y) < 10 && ((x < 0) !== (y < 0))) { cruce = true; break; } }
+      if (cruce) { inicio = t + paso / 2; break; }
+      sigD = d;
+    }
+    const a = new Date((inicio - 2440587.5) * 86400000), b = new Date((tIn - 2440587.5) * 86400000);
+    if (b > desde && a < hasta) ventanas.push({ desde: a, hasta: b });
+  }
+  return ventanas;
+}
+
+
+/* ── Agenda mágica: se calcula sola para cualquier fecha (astronomía real) ── */
 const RITUALES = {
   nueva: ['Ritual de intenciones', 'Escribí tres deseos en presente ("Elijo…", "Me permito…"). Encendé una vela blanca, leelos en voz alta y guardá el papel hasta la luna llena.'],
   creciente: ['Ritual de impulso', 'Elegí un paso concreto hacia tu intención y hacelo hoy. Dejá un cristal o una moneda junto a tu papel de deseos como ancla.'],
@@ -395,51 +452,118 @@ const RITUALES = {
   menguante: ['Limpieza energética', 'Ventilá tu casa, pasá un sahumerio de adentro hacia afuera y despejá un rincón o un cajón. Lo que se va deja lugar a lo nuevo.'],
   inicio: ['Apertura del mes', 'Escribí tu intención para este mes y una acción por semana. Guardá una moneda en tu billetera como símbolo de abundancia.'],
   fin: ['Cierre y gratitud', 'Anotá tres cosas que aprendiste este mes y tres que agradecés. Ordená tu espacio para recibir el mes nuevo.'],
-  eclipse: ['Día de eclipse', 'Energía intensa de cambios: mejor observar que decidir. Meditá, escribí lo que sentís y evitá rituales de manifestación ese día.']
+  eclipse: ['Día de eclipse', 'Energía intensa de cambios: mejor observar que decidir. Meditá, escribí lo que sentís y evitá rituales de manifestación este día.'],
+  estacion: ['Ritual de cambio de estación', 'Prendé una vela, agradecé lo que cerró la estación que termina y escribí qué querés cultivar en la que empieza. Sumá una flor o una fruta de estación a tu altar.'],
+  portal: ['Portal numérico', 'Día de números espejo, ideal para alinear intención y acción. Escribí una afirmación en presente, repetila tres veces y hacé hoy un gesto concreto que la acompañe.']
 };
+const SIGNIF_RETRO = {
+  Mercurio: 'comunicación, papeles, tecnología y viajes: momento de revisar, releer y retomar. Evitá lanzar o firmar algo nuevo si podés postergarlo.',
+  Venus: 'amor, belleza, dinero y placer: momento de revisar vínculos y valores. Evitá cambios drásticos de imagen, procedimientos estéticos permanentes, compras de lujo y empezar relaciones o sociedades.',
+  Marte: 'acción, energía y conflictos: evitá cirugías electivas, peleas e iniciar proyectos de mucho esfuerzo. Ideal para revisar estrategias.',
+  Júpiter: 'expansión y crecimiento hacia adentro: tiempo de revisar creencias y oportunidades.',
+  Saturno: 'estructuras y compromisos: tiempo de revisar responsabilidades y límites.',
+  Urano: 'cambios internos: las revoluciones empiezan por dentro.',
+  Neptuno: 'sueños e ilusiones: más claridad sobre lo que es real.',
+  Plutón: 'transformación profunda: procesos internos de cierre y poder personal.'
+};
+const ESTACIONES = { Libra: 'Equinoccio de primavera', Capricornio: 'Solsticio de verano', Aries: 'Equinoccio de otoño', Cáncer: 'Solsticio de invierno' };
 const SIGNO_DE = l => ZOD[Math.floor(l / 30)];
+const hora = d => { const x = new Date(d.getTime() - 3 * 3600000); return String(x.getUTCHours()).padStart(2, '0') + ':' + String(x.getUTCMinutes()).padStart(2, '0'); };
+const jdMed = f => jdDe(new Date(f.getFullYear(), f.getMonth(), f.getDate(), 12));
+function periodoRetro(pl, f){
+  if (!retrogrado(pl, jdMed(f))) return null;
+  let a = new Date(f), b = new Date(f);
+  for (let i = 0; i < 200 && retrogrado(pl, jdMed(new Date(a.getTime() - 86400000))); i++) a = new Date(a.getTime() - 86400000);
+  for (let i = 0; i < 200 && retrogrado(pl, jdMed(new Date(b.getTime() + 86400000))); i++) b = new Date(b.getTime() + 86400000);
+  return { pl, desde: a, hasta: b };
+}
+let LUNAS_MES = [], VOC_MES = [], AG = null, CIELO = null;
+function prepararMes(y, m){
+  LUNAS_MES = lunas(new Date(y, m - 1, 20), new Date(y, m + 1, 10));
+  VOC_MES = lunaFueraDeCurso(new Date(y, m, 1), new Date(y, m + 1, 1), longLuna, longSolar, longPlaneta, PLANETAS);
+  const retros = [];
+  PLANETAS.forEach(pl => { for (let d = 1; d <= 28; d += 3) { const r = periodoRetro(pl, new Date(y, m, d)); if (r) { retros.push(r); break; } } });
+  CIELO = { y, m, retros };
+}
 function diaAstral(f){
-  const jd = jdDe(new Date(f.getFullYear(), f.getMonth(), f.getDate(), 12));
-  const lu = longLuna(jd), so = longSolar(jd), el = norm(lu - so);
+  const jd = jdMed(f), lu = longLuna(jd), so = longSolar(jd), el = norm(lu - so);
   const elAnt = norm(longLuna(jd - .5) - longSolar(jd - .5)), elSig = norm(longLuna(jd + .5) - longSolar(jd + .5));
   const cruza = g => elAnt < g && elSig >= g;
-  const lunaHoy = LUNAS_MES.find(x => { const d = new Date(x.fecha); return d.getFullYear() === f.getFullYear() && d.getMonth() === f.getMonth() && d.getDate() === f.getDate(); });
+  const mismoDia = x => { const d = new Date(x); return d.getFullYear() === f.getFullYear() && d.getMonth() === f.getMonth() && d.getDate() === f.getDate(); };
+  const lunaHoy = LUNAS_MES.find(x => mismoDia(x.fecha));
   const ultimo = new Date(f.getFullYear(), f.getMonth() + 1, 0).getDate() === f.getDate();
   const fase = lunaHoy ? (lunaHoy.llena ? 'llena' : 'nueva') : cruza(90) ? 'creciente' : cruza(270) ? 'menguante' : '';
-  const crec = el < 180, signo = SIGNO_DE(lu), retro = mercurioRetro(jd);
-  const eclipse = LUNAS_MES.some(x => x.eclipse && Math.abs(new Date(x.fecha) - f) < 1.5 * 86400000);
-  const corte = /Leo|Virgo|Tauro|Capricornio/.test(signo) && !eclipse, corteNo = /Cáncer|Piscis/.test(signo);
-  const estetica = /Libra|Tauro|Leo/.test(signo) && !eclipse && !/llena|nueva/.test(fase);
-  const firmaNo = retro || eclipse, firmaSi = !firmaNo && crec && /Capricornio|Tauro|Virgo|Libra/.test(signo);
-  const ritual = eclipse && lunaHoy ? 'eclipse' : fase || (f.getDate() === 1 ? 'inicio' : ultimo ? 'fin' : '');
-  return { f, signo, crec, fase, retro, eclipse, corte, corteNo, estetica, firmaSi, firmaNo, ritual, el };
+  const crec = el < 180, signo = SIGNO_DE(lu);
+  const retro = {}; ['Mercurio', 'Venus', 'Marte'].forEach(p => retro[p] = retrogrado(p, jd));
+  const estac = ['Mercurio', 'Venus', 'Marte'].filter(p => retrogrado(p, jd - 1) !== retrogrado(p, jd + 1));
+  const eclipseHoy = lunaHoy && lunaHoy.eclipse ? lunaHoy : null;
+  const ventEclipse = LUNAS_MES.some(x => x.eclipse && Math.abs(new Date(x.fecha) - f - 12 * 3600000) < 3.5 * 86400000);
+  const ini = new Date(f.getFullYear(), f.getMonth(), f.getDate()), fin = new Date(ini.getTime() + 86400000);
+  const voc = VOC_MES.filter(v => v.hasta > ini && v.desde < fin).map(v => ({ desde: v.desde < ini ? null : v.desde, hasta: v.hasta > fin ? null : v.hasta }));
+  const vocHorasDia = VOC_MES.reduce((t, v) => { const a = Math.max(v.desde, new Date(ini.getTime() + 8 * 3600000)), b = Math.min(v.hasta, new Date(ini.getTime() + 22 * 3600000)); return t + Math.max(0, b - a); }, 0) / 3600000;
+  const solHoy = SIGNO_DE(longSolar(jd + .5)) !== SIGNO_DE(longSolar(jd - .5)) ? SIGNO_DE(longSolar(jd + .5)) : '';
+  const portal = f.getDate() === f.getMonth() + 1;
+  // Reglas
+  const corteBase = /Leo|Virgo|Tauro|Capricornio/.test(signo), corteNo = /Cáncer|Piscis/.test(signo);
+  const corte = ventEclipse ? '' : corteBase ? (retro.Venus ? 'retoque' : 'si') : '';
+  const esteticaBase = /Libra|Tauro|Leo/.test(signo) && !/llena|nueva/.test(fase);
+  const estetica = ventEclipse ? '' : esteticaBase ? (retro.Venus || retro.Marte ? 'mantenimiento' : 'si') : '';
+  const firmaFav = crec && /Tauro|Virgo|Capricornio|Libra/.test(signo);
+  const firma = (ventEclipse || estac.includes('Mercurio')) ? 'evitar' : retro.Mercurio ? (firmaFav ? 'cuidado' : 'evitar') : firmaFav ? 'si' : '';
+  const ritual = eclipseHoy ? 'eclipse' : fase || (solHoy && ESTACIONES[solHoy] ? 'estacion' : portal ? 'portal' : f.getDate() === 1 ? 'inicio' : ultimo ? 'fin' : '');
+  return { f, signo, crec, fase, lunaHoy, retro, estac, eclipseHoy, ventEclipse, voc, vocHorasDia, solHoy, portal, corte, corteNo, estetica, firma, ritual };
 }
-let LUNAS_MES = [], AG = null;
 function iconosDia(d){
   const i = [];
   if (d.fase === 'nueva') i.push('🌑'); else if (d.fase === 'llena') i.push('🌕'); else if (d.fase === 'creciente') i.push('🌓'); else if (d.fase === 'menguante') i.push('🌗');
-  if (d.corte) i.push('✂️'); if (d.estetica) i.push('💄'); if (d.firmaSi) i.push('📝'); if (d.firmaNo) i.push('⚠️'); if (d.ritual && !d.fase) i.push('🕯️');
+  if (d.eclipseHoy) i.push('✴️');
+  if (d.firma === 'evitar') i.push('⚠️');
+  if (d.corte) i.push('✂️'); if (d.estetica) i.push('💄'); if (d.firma === 'si' || d.firma === 'cuidado') i.push('📝');
+  if (d.vocHorasDia >= 4) i.push('⏸');
   if (d.personal) i.push('⭐');
+  if (d.ritual && !d.fase && !d.eclipseHoy) i.push('🕯️');
   return i;
 }
 function arcanoPersonalDe(f){ const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m) return null; return reducirN(m[1] + m[2] + String(f.getDate()).padStart(2, '0') + String(f.getMonth() + 1).padStart(2, '0') + f.getFullYear()); }
+const li = (ic, txt) => `<li><span>${ic}</span><div>${txt}</div></li>`;
 function detalleDia(d){
   const fecha = DIAS[d.f.getDay()].charAt(0).toUpperCase() + DIAS[d.f.getDay()].slice(1) + ' ' + d.f.getDate() + ' de ' + MESES[d.f.getMonth()];
   const L2 = [];
-  L2.push(`<li><span>🌙</span>Luna ${d.crec ? 'creciente' : 'menguante'} en <b>${d.signo}</b>${d.fase === 'nueva' ? ' · <b>Luna nueva</b>' : d.fase === 'llena' ? ' · <b>Luna llena</b>' : d.fase === 'creciente' ? ' · cuarto creciente' : d.fase === 'menguante' ? ' · cuarto menguante' : ''}${d.eclipse ? ' · <b>eclipse</b>' : ''}</li>`);
-  if (d.corte) L2.push(`<li><span>✂️</span>${d.crec ? 'Buen día para cortarte el pelo si querés que <b>crezca rápido y con fuerza</b>.' : 'Buen día para cortarte el pelo si querés que el corte <b>dure más</b> y fortalecerlo.'}</li>`);
-  else if (d.corteNo) L2.push(`<li><span>✂️</span>Poco favorable para cortes de pelo: mejor esperar unos días.</li>`);
-  if (d.estetica) L2.push(`<li><span>💄</span>Favorable para tratamientos estéticos: ${d.crec ? 'hidratación, nutrición y tratamientos que buscan sumar.' : 'depilación y limpiezas (el vello tarda más en volver).'}</li>`);
-  if (d.firmaSi) L2.push(`<li><span>📝</span>Buen día para firmar, presentar papeles o cerrar acuerdos.</li>`);
-  if (d.firmaNo) L2.push(`<li><span>⚠️</span>Poco favorable para firmas y papeles importantes${d.retro ? ' (Mercurio retrógrado: malentendidos y demoras; si no podés postergar, leé dos veces la letra chica)' : ''}${d.eclipse ? ' (eclipse: días de cambios bruscos)' : ''}.</li>`);
-  if (d.personal) L2.push(`<li><span>⭐</span>Día de tu arcano: tu energía de nacimiento está potenciada. Ideal para algo importante para vos.</li>`);
+  L2.push(li('🌙', `Luna ${d.crec ? 'creciente' : 'menguante'} en <b>${d.signo}</b>${d.lunaHoy ? ` · <b>${d.lunaHoy.llena ? 'Luna llena' : 'Luna nueva'}</b> a las ${hora(new Date(d.lunaHoy.fecha))} hs` : d.fase === 'creciente' ? ' · cuarto creciente' : d.fase === 'menguante' ? ' · cuarto menguante' : ''}`));
+  if (d.eclipseHoy) L2.push(li('✴️', `<b>Eclipse ${d.eclipseHoy.llena ? 'lunar' : 'solar'}</b>: cierres y comienzos inesperados. Los días alrededor (±3) no son buenos para decisiones grandes, firmas ni cambios de imagen.`));
+  else if (d.ventEclipse) L2.push(li('✴️', 'Temporada de eclipse (±3 días): mejor no tomar decisiones grandes ni hacer cambios importantes.'));
+  if (d.voc.length) L2.push(li('⏸', `<b>Luna fuera de curso</b> ${d.voc.map(v => v.desde && v.hasta ? 'de ' + hora(v.desde) + ' a ' + hora(v.hasta) + ' hs' : v.desde ? 'desde las ' + hora(v.desde) + ' hs' : v.hasta ? 'hasta las ' + hora(v.hasta) + ' hs' : 'todo el día').join(' y ')}: no es buen momento para empezar algo, firmar ni comprar cosas importantes (lo que se inicia suele no prosperar). Ideal para descansar, meditar y terminar pendientes.`));
+  if (d.corte === 'si') L2.push(li('✂️', d.crec ? 'Buen día para cortarte el pelo si querés que <b>crezca rápido y con fuerza</b>.' : 'Buen día para cortarte el pelo si querés que el corte <b>dure más</b> y fortalecerlo.'));
+  if (d.corte === 'retoque') L2.push(li('✂️', `La Luna favorece el corte, pero con <b>Venus retrógrado</b>: solo mantenimiento (puntas, emprolijar). <b>Nada de cambios drásticos de corte ni de color.</b>`));
+  if (!d.corte && d.corteNo) L2.push(li('✂️', 'Poco favorable para cortes de pelo: mejor esperar unos días.'));
+  if (!d.corte && d.ventEclipse) L2.push(li('✂️', 'Por el eclipse, mejor no cortarte el pelo estos días.'));
+  if (d.estetica === 'si') L2.push(li('💄', `Favorable para tratamientos estéticos: ${d.crec ? 'hidratación, nutrición y tratamientos que buscan sumar.' : 'depilación y limpiezas (el vello tarda más en volver).'}`));
+  if (d.estetica === 'mantenimiento') L2.push(li('💄', `Solo cuidados de mantenimiento (${d.crec ? 'hidratación, masajes' : 'depilación, limpiezas'}). ${d.retro.Venus ? 'Con <b>Venus retrógrado</b>, evitá procedimientos permanentes o invasivos: rellenos, botox, tatuajes, micropigmentación, cirugías.' : ''}${d.retro.Marte ? ' Con <b>Marte retrógrado</b>, evitá cirugías electivas.' : ''}`));
+  if (d.firma === 'si') L2.push(li('📝', 'Buen día para firmar, presentar papeles o cerrar acuerdos.' + (d.voc.length ? ' Evitá el horario de Luna fuera de curso.' : '')));
+  if (d.firma === 'cuidado') L2.push(li('📝', '<b>Mercurio retrógrado:</b> si no podés postergar una firma, este es de los mejores días del período. Leé todo dos veces, pedí copias y confirmá fechas y montos por escrito.' + (d.voc.length ? ' Y evitá el horario de Luna fuera de curso.' : '')));
+  if (d.firma === 'evitar') L2.push(li('⚠️', `Poco favorable para firmas y papeles importantes${d.estac.includes('Mercurio') ? ' (<b>Mercurio estacionario</b>: el día más confuso del ciclo)' : d.retro.Mercurio ? ' (<b>Mercurio retrógrado</b>)' : ''}${d.ventEclipse ? ' (eclipse)' : ''}. Si es inevitable, revisá todo con lupa.`));
+  d.estac.filter(p => p !== 'Mercurio').forEach(p => L2.push(li('⏯', `<b>${p} estacionario</b>: cambia de dirección. Energía intensa en los temas de ${p === 'Venus' ? 'vínculos, belleza y dinero' : 'acción y conflictos'}.`)));
+  if (d.solHoy) L2.push(li('☀️', `El Sol entra en <b>${d.solHoy}</b>${ESTACIONES[d.solHoy] ? ': ' + ESTACIONES[d.solHoy] + ' en el hemisferio sur' : ''}.`));
+  if (d.portal) L2.push(li('✨', `Portal ${d.f.getDate()}/${d.f.getMonth() + 1}: día de números espejo.`));
+  if (d.personal) L2.push(li('⭐', 'Día de tu arcano: tu energía de nacimiento está potenciada. Ideal para algo importante para vos.'));
   const r = d.ritual && RITUALES[d.ritual];
-  return `<div class="ag-detalle"><h4>${fecha}</h4><ul>${L2.map(x => x.replace(/^<li><span>(.*?)<\/span>([\s\S]*)<\/li>$/, '<li><span>$1</span><div>$2</div></li>')).join('')}</ul>${r ? `<div class="ag-ritual"><b>🕯️ ${r[0]}</b><p>${r[1]}</p></div>` : ''}</div>`;
+  return `<div class="ag-detalle"><h4>${fecha}</h4><ul>${L2.join('')}</ul>${r ? `<div class="ag-ritual"><b>🕯️ ${r[0]}</b><p>${r[1]}</p></div>` : ''}</div>`;
+}
+function cieloDelMes(){
+  if (!CIELO) return '';
+  const f = d => d.getDate() + '/' + (d.getMonth() + 1);
+  const pers = CIELO.retros.filter(r => ['Mercurio', 'Venus', 'Marte'].includes(r.pl)), lentos = CIELO.retros.filter(r => !['Mercurio', 'Venus', 'Marte'].includes(r.pl));
+  const lun = LUNAS_MES.filter(x => new Date(x.fecha).getMonth() === CIELO.m);
+  let h = '<div class="ag-cielo"><b>El cielo de este mes</b><ul>';
+  lun.forEach(x => { h += li(x.llena ? '🌕' : '🌑', `${x.llena ? 'Luna llena' : 'Luna nueva'} en <b>${x.signo}</b> · ${f(new Date(x.fecha))} a las ${hora(new Date(x.fecha))} hs${x.eclipse ? ' · <b>eclipse ' + (x.llena ? 'lunar' : 'solar') + '</b>' : ''}`); });
+  pers.forEach(r => { h += li('℞', `<b>${r.pl} retrógrado</b> del ${f(r.desde)} al ${f(r.hasta)}: ${SIGNIF_RETRO[r.pl]}`); });
+  if (lentos.length) h += li('🪐', `También retrógrados: ${lentos.map(r => r.pl).join(', ')}. Procesos más lentos e internos: ${lentos.map(r => SIGNIF_RETRO[r.pl].split(':')[0]).join('; ')}.`);
+  return h + '</ul></div>';
 }
 function pintarAgenda(){
   const c = $('agenda'); if (!c || !AG) return;
   const y = AG.y, m = AG.m, primero = new Date(y, m, 1), ini = (primero.getDay() + 6) % 7, dias = new Date(y, m + 1, 0).getDate();
-  LUNAS_MES = lunas(new Date(y, m - 1, 25), new Date(y, m + 1, 5));
+  prepararMes(y, m);
   const hoy = new Date(); hoy.setHours(0,0,0,0);
   const arcN = P.arcano ? +P.arcano.n : 0;
   let g = ['lu','ma','mi','ju','vi','sá','do'].map(x => `<div class="ag-dsem">${x}</div>`).join('');
@@ -447,35 +571,39 @@ function pintarAgenda(){
   for (let n = 1; n <= dias; n++) {
     const f = new Date(y, m, n), d = diaAstral(f); d.personal = arcN && arcanoPersonalDe(f) === arcN;
     const ic = iconosDia(d);
-    g += `<button type="button" class="ag-dia${f.getTime() === hoy.getTime() ? ' hoy' : ''}${AG.sel === n ? ' sel' : ''}" data-agdia="${n}" aria-label="${n} de ${MESES[m]}"><span class="n">${n}</span><span class="ic">${ic.slice(0, 3).join('')}${ic.length > 3 ? '·' : ''}</span></button>`;
+    g += `<button type="button" class="ag-dia${f.getTime() === hoy.getTime() ? ' hoy' : ''}${AG.sel === n ? ' sel' : ''}${d.retro.Mercurio || d.retro.Venus ? ' retro' : ''}" data-agdia="${n}" aria-label="${n} de ${MESES[m]}"><span class="n">${n}</span><span class="ic">${ic.slice(0, 4).join('')}${ic.length > 4 ? '·' : ''}</span></button>`;
   }
   const sel = AG.sel ? diaAstral(new Date(y, m, AG.sel)) : null; if (sel) sel.personal = arcN && arcanoPersonalDe(sel.f) === arcN;
-  c.innerHTML = `<div class="ag-nav"><button type="button" class="btn-sec" data-agmes="-1" aria-label="Mes anterior">‹</button><b>${MESES[m]} ${y}</b><button type="button" class="btn-sec" data-agmes="1" aria-label="Mes siguiente">›</button></div>
+  c.innerHTML = `<div class="ag-nav"><button type="button" class="btn-sec" data-agmes="-1" aria-label="Mes anterior">‹</button><b>${MESES[m].charAt(0).toUpperCase() + MESES[m].slice(1)} ${y}</b><button type="button" class="btn-sec" data-agmes="1" aria-label="Mes siguiente">›</button></div>
+    ${cieloDelMes()}
     <div class="ag-grid">${g}</div>
-    <div class="ag-ley"><span>🌑🌕 lunas</span><span>✂️ corte de pelo</span><span>💄 estética</span><span>📝 firmas</span><span>⚠️ evitar firmas</span><span>🕯️ ritual</span>${arcN ? '<span>⭐ día de tu arcano</span>' : ''}</div>
+    <div class="ag-ley"><span>🌑🌓🌕🌗 fases</span><span>✴️ eclipse</span><span>✂️ corte</span><span>💄 estética</span><span>📝 firmas</span><span>⚠️ evitar firmas</span><span>⏸ luna fuera de curso</span><span>🕯️ ritual</span>${arcN ? '<span>⭐ día de tu arcano</span>' : ''}<span><i class="ley-retro"></i> Mercurio o Venus retrógrado</span></div>
     ${sel ? detalleDia(sel) : '<p class="ag-ayuda">Tocá un día para ver qué favorece y su ritual.</p>'}`;
 }
 function seccionAgenda(){
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  LUNAS_MES = lunas(new Date(hoy.getFullYear(), hoy.getMonth() - 1, 25), new Date(hoy.getFullYear(), hoy.getMonth() + 2, 5));
+  prepararMes(hoy.getFullYear(), hoy.getMonth());
   const d = diaAstral(hoy); const arcN = P.arcano ? +P.arcano.n : 0; d.personal = arcN && arcanoPersonalDe(hoy) === arcN;
   const ap = arcanoPersonalDe(hoy);
-  // Ritual destacado: la próxima luna nueva o llena (o el de hoy si corresponde)
   const prox = LUNAS_MES.find(x => new Date(x.fecha) >= hoy);
   const rk = d.ritual || (prox ? (prox.eclipse ? 'eclipse' : prox.llena ? 'llena' : 'nueva') : 'inicio');
   const rf = d.ritual ? 'hoy' : prox ? DIAS[new Date(prox.fecha).getDay()] + ' ' + new Date(prox.fecha).getDate() + ' de ' + MESES[new Date(prox.fecha).getMonth()] : '';
-  const consejos = [];
-  if (d.corte) consejos.push('✂️ corte de pelo'); if (d.estetica) consejos.push('💄 estética'); if (d.firmaSi) consejos.push('📝 firmas'); if (d.firmaNo) consejos.push('⚠️ evitá firmar');
+  const chips = [];
+  Object.keys(d.retro).filter(p => d.retro[p]).forEach(p => chips.push('℞ ' + p + ' retrógrado'));
+  if (d.voc.length) chips.push('⏸ Luna fuera de curso ' + d.voc.map(v => (v.desde ? hora(v.desde) : '00:00') + '–' + (v.hasta ? hora(v.hasta) : '24:00')).join(', '));
+  if (d.corte === 'si') chips.push('✂️ corte'); if (d.corte === 'retoque') chips.push('✂️ solo retoques');
+  if (d.estetica === 'si') chips.push('💄 estética'); if (d.estetica === 'mantenimiento') chips.push('💄 solo mantenimiento');
+  if (d.firma === 'si') chips.push('📝 firmas'); if (d.firma === 'cuidado') chips.push('📝 firmas con cuidado'); if (d.firma === 'evitar') chips.push('⚠️ evitá firmar');
   AG = AG || { y: hoy.getFullYear(), m: hoy.getMonth(), sel: hoy.getDate() };
   return `<h3>Tu agenda mágica</h3>
     <div class="ag-hoy"><small>Hoy, ${DIAS[hoy.getDay()]} ${hoy.getDate()} de ${MESES[hoy.getMonth()]}</small>
-      <h4>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}${d.retro ? ' · Mercurio retrógrado' : ''}</h4>
+      <h4>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}</h4>
       ${ap ? `<p class="ag-personal"><b>Tu energía personal de hoy: ${esc(NOM[ap])} (${romano(ap)})</b><br>${esc(DIA[ap][0])} ${esc(DIA[ap][1])}</p>` : ''}
-      ${consejos.length ? `<p class="ag-chips">${consejos.map(x => `<span>${x}</span>`).join('')}</p>` : ''}
+      ${chips.length ? `<p class="ag-chips">${chips.map(x => `<span>${x}</span>`).join('')}</p>` : ''}
     </div>
     <div class="ag-ritual destacado"><small>Ritual ${rf === 'hoy' ? 'de hoy' : 'para el ' + rf}</small><b>🕯️ ${RITUALES[rk][0]}</b><p>${RITUALES[rk][1]}</p></div>
     <div id="agenda" class="ag-caja"></div>
-    <p class="ag-ayuda">Se basa en la astrología lunar tradicional: tomalo como guía, no como regla.</p>`;
+    <p class="ag-ayuda">Posiciones calculadas con fórmulas astronómicas (horarios de Argentina, aproximados ±1 h). Las recomendaciones siguen la astrología tradicional: tomalas como guía, no como regla.</p>`;
 }
 
 // Novedades: promociones cargadas + próximos encuentros + productos con foto + Instagram
