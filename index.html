@@ -314,6 +314,11 @@ details.explica summary{cursor:pointer;color:var(--lila)}
 details.explica dl{margin:10px 0 4px}
 details.explica dt{color:var(--oro);margin-top:8px}
 details.explica dd{margin:2px 0 0;color:var(--bruma)}
+.cont-card{border:1px solid var(--linea);border-radius:14px;background:var(--ciruela);padding:14px 16px;margin-bottom:10px}
+.cont-cab{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.cont-card h4{font-family:var(--serif);font-size:1.3rem;margin:6px 0 0;font-weight:600}
+.cont-card summary{cursor:pointer;color:var(--lila);font-size:.9rem}
+.cont-txt{white-space:pre-wrap;font-family:var(--sans);font-size:.9rem;color:var(--luna);background:var(--noche);border-radius:10px;padding:12px;margin:8px 0 0}
 #toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--oro);color:var(--noche);padding:10px 18px;border-radius:10px;font-weight:500;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw}
 #toast.err{background:var(--debe)}
 #cargando{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--bruma);font-family:var(--serif);font-size:1.4rem;font-style:italic}
@@ -373,6 +378,7 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
       <button class="pestana" role="tab" data-vista="gastos">Gastos</button>
       <button class="pestana" role="tab" data-vista="reventa">Reventa y stock</button>
       <button class="pestana" role="tab" data-vista="miluz">Mi Luz</button>
+      <button class="pestana" role="tab" data-vista="contenido">Contenido</button>
       <button class="pestana" role="tab" data-vista="mensajes">Mensajes</button>
       <button class="pestana" role="tab" data-vista="estadisticas">Estadísticas</button>
       <button class="pestana" role="tab" data-vista="historial">Historial</button>
@@ -522,7 +528,7 @@ function lunas(desde, hasta){
       const jde = faseJDE(k + (llena ? .5 : 0), llena);
       const f = new Date((jde - 2440587.5) * 86400000 - 69000);
       if (f > hasta) return out;
-      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; out.push({ fecha: f, llena, signo: SIG[Math.floor(ml / 30)], grado: ml % 30 }); }
+      if (f >= desde) { const l = longSol(jde); const ml = llena ? (l + 180) % 360 : l; const Fk = (160.7108 + 390.67050284 * (k + (llena ? .5 : 0))) * RAD; out.push({ fecha: f, llena, signo: SIG[Math.floor(ml / 30)], grado: ml % 30, eclipse: Math.abs(Math.sin(Fk)) < 0.30 }); }
     }
   }
 }
@@ -585,6 +591,141 @@ const TEXTO_BASE = {
   luna: { nombre: 'Luna de estos días (difusión)', texto: '{mensaje_luna}{proximo}', clave: '{mensaje_luna}' },
   cumpleanos: { nombre: 'Cumpleaños (con su regalo en Mi Luz)', texto: '¡Feliz cumpleaños, {nombre}! 🎂🌙\n\nQue este nuevo ciclo te encuentre con la energía de {arcano_anual}. Te preparamos un regalito: en tu espacio de Luz Guía te espera un mensaje especial para tu nueva vuelta al sol ✨\n\n{link_portal}\n\nCon cariño, Belu y Mey', clave: '{link_portal}' }
 };
+
+// Elementos keplerianos JPL (Standish, válidos 1800–2050): a, a', e, e', I, I', L, L', ϖ, ϖ', Ω, Ω'
+const EL = {
+  Mercurio: [0.38709927, 0.00000037, 0.20563593, 0.00001906, 7.00497902, -0.00594749, 252.25032350, 149472.67411175, 77.45779628, 0.16047689, 48.33076593, -0.12534081],
+  Venus: [0.72333566, 0.00000390, 0.00677672, -0.00004107, 3.39467605, -0.00078890, 181.97909950, 58517.81538729, 131.60246718, 0.00268329, 76.67984255, -0.27769418],
+  Tierra: [1.00000261, 0.00000562, 0.01671123, -0.00004392, -0.00001531, -0.01294668, 100.46457166, 35999.37244981, 102.93768193, 0.32327364, 0, 0],
+  Marte: [1.52371034, 0.00001847, 0.09339410, 0.00007882, 1.84969142, -0.00813131, -4.55343205, 19140.30268499, -23.94362959, 0.44441088, 49.55953891, -0.29257343],
+  Júpiter: [5.20288700, -0.00011607, 0.04838624, -0.00013253, 1.30439695, -0.00183714, 34.39644051, 3034.74612775, 14.72847983, 0.21252668, 100.47390909, 0.20469106],
+  Saturno: [9.53667594, -0.00125060, 0.05386179, -0.00050991, 2.48599187, 0.00193609, 49.95424423, 1222.49362201, 92.59887831, -0.41897216, 113.66242448, -0.28867794],
+  Urano: [19.18916464, -0.00196176, 0.04725744, -0.00004397, 0.77263783, -0.00242939, 313.23810451, 428.48202785, 170.95427630, 0.40805281, 74.01692503, 0.04240589],
+  Neptuno: [30.06992276, 0.00026291, 0.00859048, 0.00005105, 1.77004347, 0.00035372, -55.12002969, 218.45945325, 44.96476227, -0.32241464, 131.78422574, -0.00508664],
+  Plutón: [39.48211675, -0.00031596, 0.24882730, 0.00005170, 17.14001206, 0.00004818, 238.92903833, 145.20780515, 224.06891629, -0.04062942, 110.30393684, -0.01183482]
+};
+const RP = Math.PI / 180, nrm = x => ((x % 360) + 360) % 360;
+function helio(el, T){
+  const a = el[0] + el[1]*T, e = el[2] + el[3]*T, I = (el[4] + el[5]*T)*RP, L = el[6] + el[7]*T, w = el[8] + el[9]*T, O = el[10] + el[11]*T;
+  const M = nrm(L - w)*RP, om = (w - O)*RP, Or = O*RP;
+  let E = M; for (let i = 0; i < 10; i++) E = E - (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
+  const x = a*(Math.cos(E) - e), y = a*Math.sqrt(1 - e*e)*Math.sin(E);
+  const co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Or), sO = Math.sin(Or), cI = Math.cos(I);
+  return [(co*cO - so*sO*cI)*x + (-so*cO - co*sO*cI)*y, (co*sO + so*cO*cI)*x + (-so*sO + co*cO*cI)*y];
+}
+function longPlaneta(nombre, jd){ const T = (jd - 2451545) / 36525, p = helio(EL[nombre], T), t = helio(EL.Tierra, T); return nrm(Math.atan2(p[1] - t[1], p[0] - t[0]) / RP); }
+function retrogrado(nombre, jd){ let d = longPlaneta(nombre, jd + .5) - longPlaneta(nombre, jd - .5); if (d > 180) d -= 360; if (d < -180) d += 360; return d < 0; }
+const PLANETAS = ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno', 'Urano', 'Neptuno', 'Plutón'];
+
+
+/* ───── Planificador de contenido (cielo + negocio) ───── */
+const HASH = '#tarot #luzguia #santarosa #lapampa #espiritualidad';
+const fCorta = d => d.getDate() + '/' + (d.getMonth() + 1);
+const jdDia = d => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12).getTime() / 86400000 + 2440587.5;
+function ctaContenido(fRef){
+  const e = proximosEncuentros().find(t => fecha(t['Fecha']) && fecha(t['Fecha']) >= fRef && num(t['Lugares libres']) > 0);
+  if (e) return `🕯️ Próximo encuentro: ${e['Nombre / temática']}, ${lindaFecha(fecha(e['Fecha']))}. Quedan pocos lugares: escribinos por privado para reservar el tuyo.`;
+  const pr = H('Promociones').find(x => si(x['Activa']) && x['Tipo'] !== 'Nuevas fechas');
+  if (pr) return `✨ ${pr['Título']}: ${pr['Frase']} Escribinos por privado.`;
+  return '✨ Escribinos por privado para enterarte de los próximos encuentros.';
+}
+function eventosContenido(dias){
+  const ini = new Date(HOY), fin = new Date(HOY.getTime() + dias * 86400000), ev = [];
+  // Lunas y eclipses
+  lunas(ini, fin).forEach(l => {
+    const g = SIGNOS[l.signo], f = new Date(l.fecha); f.setHours(0, 0, 0, 0);
+    const fav = g.fav.slice(0, -1).join(', ') + ' y ' + g.fav[g.fav.length - 1];
+    ev.push({ f, tipo: l.llena ? 'Luna llena' : 'Luna nueva', titulo: (l.llena ? '🌕 Luna llena en ' : '🌑 Luna nueva en ') + l.signo + (l.eclipse ? ' · eclipse ' + (l.llena ? 'lunar' : 'solar') : ''),
+      formato: 'Carrusel de 3 placas + historia el mismo día', idea: l.llena ? 'Ritual de soltar y agradecer, y qué ilumina esta luna.' : 'Ritual de intenciones y qué conviene sembrar.' + ' Ideal para abrir inscripciones o lanzar algo nuevo.',
+      texto: (l.llena ? '🌕 Luna llena en ' : '🌑 Luna nueva en ') + l.signo + '\n\n' + (l.llena ? 'Esta luna ilumina ' + g.area + '. Es tiempo de culminar, ver con claridad y soltar lo que ya no suma.' : 'Se abre un nuevo ciclo en ' + g.area + '. Es tiempo de sembrar: elegí una intención clara y escribila en presente.')
+        + (l.eclipse ? '\n\nAdemás es un eclipse ' + (l.llena ? 'lunar' : 'solar') + ': cierres y comienzos que llegan de manera inesperada. Mejor observar que forzar.' : '')
+        + '\n\n✨ Buen momento para: ' + fav + '.\n⚠️ Cuidado con: ' + g.ojo + '.\n\n' + (l.llena ? '¿Qué querés soltar en esta luna?' : '¿Qué querés sembrar en esta luna?') + ' Te leemos en comentarios 💜',
+      historia: (l.llena ? '🌕 Hoy luna llena en ' : '🌑 Hoy luna nueva en ') + l.signo + '. ' + (l.llena ? 'Escribí lo que querés soltar y agradecé tres cosas de este ciclo ✨' : 'Escribí tres intenciones en presente ✨') });
+  });
+  // Retrógrados que empiezan o terminan
+  const RT = { Mercurio: ['comunicación, papeles, tecnología y viajes', 'revisar, releer, retomar proyectos y reencontrarte con personas del pasado', 'firmar sin leer, lanzar algo nuevo o comprar tecnología apurada'],
+    Venus: ['amor, belleza, dinero y placer', 'revisar tus vínculos y lo que valorás, y cuidarte con mimos de mantenimiento', 'cambios drásticos de look, procedimientos estéticos permanentes, compras de lujo o empezar relaciones'],
+    Marte: ['acción, energía y deseo', 'revisar estrategias y bajar un cambio', 'cirugías electivas, peleas o arrancar proyectos de mucho esfuerzo'] };
+  const cambios = {};
+  ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].forEach(p => {
+    let prev = retrogrado(p, jdDia(new Date(ini.getTime() - 86400000)));
+    for (let d = new Date(ini); d <= fin; d = new Date(d.getTime() + 86400000)) {
+      const r = retrogrado(p, jdDia(d));
+      if (r !== prev) { let h = new Date(d); if (r) { for (let i = 0; i < 160 && retrogrado(p, jdDia(new Date(h.getTime() + 86400000))); i++) h = new Date(h.getTime() + 86400000); }
+        const k = d.toDateString() + r; (cambios[k] = cambios[k] || { f: new Date(d), r, pls: [], hasta: h }).pls.push(p); }
+      prev = r;
+    }
+  });
+  // Retrógrados que ya están en curso al día de hoy
+  ['Mercurio', 'Venus', 'Marte'].forEach(p => {
+    if (!retrogrado(p, jdDia(ini))) return;
+    let h = new Date(ini); for (let i = 0; i < 160 && retrogrado(p, jdDia(new Date(h.getTime() + 86400000))); i++) h = new Date(h.getTime() + 86400000);
+    const t = RT[p];
+    ev.push({ f: new Date(ini), tipo: 'En curso', titulo: '℞ ' + p + ' retrógrado en curso (hasta el ' + fCorta(h) + ')', formato: 'Carrusel guardable "Qué sí / Qué no"', idea: 'Si todavía no lo publicaste, es un tema que la gente busca y comparte.',
+      texto: `℞ ${p} retrógrado hasta el ${fCorta(h)}\n\nToca los temas de ${t[0]}.\n\n✅ Qué sí: ${t[1]}.\n❌ Qué no: ${t[2]}.\n\nGuardá este posteo para tenerlo a mano 📌`, historia: `℞ Seguimos con ${p} retrógrado hasta el ${fCorta(h)}. Ojo con: ${t[2]}.` });
+  });
+  Object.values(cambios).forEach(c => {
+    const pers = c.pls.filter(p => RT[p]), nombres = c.pls.join(' y ');
+    if (c.r) c.pls.forEach(p => {
+      const t = RT[p];
+      ev.push({ f: c.f, tipo: 'Retrógrado', titulo: '℞ Empieza ' + p + ' retrógrado (hasta el ' + fCorta(c.hasta) + ')', formato: t ? 'Carrusel guardable "Qué sí / Qué no"' : 'Historia informativa',
+        idea: t ? 'Guía práctica para el período: la gente la guarda y la comparte.' : 'Contexto astrológico breve.',
+        texto: t ? `℞ ${p} retrógrado: del ${fCorta(c.f)} al ${fCorta(c.hasta)}\n\nToca los temas de ${t[0]}.\n\n✅ Qué sí: ${t[1]}.\n❌ Qué no: ${t[2]}.\n\nGuardá este posteo para tenerlo a mano 📌` : `℞ ${p} retrógrado desde el ${fCorta(c.f)}: un tiempo para revisar hacia adentro.`,
+        historia: `℞ Hoy empieza ${p} retrógrado. ${t ? 'Ojo con: ' + t[2] + '.' : ''}` });
+    });
+    else ev.push({ f: c.f, tipo: 'Directo', titulo: '➡️ ' + nombres + (c.pls.length > 1 ? ' retoman' : ' retoma') + ' la marcha directa', formato: 'Post + historia', idea: pers.length ? 'Momento ideal para lanzar algo: "todo vuelve a avanzar".' : 'Contexto astrológico breve.',
+      texto: `➡️ ${nombres} ${c.pls.length > 1 ? 'vuelven' : 'vuelve'} a avanzar\n\nLo que estuvo en pausa empieza a moverse. Es buen momento para concretar lo que revisaste estas semanas: ${pers.includes('Mercurio') ? 'firmar, lanzar, comunicar' : ''}${pers.includes('Venus') ? (pers.includes('Mercurio') ? ', ' : '') + 'animarte a ese cambio de look o a un nuevo vínculo' : ''}${pers.includes('Marte') ? ' y poner en acción tus proyectos' : ''}.\n\n¿Qué vas a poner en marcha? 💫`,
+      historia: `➡️ ${nombres} directo desde hoy: ¡a mover lo que estaba en pausa! ✨` });
+  });
+  // Cambio de signo del Sol y portales; arcano de la semana cada lunes
+  for (let d = new Date(ini); d <= fin; d = new Date(d.getTime() + 86400000)) {
+    const a = SIG[Math.floor(longSol(jdDia(d) - .5) / 30)], b = SIG[Math.floor(longSol(jdDia(d) + .5) / 30)];
+    if (a !== b) { const est = { Libra: 'Equinoccio de primavera', Capricornio: 'Solsticio de verano', Aries: 'Equinoccio de otoño', Cáncer: 'Solsticio de invierno' }[b];
+      ev.push({ f: new Date(d), tipo: 'Temporada', titulo: '☀️ Empieza la temporada de ' + b + (est ? ' · ' + est : ''), formato: 'Reel o carrusel', idea: 'Qué energía trae la nueva temporada para todos los signos.',
+        texto: `☀️ Empieza la temporada de ${b}${est ? ' (' + est + ' en el hemisferio sur)' : ''}\n\nEl Sol en ${b} pone el foco en ${SIGNOS[b].area}. Buen momento para: ${SIGNOS[b].fav.join(', ')}.\n\n¿Sos de ${b} o tenés a alguien de ${b} cerca? Etiquetalo 💫`,
+        historia: `☀️ Desde hoy, temporada de ${b}. ¿Cómo la recibís? ✨` }); }
+    if (d.getDate() === d.getMonth() + 1) ev.push({ f: new Date(d), tipo: 'Portal', titulo: '✨ Portal ' + d.getDate() + '/' + (d.getMonth() + 1), formato: 'Historia con afirmación', idea: 'Día de números espejo: muy compartible.',
+      texto: `✨ Portal ${d.getDate()}/${d.getMonth() + 1}\n\nDía de números espejo, ideal para alinear intención y acción. Escribí una afirmación en presente, repetila tres veces y hacé hoy un gesto que la acompañe.\n\nDejanos tu afirmación en comentarios 💜`,
+      historia: `✨ Hoy portal ${d.getDate()}/${d.getMonth() + 1}: ¿cuál es tu afirmación?` });
+    if (d.getDay() === 1) { const n = reducir(String(d.getDate()).padStart(2, '0') + String(d.getMonth() + 1).padStart(2, '0') + d.getFullYear());
+      ev.push({ f: new Date(d), tipo: 'Arcano de la semana', titulo: '🃏 Arcano de la semana: ' + ARCANOS[n], formato: 'Reel corto mostrando la carta', idea: 'Contenido fijo de los lunes: crea hábito de visita.',
+        texto: `🃏 Arcano de la semana: ${ARCANOS[n]}\n\n${DIA[n][0]}\n\n🌙 Consejo: ${DIA[n][1]}\n\n¿Te resuena? Contanos en qué área de tu vida lo sentís 💜`, historia: `🃏 Esta semana nos acompaña ${ARCANOS[n]}. ${DIA[n][1]}` }); }
+  }
+  // Encuentros: anuncio, recordatorio y agradecimiento
+  H('Encuentros').forEach(t => {
+    const fe = fecha(t['Fecha']); if (!fe || t['Estado'] === 'Cancelado') return;
+    const base = { nombre: t['Nombre / temática'], cuando: lindaFecha(fe) + (t['Hora'] ? ', ' + t['Hora'] + ' h' : '') };
+    const agrega = (f, tipo, titulo, formato, idea, texto, historia) => { if (f >= ini && f <= fin) ev.push({ f, tipo, titulo, formato, idea, texto, historia, propio: 1 }); };
+    agrega(new Date(fe.getTime() - 14 * 86400000), 'Encuentro', '📣 Anunciar ' + base.nombre, 'Post + historias', 'Anuncio con dos semanas de anticipación.',
+      `🕯️ ${base.nombre}\n📅 ${base.cuando}\n💫 ${t['Formato'] || ''}\n\nSomos pocas alrededor de la mesa: los lugares son limitados.\nReservá el tuyo por mensaje privado ✨`, `📣 Nuevo encuentro: ${base.nombre}, ${base.cuando}. ¡Reservá tu lugar!`);
+    agrega(new Date(fe.getTime() - 3 * 86400000), 'Encuentro', '⏳ Últimos lugares: ' + base.nombre, 'Historias con cuenta regresiva', 'Urgencia amable: quedan pocos lugares.',
+      `⏳ Faltan 3 días para ${base.nombre}.\n\n${num(t['Lugares libres']) > 0 ? 'Quedan ' + num(t['Lugares libres']) + ' lugares' : 'Lista de espera abierta'}. Escribinos por privado ✨`, `⏳ ¡Faltan 3 días! Últimos lugares para ${base.nombre}.`);
+    agrega(new Date(fe.getTime() + 86400000), 'Encuentro', '💜 Agradecer y pedir opiniones: ' + base.nombre, 'Fotos del encuentro + historia', 'Agradecé y mandá a cada participante su enlace de Mi Luz para opinar.',
+      `💜 Gracias por la magia de anoche.\n\nCada encuentro es único por las personas que lo habitan. Si estuviste, contanos cómo lo viviste en tu espacio Mi Luz ✨`, `💜 ¡Gracias a quienes vinieron a ${base.nombre}!`);
+  });
+  ev.sort((a, b) => a.f - b.f || (b.propio || 0) - (a.propio || 0));
+  return ev;
+}
+function vistaContenido(){
+  const dias = CAL.contDias || 30, ev = eventosContenido(dias);
+  let h = cabeza('Contenido', `<div class="herramientas" style="margin:0">${[[14, '2 semanas'], [30, '1 mes'], [60, '2 meses']].map(([n, t]) => `<button class="btn-sec${dias === n ? ' oro' : ''}" type="button" data-contdias="${n}">${t}</button>`).join('')}</div>`);
+  h += '<p class="ayuda">Tu agenda de publicaciones, armada sola con el cielo real (lunas, retrógrados, eclipses, temporadas y portales) y con sus encuentros. Cada idea trae el texto listo para copiar, y cuando hay un encuentro con lugares libres, lo suma como invitación.</p>';
+  if (!ev.length) return h + '<p class="ayuda">No hay eventos en este período.</p>';
+  let semana = '';
+  ev.forEach((e, i) => {
+    const lunes = new Date(e.f); lunes.setDate(lunes.getDate() - ((lunes.getDay() + 6) % 7));
+    const sk = fCorta(lunes);
+    if (sk !== semana) { semana = sk; h += `<h3>Semana del ${sk}</h3>`; }
+    const texto = e.texto + '\n\n' + ctaContenido(e.f) + '\n\n' + HASH;
+    CONT_TEXTOS[i] = { texto, historia: e.historia };
+    h += `<article class="cont-card"><div class="cont-cab"><span class="estado ${e.propio ? 'e-sena' : 'e-neutro'}">${esc(e.tipo)}</span><b>${esc(lindaFecha(e.f))}</b></div>
+      <h4>${esc(e.titulo)}</h4><p class="ayuda" style="margin:2px 0 8px"><b>Formato:</b> ${esc(e.formato)} · ${esc(e.idea)}</p>
+      <details><summary>Ver texto</summary><pre class="cont-txt">${esc(texto)}</pre></details>
+      <div class="herramientas" style="margin:8px 0 0"><button class="btn-sec" type="button" data-copcont="${i}|texto">Copiar publicación</button><button class="btn-sec" type="button" data-copcont="${i}|historia">Copiar historia</button></div></article>`;
+  });
+  return h;
+}
+const CONT_TEXTOS = {};
 
 /* ───── Mensajes ───── */
 function contexto(p, t, a){
@@ -1730,6 +1871,7 @@ V.reventa = () => {
   return h;
 };
 
+V.contenido = vistaContenido;
 V.miluz = () => {
   const ts = H('Testimonios').slice().reverse();
   const prom = ts.length ? (ts.reduce((a, x) => a + num(x['Puntaje']), 0) / ts.length).toFixed(1).replace('.', ',') : '—';
@@ -1884,6 +2026,8 @@ document.addEventListener('click', async e => {
   }
   if (ds.copiar) { navigator.clipboard.writeText(ds.copiar).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', ds.copiar)); return; }
   if (ds.calculo !== undefined) { abrirCalculo(); return; }
+  if (ds.contdias) { CAL.contDias = +ds.contdias; pintar(); return; }
+  if (ds.copcont) { const [i, k] = ds.copcont.split('|'); const tx = CONT_TEXTOS[i] && CONT_TEXTOS[i][k]; if (tx) navigator.clipboard.writeText(tx).then(() => toast('Copiado ✓')).catch(() => prompt('Copiá el texto:', tx)); return; }
   if (ds.reporte !== undefined) { abrirReporte(); return; }
   if (ds.rep) { t.disabled = true; t.textContent = 'Generando…'; await generarReporte(ds.rep); t.disabled = false; t.textContent = 'Descargar'; return; }
   if (ds.limpiar !== undefined) { limpiarRepetidas(t); return; }
