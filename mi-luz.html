@@ -223,9 +223,14 @@ body::before,body::after{display:none}
 .ag-nav .btn-sec{padding:4px 12px}
 .ag-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
 .ag-dsem{text-align:center;font-size:.75rem;color:var(--oro)}
-.ag-dia{min-width:0;aspect-ratio:1/1.1;border:1px solid rgba(185,138,230,.15);border-radius:10px;background:rgba(28,11,46,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px 2px;cursor:pointer;color:var(--luna)}
+.ag-dia .ic i{font-style:normal}
+.pasos-inst{margin:0 0 6px;padding-left:22px;color:var(--luna);line-height:1.6}
+.pasos-inst li{margin-bottom:10px}
+.pasos-inst b{color:var(--oro);font-weight:500}
+.ag-dia{min-width:0;min-height:60px;border:1px solid rgba(185,138,230,.15);border-radius:10px;background:rgba(28,11,46,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px 2px;cursor:pointer;color:var(--luna)}
 .ag-dia .n{font-size:.85rem}
-.ag-dia .ic{font-size:.7rem;line-height:1.1;letter-spacing:-1px;white-space:nowrap;overflow:hidden;max-width:100%}
+.ag-dia .ic{font-size:.72rem;line-height:1.2;display:flex;flex-wrap:wrap;justify-content:center;gap:1px;max-width:100%;padding-bottom:2px}
+@media (max-width:480px){ .ag-grid{gap:3px} .ag-dia{min-height:64px;padding:4px 1px 5px;border-radius:8px} .ag-dia .ic{font-size:.62rem} }
 .ag-dia.hoy{border-color:var(--oro);box-shadow:0 0 12px rgba(212,175,106,.35)}
 .ag-dia.sel{background:rgba(212,175,106,.16);border-color:var(--oro)}
 .ag-dia:hover{border-color:var(--lila)}
@@ -299,7 +304,21 @@ let CODIGO = new URLSearchParams(location.search).get('c') || '';
 try { if (CODIGO) localStorage.setItem('luzguia_codigo', CODIGO); else CODIGO = localStorage.getItem('luzguia_codigo') || ''; } catch (e) {}
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 let INSTALAR = null;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALAR = e; const b = document.getElementById('btn-instalar'); if (b) b.classList.remove('oculto'); });
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALAR = e; });
+const ICON_COMPARTIR = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-5px"><path d="M8 7l4-4 4 4M12 3v13"/><path d="M6 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/></svg>';
+function guiaInstalar(){
+  const ua = navigator.userAgent, ios = /iphone|ipad|ipod/i.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+  const interno = /Instagram|FBAN|FBAV|WhatsApp|Line\//i.test(ua);
+  const chromeIos = /CriOS/i.test(ua);
+  let pasos;
+  if (interno) pasos = `<li>Estás dentro de ${/Instagram/i.test(ua) ? 'Instagram' : /WhatsApp/i.test(ua) ? 'WhatsApp' : 'otra app'}, que no permite instalar.</li><li>Tocá los <b>tres puntitos</b> (arriba a la derecha) y elegí <b>"Abrir en ${ios ? 'Safari' : 'el navegador'}"</b>.</li><li>Ahí volvé a tocar <b>"Instalar Mi Luz"</b>.</li>`;
+  else if (ios) pasos = `<li>Tocá el botón <b>Compartir</b> ${ICON_COMPARTIR} ${chromeIos ? '(arriba a la derecha, al lado de la dirección)' : '(en la barra de abajo de Safari; si no la ves, tocá la dirección o deslizá hacia arriba)'}.</li><li>Deslizá y tocá <b>"Agregar a pantalla de inicio"</b>.</li><li>Tocá <b>"Agregar"</b>. ¡Listo! Mi Luz queda con el ícono de Luz Guía.</li>`;
+  else pasos = `<li>Tocá el menú del navegador <b>⋮</b> (arriba a la derecha).</li><li>Elegí <b>"Instalar app"</b> o <b>"Agregar a pantalla principal"</b>.</li><li>Confirmá. ¡Listo! Mi Luz queda con el ícono de Luz Guía.</li>`;
+  $('dlg-titulo').textContent = 'Instalar Mi Luz';
+  $('dlg-texto').textContent = 'Son tres toques:';
+  $('dlg-cuerpo').innerHTML = `<ol class="pasos-inst">${pasos}</ol><div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>`;
+  $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close();
+}
 const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const IG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>';
@@ -650,7 +669,7 @@ function pintarAgenda(){
   for (let n = 1; n <= dias; n++) {
     const f = new Date(y, m, n), d = diaAstral(f); d.personal = arcN && arcanoPersonalDe(f) === arcN;
     const ic = iconosDia(d);
-    g += `<button type="button" class="ag-dia${f.getTime() === hoy.getTime() ? ' hoy' : ''}${AG.sel === n ? ' sel' : ''}${d.retro.Mercurio || d.retro.Venus ? ' retro' : ''}" data-agdia="${n}" aria-label="${n} de ${MESES[m]}"><span class="n">${n}</span><span class="ic">${ic.slice(0, 4).join('')}${ic.length > 4 ? '·' : ''}</span></button>`;
+    g += `<button type="button" class="ag-dia${f.getTime() === hoy.getTime() ? ' hoy' : ''}${AG.sel === n ? ' sel' : ''}${d.retro.Mercurio || d.retro.Venus ? ' retro' : ''}" data-agdia="${n}" aria-label="${n} de ${MESES[m]}"><span class="n">${n}</span><span class="ic">${ic.slice(0, 4).map(x => '<i>' + x + '</i>').join('')}</span></button>`;
   }
   const sel = AG.sel ? diaAstral(new Date(y, m, AG.sel)) : null; if (sel) sel.personal = arcN && arcanoPersonalDe(sel.f) === arcN;
   c.innerHTML = `<div class="ag-nav"><button type="button" class="btn-sec" data-agmes="-1" aria-label="Mes anterior">‹</button><b>${MESES[m].charAt(0).toUpperCase() + MESES[m].slice(1)} ${y}</b><button type="button" class="btn-sec" data-agmes="1" aria-label="Mes siguiente">›</button></div>
@@ -888,8 +907,7 @@ function pintar(){
 
   const estandar = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (!estandar) {
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    h += `<div class="instalar"><h4>📲 Llevá Mi Luz en tu celular</h4><p>Todos los días tiene algo nuevo para vos: tu energía, la luna y tu agenda. ${ios ? 'En Safari tocá <b>Compartir</b> y después <b>"Agregar a pantalla de inicio"</b>.' : 'Instalala como app y abrila con un toque.'}</p>${ios ? '' : `<button class="btn${INSTALAR ? '' : ' oculto'}" type="button" id="btn-instalar">Instalar Mi Luz</button><p class="ag-ayuda" style="margin-top:8px">Si no aparece el botón: menú del navegador (⋮) → "Agregar a pantalla de inicio".</p>`}</div>`;
+    h += `<div class="instalar"><h4>📲 Llevá Mi Luz en tu celular</h4><p>Todos los días tiene algo nuevo para vos: tu energía, la luna y tu agenda. Instalala como app y abrila con un toque desde tu pantalla de inicio.</p><button class="btn" type="button" id="btn-instalar">Instalar Mi Luz</button></div>`;
   }
   if (P.telLuz || P.instagram) h += `<div class="contacto"><p>¿Tenés alguna pregunta? Escribinos o seguinos para enterarte de todo.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     ${P.telLuz ? `<a class="wa" href="${waLuz('Hola! Soy ' + P.nombre + ', les escribo desde mi espacio de Luz Guía 🌙')}" target="_blank" rel="noopener">${WA_SVG} Escribinos</a>` : ''}
@@ -951,7 +969,10 @@ document.addEventListener('touchend', e => { if (tx === null) return; const d = 
 document.addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.ir !== undefined) { irA(+b.dataset.ir); auto(); return; }
-  if (b.id === 'btn-instalar' && INSTALAR) { INSTALAR.prompt(); INSTALAR = null; b.classList.add('oculto'); return; }
+  if (b.id === 'btn-instalar') {
+    if (INSTALAR) { INSTALAR.prompt(); INSTALAR.userChoice.then(r => { if (r.outcome === 'accepted') b.closest('.instalar').remove(); }); INSTALAR = null; return; }
+    guiaInstalar(); return;
+  }
   if (b.id === 'btn-compartir') { compartirEnergia(b); return; }
   if (b.dataset.agcat) { AG.cat = b.dataset.agcat; pintarAgenda(); return; }
   if (b.dataset.agics) { descargarICS(b.dataset.agics); return; }
