@@ -841,6 +841,7 @@ const ESQ = {
     {k:'Nombre completo', t:'text', req:1, full:1}, {k:'Fecha de nacimiento', t:'date'}, {k:'Teléfono', t:'tel', ph:'2954 123456'},
     {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text'},
     {k:'Rol', t:'sel', o:() => L('Roles').length ? L('Roles') : ['Participante','Organizadora'], def:'Participante'},
+    {k:'Significado del nombre', t:'area', full:1, lab:'Significado del nombre (opcional: si lo completás, reemplaza al que muestra Mi Luz)'},
     {k:'Consentimiento datos', t:'check', lab:'Aceptó que guardemos sus datos'}, {k:'Notas', t:'area', full:1}]},
   Asistencias: { nombre: 'inscripción', clave: 'ID Encuentro', etiqueta: 'Nombre', campos: [
     {k:'ID Encuentro', t:'sel', o:optEncuentros, req:1, full:1, lab:'Encuentro'}, {k:'ID Persona', t:'sel', o:optPersonas, full:1, lab:'Persona'},
@@ -890,7 +891,7 @@ const ESQ = {
   Testimonios: { nombre: 'testimonio', clave: 'Nombre', etiqueta: 'Encuentro', campos: [
     {k:'Comentario', t:'area', full:1, filas:4}, {k:'Se puede publicar', t:'check', lab:'Autorizó publicarlo'}, {k:'Destacado', t:'check', lab:'Destacado'}]},
   Pedidos: { nombre: 'pedido', clave: 'Nombre', etiqueta: 'Qué', campos: [
-    {k:'Estado', t:'sel', o:() => L('Estados pedido'), req:1}, {k:'Mensaje', t:'area', full:1}]},
+    {k:'Estado', t:'sel', o:() => L('Estados pedido'), req:1}, {k:'Motivo', t:'sel', o:() => L('Motivos sin compra'), lab:'Motivo (si no compró)'}, {k:'Mensaje', t:'area', full:1}]},
   Plantillas: { nombre: 'plantilla', clave: 'Clave', etiqueta: 'Nombre', campos: [
     {k:'Nombre', t:'text', req:1, full:1}, {k:'Texto', t:'area', req:1, full:1, filas:8}]}
 };
@@ -1635,12 +1636,12 @@ V.hoy = () => {
   // Tareas del día
   const T = [];
   H('Pedidos').filter(x => x['Estado'] === 'Nuevo').forEach(x => {
-    const esT = x['Tipo'] === 'Encuentro', esPromo = x['Tipo'] === 'Promoción';
+    const esT = x['Tipo'] === 'Encuentro', esPromo = /Promoción|Kit|Aviso/.test(x['Tipo']);
     const pre = esT ? { 'ID Encuentro': x['Referencia'], 'ID Persona': x['ID Persona'] } : { 'Producto': x['Referencia'], 'Comprador/a': x['Nombre'] };
-    T.push({ ico:'✨', txt: `${esc(x['Nombre'])} pidió desde su portal: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
+    T.push({ ico: x['Tipo'] === 'Kit' ? '🕯️' : x['Tipo'] === 'Aviso de stock' ? '🔔' : '✨', txt: `${esc(x['Nombre'])} ${x['Tipo'] === 'Kit' ? 'se interesó por un kit' : x['Tipo'] === 'Aviso de stock' ? 'quiere que le avisen' : 'pidió desde su portal'}: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
       bt: btnWA(x['ID Persona'], esT ? 'invitacion' : 'invitacion', esT ? x['Referencia'] : '', '', 'Responderle') +
         (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
-        `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button><button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button>` });
+        `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button>` });
   });
   H('Testimonios').filter(x => { const f = fecha(x['Fecha']); return f && diasEntre(f, HOY) <= 7; }).forEach(x => T.push({ ico:'💬', txt: `${esc(x['Nombre'])} dejó su opinión de ${esc(x['Encuentro'])} ${'★'.repeat(num(x['Puntaje']))}`, sub: esc(String(x['Comentario'] || '').slice(0, 120)), bt: `<button class="btn-sec" type="button" data-vista="miluz">Ver</button>` }));
   const cumples = cumplesProximos(D.params.cumple);
@@ -1961,6 +1962,16 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Cobrado a quienes no vinieron</span><b class="oro">${pesos(plataAus)}</b></div></div>`
     + '<p class="ayuda" style="margin-top:10px">Lo que pagaron quienes no vinieron cuenta en lo cobrado y en la ganancia, pero no en la cantidad de personas de cada encuentro.</p>';
   h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro encuentro</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Encuentros realizados</span><b>${ts.length}</b></div><div class="cifra"><span>Asistencias en total</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div></div>`;
+  const ped = H('Pedidos');
+  if (ped.length) {
+    const g = {};
+    ped.forEach(x => { const k = x['Tipo'] + '|' + (x['Tipo'] === 'Encuentro' ? x['Qué'] : x['Referencia']); const o = g[k] = g[k] || { tipo: x['Tipo'], que: x['Tipo'] === 'Encuentro' ? x['Qué'] : String(x['Referencia']).replace(/^Kit: /, ''), n: 0, si: 0, no: 0, mot: {} }; o.n++; if (x['Estado'] === 'Atendido') o.si++; if (x['Estado'] === 'No compró') { o.no++; const m = x['Motivo'] || 'Sin indicar'; o.mot[m] = (o.mot[m] || 0) + 1; } });
+    const filas = Object.values(g).sort((a, b) => b.n - a.n).map(o => ({ 'Tipo': o.tipo, 'Qué': o.que, 'Consultas': o.n, 'Concretadas': o.si, 'No compró': o.no, 'Conversión': o.n ? Math.round(o.si / o.n * 100) + '%' : '', 'Motivos': Object.entries(o.mot).map(([m, c]) => m + ' (' + c + ')').join(', ') }));
+    const motivos = {}; ped.filter(x => x['Estado'] === 'No compró').forEach(x => { const m = x['Motivo'] || 'Sin indicar'; motivos[m] = (motivos[m] || 0) + 1; });
+    h += '<h3>Consultas desde Mi Luz</h3><p class="ayuda" style="margin-top:0">Qué preguntan, cuánto se concreta y por qué no. Los kits muestran el interés antes de fabricarlos.</p>'
+      + tabla([{ t:'Tipo', k:'Tipo' }, { t:'Qué', k:'Qué' }, { t:'Consultas', k:'Consultas', num:1 }, { t:'Concretadas', k:'Concretadas', num:1 }, { t:'No compró', k:'No compró', num:1 }, { t:'Conversión', k:'Conversión', num:1 }, { t:'Motivos', k:'Motivos' }], filas, '')
+      + (Object.keys(motivos).length ? '<h3>Por qué no compran</h3>' + barras(Object.entries(motivos).sort((a, b) => b[1] - a[1])) : '');
+  }
   h += '<h3>Por formato</h3>' + tabla([{ t:'Formato', k:'Formato' }, { t:'Realizados', k:'Realizados', num:1 }, { t:'Promedio de asistentes', k:'Promedio', num:1 }, { t:'Ganancia promedio', k:'Ganancia', num:1 }, { t:'Costo por persona', k:'Costo', num:1 }], filasFm, 'Cuando haya encuentros realizados, acá vas a ver cuál formato rinde más.');
   h += `<div class="dos-col"><div><h3>Cómo llegan</h3>${barras(contar(ps, 'Canal de llegada'))}</div><div><h3>Arcanos de nacimiento más frecuentes</h3>${barras(contar(ps, 'Arcano nacimiento').slice(0, 8))}</div></div>`;
   h += `<h3>Por qué no vinieron</h3>${barras(contar(H('Asistencias').filter(a => /No vino|Canceló/.test(a['Asistencia'])), 'Motivo de ausencia'))}`;
@@ -2001,6 +2012,15 @@ document.addEventListener('click', async e => {
       } catch (e) { out.textContent = '✗ No hubo respuesta del script (' + (e.message || e) + '). Revisá que la implementación tenga acceso "Cualquier usuario".'; }
     };
     $('lk-copiar').onclick = () => { $('lk').select(); (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Enlace copiado')).catch(() => { document.execCommand('copy'); toast('Enlace copiado'); }); };
+    return;
+  }
+  if (ds.nocompro) {
+    const r = H('Pedidos').find(x => String(x._fila) === ds.nocompro); if (!r) return;
+    const mot = L('Motivos sin compra').length ? L('Motivos sin compra') : ['Precio', 'Lo pensaba / más adelante', 'No respondió', 'Ya lo consiguió', 'Sin stock', 'Otro'];
+    modal('¿Por qué no se concretó?', `<p class="ayuda" style="margin-top:0">${esc(r['Nombre'])} · ${esc(r['Qué'])}. Anotarlo te ayuda a entender por qué preguntan y no compran.</p>
+      <div class="form"><label class="full">Motivo<select class="campo" id="nc-mot">${mot.map(x => `<option>${esc(x)}</option>`).join('')}</select></label></div>`,
+      `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="nc-ok">Guardar</button>`);
+    $('nc-ok').onclick = async ev => { ev.target.disabled = true; try { await guardarCambios('Pedidos', r, { 'Estado': 'No compró', 'Motivo': $('nc-mot').value }, 'Anotado ✓'); } catch (err) { toast(err.message, true); ev.target.disabled = false; } };
     return;
   }
   if (ds.pedido) {
