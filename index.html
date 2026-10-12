@@ -319,6 +319,10 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
 .cont-card h4{font-family:var(--serif);font-size:1.3rem;margin:6px 0 0;font-weight:600}
 .cont-card summary{cursor:pointer;color:var(--lila);font-size:.9rem}
 .cont-txt{white-space:pre-wrap;font-family:var(--sans);font-size:.9rem;color:var(--luna);background:var(--noche);border-radius:10px;padding:12px;margin:8px 0 0}
+.foto-prod{width:44px;height:44px;border-radius:8px;border:1px solid var(--linea);background:var(--noche);padding:0;overflow:hidden;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem}
+.foto-prod img{width:100%;height:100%;object-fit:cover}
+.foto-prod.vacia{border-style:dashed;border-color:var(--oro-suave)}
+.foto-prod:hover{border-color:var(--oro)}
 #toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--oro);color:var(--noche);padding:10px 18px;border-radius:10px;font-weight:500;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:90vw}
 #toast.err{background:var(--debe)}
 #cargando{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--bruma);font-family:var(--serif);font-size:1.4rem;font-style:italic}
@@ -1641,7 +1645,7 @@ V.hoy = () => {
     T.push({ ico: x['Tipo'] === 'Kit' ? '🕯️' : x['Tipo'] === 'Aviso de stock' ? '🔔' : '✨', txt: `${esc(x['Nombre'])} ${x['Tipo'] === 'Kit' ? 'se interesó por un kit' : x['Tipo'] === 'Aviso de stock' ? 'quiere que le avisen' : 'pidió desde su portal'}: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
       bt: btnWA(x['ID Persona'], esT ? 'invitacion' : 'invitacion', esT ? x['Referencia'] : '', '', 'Responderle') +
         (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
-        `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button>` });
+        `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
   });
   H('Testimonios').filter(x => { const f = fecha(x['Fecha']); return f && diasEntre(f, HOY) <= 7; }).forEach(x => T.push({ ico:'💬', txt: `${esc(x['Nombre'])} dejó su opinión de ${esc(x['Encuentro'])} ${'★'.repeat(num(x['Puntaje']))}`, sub: esc(String(x['Comentario'] || '').slice(0, 120)), bt: `<button class="btn-sec" type="button" data-vista="miluz">Ver</button>` }));
   const cumples = cumplesProximos(D.params.cumple);
@@ -1851,7 +1855,9 @@ V.reventa = () => {
   let h = cabeza('Reventa y stock');
   h += '<p class="ayuda">Tarots, oráculos y accesorios a la venta, más los insumos de los encuentros. Las compras de mercadería se cargan en Gastos con destino "Compra para reventa".</p>';
   h += `<div class="herramientas">${btnNuevo('Ventas', 'Registrar venta')} <button class="btn-sec" type="button" data-nuevo="Productos">Nuevo producto</button> <button class="btn-sec" type="button" data-nuevo="Insumos">Nuevo insumo</button></div>`;
-  h += '<h3>Productos</h3>' + tabla([
+  h += '<h3>Productos</h3><p class="ayuda" style="margin-top:0">Tocá 📷 para sacarle o subirle una foto: aparece sola en Mi Luz (en Productos y en el carrusel de Novedades).</p>' + tabla([
+    { t:'', f: p => { const id = (String(p['Imagen'] || '').match(/[-\w]{25,}/) || [''])[0];
+      return id ? `<button class="foto-prod" type="button" data-fotoprod="${p._fila}" title="Cambiar foto"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w120" alt="" loading="lazy" onerror="this.replaceWith('🖼️')"></button>` : `<button class="foto-prod vacia" type="button" data-fotoprod="${p._fila}" title="Agregar foto">📷</button>`; } },
     { t:'Producto', k:'Producto' }, { t:'Costo', k:'Costo de compra', num:1 }, { t:'Venta', k:'Precio de venta', num:1 },
     { t:'Ganancia x u.', k:'Ganancia por unidad', num:1 }, { t:'Margen', k:'Margen %', num:1 }, { t:'Vendidas', k:'Vendidas', num:1 },
     { t:'Stock', k:'Stock actual', num:1 }, { t:'', f: p => al(p['Alerta']) }, colAcc('Productos')
@@ -2013,6 +2019,17 @@ document.addEventListener('click', async e => {
     };
     $('lk-copiar').onclick = () => { $('lk').select(); (navigator.clipboard ? navigator.clipboard.writeText(l) : Promise.reject()).then(() => toast('Enlace copiado')).catch(() => { document.execCommand('copy'); toast('Enlace copiado'); }); };
     return;
+  }
+  if (ds.fotoprod) {
+    const r = H('Productos').find(x => String(x._fila) === ds.fotoprod); if (!r) return;
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = async () => {
+      const arch = inp.files[0]; if (!arch) return;
+      t.disabled = true; toast('Subiendo la foto de ' + r['Producto'] + '…');
+      try { const id = await subirFoto(arch, true); await guardarCambios('Productos', r, { 'Imagen': id }, 'Foto guardada ✓ Ya aparece en Mi Luz'); }
+      catch (err) { toast(err.message, true); t.disabled = false; }
+    };
+    inp.click(); return;
   }
   if (ds.nocompro) {
     const r = H('Pedidos').find(x => String(x._fila) === ds.nocompro); if (!r) return;
