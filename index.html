@@ -845,6 +845,7 @@ const ESQ = {
     {k:'Nombre completo', t:'text', req:1, full:1}, {k:'Fecha de nacimiento', t:'date'}, {k:'Teléfono', t:'tel', ph:'2954 123456'},
     {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text'},
     {k:'Rol', t:'sel', o:() => L('Roles').length ? L('Roles') : ['Participante','Organizadora'], def:'Participante'},
+    {k:'Plan', t:'sel', o:() => ['Gratis','Premium'], def:'Gratis', lab:'Plan de Mi Luz'}, {k:'Premium hasta', t:'date', lab:'Premium hasta (vacío = sin vencimiento)'},
     {k:'Significado del nombre', t:'area', full:1, lab:'Significado del nombre (opcional: si lo completás, reemplaza al que muestra Mi Luz)'},
     {k:'Consentimiento datos', t:'check', lab:'Aceptó que guardemos sus datos'}, {k:'Notas', t:'area', full:1}]},
   Asistencias: { nombre: 'inscripción', clave: 'ID Encuentro', etiqueta: 'Nombre', campos: [
@@ -1640,6 +1641,11 @@ V.hoy = () => {
   // Tareas del día
   const T = [];
   H('Pedidos').filter(x => x['Estado'] === 'Nuevo').forEach(x => {
+    if (x['Tipo'] === 'Premium') {
+      T.push({ ico:'💎', txt: `${esc(x['Nombre'])} quiere ser Premium`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : '') + ' · activalo cuando confirmes el pago',
+        bt: btnWA(x['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(x['ID Persona'])}|${x._fila}">Activar Premium</button><button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
+      return;
+    }
     const esT = x['Tipo'] === 'Encuentro', esPromo = /Promoción|Kit|Aviso/.test(x['Tipo']);
     const pre = esT ? { 'ID Encuentro': x['Referencia'], 'ID Persona': x['ID Persona'] } : { 'Producto': x['Referencia'], 'Comprador/a': x['Nombre'] };
     T.push({ ico: x['Tipo'] === 'Kit' ? '🕯️' : x['Tipo'] === 'Aviso de stock' ? '🔔' : '✨', txt: `${esc(x['Nombre'])} ${x['Tipo'] === 'Kit' ? 'se interesó por un kit' : x['Tipo'] === 'Aviso de stock' ? 'quiere que le avisen' : 'pidió desde su portal'}: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
@@ -1647,9 +1653,13 @@ V.hoy = () => {
         (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
         `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
   });
+  H('Personas').filter(p => !esOrg(p) && /premium/i.test(p['Plan'] || '') && fecha(p['Premium hasta'])).forEach(p => {
+    const d = diasEntre(HOY, fecha(p['Premium hasta']));
+    if (d <= 5 && d >= -3) T.push({ ico:'💎', txt: `El Premium de ${esc(p['Nombre completo'])} ${d < 0 ? 'venció' : d === 0 ? 'vence hoy' : 'vence ' + (d === 1 ? 'mañana' : 'en ' + d + ' días')}`, sub: 'Vence el ' + lindaFecha(fecha(p['Premium hasta'])), bt: btnWA(p['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(p['ID Persona'])}|">Renovar</button>` });
+  });
   const visHoy = {};
-  H('Visitas').filter(v => v['Tipo'] === 'Apertura' && (fecha(v['Fecha']) || 0) >= HOY).forEach(v => { if (!esOrg(persona(v['ID Persona']))) visHoy[v['Nombre']] = (visHoy[v['Nombre']] || 0) + 1; });
-  if (Object.keys(visHoy).length) T.push({ ico:'👁', txt: 'Hoy abrieron Mi Luz: ' + Object.entries(visHoy).map(([n, c]) => esc(String(n).split(' ')[0]) + (c > 1 ? ' (' + c + ')' : '')).join(', '), sub: 'Detalle en Estadísticas', bt: `<button class="btn-sec" type="button" data-vista="estadisticas">Ver</button>` });
+  H('Visitas').filter(v => v['Tipo'] === 'Apertura' && (fecha(v['Fecha']) || 0) >= HOY).forEach(v => { const k = String(v['Nombre']).split(' ')[0] + (esOrg(persona(v['ID Persona'])) ? ' (vos o Mey)' : ''); visHoy[k] = (visHoy[k] || 0) + 1; });
+  if (Object.keys(visHoy).length) T.push({ ico:'👁', txt: 'Hoy abrieron Mi Luz: ' + Object.entries(visHoy).map(([n, c]) => esc(n) + (c > 1 ? ' (' + c + ')' : '')).join(', '), sub: 'Detalle en Estadísticas', bt: `<button class="btn-sec" type="button" data-vista="estadisticas">Ver</button>` });
   H('Testimonios').filter(x => { const f = fecha(x['Fecha']); return f && diasEntre(f, HOY) <= 7; }).forEach(x => T.push({ ico:'💬', txt: `${esc(x['Nombre'])} dejó su opinión de ${esc(x['Encuentro'])} ${'★'.repeat(num(x['Puntaje']))}`, sub: esc(String(x['Comentario'] || '').slice(0, 120)), bt: `<button class="btn-sec" type="button" data-vista="miluz">Ver</button>` }));
   const cumples = cumplesProximos(D.params.cumple);
   cumples.forEach(x => T.push({ ico:'🎂', txt: x.c.dias === 0 ? `Hoy cumple ${esc(x.p['Nombre completo'])}` : `${esc(x.p['Nombre completo'])} cumple ${x.c.dias === 1 ? 'mañana' : 'el ' + lindaFecha(x.c.fecha)}`, sub: `Cumple ${x.c.edad}. Arcano de nacimiento: ${esc(x.p['Arcano nacimiento'] || '—')}`, bt: btnWA(x.p['ID Persona'], 'cumpleanos', '', '', 'Saludo de cumpleaños') }));
@@ -1971,8 +1981,16 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Cobrado a quienes no vinieron</span><b class="oro">${pesos(plataAus)}</b></div></div>`
     + '<p class="ayuda" style="margin-top:10px">Lo que pagaron quienes no vinieron cuenta en lo cobrado y en la ganancia, pero no en la cantidad de personas de cada encuentro.</p>';
   h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro encuentro</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Encuentros realizados</span><b>${ts.length}</b></div><div class="cifra"><span>Asistencias en total</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div></div>`;
-  const vis = H('Visitas').filter(v => !esOrg(persona(v['ID Persona'])));
-  if (vis.length) {
+  const visTodas = H('Visitas'), vis = visTodas.filter(v => !esOrg(persona(v['ID Persona'])));
+  const prem = H('Personas').filter(p => !esOrg(p) && /premium/i.test(p['Plan'] || '') && (!fecha(p['Premium hasta']) || fecha(p['Premium hasta']) >= HOY));
+  const pidenPrem = H('Pedidos').filter(x => x['Tipo'] === 'Premium');
+  h += '<h3>Mi Luz Premium</h3><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Premium activas</span><b class="oro">${prem.length}</b></div>`
+    + `<div class="cifra"><span>Pidieron ser Premium</span><b>${pidenPrem.length}</b></div>`
+    + `<div class="cifra"><span>Esperando activación</span><b>${pidenPrem.filter(x => x['Estado'] === 'Nuevo').length}</b></div></div>`
+    + (prem.length ? '<p class="ayuda" style="margin-top:10px">' + prem.map(p => esc(p['Nombre completo']) + (fecha(p['Premium hasta']) ? ' (hasta ' + lindaFecha(fecha(p['Premium hasta'])) + ')' : '')).join(' · ') + '</p>' : '<p class="ayuda" style="margin-top:10px">Para dar Premium a alguien, editá la persona y elegí Plan: Premium. Vos y Mey ya tienen acceso a todo.</p>');
+  if (!visTodas.length) h += '<h3>Mi Luz: quién entra</h3><p class="vacio">Todavía no hay aperturas registradas. Cada vez que alguien abra Mi Luz va a aparecer acá (y te llega un mail). Si ya entraste y no aparece nada, revisá que en Apps Script hayas hecho <b>Nueva versión</b> de la implementación.</p>';
+  else {
     const ap = vis.filter(v => v['Tipo'] === 'Apertura'), mesK = f => f.getFullYear() * 100 + f.getMonth();
     const kHoy = mesK(HOY), meses = []; for (let i = 5; i >= 0; i--) meses.push(new Date(HOY.getFullYear(), HOY.getMonth() - i, 1));
     const delMes = ap.filter(v => fecha(v['Fecha']) && mesK(fecha(v['Fecha'])) === kHoy);
@@ -1985,8 +2003,11 @@ V.estadisticas = () => {
       + `<div class="cifra"><span>Personas distintas este mes</span><b>${new Set(delMes.map(v => v['ID Persona'])).size}</b></div>`
       + `<div class="cifra"><span>Aperturas en total</span><b>${ap.length}</b></div>`
       + `<div class="cifra"><span>Imágenes compartidas</span><b>${comp.length}</b></div></div>`;
-    h += '<div style="margin-top:14px">' + tabla([{ t:'Persona', k:'n' }].concat(meses.map(m => ({ t: MESES[m.getMonth()].slice(0, 3) + ' ' + String(m.getFullYear()).slice(2), k: 'm' + mesK(m), num:1 }))).concat([{ t:'Total', k:'tot', num:1 }, { t:'Última vez', k:'ult' }, { t:'Desde', k:'disp' }]),
-      Object.values(porP).sort((a, b) => b.tot - a.tot).map(o => { const r = { n: o.n, tot: o.tot, ult: lindaFecha(o.ult) + ' ' + String(o.ult.getHours()).padStart(2, '0') + ':' + String(o.ult.getMinutes()).padStart(2, '0'), disp: Object.keys(o.disp).join(', ') }; meses.forEach(m => r['m' + mesK(m)] = o.m[mesK(m)] || ''); return r; }), '') + '</div>';
+    const porO = {};
+    visTodas.filter(v => v['Tipo'] === 'Apertura' && esOrg(persona(v['ID Persona']))).forEach(v => { const f = fechaH(v['Fecha']); if (!f) return; const o = porO[v['ID Persona']] = porO[v['ID Persona']] || { n: v['Nombre'], m: {}, tot: 0, ult: f, disp: {}, org: 1 }; o.tot++; o.m[mesK(f)] = (o.m[mesK(f)] || 0) + 1; if (f > o.ult) o.ult = f; if (v['Dispositivo']) o.disp[v['Dispositivo']] = 1; });
+    if (!ap.length) h += '<p class="ayuda" style="margin-top:10px">Por ahora solo entraron ustedes (sus aperturas se muestran abajo, pero no suman en los números ni mandan mail).</p>';
+    h += '<div style="margin-top:14px">' + tabla([{ t:'Persona', k:'n', f: d => d.n }].concat(meses.map(m => ({ t: MESES[m.getMonth()].slice(0, 3) + ' ' + String(m.getFullYear()).slice(2), k: 'm' + mesK(m), num:1 }))).concat([{ t:'Total', k:'tot', num:1 }, { t:'Última vez', k:'ult' }, { t:'Desde', k:'disp' }]),
+      Object.values(porP).sort((a, b) => b.tot - a.tot).concat(Object.values(porO)).map(o => { const r = { n: esc(o.n) + (o.org ? ' <span class="estado e-sena">Organizadora</span>' : ''), tot: o.tot, ult: lindaFecha(o.ult) + ' ' + String(o.ult.getHours()).padStart(2, '0') + ':' + String(o.ult.getMinutes()).padStart(2, '0'), disp: Object.keys(o.disp).join(', ') }; meses.forEach(m => r['m' + mesK(m)] = o.m[mesK(m)] || ''); return r; }), '') + '</div>';
     const secc = contar(vis.filter(v => v['Tipo'] === 'Sección'), 'Detalle'), cmp = contar(comp, 'Detalle');
     if (secc.length || cmp.length) h += `<div class="dos-col"><div><h3>Qué secciones miran</h3>${barras(secc)}</div><div><h3>Qué comparten</h3>${barras(cmp)}</div></div>`;
   }
@@ -2052,6 +2073,24 @@ document.addEventListener('click', async e => {
       catch (err) { toast(err.message, true); t.disabled = false; }
     };
     inp.click(); return;
+  }
+  if (ds.premium !== undefined && ds.premium !== '') {
+    const [pid, filaPed] = ds.premium.split('|'); const pr = persona(pid); if (!pr) return;
+    const ped = filaPed ? H('Pedidos').find(x => String(x._fila) === filaPed) : null;
+    const base = fecha(pr['Premium hasta']) && fecha(pr['Premium hasta']) > HOY ? fecha(pr['Premium hasta']) : HOY;
+    const mas = m => { const d = new Date(base); d.setMonth(d.getMonth() + m); return iso(d); };
+    modal('Activar Premium', `<p class="ayuda" style="margin-top:0">${esc(pr['Nombre completo'])} va a ver todas las secciones Premium de Mi Luz apenas la vuelva a abrir.</p>
+      <div class="form"><label class="full">¿Por cuánto tiempo?<select class="campo" id="pm-dur"><option value="${mas(1)}">1 mes</option><option value="${mas(3)}">3 meses</option><option value="${mas(6)}">6 meses</option><option value="${mas(12)}">1 año</option><option value="">Sin vencimiento</option></select></label></div>`,
+      `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pm-ok">Activar</button>`);
+    $('pm-ok').onclick = async ev => {
+      ev.target.disabled = true;
+      try {
+        const hasta = $('pm-dur').value;
+        if (ped) await enviar({ accion: 'editar', hoja: 'Pedidos', fila: ped._fila, original: ped[ESQ.Pedidos.clave], datos: { 'Estado': 'Atendido' } });
+        await guardarCambios('Personas', pr, { 'Plan': 'Premium', 'Premium hasta': hasta }, '💎 Premium activado' + (hasta ? ' hasta el ' + lindaFecha(new Date(hasta + 'T12:00')) : ''));
+      } catch (err) { toast(err.message, true); ev.target.disabled = false; }
+    };
+    return;
   }
   if (ds.nocompro) {
     const r = H('Pedidos').find(x => String(x._fila) === ds.nocompro); if (!r) return;
