@@ -845,6 +845,7 @@ const ESQ = {
     {k:'Nombre completo', t:'text', req:1, full:1}, {k:'Fecha de nacimiento', t:'date'}, {k:'Teléfono', t:'tel', ph:'2954 123456'},
     {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text'},
     {k:'Rol', t:'sel', o:() => L('Roles').length ? L('Roles') : ['Participante','Organizadora'], def:'Participante'},
+    {k:'Hora de nacimiento', t:'text', ph:'20:20 (para la revolución solar)'}, {k:'Lugar de nacimiento', t:'text', ph:'Santa Rosa, La Pampa'},
     {k:'Plan', t:'sel', o:() => ['Gratis','Premium'], def:'Gratis', lab:'Plan de Mi Luz'}, {k:'Premium hasta', t:'date', lab:'Premium hasta (vacío = sin vencimiento)'},
     {k:'Significado del nombre', t:'area', full:1, lab:'Significado del nombre (opcional: si lo completás, reemplaza al que muestra Mi Luz)'},
     {k:'Consentimiento datos', t:'check', lab:'Aceptó que guardemos sus datos'}, {k:'Notas', t:'area', full:1}]},

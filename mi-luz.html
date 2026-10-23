@@ -374,6 +374,25 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .matriz{display:block;width:100%;max-width:320px;margin:0 auto 6px}
 .mz-lista{list-style:none;padding:0;margin:0}.mz-lista li{display:grid;grid-template-columns:62px 1fr;gap:12px;padding:12px 0;border-top:1px solid rgba(185,138,230,.15)}
 .mz-lista small{color:var(--oro);text-transform:uppercase;letter-spacing:.06em;font-size:.75rem}.mz-lista h4{margin:2px 0;font-family:var(--serif);font-size:1.15rem}.mz-lista p{margin:4px 0}
+.intro{color:var(--bruma);font-size:.95rem;line-height:1.55;border-left:2px solid var(--oro);padding-left:12px;margin:0 0 14px}
+.luz-som{font-size:.88rem;color:var(--bruma)}.luz-som span{color:var(--oro)}
+.anio-chino{border:1px solid var(--oro);border-radius:14px;padding:14px;margin:16px 0;background:rgba(91,42,134,.25)}.anio-chino.prox{border-style:dashed;opacity:.92}
+.anio-chino small{color:var(--oro);letter-spacing:.05em}.anio-chino h4{font-family:var(--serif);font-size:1.25rem;margin:4px 0 8px}
+.estr{color:var(--oro);font-size:.85rem;letter-spacing:1px;white-space:nowrap}
+.meses-ch{list-style:none;padding:0;margin:6px 0}.meses-ch li{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:10px 12px;border-radius:12px;border:1px solid rgba(185,138,230,.15);margin-bottom:8px;background:rgba(39,16,64,.5)}
+.meses-ch li.ahora{border-color:var(--oro);background:rgba(212,175,106,.12)}.meses-ch small{color:var(--bruma);font-size:.78rem}.meses-ch b{display:block;color:var(--luna);font-weight:500}.meses-ch p{margin:4px 0 0;font-size:.9rem;color:var(--bruma)}
+.si{color:#9fd8a8}.no{color:#f2a3b3}
+.sr-cab{text-align:center;padding:12px;border-radius:14px;background:radial-gradient(circle at 50% 0,rgba(212,175,106,.2),transparent 70%);margin:10px 0}.sr-cab small{color:var(--oro)}.sr-cab h4{font-family:var(--serif);font-size:1.3rem;margin:4px 0}
+.sr-ciudad{display:block;font-size:.82rem;color:var(--bruma);margin-top:6px}.sr-ciudad select,.form-nac input,.form-nac select{display:block;width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--linea);background:#1a0b2e;color:var(--luna);font:inherit}
+.form-nac{border:1px dashed var(--oro);border-radius:14px;padding:14px;margin:10px 0}.form-nac label{display:block;color:var(--bruma);font-size:.88rem;margin-bottom:10px}.form-nac p{margin:0 0 10px}
+.sin-pct{text-align:center;margin:16px 0 6px}.sin-pct b{display:block;font-family:var(--serif);font-size:3.2rem;color:var(--oro);line-height:1}.sin-pct span{color:var(--bruma)}
+.medita{border:1px solid var(--linea);border-radius:14px;padding:16px;margin-top:14px;background:linear-gradient(180deg,rgba(28,11,46,.9),rgba(59,23,96,.6))}.medita h4{margin:0 0 6px;font-family:var(--serif);font-size:1.2rem}
+.medita-paso{text-align:center;min-height:150px}.medita-paso small{color:var(--oro)}.medita-paso p{font-family:var(--serif);font-size:1.3rem;line-height:1.45;color:var(--luna)}
+.medita-barra{height:4px;border-radius:4px;background:rgba(185,138,230,.2);overflow:hidden}.medita-barra i{display:block;height:100%;width:0;background:var(--oro);animation:llenar linear forwards}
+@keyframes llenar{to{width:100%}}
+.ser-hist{font-size:.95rem;color:var(--bruma);margin:0 0 10px}
+.prem-gratis{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;width:100%;text-align:left;padding:14px 16px;border:1px solid var(--oro);border-radius:14px;background:linear-gradient(120deg,rgba(212,175,106,.18),rgba(91,42,134,.4));color:var(--luna);font:inherit;margin-bottom:14px;cursor:pointer}
+.prem-gratis > span{font-size:2rem;text-align:center}.prem-gratis small{color:var(--oro)}.prem-gratis b{display:block;font-family:var(--serif);font-size:1.15rem}.prem-gratis p{margin:2px 0 0;font-size:.85rem;color:var(--bruma)}
 .chino{display:flex;gap:14px;align-items:center;margin-bottom:8px}.chino > span{font-size:3rem}.chino small{color:var(--bruma)}.chino h4{margin:0;font-family:var(--serif);font-size:1.5rem;color:var(--luna)}
 .num-lista li{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;padding:8px 0;border-top:1px solid rgba(185,138,230,.12);color:var(--bruma);font-size:.93rem}
 .num-lista li > b{width:40px;height:40px;border-radius:50%;border:1px solid var(--oro);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.2rem;color:var(--oro);font-weight:600}
@@ -1387,12 +1406,7 @@ function chinoDe(diaMes, anio){
 
 // Matriz del destino
 function redM(n){ while (n > 22) n = String(n).split('').reduce((a, c) => a + +c, 0); return n || 22; }
-function matrizDe(diaMes, anio){
-  const m = String(diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m || !anio) return null;
-  const A = redM(+m[1]), B = redM(+m[2]), C = redM(String(anio).split('').reduce((a, c) => a + +c, 0));
-  const D = redM(A + B + C), E = redM(A + B + C + D);
-  return { A, B, C, D, E, amor: redM(D + E), plata: redM(C + E) };
-}
+function matrizDe(diaMes, anio){ return matrizCompleta(diaMes, anio); }
 const MATRIZ_POS = [
   ['A', 'Tu personalidad', 'Cómo sos y cómo te ven. Es la energía que mostrás al mundo.'],
   ['B', 'Tu talento', 'El don con el que naciste y que se activa cuando te conectás con lo espiritual.'],
@@ -1402,19 +1416,19 @@ const MATRIZ_POS = [
   ['amor', 'Tu energía en el amor', 'Cómo amás y qué necesitás en un vínculo.'],
   ['plata', 'Tu energía para el dinero', 'Por dónde te llega la abundancia cuando estás alineada.']
 ];
-const PREMIUM_LISTA = [
-  ['matriz', '🔯', 'Tu Matriz del Destino', 'Tus talentos, tu lección y tu propósito según la fecha de nacimiento.'],
-  ['vocacion', '💼', 'Vocación y dinero', 'Para qué sos buena, ideas para emprender y cómo te llega la plata.'],
-  ['amor', '💞', 'Amor y pareja ideal', 'Cómo amás, quién te complementa y dónde podés conocer a esa persona.'],
-  ['chino', '🏮', 'Tu horóscopo chino', 'Tu animal, tu elemento y lo que te trae el año del Caballo de Fuego.'],
-  ['revolucion', '☀️', 'Revolución solar', 'Tu año astrológico de cumpleaños a cumpleaños. Próximamente.', 1],
-  ['sinastria', '♾️', 'Sinastría', 'La compatibilidad astral con tu pareja o con quien quieras. Próximamente.', 1],
-  ['animal', '🐺', 'Tu animal de poder', 'Con una meditación guiada para encontrarlo. Próximamente.', 1],
-  ['meditaciones', '🎧', 'Meditaciones de Mey', 'Meditaciones guiadas grabadas para vos. Próximamente.', 1]
-];
 
 /* ───── v10: cualidades, ser sobrenatural y Premium ───── */
-let VISTA_GRATIS = false;
+let VISTA_GRATIS = false, PREM_ABIERTA = null;
+const PREM_FN = { matriz: () => premMatriz(), vocacion: () => premVocacion(), amor: () => premAmor(), chino: () => premChino(), revolucion: () => premRevolucion(), sinastria: () => premSinastria(), animal: () => premAnimal() };
+document.addEventListener('toggle', e => {
+  const d = e.target; if (!d.matches || !d.matches('details.prem-sec')) return;
+  if (d.open) { PREM_ABIERTA = d.dataset.premsec; const cu = d.querySelector('.prem-cuerpo'); if (!cu.innerHTML) { try { cu.innerHTML = PREM_FN[d.dataset.premsec](); } catch (err) { console.error(err); cu.innerHTML = '<p class="vacio">No se pudo calcular esta sección.</p>'; } } evento('Sección', 'Premium: ' + d.querySelector('h4').textContent); }
+  else if (PREM_ABIERTA === d.dataset.premsec) PREM_ABIERTA = null;
+}, true);
+function repintarPrem(){ const t = document.querySelector('.tab[data-tab=premium]'); if (t) t.innerHTML = premiumHTML(); }
+document.addEventListener('change', e => {
+  if (e.target.id === 'sr-ciudad') { try { localStorage.setItem('luzguia_sr_ciudad', e.target.value); } catch (x) {} repintarPrem(); }
+});
 function radarSVG(cs){
   const R = 92, cx = 150, cy = 130, n = cs.length, pt = (i, r) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
   let s = `<svg class="radar" viewBox="0 0 300 260" role="img" aria-label="Gráfico de tus cualidades">`;
@@ -1433,39 +1447,13 @@ function cualidadesHTML(){
     <p class="ag-ayuda">Calculado con tu numerología y tu arcano de nacimiento.</p>
     <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="cualidades">✨ Compartir mis cualidades</button></p></div>`;
 }
-function serHTML(){
-  const s = serDe(); if (!s) return '';
-  return `<h3>Si fueras un ser sobrenatural…</h3><div class="ser-caja"><div class="ser-ic" aria-hidden="true">${s.ic}</div><small>Serías</small><h4>${s.n}</h4><p class="ser-txt">${s.txt}</p>
-    <ul class="ser-lista"><li><b>Poderes</b>${s.pod.join(' · ')}</li><li><b>Debilidad</b>${s.deb}</li><li><b>Familiar</b>${s.fam}</li><li><b>Objeto mágico</b>${s.obj}</li><li><b>Hogar</b>${s.hog}</li>
-    <li><b>Tu paleta</b><span class="paleta">${s.pal.map(c => `<i style="background:${c}"></i>`).join('')}</span></li></ul>
-    <p class="ag-ayuda">Según tu arcano de nacimiento, ${esc(P.arcano.nombre)}.</p>
-    <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="ser">✨ Compartir mi ser</button></p></div>`;
-}
 function prediccionesHTML(num){
   if (!num.anio) return '';
   const p = PRED_ANIO[num.anio];
   return `<h3>Tu ${new Date().getFullYear()} por ámbitos</h3><div class="num-caja"><p class="ag-ayuda" style="margin-top:0">Según tu año personal ${num.anio}: ${ANIO_PERS[num.anio]}</p><ul class="num-lista">
     ${[['💞', 'Amor', p.amor], ['💼', 'Trabajo', p.trab], ['💰', 'Dinero', p.plata], ['🌿', 'Bienestar', p.bien]].map(x => `<li><b>${x[0]}</b><div><span>${x[1]}</span>${x[2]}</div></li>`).join('')}</ul></div>`;
 }
-function matrizSVG(mz){
-  const c = 150, r = 110, pos = { B: [c, c - r], C: [c + r, c], D: [c, c + r], A: [c - r, c] };
-  const d = r * .72, diag = [[c - d, c - d], [c + d, c - d], [c + d, c + d], [c - d, c + d]];
-  let s = `<svg class="matriz" viewBox="0 0 300 300" role="img" aria-label="Tu matriz del destino"><polygon points="${Object.values(pos).map(p => p.join(',')).join(' ')}" fill="none" stroke="#D4AF6A" stroke-width="1.5"/>
-    <polygon points="${diag.map(p => p.join(',')).join(' ')}" fill="none" stroke="rgba(185,138,230,.55)" stroke-width="1.5"/>
-    <line x1="${c - r}" y1="${c}" x2="${c + r}" y2="${c}" stroke="rgba(212,175,106,.25)"/><line x1="${c}" y1="${c - r}" x2="${c}" y2="${c + r}" stroke="rgba(212,175,106,.25)"/>`;
-  const bol = (x, y, n, big, lab) => `<circle cx="${x}" cy="${y}" r="${big ? 24 : 19}" fill="#2a1246" stroke="#D4AF6A" stroke-width="1.5"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="${big ? 18 : 15}" fill="#F3DCA0" font-family="Cormorant Garamond, serif" font-weight="600">${n}</text>${lab ? `<text x="${x}" y="${y + (big ? 40 : 34)}" text-anchor="middle" font-size="10" fill="#B6A7C9" font-family="Jost, sans-serif">${lab}</text>` : ''}`;
-  s += bol(...pos.A, mz.A, 0, '') + bol(...pos.B, mz.B, 0, '') + bol(...pos.C, mz.C, 0, '') + bol(...pos.D, mz.D, 0, '') + bol(c, c, mz.E, 1, '');
-  s += bol(...diag[3], mz.amor, 0, '♡ amor') + bol(...diag[2], mz.plata, 0, '$ dinero');
-  return s + '</svg>';
-}
 const faltaFecha = '<p class="vacio">Para calcular esto necesitamos tu fecha de nacimiento completa. Pasánosla y te lo activamos ✨</p>';
-function premMatriz(){
-  const mz = matrizDe(P.diaMes, P.anioNac); if (!mz) return faltaFecha;
-  return matrizSVG(mz) + '<ul class="mz-lista">' + MATRIZ_POS.map(([k, t, d]) => { const n = mz[k], a = ARC[n];
-    return `<li><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><div><small>${t}</small><h4>${n} · ${esc(NOM[n])}</h4><p class="ag-ayuda">${d}</p>
-      <p>${k === 'D' ? 'Venís a desarrollar ' + minus(a.luz) + '. La sombra a trabajar: ' + minus(a.sombra) + '.' : a.e.split('. ')[0] + '. Tu luz: ' + minus(a.luz) + '.'}</p></div></li>`; }).join('') + '</ul>'
-    + '<p class="ag-ayuda">La matriz se calcula con tu día, mes y año de nacimiento, y cada punto es un arcano mayor. Interpretación de Luz Guía.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="matriz">✨ Compartir mi matriz</button></p>';
-}
 function premVocacion(){
   const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre); if (!num.camino) return faltaFecha;
   const v = VOCACION[num.camino], mz = matrizDe(P.diaMes, P.anioNac);
@@ -1484,25 +1472,17 @@ function premAmor(){
     ${mz ? `<p class="sub">Tu energía en el amor: ${esc(NOM[mz.amor])}</p><p>${ARC[mz.amor].e.split('. ')[0]}. ${ARC[mz.amor].a[1] || ''}</p>` : ''}
     <p class="ag-ayuda">Según tu número del alma${num.alma ? ' (' + num.alma + ')' : ''}, tu camino de vida y tu matriz.</p>`;
 }
-function premChino(){
-  const ch = chinoDe(P.diaMes, P.anioNac); if (!ch) return faltaFecha;
-  const vigente = new Date() < new Date(2027, 1, 6);
-  return `<div class="chino"><span aria-hidden="true">${ch.an.ic}</span><div><small>Naciste en el año del</small><h4>${ch.an.a} de ${ch.el[0]}</h4></div></div>
-    <p>${ch.an.r} El elemento ${ch.el[0]} te suma ${ch.el[1]}.</p><p><b>En el amor:</b> ${ch.an.amor}</p>
-    ${vigente ? `<p class="sub">Tu 2026, año del Caballo de Fuego</p><p>${ch.an.y26}</p>` : ''}
-    <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="chino">✨ Compartir mi animal</button></p>`;
-}
 function premiumHTML(){
   const ver = P.premium && !VISTA_GRATIS;
   let h = `<section class="prem-cab"><small>✷ Mi Luz</small><h2>Premium</h2><p>Lecturas más profundas sobre tu propósito, tu vocación, el amor y tu energía.</p>`;
   if (P.organizadora) h += `<p class="prem-org">Vista de organizadora: tenés acceso a todo. <button class="link" type="button" data-vistagratis>${VISTA_GRATIS ? 'Volver a ver todo' : 'Ver como alguien sin Premium'}</button></p>`;
   else if (ver && P.premiumHasta) h += `<p class="prem-org">Tu Premium está activo hasta el ${esc(P.premiumHasta)} 💜</p>`;
   h += '</section>';
-  const fn = { matriz: premMatriz, vocacion: premVocacion, amor: premAmor, chino: premChino };
+  if (serDe()) h += `<button class="prem-gratis" type="button" data-irser><span>${serDe().ic}</span><div><small>Gratis para vos</small><b>Si fueras un ser sobrenatural…</b><p>Tu ser, tus cualidades y tu año por ámbitos están en Arcanos ›</p></div></button>`;
   if (ver) {
     h += PREMIUM_LISTA.map(([k, ic, t, d, pronto]) => pronto
       ? `<div class="prem-item pronto"><span>${ic}</span><div><h4>${t}</h4><p>${d}</p></div></div>`
-      : `<details class="prem-sec" data-premsec="${k}"><summary><span>${ic}</span><div><h4>${t}</h4><p>${d}</p></div></summary><div class="prem-cuerpo">${fn[k]()}</div></details>`).join('');
+      : `<details class="prem-sec" data-premsec="${k}"${PREM_ABIERTA === k ? ' open' : ''}><summary><span>${ic}</span><div><h4>${t}</h4><p>${d}</p></div></summary><div class="prem-cuerpo">${PREM_ABIERTA === k ? PREM_FN[k]() : ''}</div></details>`).join('');
   } else {
     h += PREMIUM_LISTA.map(([k, ic, t, d]) => `<div class="prem-item"><span>${ic}</span><div><h4>${t}</h4><p>${d.replace(' Próximamente.', '')}</p></div><i aria-hidden="true">🔒</i></div>`).join('');
     const pedido = P.pedidos.includes('Premium');
@@ -1510,6 +1490,520 @@ function premiumHTML(){
       ${pedido ? '<span class="hecho">✓ Pedido enviado. Te escribimos pronto ✨</span>' : `<button class="btn" type="button" data-quiero-premium>${P.premiumVencido ? 'Renovar Premium' : 'Quiero ser Premium'}</button>`}</div>`;
   }
   return h;
+}
+
+/* ── v11: Matriz completa ── */
+const MZ_DINERO = ['',
+  'Te llega por tu iniciativa y tus habilidades: vender, comunicar, emprender algo propio. Cuando dudás de vos, la plata se frena.',
+  'Por el conocimiento, el estudio y la intuición: enseñar, asesorar, lo espiritual. Escuchá tus corazonadas antes de invertir.',
+  'Por la belleza, la creatividad y el cuidado: estética, arte, gastronomía, proyectos que nutren. Disfrutar te abre la abundancia.',
+  'Por la estructura y el liderazgo: dirigir, organizar, tener tu propio negocio con orden. La disciplina multiplica.',
+  'Por enseñar, guiar y transmitir: docencia, formación, consultoría y trabajos con tradición.',
+  'Por los vínculos y las elecciones del corazón: trabajar con gente, en sociedad o en lo que amás.',
+  'Por el movimiento y la acción: viajes, ventas, proyectos que avanzan rápido. Quedarte quieta te frena.',
+  'Por tu fuerza interior y tu energía: terapias corporales, deporte, trabajos que piden temple y constancia.',
+  'Por el saber profundo y la especialización: investigación, terapias, consultoría. Menos es más.',
+  'Por los cambios y las oportunidades: comercio, negocios que se renuevan, suerte cuando fluís con los ciclos.',
+  'Por el orden, lo legal y lo justo: administración, contratos claros, cobrar lo que corresponde.',
+  'Por mirar distinto: arte, espiritualidad, servicio. La plata llega cuando soltás el control.',
+  'Por transformar: renovar, reciclar, acompañar crisis y cambios profundos.',
+  'Por sanar y armonizar: salud, terapias holísticas, mediación, arte. La paciencia trae los frutos.',
+  'Por el magnetismo y la ambición: ventas, marketing, negocios grandes. Cuidado con atarte a la plata.',
+  'Por romper moldes: proyectos innovadores y cambios que liberan. Evitá construir sobre bases falsas.',
+  'Por inspirar: arte, redes, belleza, terapias. Tu talento brilla y se paga cuando confiás en él.',
+  'Por la intuición y lo emocional: lo psíquico, el arte, lo nocturno. Cuidá que el miedo no decida tus inversiones.',
+  'Por la alegría y la visibilidad: mostrarte, liderar, trabajar con niñez, ser vos misma.',
+  'Por tu propósito y tu voz: enseñar, comunicar, trabajar con la familia y la memoria.',
+  'Por lo amplio e internacional: viajes, comercio exterior, proyectos completos. Ganás cuando cerrás lo que empezás.',
+  'Por la libertad y la originalidad: emprendimientos creativos, viajes, lo nuevo. La rutina te frena.'];
+const MZ_AMOR = ['',
+  'Necesitás un vínculo con chispa, conversación y proyectos en común; te enamora la inteligencia.',
+  'Buscás profundidad y misterio; necesitás tiempo para abrirte y alguien que respete tus silencios.',
+  'Amás con ternura y sensualidad; necesitás sentirte cuidada, admirada y disfrutar juntos.',
+  'Necesitás estabilidad, protección y compromiso; demostrás amor con hechos.',
+  'Valorás la lealtad, los valores compartidos y el compromiso.',
+  'El amor es central en tu vida; necesitás elegir y ser elegida con libertad.',
+  'Necesitás un compañero de ruta que acompañe tu ritmo y tus metas.',
+  'Amás con pasión y calidez; necesitás un vínculo intenso pero amoroso.',
+  'Necesitás espacio y profundidad; preferís pocos vínculos pero verdaderos.',
+  'Vínculos con giros de destino; necesitás movimiento y renovación.',
+  'Buscás equilibrio y reciprocidad: el dar y el recibir tienen que estar parejos.',
+  'Tendés a sacrificarte; necesitás un amor que no te pida desaparecer.',
+  'Vivís vínculos intensos y transformadores; el amor necesita renovarse para no estancarse.',
+  'Buscás armonía y calma: un amor que te dé paz.',
+  'Intensidad y pasión; cuidá los vínculos de dependencia.',
+  'Vínculos que sacuden y despiertan; necesitás verdad ante todo.',
+  'Amás con esperanza y generosidad; necesitás alguien que te inspire.',
+  'Muy sensible y soñadora; necesitás seguridad emocional y claridad.',
+  'Amás con calidez y lealtad; necesitás alegría y reconocimiento.',
+  'Vínculos de alma que despiertan; el perdón y la renovación son clave.',
+  'Buscás un amor pleno, que sume a tu mundo y no lo achique.',
+  'Necesitás libertad y aventura; el amor tiene que ser liviano y auténtico.'];
+const MZ_KARMA = ['',
+  'Dones que no se usaron o se usaron para manipular: hoy te toca confiar en tu poder y usarlo con honestidad.',
+  'Saberes guardados o silenciados: te toca compartir lo que sabés y confiar en tu intuición sin miedo.',
+  'Temas con lo femenino y el cuidado: te toca nutrirte a vos misma y permitirte recibir.',
+  'Poder y control: te toca liderar sin rigidez y poner límites sanos.',
+  'Dogmas y mandatos: te toca encontrar tu propia verdad y enseñar desde la experiencia.',
+  'Elecciones que no se hicieron o amores condicionados: te toca elegir desde el corazón y no desde la culpa.',
+  'Avanzar a cualquier costo: te toca moverte con propósito sin pasar por encima de tus emociones.',
+  'Fuerza reprimida o mal usada: te toca usar tu fuerza con suavidad y aceptar tu lado instintivo.',
+  'Aislamiento: te toca compartir tu luz y dejar que otros se acerquen.',
+  'Repetir los mismos ciclos: te toca aprender la lección para no volver al mismo lugar.',
+  'Juicios y deudas pendientes: te toca ser justa también con vos.',
+  'Sacrificio y victimismo: te toca soltar sin perderte y cambiar el punto de vista.',
+  'Miedo a los finales: te toca cerrar ciclos con valentía.',
+  'Excesos y desequilibrios: te toca encontrar tu punto medio.',
+  'Apegos y tentaciones: te toca usar tu poder sin quedar atrapada.',
+  'Estructuras que se caen: te toca construir desde lo auténtico.',
+  'Desilusión: te toca volver a creer y mostrar tu talento.',
+  'Miedos e ilusiones: te toca confiar en tu intuición sin dejarte engañar.',
+  'Ego o brillo escondido: te toca brillar sin apagar a otros.',
+  'Heridas familiares y de linaje: te toca sanar el pasado y escuchar tu llamado.',
+  'Proyectos sin terminar: te toca completar ciclos y celebrar tus logros.',
+  'Miedo al salto o falta de compromiso: te toca animarte con confianza y presencia.'];
+function matrizCompleta(diaMes, anio){
+  const m = String(diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m || !anio) return null;
+  const r = redM, A = r(+m[1]), B = r(+m[2]), C = r(String(anio).split('').reduce((a, c) => a + +c, 0));
+  const D = r(A + B + C), E = r(A + B + C + D);
+  const F = r(A + B), G = r(B + C), H = r(C + D), I = r(D + A);
+  const J = r(A + E), K = r(B + E), L = r(C + E), M = r(D + E);
+  const N = r(L + M), O = r(M + N), Pd = r(L + N);
+  const Q = r(A + J), R = r(B + K), S = r(C + L), T = r(D + M);
+  const cielo = r(B + D), tierra = r(A + C), personal = r(cielo + tierra);
+  const padre = r(F + H), madre = r(G + I), social = r(padre + madre), espiritual = r(personal + social), planetario = r(social + espiritual);
+  return { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P: Pd, Q, R, S, T, cielo, tierra, personal, padre, madre, social, espiritual, planetario, amor: O, plata: Pd };
+}
+const MZ_INTRO = 'La Matriz del Destino combina la numerología con los 22 arcanos mayores del tarot. Con tu fecha de nacimiento se calculan más de 20 puntos, y cada uno es un arcano que habla de un área de tu vida: tu personalidad, tus talentos, el dinero, el amor, lo que heredaste de tu familia y lo que venís a aprender. Sirve para conocerte, entender patrones que se repiten y saber qué energía activar en cada área. Cada arcano tiene luz y sombra: cuando vivís su luz, las cosas fluyen; cuando caés en su sombra, aparecen los bloqueos.';
+const MZ_GRUPOS = [
+  { t: 'Tu esencia', d: 'Los cinco puntos principales: quién sos, con qué naciste y qué venís a hacer.', p: [
+    ['A', 'Personalidad', 'Cómo sos y cómo te ven. La energía que mostrás al mundo.'],
+    ['B', 'Talento principal', 'El don con el que naciste. Se activa cuando te conectás con lo espiritual.'],
+    ['C', 'Materialización', 'Cómo concretás, trabajás y te movés en lo material.'],
+    ['D', 'Tarea kármica', 'Lo que venís a aprender en esta vida.'],
+    ['E', 'Tu centro', 'Tu zona de confort y la energía que te equilibra. Volvé a ella cuando te sientas perdida.']] },
+  { t: 'Tus talentos', d: 'La línea vertical superior: los dones que traés y cómo se despliegan.', p: [
+    ['B', 'Talento de lo alto', 'Lo que te viene dado, casi sin esfuerzo.'],
+    ['R', 'Talento a desarrollar', 'Lo que crece cuando lo practicás.'],
+    ['K', 'Talento del corazón', 'El don más íntimo, el que usás con quienes amás.']] },
+  { t: 'Tu personalidad', d: 'La línea izquierda: de lo que mostrás a lo que sos en lo profundo.', p: [
+    ['A', 'Cómo te ven', 'La primera impresión que dejás.'],
+    ['Q', 'Cómo te expresás', 'Tu forma de comunicarte y actuar.'],
+    ['J', 'Tu yo íntimo', 'Cómo sos cuando nadie te mira.']] },
+  { t: 'El dinero', d: 'El canal del dinero: por dónde te llega la abundancia cuando estás alineada.', p: [
+    ['P', 'Punto del dinero', 'La energía principal para generar ingresos.', 'dinero'],
+    ['L', 'Canal del dinero', 'La actitud que destraba la plata.'],
+    ['C', 'Raíz material', 'Cómo te movés en lo concreto.']] },
+  { t: 'El amor', d: 'La línea de los vínculos: cómo amás y qué necesitás en pareja.', p: [
+    ['O', 'Punto del amor', 'Lo que buscás y necesitás en un vínculo.', 'amor'],
+    ['N', 'Centro de los vínculos', 'Lo que une tu forma de amar con tu forma de ganar dinero.'],
+    ['M', 'Raíz afectiva', 'Lo que aprendiste del amor en tu historia.']] },
+  { t: 'Tu cola kármica', d: 'Se lee desde el centro hacia abajo. Habla de lo que traés de vidas pasadas o de tu historia familiar, y de lo que conviene sanar.', p: [
+    ['M', 'Lo que traés', 'La experiencia que arrastrás.'],
+    ['T', 'El patrón', 'Lo que tiende a repetirse.'],
+    ['D', 'La lección', 'Lo que venís a aprender.', 'karma']] },
+  { t: 'Tu linaje', d: 'Las esquinas de la matriz: lo que heredaste por línea paterna y materna (dones y heridas).', p: [
+    ['padre', 'Línea paterna', 'Lo que te transmitió la familia de tu papá.'],
+    ['madre', 'Línea materna', 'Lo que te transmitió la familia de tu mamá.']] },
+  { t: 'Tus propósitos', d: 'Cada etapa de la vida tiene su propósito.', p: [
+    ['personal', 'Propósito personal (20 a 40 años)', 'Conocerte, encontrar tu lugar y tus talentos.'],
+    ['social', 'Propósito social (40 a 60 años)', 'Tu aporte a los demás y a tu comunidad.'],
+    ['espiritual', 'Propósito espiritual (después de los 60)', 'La sabiduría que dejás.'],
+    ['planetario', 'Propósito planetario', 'Tu huella en el mundo.']] }
+];
+
+/* ── Horóscopo chino completo ── */
+const CHINO_MAS = [
+  { trab: 'Brillás en negocios, finanzas y todo lo que pida estrategia.', plata: 'Ahorrás con inteligencia y detectás oportunidades antes que nadie.', salud: 'Cuidá el estrés y el descanso: tu mente nunca para.' },
+  { trab: 'Tu constancia te lleva lejos: administración, campo, construcción, docencia.', plata: 'Construís patrimonio de a poco; sos de las que ahorran.', salud: 'Movete: el sedentarismo y la rigidez son tu punto débil.' },
+  { trab: 'Naciste para liderar y emprender; te aburren los trabajos rutinarios.', plata: 'Ganás y gastás con intensidad: armá un colchón para los impulsos.', salud: 'Cuidá los excesos y date tiempo de recuperación.' },
+  { trab: 'Diplomacia, arte, diseño, salud y trabajos en ambientes armónicos.', plata: 'Prudente con la plata; te gusta invertir en belleza y confort.', salud: 'Tu sistema nervioso es sensible: buscá calma y rutinas suaves.' },
+  { trab: 'Liderazgo, proyectos grandes y todo lo que te ponga en el centro.', plata: 'Atraés oportunidades grandes; cuidá no apostar todo de una vez.', salud: 'Bajá el ritmo antes de que el cuerpo te lo pida.' },
+  { trab: 'Investigación, terapias, estrategia, lo esotérico y lo financiero.', plata: 'Muy buen ojo para invertir; confiá en tu intuición.', salud: 'Necesitás descanso profundo y momentos de soledad.' },
+  { trab: 'Ventas, viajes, comunicación, deporte y trabajos con movimiento.', plata: 'La plata viene y va: aprendé a guardar en los buenos meses.', salud: 'Necesitás moverte; cuidá el agotamiento por hacer demasiado.' },
+  { trab: 'Arte, diseño, cuidado de otros, gastronomía y trabajos creativos.', plata: 'Te va mejor con un socio o alguien que ordene los números.', salud: 'Cuidá tu ánimo: la tristeza te pega en el cuerpo.' },
+  { trab: 'Comunicación, tecnología, negociación y trabajos que piden ingenio.', plata: 'Encontrás maneras originales de ganar; evitá dispersarte en mil proyectos.', salud: 'Dormí bien: la cabeza acelerada te cansa.' },
+  { trab: 'Organización, estética, finanzas y trabajos que piden precisión.', plata: 'Ordenada con la plata; cuidá los gastos en imagen.', salud: 'La autoexigencia te tensiona: aflojá.' },
+  { trab: 'Trabajos con propósito: salud, justicia, docencia, ayuda social.', plata: 'Estable y responsable; a veces das de más.', salud: 'Cuidá la ansiedad: preocuparte por todos te desgasta.' },
+  { trab: 'Gastronomía, arte, hotelería y trabajos donde se disfruta.', plata: 'Generosa y disfrutona: un presupuesto te ayuda a no excederte.', salud: 'Equilibrá el placer con el cuidado: comida y descanso.' }
+];
+const CHINO_SUERTE = [['2 y 3', 'azul, dorado y verde'], ['1 y 4', 'blanco, amarillo y verde'], ['1, 3 y 4', 'azul, gris y naranja'], ['3, 4 y 6', 'rosa, rojo, violeta y azul'], ['1, 6 y 7', 'dorado, plateado y gris'], ['2, 8 y 9', 'negro, rojo y amarillo'], ['2, 3 y 7', 'amarillo y verde'], ['2 y 7', 'marrón, rojo y violeta'], ['4 y 9', 'blanco, azul y dorado'], ['5, 7 y 8', 'dorado, marrón y amarillo'], ['3, 4 y 9', 'rojo, verde y violeta'], ['2, 5 y 8', 'amarillo, gris, marrón y dorado']];
+// Relación entre dos animales (ramas terrestres)
+function relChina(a, b){
+  if (a === b) return 'mismo';
+  if ((a + 6) % 12 === b) return 'choque';
+  if (a % 4 === b % 4) return 'aliado';
+  if ((a + b) % 12 === 1) return 'amigo';
+  if ((a + b) % 12 === 7) return 'dano';
+  return 'neutro';
+}
+const REL_NOMBRE = { mismo: 'Es tu propio año', aliado: 'Año aliado', amigo: 'Año amigo secreto', choque: 'Año de choque', dano: 'Año de roces', neutro: 'Año neutro' };
+const REL_ANIO = {
+  mismo: { e: 3, gen: 'Es tu Ben Ming Nian, el año de tu propio animal. La tradición dice que es un año de mucho movimiento interno: cambios, decisiones y renovación. No es un año malo, pero pide atención y cuidado.', amor: 'Revisás qué querés de verdad en el amor. Evitá decisiones apuradas; lo que nace con calma, se sostiene.', plata: 'Cuidá los gastos impulsivos y las inversiones riesgosas. Ahorrá para imprevistos.', trab: 'Pueden aparecer cambios de puesto o de rumbo. Preparate y no te resistas a lo nuevo.', salud: 'Escuchá a tu cuerpo: chequeos al día y descanso.', tip: 'Usá algo rojo (una pulsera, un detalle) como protección: es la tradición para el año propio.' },
+  aliado: { e: 5, gen: 'Tu animal y el del año pertenecen al mismo trígono: son aliados. Es uno de los mejores años para vos: las cosas fluyen y aparecen ayudas.', amor: 'Muy favorable: encuentros, reconciliaciones y vínculos que se afianzan.', plata: 'Buenas oportunidades de ingresos. Animate a crecer y a cobrar más.', trab: 'Reconocimiento, proyectos nuevos y gente que te abre puertas.', salud: 'Buena energía general. Aprovechala para empezar hábitos.', tip: 'Lanzá ese proyecto que venís postergando: el año te acompaña.' },
+  amigo: { e: 5, gen: 'Tu animal es el amigo secreto del año: una de las combinaciones más protectoras. Hay ayudas invisibles y personas que te sostienen.', amor: 'Vínculos cálidos y apoyo mutuo. Si buscás pareja, puede llegar por amistades.', plata: 'Estabilidad y oportunidades a través de contactos.', trab: 'Alianzas y sociedades muy favorecidas.', salud: 'Año de bienestar si mantenés tus rutinas.', tip: 'Apoyate en tu red: pedir ayuda este año rinde mucho.' },
+  choque: { e: 2, gen: 'Tu animal es el opuesto del año (Tai Sui en choque). Es un año de sacudones y cambios, que obliga a moverse. Bien llevado, trae transformaciones importantes.', amor: 'Pueden aparecer tensiones o cambios en los vínculos. Hablá claro y evitá discusiones por orgullo.', plata: 'Prudencia: nada de préstamos grandes ni inversiones riesgosas.', trab: 'Cambios inesperados. Mantené un plan B y cuidá las relaciones laborales.', salud: 'Bajá el estrés y cuidá los accidentes: ojo con el apuro.', tip: 'Flexibilidad: lo que se resiste, se rompe. Lo que fluye, se transforma.' },
+  dano: { e: 3, gen: 'Tu animal y el del año tienen una relación de roce (hai). Puede haber malentendidos o pequeños obstáculos, nada que no se resuelva con paciencia.', amor: 'Cuidá los malentendidos: preguntá antes de suponer.', plata: 'Año para ordenar y no para arriesgar.', trab: 'Atención a chismes y competencias. Dejá todo por escrito.', salud: 'Cuidá la energía: dormí bien y alimentate rico.', tip: 'Elegí bien en quién confiás y cuidá tu palabra.' },
+  neutro: { e: 4, gen: 'Un año neutro para tu animal: ni muy fácil ni muy difícil. Lo que siembres, cosechás.', amor: 'El amor depende de tu iniciativa: animate a proponer.', plata: 'Estabilidad. Buen momento para planificar a largo plazo.', trab: 'Constancia: el esfuerzo sostenido se nota.', salud: 'Mantené tus rutinas y sumá algo de movimiento.', tip: 'Tomalo como un año de construcción: paso a paso.' }
+};
+const REL_MES = {
+  mismo: [3, 'Mes de tu propio animal: energía intensa y personal. Bueno para decisiones sobre vos misma; evitá los extremos.'],
+  aliado: [5, 'Mes aliado: todo fluye. Ideal para empezar, pedir, firmar y mostrarte.'],
+  amigo: [5, 'Mes amigo: llegan ayudas y buenas noticias. Bueno para vínculos y acuerdos.'],
+  choque: [2, 'Mes de choque: andá con calma. Evitá discusiones, decisiones apuradas y gastos grandes.'],
+  dano: [3, 'Mes de roces: cuidá los malentendidos y dejá todo claro.'],
+  neutro: [4, 'Mes tranquilo: buen momento para avanzar con constancia.']
+};
+const MES_TEMA = ['🐀 Rata: estrategia y oportunidades', '🐂 Buey: trabajo y constancia', '🐅 Tigre: coraje y comienzos', '🐇 Conejo: armonía y amor', '🐉 Dragón: expansión y poder', '🐍 Serpiente: intuición y estrategia', '🐎 Caballo: movimiento y pasión', '🐐 Cabra: creatividad y cuidado', '🐒 Mono: ingenio y cambios', '🐓 Gallo: orden y resultados', '🐕 Perro: lealtad y vínculos', '🐖 Cerdo: disfrute y cierre'];
+// Ciclo de los cinco elementos
+const ELEM = ['Madera', 'Fuego', 'Tierra', 'Metal', 'Agua'];
+function relElem(mio, anio){
+  const a = ELEM.indexOf(mio), b = ELEM.indexOf(anio);
+  if (a === b) return 'mismo';
+  if ((b + 1) % 5 === a) return 'nutre';     // el año te alimenta
+  if ((a + 1) % 5 === b) return 'das';       // vos alimentás al año
+  if ((b + 2) % 5 === a) return 'controla';  // el año te controla
+  return 'riqueza';                          // vos controlás al año
+}
+const ELEM_REL = {
+  mismo: 'El elemento del año es el mismo que el tuyo: te sentís en tu salsa, con amigas y pares cerca. Ojo con la competencia y con gastar de más en lo social.',
+  nutre: 'El elemento del año alimenta al tuyo: es un año de apoyo, aprendizaje y recursos. Aprovechá para estudiar y recibir ayuda.',
+  das: 'Tu elemento alimenta al del año: das mucha energía. Es muy creativo y expresivo, pero cuidá el cansancio y no te vacíes.',
+  controla: 'El elemento del año controla al tuyo: trae presión, exigencias y desafíos que te hacen crecer. En la tradición, también es reconocimiento y autoridad.',
+  riqueza: 'Tu elemento controla al del año: en la tradición china, lo que controlás es tu riqueza. Es un año con oportunidades de dinero, si ponés el esfuerzo.'
+};
+function inicioMesesChinos(y){
+  // Cada mes chino empieza cuando el Sol llega a 315°, 345°, 15°... (términos solares)
+  const out = []; let d = new Date(y, 0, 20, 12), prev = longSolar(jdDe(d));
+  for (let i = 0; i < 400 && out.length < 13; i++) {
+    d = new Date(d.getTime() + 86400000); const l = longSolar(jdDe(d));
+    for (let k = 0; k < 13; k++) { const g = (315 + 30 * k) % 360; const pasa = prev < l ? (prev < g && g <= l) : (prev < g || g <= l); if (pasa && out.length === k) out.push(new Date(d)); }
+    prev = l;
+  }
+  return out.map((f, k) => ({ desde: f, animal: (2 + k) % 12 }));
+}
+
+/* ── Revolución solar ── */
+const CIUDADES = [['Santa Rosa, La Pampa', -36.62, -64.29], ['General Pico, La Pampa', -35.66, -63.76], ['Ciudad de Buenos Aires', -34.60, -58.38], ['Pilar, Buenos Aires', -34.46, -58.91], ['La Plata', -34.92, -57.95], ['Mar del Plata', -38.00, -57.56], ['Bahía Blanca', -38.72, -62.27], ['Tandil', -37.32, -59.13], ['Córdoba', -31.42, -64.18], ['Río Cuarto', -33.12, -64.35], ['Rosario', -32.95, -60.65], ['Santa Fe', -31.63, -60.70], ['Paraná', -31.73, -60.53], ['Mendoza', -32.89, -68.84], ['San Luis', -33.30, -66.34], ['San Juan', -31.54, -68.53], ['Neuquén', -38.95, -68.06], ['Viedma', -40.81, -62.99], ['Bariloche', -41.13, -71.31], ['Rawson / Trelew', -43.30, -65.10], ['Comodoro Rivadavia', -45.86, -67.48], ['Río Gallegos', -51.62, -69.22], ['Ushuaia', -54.80, -68.30], ['Tucumán', -26.82, -65.22], ['Salta', -24.78, -65.41], ['Jujuy', -24.19, -65.30], ['Catamarca', -28.47, -65.78], ['La Rioja', -29.41, -66.86], ['Santiago del Estero', -27.80, -64.26], ['Resistencia', -27.45, -58.99], ['Corrientes', -27.47, -58.83], ['Posadas', -27.37, -55.90], ['Formosa', -26.18, -58.17]];
+const SIGNO_ADJ = ['directo e impulsivo', 'sensual y paciente', 'curioso y conversador', 'protector y emotivo', 'generoso y apasionado', 'práctico y detallista', 'armonioso y diplomático', 'intenso y profundo', 'optimista y aventurero', 'responsable y ambicioso', 'original y libre', 'sensible e intuitivo'];
+const ASC_SR = [
+  'Un año de comienzos y valentía. Vas a tener más energía para iniciar, decidir y ponerte primera. Cuidá la impaciencia.',
+  'Un año para construir con calma y disfrutar. Se destacan la plata, el cuerpo, el placer y la estabilidad.',
+  'Un año movido, social y lleno de conversaciones. Aprender, escribir, viajar cerca y conectar con gente nueva.',
+  'Un año emocional, centrado en el hogar, la familia y tu mundo interno. Necesitás sentirte en casa.',
+  'Un año para brillar y mostrarte. Creatividad, protagonismo y ganas de ser vista.',
+  'Un año para ordenar: rutinas, salud, trabajo y detalles. Lo que organices ahora te va a servir mucho.',
+  'Un año centrado en los vínculos: pareja, sociedades y acuerdos. Buscás armonía y belleza.',
+  'Un año intenso y transformador. Se mueven temas profundos: soltar, renacer, recuperar tu poder.',
+  'Un año expansivo: viajes, estudios, filosofía y ganas de libertad. Mucho optimismo.',
+  'Un año de responsabilidad y logros. Metas concretas, trabajo serio y reconocimiento.',
+  'Un año de libertad y cambios inesperados. Amistades, grupos, proyectos innovadores.',
+  'Un año sensible, espiritual e intuitivo. Ideal para lo artístico, lo terapéutico y escucharte.'];
+const CASA_SR = [
+  { area: 'vos misma, tu imagen y tu energía personal', hacer: 'empezar proyectos personales, renovar tu imagen, tomar la iniciativa', evitar: 'imponerte o actuar sin pensar' },
+  { area: 'el dinero, tus recursos y tu autoestima', hacer: 'ordenar tus finanzas, pedir aumentos, poner precio a tu trabajo', evitar: 'gastos por ansiedad y desvalorizarte' },
+  { area: 'la comunicación, los estudios y tu entorno cercano', hacer: 'cursos, escribir, charlas pendientes, trámites', evitar: 'chismes y decir cosas sin pensar' },
+  { area: 'el hogar, la familia y tus raíces', hacer: 'arreglar la casa, mudanzas, tiempo en familia, sanar lo emocional', evitar: 'encerrarte o cargar con todo' },
+  { area: 'el amor, la creatividad y el disfrute', hacer: 'crear, salir, enamorarte, jugar, actividades con niñez', evitar: 'el drama y apostar de más' },
+  { area: 'el trabajo diario, la salud y las rutinas', hacer: 'chequeos de salud, ordenar tu agenda, mejorar hábitos', evitar: 'sobreexigirte y la autocrítica' },
+  { area: 'la pareja, las sociedades y los acuerdos', hacer: 'formalizar vínculos, negociar, firmar acuerdos', evitar: 'ceder todo por evitar conflictos' },
+  { area: 'las transformaciones, la intimidad y la plata compartida', hacer: 'terapia, soltar lo viejo, revisar deudas y herencias', evitar: 'los celos y querer controlar' },
+  { area: 'los viajes, los estudios y tus creencias', hacer: 'viajar, estudiar, enseñar, expandirte', evitar: 'prometer de más o dispersarte' },
+  { area: 'la carrera, las metas y el reconocimiento', hacer: 'mostrar tu trabajo, buscar ascensos, lanzar proyectos', evitar: 'descuidar tu vida personal por el trabajo' },
+  { area: 'las amistades, los grupos y los proyectos a futuro', hacer: 'sumarte a grupos, hacer contactos, soñar en grande', evitar: 'dispersarte en mil planes' },
+  { area: 'el mundo interior, la espiritualidad y lo que termina', hacer: 'meditar, descansar, cerrar ciclos, terapias', evitar: 'aislarte o huir de lo que sentís' }];
+const SOL_CASA_SR = [
+  'Este año sos la protagonista: el foco está en vos, en tus deseos y en cómo te mostrás. Ideal para reinventarte.',
+  'El tema del año es el dinero y tu valor. Es tiempo de generar recursos y de creer en lo que valés.',
+  'El año gira en torno a aprender, comunicar y moverte. Estudios, escritura, hermanos y viajes cortos.',
+  'El año te lleva al hogar y la familia: mudanzas, arreglos, raíces y sanar lo emocional.',
+  'Un año para el amor, la creatividad y el disfrute. Puede haber romances, proyectos creativos o hijos.',
+  'El foco está en el trabajo cotidiano y la salud. Ordenar, mejorar hábitos y servir.',
+  'El año se juega en los vínculos: pareja, socios, acuerdos. Puede formalizarse una relación.',
+  'Un año de transformación profunda: soltar, renacer, trabajar con lo oculto y la plata compartida.',
+  'Un año de expansión: viajes, estudios superiores, nuevas ideas y crecimiento espiritual.',
+  'Un año de carrera y metas: reconocimiento, responsabilidades y logros visibles.',
+  'Un año social: amistades, grupos y proyectos a futuro. Tus sueños toman forma con otros.',
+  'Un año de introspección y cierre de ciclo: preparás el terreno para lo nuevo. Mucho trabajo interior.'];
+const PLANETA_SR = {
+  Mercurio: (c, s) => `Tus pensamientos, conversaciones y trámites giran en torno a ${c.area}, con un estilo ${s}.`,
+  Venus: (c, s) => `El amor, el placer y la plata fluyen a través de ${c.area}. Ahí está lo que te da alegría, vivido de modo ${s}.`,
+  Marte: (c, s) => `Tu energía y tus impulsos se concentran en ${c.area}: ahí vas a tener que actuar (y cuidar los conflictos). Tu forma de actuar: ${s}.`,
+  Júpiter: (c, s) => `La suerte y la expansión llegan por ${c.area}. Es el área donde el año te abre puertas.`,
+  Saturno: (c, s) => `El trabajo serio y las lecciones pasan por ${c.area}: lo que construyas ahí con paciencia va a durar.`
+};
+
+/* ── Sinastría ── */
+const SIN_PARES = [['Sol', 'Sol', 'Sus esencias'], ['Sol', 'Luna', 'Tu esencia y sus emociones'], ['Luna', 'Sol', 'Tus emociones y su esencia'], ['Luna', 'Luna', 'Sus mundos emocionales'], ['Venus', 'Marte', 'Tu forma de amar y su deseo'], ['Marte', 'Venus', 'Tu deseo y su forma de amar'], ['Mercurio', 'Mercurio', 'Cómo se comunican'], ['Venus', 'Venus', 'Lo que disfrutan juntos']];
+const SIN_TXT = {
+  conj: 'Están en el mismo signo: se reconocen enseguida, se entienden sin palabras. A veces se espejan demasiado.',
+  arm: 'Armonía natural: fluye fácil, se potencian y se sienten cómodos juntos.',
+  tenso: 'Tensión creativa: hay roce y diferencias, pero también chispa. Requiere diálogo y paciencia.',
+  opos: 'Polos opuestos que se atraen: se complementan y aprenden mucho uno del otro, si encuentran el punto medio.',
+  neutro: 'Energías distintas que no chocan ni se potencian: depende de lo que construyan juntos.'
+};
+const ELEM_SIGNO = ['Fuego', 'Tierra', 'Aire', 'Agua'];
+
+/* ── Animal de poder (rueda de la medicina) ── */
+const ANIMAL_PODER = [
+  { a: 'Halcón', ic: '🦅', med: 'Visión y claridad: ves lo importante desde lo alto y actuás en el momento justo.', msg: 'Prestá atención a las señales: el universo te está hablando.', som: 'Impaciencia y apuro.', con: 'Mirá el cielo al amanecer y pedí claridad para tu día.', af: 'Veo con claridad y actúo con decisión.' },
+  { a: 'Castor', ic: '🦫', med: 'Construcción y constancia: sabés crear hogar y proyectos sólidos con tus manos.', msg: 'Paso a paso, lo que construís hoy te sostiene mañana.', som: 'Rigidez y trabajar sin descanso.', con: 'Hacé algo con tus manos: cocinar, plantar, ordenar.', af: 'Construyo mi vida con amor y paciencia.' },
+  { a: 'Ciervo', ic: '🦌', med: 'Dulzura y sensibilidad: tu poder está en la gentileza y en la intuición.', msg: 'La suavidad también es fuerza. No necesitás endurecerte.', som: 'Inseguridad y dispersión.', con: 'Caminá en la naturaleza en silencio y escuchá.', af: 'Mi dulzura es mi poder.' },
+  { a: 'Pájaro carpintero', ic: '🐦', med: 'Ritmo y protección del hogar: sabés cuidar y nutrir a los tuyos.', msg: 'Escuchá el ritmo de tu corazón: ahí está tu guía.', som: 'Sobreprotección y apego.', con: 'Tocá un tambor, bailá o marcá un ritmo con tus manos.', af: 'Mi corazón marca el ritmo de mi vida.' },
+  { a: 'Salmón', ic: '🐟', med: 'Determinación y propósito: nadás contra la corriente para llegar a tu destino.', msg: 'Volvé a tu origen: ahí está la fuerza para seguir.', som: 'Terquedad y orgullo.', con: 'Visitá un río o un lago y agradecé al agua.', af: 'Sigo mi propósito con valentía.' },
+  { a: 'Oso', ic: '🐻', med: 'Introspección y sanación: sabés retirarte a tu cueva para encontrar respuestas.', msg: 'Es tiempo de descansar y escucharte antes de actuar.', som: 'Aislamiento y exigencia.', con: 'Regalate un tiempo de silencio, como una pequeña hibernación.', af: 'En mi silencio encuentro mis respuestas.' },
+  { a: 'Cuervo', ic: '🐦‍⬛', med: 'Magia y transformación: sos puente entre mundos y conocés los misterios.', msg: 'La magia está en lo cotidiano: mirá con otros ojos.', som: 'Indecisión y querer agradar.', con: 'Anotá tus sueños y las coincidencias del día.', af: 'Soy magia y transformo mi realidad.' },
+  { a: 'Serpiente', ic: '🐍', med: 'Renacimiento y sanación: cambiás de piel una y otra vez, más sabia.', msg: 'Soltá la piel vieja: algo nuevo quiere nacer.', som: 'Rencor y control.', con: 'Escribí lo que querés soltar y quemalo con cuidado.', af: 'Me transformo y renazco.' },
+  { a: 'Búho', ic: '🦉', med: 'Sabiduría y visión en la oscuridad: ves la verdad detrás de las apariencias.', msg: 'Confiá en lo que intuís, aunque no lo puedas explicar.', som: 'Exceso de sinceridad y dispersión.', con: 'Meditá de noche, con una vela, en silencio.', af: 'Veo la verdad con amor.' },
+  { a: 'Ganso', ic: '🪿', med: 'Perseverancia y comunidad: llegás lejos acompañada y con constancia.', msg: 'No tenés que volar sola: tu bandada te acompaña.', som: 'Exigencia y pesimismo.', con: 'Compartí tus metas con alguien de confianza.', af: 'Avanzo con constancia y acompañada.' },
+  { a: 'Nutria', ic: '🦦', med: 'Alegría y originalidad: tu juego y tu creatividad sanan a los demás.', msg: 'Volvé a jugar: la alegría también es sagrada.', som: 'Rebeldía y distancia emocional.', con: 'Hacé algo solo por diversión, sin objetivo.', af: 'La alegría guía mi camino.' },
+  { a: 'Lobo', ic: '🐺', med: 'Intuición y maestría: sos guía y maestra, leal a tu manada.', msg: 'Escuchá tu instinto: ya sabés el camino.', som: 'Sacrificio y soledad.', con: 'Aullale a la Luna llena (de verdad, se siente lindo) y pedí guía.', af: 'Confío en mi instinto y en mi manada.' }
+];
+const MEDITACION = [
+  ['Buscá un lugar tranquilo. Sentate o acostate cómoda, y cerrá los ojos.', 12],
+  ['Respirá profundo por la nariz… y soltá el aire por la boca. Otra vez. Sentí cómo tu cuerpo se afloja con cada exhalación.', 15],
+  ['Imaginá que de tus pies nacen raíces que bajan hasta el centro de la tierra. Estás sostenida y protegida.', 15],
+  ['Ahora visualizá frente a vos un sendero en un bosque. Es de noche y la Luna ilumina el camino.', 15],
+  ['Caminá despacio. Sentí la tierra bajo tus pies, el aire fresco, el sonido de las hojas.', 18],
+  ['El sendero te lleva a un claro. En el centro hay un fuego encendido que te da calor y paz.', 15],
+  ['Sentate junto al fuego. Desde tu corazón, pedí: "Animal de poder, te invito a mostrarte".', 18],
+  ['Esperá con paciencia. Puede aparecer entre los árboles, en el cielo o en el agua. No lo fuerces: dejá que llegue.', 25],
+  ['Se acerca tu animal de poder. Observalo: su forma, sus ojos, cómo se mueve. Te reconoce.', 20],
+  ['Preguntale: "¿Qué medicina me traés?". Escuchá lo que te dice, con palabras, imágenes o sensaciones.', 25],
+  ['Agradecele. Sabés que podés volver a encontrarte con él cuando lo necesites.', 15],
+  ['Volvé por el sendero. Respirá profundo, mové suavemente manos y pies, y cuando estés lista, abrí los ojos.', 15]
+];
+
+/* ── Ser sobrenatural: historia, vida real y ritual ── */
+const SER_MAS = {
+  hechicera: { hist: 'Naciste en una torre donde se estudian las estrellas. Desde chica supiste que las palabras y las intenciones crean realidad.', vida: 'En tu vida real, tu magia es la capacidad de convertir ideas en proyectos. Cuando escribís lo que querés y das el primer paso, se activa tu poder.', rit: 'En Luna nueva, escribí tres deseos en un papel, encendé una vela dorada y leelos en voz alta.' },
+  oraculo: { hist: 'Guardiana de un templo junto al lago, ves en el agua lo que vendrá. Los sueños son tu idioma.', vida: 'En tu vida real, tu don es la intuición: sabés cosas antes de que pasen. Confiá en tus corazonadas.', rit: 'Dejá un vaso de agua junto a tu cama y anotá tus sueños al despertar durante una semana.' },
+  hada: { hist: 'Viviste entre flores y hongos en lo profundo del bosque. Donde pisás, crece algo.', vida: 'En tu vida real, hacés florecer a las personas y los proyectos. Tu poder se recarga en la naturaleza.', rit: 'Regalate una planta y cuidala como un símbolo de lo que querés que crezca en tu vida.' },
+  dragona: { hist: 'Dormiste siglos sobre un tesoro en la montaña. Cuando despertaste, tu fuego era más fuerte que nunca.', vida: 'En tu vida real, sos protectora y poderosa. Tu fuego es tu determinación: usalo para lo que amás.', rit: 'Encendé una vela roja y nombrá en voz alta aquello que vas a defender este año.' },
+  guardiana: { hist: 'Creciste entre árboles milenarios que te enseñaron a escuchar. Custodiás saberes antiguos.', vida: 'En tu vida real, sos la que guía y aconseja. Tu sabiduría se nota cuando hablás desde la experiencia.', rit: 'Abrazá un árbol (sí, en serio) y pedile que te transmita su paciencia.' },
+  sirena: { hist: 'Naciste en un palacio de nácar bajo el mar. Tu canto puede calmar tormentas.', vida: 'En tu vida real, tu sensibilidad y tu voz tocan el corazón de los demás. El agua te sana.', rit: 'Tomá un baño con sal marina y pétalos, y cantá (aunque sea bajito).' },
+  valquiria: { hist: 'Volaste entre las nubes eligiendo a los valientes. Sos guerrera de la verdad.', vida: 'En tu vida real, defendés lo justo y no tenés miedo de ir al frente. Tu poder es el coraje.', rit: 'Escribí en un papel tu mayor miedo, rompelo y decí: "Soy más fuerte que esto".' },
+  esfinge: { hist: 'Guardaste durante milenios los enigmas del templo. Solo los sabios pueden pasar.', vida: 'En tu vida real, tu fuerza es tranquila y tu mente, profunda. Resolvés lo que otros no ven.', rit: 'Hacete una pregunta importante antes de dormir y esperá la respuesta en tus sueños.' },
+  sombras: { hist: 'Viviste en una cabaña oculta en el bosque nocturno. Aprendiste que la oscuridad también enseña.', vida: 'En tu vida real, sabés transformar el dolor en sabiduría. Tu magnetismo viene de tu profundidad.', rit: 'En Luna menguante, escribí lo que querés soltar y quemalo con cuidado en una vela negra.' },
+  fenix: { hist: 'Ardiste y renaciste muchas veces en la cima de un volcán. Cada vez, más luminosa.', vida: 'En tu vida real, te levantás siempre. Tu calidez da vida y esperanza a quienes te rodean.', rit: 'Al amanecer, encendé una vela naranja y agradecé todo lo que superaste.' },
+  kitsune: { hist: 'Naciste en un santuario entre bambúes. Con cada siglo de sabiduría, te crecía una nueva cola.', vida: 'En tu vida real, tu poder es la adaptación y la astucia. Encontrás caminos donde otros ven paredes.', rit: 'Hacé sonar una campanita en cada rincón de tu casa para limpiar la energía.' }
+};
+
+/* ───── v11: Premium completo ───── */
+const PREMIUM_LISTA = [
+  ['matriz', '🔯', 'Tu Matriz del Destino', 'Qué es, tus 20 arcanos y lo que dicen de tu esencia, el dinero, el amor, tu linaje y tu propósito.'],
+  ['revolucion', '☀️', 'Tu Revolución Solar', 'Tu año de cumpleaños a cumpleaños: el tono del año, cada área, mes a mes y fechas clave.'],
+  ['chino', '🏮', 'Tu horóscopo chino', 'Tu animal, tu elemento, el año completo por pilares, mes a mes y lo que viene.'],
+  ['vocacion', '💼', 'Vocación y dinero', 'Para qué sos buena, ideas para emprender y cómo te llega la plata.'],
+  ['amor', '💞', 'Amor y pareja ideal', 'Cómo amás, quién te complementa y dónde podés conocer a esa persona.'],
+  ['sinastria', '♾️', 'Sinastría', 'La compatibilidad con tu pareja o con quien quieras: astrología, numerología y horóscopo chino.'],
+  ['animal', '🐺', 'Tu animal de poder', 'Su medicina y su mensaje, con una meditación guiada para encontrarte con él.'],
+  ['meditaciones', '🎧', 'Meditaciones de Luz Guía', 'Meditaciones guiadas grabadas por Belu y Mey. Próximamente.', 1]
+];
+const lin = 'font-variant-numeric:lining-nums';
+const estrellitas = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+const fechaCorta = f => f.getDate() + ' de ' + MESES[f.getMonth()];
+const fechaConAnio = (f, y) => fechaCorta(f) + (f.getFullYear() !== y ? ' de ' + f.getFullYear() : '');
+const ART_CH = ['de la', 'del', 'del', 'del', 'del', 'de la', 'del', 'de la', 'del', 'del', 'del', 'del'];
+
+/* Matriz */
+function matrizPuntos(c, r){
+  const p = (k, x, y, t) => [k, c + x * r, c + y * r, t];
+  return [p('A', -1, 0, 2), p('B', 0, -1, 2), p('C', 1, 0, 2), p('D', 0, 1, 2), p('F', -.72, -.72, 2), p('G', .72, -.72, 2), p('H', .72, .72, 2), p('I', -.72, .72, 2),
+    p('Q', -.74, 0, 1), p('R', 0, -.74, 1), p('S', .74, 0, 1), p('T', 0, .74, 1), p('J', -.46, 0, 1), p('K', 0, -.46, 1), p('L', .46, 0, 1), p('M', 0, .46, 1),
+    p('N', .36, .36, 1), p('O', .16, .62, 1), p('P', .62, .16, 1), p('E', 0, 0, 3)];
+}
+function matrizSVG(mz){
+  const c = 170, r = 140, pts = matrizPuntos(c, r), d = r * .72;
+  let s = `<svg class="matriz" viewBox="0 0 340 340" role="img" aria-label="Tu matriz del destino" style="${lin}">
+    <circle cx="${c}" cy="${c}" r="${r + 20}" fill="none" stroke="rgba(185,138,230,.18)" stroke-dasharray="2 5"/>
+    <polygon points="${c - r},${c} ${c},${c - r} ${c + r},${c} ${c},${c + r}" fill="none" stroke="#D4AF6A" stroke-width="1.4"/>
+    <polygon points="${c - d},${c - d} ${c + d},${c - d} ${c + d},${c + d} ${c - d},${c + d}" fill="none" stroke="rgba(185,138,230,.6)" stroke-width="1.4"/>
+    <line x1="${c - r}" y1="${c}" x2="${c + r}" y2="${c}" stroke="rgba(212,175,106,.3)"/><line x1="${c}" y1="${c - r}" x2="${c}" y2="${c + r}" stroke="rgba(212,175,106,.3)"/>
+    <line x1="${c - d}" y1="${c - d}" x2="${c + d}" y2="${c + d}" stroke="rgba(185,138,230,.25)"/><line x1="${c + d}" y1="${c - d}" x2="${c - d}" y2="${c + d}" stroke="rgba(185,138,230,.25)"/>
+    <line x1="${c + r * .46}" y1="${c}" x2="${c}" y2="${c + r * .46}" stroke="rgba(242,184,198,.5)" stroke-dasharray="3 3"/>`;
+  pts.forEach(([k, x, y, t]) => {
+    const rr = t === 3 ? 22 : t === 2 ? 16 : 12, fs = t === 3 ? 19 : t === 2 ? 14 : 11;
+    const col = k === 'P' ? '#9fd8a8' : k === 'O' ? '#f2b8c6' : '#F3DCA0';
+    s += `<circle cx="${x}" cy="${y}" r="${rr}" fill="${t === 1 ? '#22103a' : '#2a1246'}" stroke="${k === 'P' || k === 'O' ? col : '#D4AF6A'}" stroke-width="${t === 1 ? 1 : 1.5}"/><text x="${x}" y="${y + fs * .36}" text-anchor="middle" font-size="${fs}" fill="${col}" font-family="Jost, sans-serif" font-weight="500">${mz[k]}</text>`;
+  });
+  s += `<text x="${c + r * .16}" y="${c + r * .62 + 24}" text-anchor="middle" font-size="9" fill="#f2b8c6" font-family="Jost">amor</text><text x="${c + r * .62 + 26}" y="${c + r * .16 + 3}" text-anchor="start" font-size="9" fill="#9fd8a8" font-family="Jost">dinero</text>`;
+  return s + '</svg>';
+}
+function premMatriz(){
+  const mz = matrizCompleta(P.diaMes, P.anioNac); if (!mz) return faltaFecha;
+  let h = `<p class="intro">${MZ_INTRO}</p>${matrizSVG(mz)}<p class="ag-ayuda" style="text-align:center">Tu centro es <b>${mz.E} · ${esc(NOM[mz.E])}</b>. Abajo, cada punto explicado.</p>`;
+  MZ_GRUPOS.forEach(g => {
+    h += `<p class="sub">${g.t}</p><p class="ag-ayuda" style="margin-top:0">${g.d}</p><ul class="mz-lista">`;
+    g.p.forEach(([k, t, d, extra]) => { const n = mz[k], a = ARC[n];
+      const txt = extra === 'dinero' ? MZ_DINERO[n] : extra === 'amor' ? MZ_AMOR[n] : extra === 'karma' ? MZ_KARMA[n] : a.e.split('. ')[0] + '.';
+      h += `<li><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><div><small>${t}</small><h4 style="${lin}">${n} · ${esc(NOM[n])}</h4><p class="ag-ayuda">${d}</p><p>${txt}</p><p class="luz-som"><span>Luz:</span> ${a.luz}. <span>Sombra:</span> ${a.sombra}.</p></div></li>`; });
+    h += '</ul>';
+  });
+  return h + '<p class="ag-ayuda">Método de la Matriz del Destino: cada punto suma arcanos de tu fecha de nacimiento (si pasa de 22, se suman sus dígitos). Interpretación de Luz Guía.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="matriz">✨ Compartir mi matriz</button></p>';
+}
+
+/* Horóscopo chino */
+function chinoAnio(y){ return { idx: ((y - 1900) % 12 + 12) % 12, el: CHINO_EL[Math.floor(((y % 10) + 10) % 10 / 2)] }; }
+function premChino(){
+  const ch = chinoDe(P.diaMes, P.anioNac); if (!ch) return faltaFecha;
+  const yo = ((ch.anio - 1900) % 12 + 12) % 12, mas = CHINO_MAS[yo], su = CHINO_SUERTE[yo];
+  const hoy = new Date(), act = chinoDe(String(hoy.getDate()).padStart(2, '0') + '/' + String(hoy.getMonth() + 1).padStart(2, '0'), hoy.getFullYear()).anio;
+  const ya = chinoAnio(act), rel = relChina(yo, ya.idx), ra = REL_ANIO[rel], er = relElem(ch.el[0], ya.el[0]);
+  const aliados = CHINO.filter((x, i) => i !== yo && (relChina(yo, i) === 'aliado' || relChina(yo, i) === 'amigo')).map(x => x.ic + ' ' + x.a).join(', ');
+  const opuesto = CHINO[(yo + 6) % 12];
+  let h = `<div class="chino"><span aria-hidden="true">${ch.an.ic}</span><div><small>Naciste en el año ${ART_CH[yo]}</small><h4>${ch.an.a} de ${ch.el[0]}</h4></div></div>
+    <p>${ch.an.r} El elemento ${ch.el[0]} te suma ${ch.el[1]}.</p>
+    <ul class="num-lista"><li><b>💞</b><div><span>En el amor</span>${ch.an.amor}</div></li><li><b>💼</b><div><span>En el trabajo</span>${mas.trab}</div></li><li><b>💰</b><div><span>Con la plata</span>${mas.plata}</div></li><li><b>🌿</b><div><span>Tu salud</span>${mas.salud}</div></li>
+    <li><b>🍀</b><div><span>Tu suerte</span>Números ${su[0]} · colores ${su[1]}.</div></li><li><b>🤝</b><div><span>Compatibilidad</span>Tus mejores aliados: ${aliados}. Tu opuesto (el que más te desafía): ${opuesto.ic} ${opuesto.a}.</div></li></ul>`;
+  h += `<div class="anio-chino"><small>Tu año chino ${act} · ${CHINO[ya.idx].ic} ${CHINO[ya.idx].a} de ${ya.el[0]}</small><h4>${REL_NOMBRE[rel]} <span class="estr">${estrellitas(ra.e)}</span></h4>
+    <p>${ra.gen}</p><p>${ELEM_REL[er]}</p>
+    <ul class="num-lista"><li><b>💞</b><div><span>Amor</span>${ra.amor}</div></li><li><b>💰</b><div><span>Dinero</span>${ra.plata}</div></li><li><b>💼</b><div><span>Trabajo</span>${ra.trab}</div></li><li><b>🌿</b><div><span>Salud</span>${ra.salud}</div></li><li><b>✨</b><div><span>Consejo</span>${ra.tip}</div></li></ul></div>`;
+  const meses = inicioMesesChinos(act);
+  h += `<p class="sub">Mes a mes</p><p class="ag-ayuda" style="margin-top:0">Los meses chinos empiezan alrededor del día 4 al 8 de cada mes, cuando el Sol cambia de término solar.</p><ul class="meses-ch">`;
+  meses.slice(0, 12).forEach((m, i) => { const hasta = meses[i + 1] ? meses[i + 1].desde : null, r = REL_MES[relChina(yo, m.animal)], esAhora = hoy >= m.desde && (!hasta || hoy < hasta);
+    h += `<li class="${esAhora ? 'ahora' : ''}"><div><small>${fechaCorta(m.desde)}${hasta ? ' al ' + fechaCorta(new Date(hasta.getTime() - 86400000)) : ''}${esAhora ? ' · ahora' : ''}</small><b>${MES_TEMA[m.animal]}</b><p>${r[1]}</p></div><span class="estr">${estrellitas(r[0])}</span></li>`; });
+  h += '</ul>';
+  const yn = chinoAnio(act + 1), reln = relChina(yo, yn.idx), rn = REL_ANIO[reln];
+  h += `<div class="anio-chino prox"><small>Lo que viene · ${act + 1}</small><h4>${CHINO[yn.idx].ic} Año ${ART_CH[yn.idx]} ${CHINO[yn.idx].a} de ${yn.el[0]} · ${REL_NOMBRE[reln].toLowerCase()} <span class="estr">${estrellitas(rn.e)}</span></h4>
+    <p>${rn.gen}</p><p>${ELEM_REL[relElem(ch.el[0], yn.el[0])]}</p><p class="ag-ayuda">Cuando empiece el año nuevo chino, esta sección se renueva sola con el detalle completo y mes a mes.</p></div>`;
+  return h + '<p class="fila-comp"><button class="btn-sec comp" type="button" data-share="chino">✨ Compartir mi horóscopo chino</button></p>';
+}
+
+/* Astrología: posiciones, ascendente y revolución solar */
+const nrm2 = x => ((x % 360) + 360) % 360;
+function posiciones(jd){ const o = { Sol: longSolar(jd), Luna: longLuna(jd) }; ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].forEach(p => o[p] = longPlaneta(p, jd)); return o; }
+function ascMc(jd, lat, lon){
+  const eps = 23.4393 * RP, lst = nrm2(280.46061837 + 360.98564736629 * (jd - 2451545) + lon) * RP;
+  return { asc: nrm2(Math.atan2(Math.cos(lst), -(Math.sin(lst) * Math.cos(eps) + Math.tan(lat * RP) * Math.sin(eps))) / RP), mc: nrm2(Math.atan2(Math.sin(lst), Math.cos(lst) * Math.cos(eps)) / RP) };
+}
+const signoDe = l => ZOD[Math.floor(nrm2(l) / 30)];
+function horaDe(t){ const m = String(t || '').match(/(\d{1,2})[:.hH](\d{2})/); return m ? [+m[1], +m[2]] : null; }
+function jdNac(diaMes, anio, hora){ const m = String(diaMes).match(/(\d{2})\/(\d{2})/); const h = horaDe(hora) || [12, 0]; return jdDe(new Date(Date.UTC(+anio, +m[2] - 1, +m[1], h[0] + 3, h[1]))); }
+const ciudad = n => CIUDADES.find(c => c[0] === n) || CIUDADES[0];
+function leerLS(k){ try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function revolucion(){
+  if (!P.diaMes || !P.anioNac) return null;
+  const m = P.diaMes.match(/(\d{2})\/(\d{2})/), jdN = jdNac(P.diaMes, P.anioNac, P.horaNac), solN = longSolar(jdN);
+  const hoy = new Date(); let y = hoy.getFullYear(); if (hoy < new Date(y, +m[2] - 1, +m[1])) y--;
+  let jd = jdNac(P.diaMes, y, P.horaNac);
+  for (let i = 0; i < 8; i++) { let d = solN - longSolar(jd); if (d > 180) d -= 360; if (d < -180) d += 360; jd += d / 0.98565; }
+  const cd = ciudad(leerLS('luzguia_sr_ciudad') || P.lugarNac || CIUDADES[0][0]), am = ascMc(jd, cd[1], cd[2]), pos = posiciones(jd);
+  const casa = l => Math.floor(nrm2(l - am.asc) / 30);
+  return { jd, fecha: new Date((jd - 2440587.5) * 86400000), y, ciudad: cd[0], asc: am.asc, mc: am.mc, pos, casa, natalSol: solN, hora: !!horaDe(P.horaNac) };
+}
+function periodosRetro(nombre, desde, dias){
+  const out = []; let ini = null;
+  for (let i = 0; i <= dias; i++) { const f = new Date(desde.getTime() + i * 86400000), r = nombre === 'Mercurio' ? mercurioRetro(jdDe(f)) : retrogrado(nombre, jdDe(f));
+    if (r && !ini) ini = f; if (!r && ini) { out.push([ini, f]); ini = null; } }
+  if (ini) out.push([ini, null]); return out;
+}
+function datosNacimientoHTML(motivo){
+  const op = sel => CIUDADES.map(c => `<option${c[0] === sel ? ' selected' : ''}>${c[0]}</option>`).join('');
+  return `<div class="form-nac"><p>${motivo}</p><label>Hora de nacimiento<input type="time" id="nac-hora" value="${esc((horaDe(P.horaNac) || []).map(x => String(x).padStart(2, '0')).join(':'))}"></label>
+    <label>Lugar de nacimiento<select id="nac-lugar">${op(P.lugarNac || CIUDADES[0][0])}</select></label>
+    <p class="ag-ayuda">Si no sabés la hora exacta, fijate en tu partida de nacimiento o preguntale a tu familia. Sin la hora igual calculamos todo, pero el ascendente y las casas pueden variar.</p>
+    <button class="btn" type="button" data-guardarnac>Guardar mis datos</button></div>`;
+}
+function premRevolucion(){
+  const sr = revolucion(); if (!sr) return faltaFecha;
+  const casaTxt = l => CASA_SR[sr.casa(l)], ascI = Math.floor(sr.asc / 30), solC = sr.casa(sr.pos.Sol), lunC = sr.casa(sr.pos.Luna);
+  const fin = new Date(sr.fecha); fin.setFullYear(fin.getFullYear() + 1);
+  let h = `<p class="intro">La Revolución Solar es la carta del momento exacto en que el Sol vuelve al mismo lugar donde estaba cuando naciste. Pasa una vez por año, cerca de tu cumpleaños, y describe la energía de tu año personal: de cumpleaños a cumpleaños.</p>`;
+  if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:');
+  h += `<div class="sr-cab"><small>Tu revolución ${sr.y}–${sr.y + 1}</small><h4>${fechaCorta(sr.fecha)} de ${sr.y}, ${String(sr.fecha.getHours()).padStart(2, '0')}:${String(sr.fecha.getMinutes()).padStart(2, '0')} hs</h4>
+    <label class="sr-ciudad">Dónde pasaste tu cumpleaños <select id="sr-ciudad">${CIUDADES.map(c => `<option${c[0] === sr.ciudad ? ' selected' : ''}>${c[0]}</option>`).join('')}</select></label></div>`;
+  h += `<p class="sub">🌅 El tono de tu año · Ascendente en ${ZOD[ascI]}</p><p>${ASC_SR[ascI]}</p>`;
+  h += `<p class="sub">☀️ El tema central · Sol en casa ${solC + 1}</p><p>${SOL_CASA_SR[solC]}</p>`;
+  h += `<p class="sub">🌙 Tus emociones · Luna en ${signoDe(sr.pos.Luna)}, casa ${lunC + 1}</p><p>Tu mundo emocional este año se mueve en torno a ${CASA_SR[lunC].area}. ${LUNA_TONO[signoDe(sr.pos.Luna)] ? 'La Luna en ' + signoDe(sr.pos.Luna) + ' trae ' + LUNA_TONO[signoDe(sr.pos.Luna)][1] + '.' : ''} Ahí vas a necesitar contención y cuidado.</p>`;
+  h += `<p class="sub">🎯 Tus metas · Medio Cielo en ${signoDe(sr.mc)}</p><p>Tu imagen pública y tus logros se viven de modo ${SIGNO_ADJ[Math.floor(sr.mc / 30)]}. Es la energía que conviene mostrar en lo profesional.</p>`;
+  h += '<p class="sub">🪐 Cada área de tu año</p><ul class="num-lista">' + [['☿', 'Mercurio'], ['♀', 'Venus'], ['♂', 'Marte'], ['♃', 'Júpiter'], ['♄', 'Saturno']].map(([ic, p]) => {
+    const l = sr.pos[p]; return `<li><b>${ic}</b><div><span>${p} en ${signoDe(l)} · casa ${sr.casa(l) + 1}</span>${PLANETA_SR[p](casaTxt(l), SIGNO_ADJ[Math.floor(l / 30)])}</div></li>`; }).join('') + '</ul>';
+  h += '<p class="sub">📅 Mes a mes</p><p class="ag-ayuda" style="margin-top:0">Cada mes el Sol recorre una casa distinta de tu carta y enciende un área de tu vida.</p><ul class="meses-ch">';
+  for (let i = 0; i < 12; i++) {
+    const d0 = new Date(sr.fecha); d0.setMonth(d0.getMonth() + i); const d1 = new Date(sr.fecha); d1.setMonth(d1.getMonth() + i + 1); d1.setDate(d1.getDate() - 1);
+    const c = CASA_SR[sr.casa(longSolar(jdDe(new Date((d0.getTime() + d1.getTime()) / 2))))], hoy = new Date(), ahora = hoy >= d0 && hoy <= d1;
+    h += `<li class="${ahora ? 'ahora' : ''}"><div><small>${fechaCorta(d0)} al ${fechaCorta(d1)}${ahora ? ' · ahora' : ''}</small><b>Foco: ${c.area}</b><p><span class="si">Hacé:</span> ${c.hacer}.<br><span class="no">Evitá:</span> ${c.evitar}.</p></div></li>`;
+  }
+  h += '</ul><p class="sub">⚠️ Fechas clave de tu año</p><ul class="num-lista">';
+  const clave = [];
+  lunas(sr.fecha, fin).filter(x => x.eclipse).forEach(x => clave.push([x.fecha, `<b>🌑</b><div><span>${fechaCorta(x.fecha)}${x.fecha.getFullYear() !== sr.y ? ' de ' + x.fecha.getFullYear() : ''} · Eclipse ${x.llena ? 'lunar' : 'solar'} en ${x.signo}</span>Activa ${CASA_SR[sr.casa(x.signo ? ZOD.indexOf(x.signo) * 30 + x.grado : 0)].area}. ${x.llena ? 'Cierres y revelaciones: soltá lo que ya cumplió su ciclo.' : 'Nuevos comienzos inesperados: sembrá con intención.'}</div>`]));
+  [['Mercurio', 'Revisá contratos, mensajes y tecnología; buen momento para retomar pendientes.'], ['Venus', 'Revisás el amor y la plata: evitá cambios drásticos de imagen y compras grandes.'], ['Marte', 'Bajá la impulsividad; retomá proyectos en vez de empezar nuevos.']].forEach(([p, t]) =>
+    periodosRetro(p, sr.fecha, 365).forEach(([a, b]) => clave.push([a, `<b>℞</b><div><span>${p} retrógrado · ${fechaConAnio(a, sr.y)}${b ? ' al ' + fechaConAnio(b, sr.y) : ' (sigue después de tu próximo cumpleaños)'}</span>${t}</div>`])));
+  clave.sort((a, b) => a[0] - b[0]).forEach(x => h += `<li>${x[1]}</li>`);
+  h += '</ul>';
+  const sig = Math.floor(sr.natalSol / 30), dias = [];
+  for (let i = 0; i < 95; i++) { const f = new Date(); f.setHours(12, 0, 0, 0); f.setDate(f.getDate() + i); if (Math.floor(longLuna(jdDe(f)) / 30) === sig) { const u = dias[dias.length - 1]; if (u && (f - u[1]) <= 86400000 * 1.5) u[1] = f; else dias.push([f, f]); } }
+  h += `<p class="sub">✨ Tus días de poder</p><p>Cuando la Luna pasa por tu signo (${ZOD[sig]}), tu energía se renueva: son días ideales para decisiones, rituales y empezar cosas. Los próximos: ${dias.slice(0, 4).map(([a, b]) => a.getDate() + (b > a ? '–' + b.getDate() : '') + ' de ' + MESES[b.getMonth()]).join(', ')}.</p>
+    <p class="ag-ayuda">Para el día a día (qué conviene hacer cada día), mirá tu Agenda mágica. Carta calculada con casas iguales desde el ascendente y horario de Argentina; tomalo como guía.</p>`;
+  return h;
+}
+
+/* Sinastría */
+function signosPersona(diaMes, anio, hora){ const p = posiciones(jdNac(diaMes, anio, hora)), o = {}; Object.keys(p).forEach(k => o[k] = Math.floor(p[k] / 30)); return o; }
+function catAspecto(a, b){ const d = (b - a + 12) % 12; return d === 0 ? 'conj' : [2, 4, 8, 10].includes(d) ? 'arm' : [3, 9].includes(d) ? 'tenso' : d === 6 ? 'opos' : 'neutro'; }
+function premSinastria(){
+  if (!P.diaMes || !P.anioNac) return faltaFecha;
+  let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
+  let h = `<p class="intro">La sinastría compara dos cartas para ver cómo se combinan dos personas: dónde fluyen, dónde se desafían y qué vienen a aprender juntas. Sumamos también la numerología y el horóscopo chino.</p>
+    <div class="form-nac"><label>Nombre de la otra persona<input id="sin-nombre" value="${esc(o ? o.nombre : '')}" maxlength="40"></label><label>Fecha de nacimiento<input type="date" id="sin-fecha" value="${esc(o ? o.fecha : '')}"></label><label>Hora (opcional)<input type="time" id="sin-hora" value="${esc(o ? o.hora : '')}"></label>
+    <button class="btn" type="button" data-sinastria>Ver nuestra sinastría</button><p class="ag-ayuda">Estos datos quedan solo en tu celular.</p></div>`;
+  if (!o || !o.fecha) return h;
+  const [yy, mm, dd] = o.fecha.split('-'), dm2 = dd + '/' + mm, yo = signosPersona(P.diaMes, P.anioNac, P.horaNac), el = signosPersona(dm2, yy, o.hora);
+  let pts = 0, n = 0;
+  h += `<div class="sr-cab"><small>Vos y ${esc(o.nombre || 'tu persona')}</small><h4>${ZOD[yo.Sol]} + ${ZOD[el.Sol]}</h4></div><ul class="num-lista">`;
+  SIN_PARES.forEach(([a, b, t]) => { const ca = catAspecto(yo[a], el[b]); pts += { conj: 2, arm: 2, tenso: -1, opos: 1, neutro: 0 }[ca] * (a === 'Venus' && b === 'Marte' || a === 'Marte' && b === 'Venus' || a === 'Sol' && b === 'Luna' || a === 'Luna' && b === 'Sol' ? 1.5 : 1); n++;
+    h += `<li><b>${{ conj: '☌', arm: '△', tenso: '□', opos: '☍', neutro: '·' }[ca]}</b><div><span>${t}: tu ${a} en ${ZOD[yo[a]]}, su ${b} en ${ZOD[el[b]]}</span>${SIN_TXT[ca]}</div></li>`; });
+  const e1 = ELEM_SIGNO[yo.Sol % 4], e2 = ELEM_SIGNO[el.Sol % 4], compat = e1 === e2 || [e1, e2].sort().join() === 'Aire,Fuego' || [e1, e2].sort().join() === 'Agua,Tierra';
+  h += `<li><b>🜁</b><div><span>Elementos: ${e1} y ${e2}</span>${e1 === e2 ? 'Mismo elemento: hablan el mismo idioma.' : compat ? 'Elementos compatibles: se alimentan mutuamente.' : 'Elementos distintos: se complementan si respetan sus diferencias.'}</div></li>`;
+  pts += compat ? 2 : 0;
+  const n1 = numerologia(P.diaMes, P.anioNac, '').camino, n2 = numerologia(dm2, yy, '').camino, r = x => x > 9 ? reducirNum(x, false) : x, g = x => [1, 5, 7].includes(r(x)) ? 0 : [2, 4, 8].includes(r(x)) ? 1 : 2;
+  h += `<li><b>🔢</b><div><span>Numerología: camino ${n1} y ${n2}</span>${r(n1) === r(n2) ? 'El mismo número: se entienden profundamente, aunque pueden potenciar los mismos defectos.' : g(n1) === g(n2) ? 'Números de la misma familia: hay afinidad natural.' : 'Números distintos: se enseñan mutuamente lo que al otro le falta.'}</div></li>`;
+  pts += r(n1) === r(n2) || g(n1) === g(n2) ? 2 : 0;
+  const c1 = chinoDe(P.diaMes, P.anioNac), c2 = chinoDe(dm2, yy), rc = relChina(CHINO.indexOf(c1.an), CHINO.indexOf(c2.an));
+  h += `<li><b>🏮</b><div><span>Horóscopo chino: ${c1.an.a} y ${c2.an.a}</span>${{ mismo: 'Mismo animal: se reconocen, aunque pueden chocar por parecerse.', aliado: 'Son aliados (mismo trígono): una de las mejores combinaciones.', amigo: 'Amigos secretos: se protegen y se sostienen.', choque: 'Animales opuestos: mucha atracción y mucho aprendizaje.', dano: 'Relación de roce: cuiden los malentendidos.', neutro: 'Combinación neutra: depende de lo que construyan.' }[rc]}</div></li></ul>`;
+  pts += { mismo: 1, aliado: 3, amigo: 3, choque: -1, dano: 0, neutro: 1 }[rc];
+  const pct = Math.max(52, Math.min(97, Math.round(62 + pts * 2.6)));
+  h += `<div class="sin-pct"><b>${pct}%</b><span>de afinidad</span></div><p class="ag-ayuda">${o.hora ? '' : 'Sin la hora de nacimiento, la Luna puede variar. '}La compatibilidad no define una relación: muestra la energía de base. Lo demás lo construyen ustedes 💜</p>`;
+  return h;
+}
+
+/* Animal de poder */
+function animalDe(){ if (!P.diaMes || !P.anioNac) return null; return ANIMAL_PODER[Math.floor(longSolar(jdNac(P.diaMes, P.anioNac, P.horaNac)) / 30)]; }
+function premAnimal(){
+  const an = animalDe(); if (!an) return faltaFecha;
+  return `<p class="intro">El animal de poder es un guía espiritual que te acompaña y te presta su medicina: una cualidad que te protege y te ayuda a crecer. Según la rueda de la medicina, se relaciona con el momento del año en que naciste.</p>
+    <div class="ser-caja"><div class="ser-ic" aria-hidden="true">${an.ic}</div><small>Tu animal de poder</small><h4>${an.a}</h4>
+    <ul class="ser-lista"><li><b>Su medicina</b>${an.med}</li><li><b>Su mensaje para vos</b>${an.msg}</li><li><b>Su sombra</b>${an.som}</li><li><b>Cómo conectar</b>${an.con}</li></ul>
+    <p class="afir">✨ ${an.af}</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="animal">✨ Compartir mi animal de poder</button></p></div>
+    <div class="medita" id="medita"><h4>🧘 Meditación para encontrarte con tu animal</h4><p>Unos 4 minutos. Buscá un lugar tranquilo. Podés leerla a tu ritmo o escucharla con la voz del celular.</p>
+    <div class="fila-bt"><button class="btn" type="button" data-medita="voz">🔊 Escuchar</button><button class="btn-sec" type="button" data-medita="leer">📖 Leer a mi ritmo</button></div></div>`;
+}
+let MED = null;
+function meditar(modo){
+  const caja = $('medita'); if (!caja) return; MED && clearTimeout(MED.t); MED = { i: 0, voz: modo === 'voz' };
+  const sintes = window.speechSynthesis, voz = sintes && (sintes.getVoices().find(v => /es[-_]AR/i.test(v.lang)) || sintes.getVoices().find(v => /^es/i.test(v.lang)));
+  const paso = () => {
+    if (MED.i >= MEDITACION.length) { const an = animalDe(); caja.innerHTML = `<h4>✨ Bienvenida de vuelta</h4><p>Tu animal de poder según tu fecha de nacimiento es el <b>${an.a}</b> ${an.ic}. Si en la meditación apareció otro animal, también es un mensaje: anotalo y buscá qué medicina te trae.</p><div class="fila-bt"><button class="btn-sec" type="button" data-medita="leer">Repetir</button></div>`; return; }
+    const [t, s] = MEDITACION[MED.i];
+    caja.innerHTML = `<div class="medita-paso"><small>${MED.i + 1} de ${MEDITACION.length}</small><p>${t}</p><div class="medita-barra"><i style="animation-duration:${s}s"></i></div></div><div class="fila-bt"><button class="btn-sec" type="button" data-medita="parar">Terminar</button>${MED.voz ? '' : '<button class="btn" type="button" data-medita="sig">Siguiente</button>'}</div>`;
+    if (MED.voz && sintes) { sintes.cancel(); const u = new SpeechSynthesisUtterance(t.replace(/…/g, '...')); u.lang = 'es-AR'; if (voz) u.voice = voz; u.rate = .82; u.pitch = 1; sintes.speak(u); }
+    MED.i++; if (MED.voz) MED.t = setTimeout(paso, s * 1000);
+  };
+  MED.sig = paso; paso();
+}
+
+/* Ser sobrenatural ampliado */
+function serHTML(){
+  const s = serDe(); if (!s) return '';
+  const k = SER_ARC[+P.arcano.n], m = SER_MAS[k];
+  return `<h3 id="ser">Si fueras un ser sobrenatural…</h3><div class="ser-caja"><div class="ser-ic" aria-hidden="true">${s.ic}</div><small>Serías</small><h4>${s.n}</h4><p class="ser-txt">${s.txt}</p>
+    <p class="ser-hist">${m.hist}</p>
+    <ul class="ser-lista"><li><b>Poderes</b>${s.pod.join(' · ')}</li><li><b>Debilidad</b>${s.deb}</li><li><b>Familiar</b>${s.fam}</li><li><b>Objeto mágico</b>${s.obj}</li><li><b>Hogar</b>${s.hog}</li>
+    <li><b>Tu paleta</b><span class="paleta">${s.pal.map(c => `<i style="background:${c}"></i>`).join('')}</span></li>
+    <li><b>Tu poder en la vida real</b>${m.vida}</li><li><b>Ritual para activarlo</b>${m.rit}</li></ul>
+    <p class="ag-ayuda">Según tu arcano de nacimiento, ${esc(P.arcano.nombre)}.</p>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="ser">✨ Compartir mi ser</button></p></div>`;
 }
 
 /* ───── Secciones ───── */
@@ -1742,37 +2236,64 @@ function pintar(){
 }
 
 /* ───── Imágenes para compartir (con logo e Instagram) ───── */
-async function tarjetaHistoria(o){
+/* ───── Imágenes y videos para compartir ───── */
+function textoCentrado(c, t, cx, cy){
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  const m = c.measureText(t), L = m.actualBoundingBoxLeft || 0, R = m.actualBoundingBoxRight || m.width, A = m.actualBoundingBoxAscent || 0, D = m.actualBoundingBoxDescent || 0;
+  c.fillText(t, cx - (R - L) / 2, cy + (A - D) / 2); c.textAlign = 'center';
+}
+function estrellaPuntas(c, x, y, r, puntas){ puntas = puntas || 4; c.beginPath(); for (let i = 0; i < puntas * 2; i++) { const a = i * Math.PI / puntas - Math.PI / 2, rr = i % 2 ? r * .28 : r; c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } c.closePath(); c.fill(); }
+function dibujarLlama(c, x, y, s, t, fase){
+  const fl = 1 + .09 * Math.sin(t * 13 + fase) + .05 * Math.sin(t * 7.3 + fase * 2), sw = 4 * s * Math.sin(t * 4.2 + fase);
+  const h = 62 * s * fl, w = 20 * s;
+  const halo = c.createRadialGradient(x, y - h * .4, 2, x, y - h * .4, 120 * s * (1 + .06 * Math.sin(t * 9 + fase)));
+  halo.addColorStop(0, 'rgba(255,214,140,.55)'); halo.addColorStop(1, 'rgba(255,170,80,0)'); c.fillStyle = halo; c.beginPath(); c.arc(x, y - h * .4, 130 * s, 0, 7); c.fill();
+  const g = c.createRadialGradient(x, y - h * .25, 1, x, y - h * .35, h * .8); g.addColorStop(0, '#FFFFFF'); g.addColorStop(.3, '#FFF1B8'); g.addColorStop(.7, '#FFB347'); g.addColorStop(1, 'rgba(255,120,40,0)');
+  c.fillStyle = g; c.beginPath(); c.moveTo(x + sw, y - h); c.bezierCurveTo(x + w + sw * .5, y - h * .45, x + w * .9, y - h * .05, x, y); c.bezierCurveTo(x - w * .9, y - h * .05, x - w + sw * .5, y - h * .45, x + sw, y - h); c.fill();
+  c.fillStyle = 'rgba(120,170,255,.55)'; c.beginPath(); c.ellipse(x, y - 6 * s, 5 * s, 8 * s, 0, 0, 7); c.fill();
+}
+async function dibujarTarjeta(o, modo){
+  modo = modo || {};
   try { await document.fonts.ready; await Promise.all(['120px "Great Vibes"', '600 80px "Cormorant Garamond"', 'italic 40px "Cormorant Garamond"', '500 30px Jost'].map(f => document.fonts.load(f))); } catch (e) {}
-  const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d'), anim = { llamas: [] };
   const g = c.createRadialGradient(W / 2, -200, 100, W / 2, H / 2, 1400); g.addColorStop(0, '#4a1f7c'); g.addColorStop(.45, '#22103d'); g.addColorStop(1, '#0b0414');
   c.fillStyle = g; c.fillRect(0, 0, W, H);
-  for (let i = 0; i < 260; i++) { c.globalAlpha = .3 + Math.random() * .7; c.fillStyle = Math.random() < .3 ? '#f3dca0' : '#ffffff'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, Math.random() * 2.2, 0, 7); c.fill(); }
+  const neb = (x, y, r, col) => { const n = c.createRadialGradient(x, y, 10, x, y, r); n.addColorStop(0, col); n.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = n; c.fillRect(0, 0, W, H); };
+  neb(W * .82, 260, 440, 'rgba(255,244,214,.22)'); neb(W * .12, H * .62, 520, 'rgba(142,106,216,.16)'); neb(W * .9, H * .9, 420, 'rgba(91,42,134,.25)');
+  for (let i = 0; i < (modo.video ? 140 : 260); i++) { c.globalAlpha = .25 + Math.random() * .7; c.fillStyle = Math.random() < .3 ? '#f3dca0' : '#ffffff'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, Math.random() * 2, 0, 7); c.fill(); }
   c.globalAlpha = 1;
-  const neb = c.createRadialGradient(W * .8, 260, 20, W * .8, 260, 420); neb.addColorStop(0, 'rgba(255,244,214,.3)'); neb.addColorStop(1, 'rgba(255,244,214,0)'); c.fillStyle = neb; c.fillRect(0, 0, W, H);
-  // marco fino dorado
-  c.strokeStyle = 'rgba(212,175,106,.35)'; c.lineWidth = 2; c.strokeRect(40, 40, W - 80, H - 80);
+  // constelaciones suaves
+  c.strokeStyle = 'rgba(243,220,160,.18)'; c.lineWidth = 1.5; c.fillStyle = 'rgba(243,220,160,.7)';
+  [[[90, 420], [160, 470], [150, 560], [230, 610]], [[880, 1500], [960, 1440], [1010, 1520], [940, 1600]]].forEach(cn => { c.beginPath(); cn.forEach(p => c.lineTo(...p)); c.stroke(); cn.forEach(p => { c.beginPath(); c.arc(...p, 3.5, 0, 7); c.fill(); }); });
+  // marco con esquinas ornamentadas
+  c.strokeStyle = 'rgba(212,175,106,.4)'; c.lineWidth = 2; c.strokeRect(44, 44, W - 88, H - 88); c.strokeStyle = 'rgba(212,175,106,.18)'; c.strokeRect(58, 58, W - 116, H - 116);
+  [[44, 44, 1, 1], [W - 44, 44, -1, 1], [44, H - 44, 1, -1], [W - 44, H - 44, -1, -1]].forEach(([x, y, sx, sy]) => {
+    c.fillStyle = '#1a0b2e'; c.beginPath(); c.arc(x, y, 26, 0, 7); c.fill(); c.strokeStyle = '#D4AF6A'; c.lineWidth = 2; c.stroke();
+    c.fillStyle = '#E8C77E'; c.beginPath(); c.arc(x, y, 15, 0, 7); c.fill(); c.fillStyle = '#1a0b2e'; c.beginPath(); c.arc(x + 6 * sx, y - 4 * sy, 13, 0, 7); c.fill();
+    c.fillStyle = 'rgba(243,220,160,.8)'; [[48, 0, 3], [70, 0, 2], [0, 48, 3], [0, 70, 2]].forEach(([dx, dy, r]) => { c.beginPath(); c.arc(x + dx * sx, y + dy * sy, r, 0, 7); c.fill(); });
+  });
   const cargarImg = src => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
   const logo = await cargarImg(document.querySelector('link[rel=icon]').href);
-  if (logo) { c.save(); c.beginPath(); c.arc(W / 2, 140, 62, 0, 7); c.clip(); c.drawImage(logo, W / 2 - 62, 78, 124, 124); c.restore(); }
-  c.textAlign = 'center'; c.fillStyle = '#D4AF6A'; c.font = '600 38px Jost, sans-serif'; c.fillText(o.kicker, W / 2, 262);
+  if (logo) { c.save(); c.beginPath(); c.arc(W / 2, 140, 62, 0, 7); c.clip(); c.drawImage(logo, W / 2 - 62, 78, 124, 124); c.restore(); c.strokeStyle = 'rgba(212,175,106,.6)'; c.lineWidth = 2; c.beginPath(); c.arc(W / 2, 140, 64, 0, 7); c.stroke(); }
+  c.textAlign = 'center'; c.fillStyle = '#D4AF6A'; c.font = '600 36px Jost, sans-serif'; c.fillText(o.kicker, W / 2, 262);
   if (o.fecha) { c.fillStyle = '#B98AE6'; c.font = 'italic 44px "Cormorant Garamond", Georgia, serif'; c.fillText(o.fecha, W / 2, 320); }
   const lineas = (txt, max) => { const out = [], pal = String(txt).split(' '); let l = ''; pal.forEach(p => { const t = l ? l + ' ' + p : p; if (c.measureText(t).width > max && l) { out.push(l); l = p; } else l = t; }); if (l) out.push(l); return out; };
   let y = o.fecha ? 370 : 320;
   const muchas = (o.secciones || []).length > 2;
   if (o.carta) {
     const cw = muchas ? 330 : 420, ch = Math.round(cw * 1.72), cx = (W - cw) / 2;
+    const gl = c.createRadialGradient(W / 2, y + ch / 2, 50, W / 2, y + ch / 2, ch * .8); gl.addColorStop(0, 'rgba(243,220,160,.28)'); gl.addColorStop(1, 'rgba(243,220,160,0)'); c.fillStyle = gl; c.fillRect(0, y - 200, W, ch + 400);
     c.shadowColor = 'rgba(243,220,160,.45)'; c.shadowBlur = 60; c.fillStyle = '#3B1760'; c.fillRect(cx - 12, y - 12, cw + 24, ch + 24); c.shadowBlur = 0;
     c.strokeStyle = '#D4AF6A'; c.lineWidth = 4; c.strokeRect(cx - 12, y - 12, cw + 24, ch + 24);
     const img = await cargarImg(cartaSrc(o.carta));
-    if (img) c.drawImage(img, cx, y, cw, ch); else { c.fillStyle = '#D4AF6A'; c.font = '600 150px "Cormorant Garamond", serif'; c.fillText(romano(o.carta), W / 2, y + ch / 2 + 50); }
+    if (img) c.drawImage(img, cx, y, cw, ch); else { c.fillStyle = '#D4AF6A'; c.font = '600 150px "Cormorant Garamond", serif'; textoCentrado(c, romano(o.carta), W / 2, y + ch / 2); }
+    anim.carta = { x: cx, y, w: cw, h: ch }; anim.halo = { x: W / 2, y: y + ch / 2, r: cw * .7 };
     y += ch + 90;
-  } else if (o.ilus) y = ilustrar(c, o.ilus, W / 2, y + 20) + 70;
+  } else if (o.ilus) y = ilustrar(c, o.ilus, W / 2, y + 20, anim, modo) + 70;
   else y += 120;
-  // Texto: título, subtítulo, secciones y afirmación, achicando la letra si no entra
   const piso = H - 250;
-  const bloques = esc0 => {
-    const out = [], k = esc0;
+  const bloques = k => {
+    const out = [];
     out.push(o.script ? { f: `${Math.round(150 * k)}px "Great Vibes", cursive`, col: '#EDE6F5', txt: o.titulo, lh: 130 * k, max: 920, pre: 30 * k } : { f: `600 ${Math.round(84 * k)}px "Cormorant Garamond", Georgia, serif`, col: '#EDE6F5', txt: o.titulo, lh: 92 * k, max: 920 });
     if (o.subtitulo) out.push({ f: `italic ${Math.round(46 * k)}px "Cormorant Garamond", Georgia, serif`, col: '#E3D6F2', txt: o.subtitulo, lh: 58 * k, max: 900, pre: 6 });
     (o.lineas || []).forEach(t => out.push({ f: `italic ${Math.round(46 * k)}px "Cormorant Garamond", Georgia, serif`, col: '#E3D6F2', txt: t, lh: 58 * k, max: 900, pre: 14 }));
@@ -1783,101 +2304,180 @@ async function tarjetaHistoria(o){
     if (o.afirmacion) out.push({ f: `italic ${Math.round(48 * k)}px "Cormorant Garamond", Georgia, serif`, col: '#D4AF6A', txt: '✨ ' + o.afirmacion, lh: 60 * k, max: 900, pre: 34 * k });
     return out;
   };
-  let k = 1, bl, alto;
-  for (; k >= .62; k -= .04) { bl = bloques(k); alto = bl.reduce((a, b) => { c.font = b.f; return a + (b.pre || 0) + lineas(b.txt, b.max).length * b.lh; }, 0); if (y + alto <= piso) break; }
+  let k = 1.12, bl, alto;
+  for (; k >= .6; k -= .04) { bl = bloques(k); alto = bl.reduce((a, b) => { c.font = b.f; return a + (b.pre || 0) + lineas(b.txt, b.max).length * b.lh; }, 0); if (y + alto <= piso) break; }
   bl.forEach(b => {
     y += b.pre || 0;
-    if (b.sep) { c.fillStyle = 'rgba(212,175,106,.55)'; c.font = `${Math.round(22 * k)}px serif`; c.fillText('✦', W / 2, y - 10 * k); y += 18 * k; }
-    c.font = b.f; c.fillStyle = b.col;
+    if (b.sep) { c.fillStyle = 'rgba(212,175,106,.6)'; estrellaPuntas(c, W / 2, y - 18 * k, 9 * k); c.fillRect(W / 2 - 80 * k, y - 19 * k, 56 * k, 1.5); c.fillRect(W / 2 + 24 * k, y - 19 * k, 56 * k, 1.5); y += 18 * k; }
+    c.font = b.f; c.fillStyle = b.col; c.textAlign = 'center';
     lineas(b.txt, b.max).forEach(l => { if (y < piso + 20) c.fillText(l, W / 2, y); y += b.lh; });
   });
   c.fillStyle = 'rgba(212,175,106,.5)'; c.fillRect(W / 2 - 160, H - 210, 320, 2);
   if (P.igPersona) { c.fillStyle = '#EDE6F5'; c.font = '500 40px Jost, sans-serif'; c.fillText('@' + P.igPersona, W / 2, H - 150); }
   c.fillStyle = '#D4AF6A'; c.font = '500 34px Jost, sans-serif'; c.fillText('Mi Luz · Luz Guía' + (usuarioIG() ? '  ·  @' + usuarioIG() : ''), W / 2, H - (P.igPersona ? 95 : 140));
   c.fillStyle = '#B6A7C9'; c.font = '30px Jost, sans-serif'; c.fillText('Descubrí la tuya ✦', W / 2, H - (P.igPersona ? 50 : 90));
-  return new Promise(ok => cv.toBlob(ok, 'image/png'));
+  return { cv, anim };
 }
-// Ilustraciones dibujadas para cada tipo de imagen. Devuelve la altura final.
-function ilustrar(c, il, cx, y){
-  const oro = (x0, y0, x1, y1) => { const g = c.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, '#F3DCA0'); g.addColorStop(1, '#B8893E'); return g; };
+async function tarjetaHistoria(o){ const { cv } = await dibujarTarjeta(o); return new Promise(ok => cv.toBlob(ok, 'image/png')); }
+function ilustrar(c, il, cx, y, anim, modo){
+  anim = anim || { llamas: [] }; modo = modo || {};
+  const oro = (x0, y0, x1, y1) => { const g = c.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, '#FFF0C2'); g.addColorStop(.5, '#E3BC6A'); g.addColorStop(1, '#A87A32'); return g; };
   const halo = (x, yy, r, col) => { const g = c.createRadialGradient(x, yy, 0, x, yy, r); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.beginPath(); c.arc(x, yy, r, 0, 7); c.fill(); };
-  const estrella = (x, yy, r) => { c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, rr = i % 2 ? r * .35 : r; c.lineTo(x + Math.cos(a) * rr, yy + Math.sin(a) * rr); } c.closePath(); c.fill(); };
-  const anillo = (x, yy, r) => { c.strokeStyle = oro(x - r, yy - r, x + r, yy + r); c.lineWidth = 4; c.beginPath(); c.arc(x, yy, r, 0, 7); c.stroke(); c.lineWidth = 1.5; c.beginPath(); c.arc(x, yy, r - 14, 0, 7); c.stroke();
-    c.fillStyle = '#F3DCA0'; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; estrella(x + Math.cos(a) * (r + 30), yy + Math.sin(a) * (r + 30), i % 2 ? 7 : 12); } };
+  const rueda = (x, yy, r) => { c.strokeStyle = 'rgba(212,175,106,.28)'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, yy, r, 0, 7); c.stroke(); c.beginPath(); c.arc(x, yy, r - 26, 0, 7); c.stroke();
+    for (let i = 0; i < 72; i++) { const a = i * Math.PI / 36, l = i % 6 === 0 ? 26 : 9; c.beginPath(); c.moveTo(x + Math.cos(a) * r, yy + Math.sin(a) * r); c.lineTo(x + Math.cos(a) * (r - l), yy + Math.sin(a) * (r - l)); c.stroke(); }
+    c.fillStyle = 'rgba(243,220,160,.55)'; for (let i = 0; i < 12; i++) { const a = (i + .5) * Math.PI / 6; estrellaPuntas(c, x + Math.cos(a) * (r - 13), yy + Math.sin(a) * (r - 13), 5); } };
+  const anillo = (x, yy, r) => { c.strokeStyle = oro(x - r, yy - r, x + r, yy + r); c.lineWidth = 5; c.beginPath(); c.arc(x, yy, r, 0, 7); c.stroke(); c.lineWidth = 1.5; c.beginPath(); c.arc(x, yy, r - 16, 0, 7); c.stroke();
+    c.fillStyle = '#F3DCA0'; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 - Math.PI / 2; estrellaPuntas(c, x + Math.cos(a) * (r + 32), yy + Math.sin(a) * (r + 32), i % 2 ? 8 : 15); } };
   if (il.tipo === 'inicial') {
-    const r = 150, cy = y + r + 30; halo(cx, cy, r * 1.6, 'rgba(243,220,160,.25)'); anillo(cx, cy, r);
-    c.fillStyle = oro(cx - 100, cy - 100, cx + 100, cy + 100); c.font = '230px "Great Vibes", cursive'; c.textAlign = 'center'; c.fillText(il.letra, cx + 6, cy + 78);
-    return cy + r + 40;
+    const r = 150, cy = y + r + 40; anim.halo = { x: cx, y: cy, r: r * 1.3 };
+    halo(cx, cy, r * 1.8, 'rgba(243,220,160,.22)'); rueda(cx, cy, r + 80); anillo(cx, cy, r);
+    c.fillStyle = 'rgba(28,11,46,.6)'; c.beginPath(); c.arc(cx, cy, r - 17, 0, 7); c.fill();
+    c.fillStyle = oro(cx - 110, cy - 110, cx + 110, cy + 110); c.font = '240px "Great Vibes", cursive'; c.shadowColor = 'rgba(243,220,160,.6)'; c.shadowBlur = 24; textoCentrado(c, il.letra, cx, cy); c.shadowBlur = 0;
+    return cy + r + 60;
   }
   if (il.tipo === 'numero') {
-    const r = 82, cy = y + 2 * r + 20; halo(cx, cy, r * 3, 'rgba(185,138,230,.25)');
-    c.strokeStyle = 'rgba(243,220,160,.55)'; c.lineWidth = 2;
+    const r = 82, cy = y + 2 * r + 30; anim.halo = { x: cx, y: cy, r: r * 2 };
+    halo(cx, cy, r * 3, 'rgba(185,138,230,.28)'); rueda(cx, cy, 2 * r + 60);
+    c.strokeStyle = 'rgba(243,220,160,.6)'; c.lineWidth = 2;
     c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke();
     for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; c.beginPath(); c.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, r, 0, 7); c.stroke(); }
-    c.lineWidth = 4; c.strokeStyle = oro(cx - 2 * r, cy - 2 * r, cx + 2 * r, cy + 2 * r); c.beginPath(); c.arc(cx, cy, 2 * r, 0, 7); c.stroke();
-    c.fillStyle = '#1C0B2E'; c.beginPath(); c.arc(cx, cy, 70, 0, 7); c.fill(); c.lineWidth = 2; c.stroke();
-    c.fillStyle = '#F3DCA0'; c.font = '600 92px "Cormorant Garamond", serif'; c.textAlign = 'center'; c.fillText(il.n, cx, cy + 32);
-    return cy + 2 * r + 10;
+    c.lineWidth = 5; c.strokeStyle = oro(cx - 2 * r, cy - 2 * r, cx + 2 * r, cy + 2 * r); c.beginPath(); c.arc(cx, cy, 2 * r, 0, 7); c.stroke();
+    c.fillStyle = '#1C0B2E'; c.beginPath(); c.arc(cx, cy, 72, 0, 7); c.fill(); c.lineWidth = 3; c.stroke();
+    c.fillStyle = '#F3DCA0'; c.font = '500 86px Jost, sans-serif'; c.shadowColor = 'rgba(243,220,160,.6)'; c.shadowBlur = 18; textoCentrado(c, String(il.n), cx, cy); c.shadowBlur = 0;
+    return cy + 2 * r + 30;
   }
   if (il.tipo === 'vela') {
-    const cy = y + 40; halo(cx, cy + 40, 230, 'rgba(255,214,140,.35)');
-    const gV = c.createLinearGradient(cx - 55, 0, cx + 55, 0); gV.addColorStop(0, il.color || '#E8D9F5'); gV.addColorStop(.5, '#FFFFFF'); gV.addColorStop(1, il.color || '#C9B3E0');
-    c.fillStyle = gV; c.beginPath(); c.roundRect ? c.roundRect(cx - 55, cy + 70, 110, 210, 14) : c.rect(cx - 55, cy + 70, 110, 210); c.fill();
-    c.fillStyle = oro(cx - 110, 0, cx + 110, 0); c.beginPath(); c.ellipse(cx, cy + 285, 110, 22, 0, 0, 7); c.fill();
-    c.strokeStyle = '#3a2a1a'; c.lineWidth = 4; c.beginPath(); c.moveTo(cx, cy + 70); c.lineTo(cx, cy + 50); c.stroke();
-    const gF = c.createRadialGradient(cx, cy + 20, 4, cx, cy + 10, 60); gF.addColorStop(0, '#FFFFFF'); gF.addColorStop(.35, '#FFE29A'); gF.addColorStop(1, 'rgba(255,140,40,0)');
-    c.fillStyle = gF; c.beginPath(); c.moveTo(cx, cy - 50); c.bezierCurveTo(cx + 30, cy, cx + 26, cy + 40, cx, cy + 50); c.bezierCurveTo(cx - 26, cy + 40, cx - 30, cy, cx, cy - 50); c.fill();
-    c.fillStyle = '#F3DCA0'; [[-170, 30, 10], [160, 90, 8], [-140, 200, 6], [190, 230, 11]].forEach(([dx, dy, r]) => estrella(cx + dx, cy + dy, r));
-    return cy + 320;
+    const base = y + 330; anim.halo = { x: cx, y: base - 150, r: 260 };
+    halo(cx, base - 140, 380, 'rgba(255,190,110,.32)');
+    // humo
+    c.strokeStyle = 'rgba(230,220,255,.14)'; c.lineWidth = 6; c.lineCap = 'round';
+    [[-8, 1], [10, -1]].forEach(([dx, s]) => { c.beginPath(); c.moveTo(cx + dx, base - 290); c.bezierCurveTo(cx + dx + 40 * s, base - 360, cx + dx - 40 * s, base - 420, cx + dx + 20 * s, base - 500); c.stroke(); });
+    // mesa de luz
+    const mesa = c.createRadialGradient(cx, base + 10, 10, cx, base + 10, 330); mesa.addColorStop(0, 'rgba(255,200,120,.45)'); mesa.addColorStop(1, 'rgba(255,200,120,0)'); c.fillStyle = mesa; c.beginPath(); c.ellipse(cx, base + 10, 340, 60, 0, 0, 7); c.fill();
+    const velas = [[-150, 120, 62, .8], [0, 220, 78, 1], [150, 150, 62, .85]];
+    velas.forEach(([dx, h, w, s], i) => {
+      const x = cx + dx, top = base - h;
+      const gv = c.createLinearGradient(x - w / 2, 0, x + w / 2, 0); gv.addColorStop(0, il.color || '#D9C6EE'); gv.addColorStop(.45, '#FFFFFF'); gv.addColorStop(1, il.color || '#B79BD6');
+      c.fillStyle = gv; c.beginPath(); c.moveTo(x - w / 2, base); c.lineTo(x - w / 2, top + 8); c.quadraticCurveTo(x, top - 6, x + w / 2, top + 8); c.lineTo(x + w / 2, base); c.closePath(); c.fill();
+      c.fillStyle = 'rgba(255,255,255,.85)'; c.beginPath(); c.moveTo(x + w * .18, top + 4); c.quadraticCurveTo(x + w * .3, top + 40, x + w * .2, top + 56); c.quadraticCurveTo(x + w * .1, top + 30, x + w * .12, top + 6); c.fill();
+      c.strokeStyle = '#2b1d14'; c.lineWidth = 3.5; c.beginPath(); c.moveTo(x, top + 2); c.lineTo(x + 1, top - 14); c.stroke();
+      anim.llamas.push({ x: x + 1, y: top - 12, s, f: i * 1.7 });
+      if (!modo.video) dibujarLlama(c, x + 1, top - 12, s, 0, i * 1.7);
+    });
+    // cristales y pétalos
+    const cristal = (x, yb, h, w, col) => { const g = c.createLinearGradient(x, yb - h, x, yb); g.addColorStop(0, '#F3E8FF'); g.addColorStop(1, col); c.fillStyle = g; c.beginPath(); c.moveTo(x - w / 2, yb); c.lineTo(x - w / 2, yb - h * .7); c.lineTo(x, yb - h); c.lineTo(x + w / 2, yb - h * .7); c.lineTo(x + w / 2, yb); c.closePath(); c.fill(); c.strokeStyle = 'rgba(255,255,255,.4)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, yb - h); c.lineTo(x, yb); c.stroke(); };
+    cristal(cx - 250, base + 6, 90, 34, '#7B4BB0'); cristal(cx - 222, base + 10, 60, 26, '#9B6FD0'); cristal(cx + 245, base + 8, 80, 32, '#7B4BB0'); cristal(cx + 275, base + 12, 52, 24, '#C79BE8');
+    c.fillStyle = 'rgba(242,150,175,.85)'; [[-80, 22, .4], [70, 30, -.6], [210, 26, .9], [-200, 30, -.3], [20, 38, .2]].forEach(([dx, dy, rot]) => { c.beginPath(); c.ellipse(cx + dx, base + dy, 14, 8, rot, 0, 7); c.fill(); });
+    c.fillStyle = '#F3DCA0'; [[-300, -280, 12], [290, -330, 15], [-330, -120, 8], [320, -150, 10]].forEach(([dx, dy, r]) => estrellaPuntas(c, cx + dx, base + dy, r));
+    return base + 60;
   }
   if (il.tipo === 'luna') {
-    const r = 130, cy = y + r + 20; halo(cx, cy, r * 2.1, 'rgba(255,244,214,.28)');
-    const gL = c.createRadialGradient(cx - 40, cy - 40, 10, cx, cy, r); gL.addColorStop(0, '#FFF8E6'); gL.addColorStop(1, '#D9C08A');
+    const r = 140, cy = y + r + 40; anim.halo = { x: cx, y: cy, r: r * 1.4 };
+    halo(cx, cy, r * 2.3, 'rgba(255,244,214,.3)'); rueda(cx, cy, r + 70);
+    const gL = c.createRadialGradient(cx - 45, cy - 45, 10, cx, cy, r); gL.addColorStop(0, '#FFFBEF'); gL.addColorStop(.7, '#EBD9A8'); gL.addColorStop(1, '#C9A96A');
     c.fillStyle = gL; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.fill();
-    if (!il.llena) { c.fillStyle = '#1a0b2e'; c.beginPath(); c.arc(cx + 55, cy - 10, r * .95, 0, 7); c.fill(); }
-    else { c.fillStyle = 'rgba(160,130,90,.25)'; [[-40, -30, 22], [30, 20, 16], [-10, 50, 12], [45, -45, 10]].forEach(([dx, dy, rr]) => { c.beginPath(); c.arc(cx + dx, cy + dy, rr, 0, 7); c.fill(); }); }
-    c.fillStyle = '#F3DCA0'; [[-210, -60, 10], [200, -90, 13], [230, 70, 7], [-190, 90, 8]].forEach(([dx, dy, rr]) => estrella(cx + dx, cy + dy, rr));
-    return cy + r + 10;
+    c.fillStyle = 'rgba(160,130,90,.22)'; [[-42, -30, 24], [34, 22, 18], [-10, 56, 13], [50, -50, 11], [-60, 40, 9]].forEach(([dx, dy, rr]) => { c.beginPath(); c.arc(cx + dx, cy + dy, rr, 0, 7); c.fill(); });
+    if (!il.llena) { c.fillStyle = '#170a28'; c.beginPath(); c.arc(cx + 58, cy - 12, r * .96, 0, 7); c.fill(); c.strokeStyle = 'rgba(243,220,160,.25)'; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke(); }
+    [[-150, 115, 150], [160, 128, 170], [10, 150, 120]].forEach(([dx, dy, w]) => { const gn = c.createRadialGradient(cx + dx, cy + dy, 5, cx + dx, cy + dy, w); gn.addColorStop(0, 'rgba(120,90,170,.45)'); gn.addColorStop(1, 'rgba(120,90,170,0)'); c.fillStyle = gn; c.beginPath(); c.ellipse(cx + dx, cy + dy, w, w * .28, 0, 0, 7); c.fill(); });
+    return cy + r + 50;
   }
   if (il.tipo === 'emoji') {
-    const r = 140, cy = y + r + 30; halo(cx, cy, r * 1.7, 'rgba(243,220,160,.22)'); anillo(cx, cy, r);
-    c.font = '150px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(il.ic, cx, cy + 8); c.textBaseline = 'alphabetic';
-    let yy = cy + r + 50;
-    if (il.pal) { const n = il.pal.length; il.pal.forEach((col, i) => { const x = cx + (i - (n - 1) / 2) * 96; c.fillStyle = col; c.beginPath(); c.arc(x, yy + 30, 34, 0, 7); c.fill(); c.strokeStyle = '#D4AF6A'; c.lineWidth = 3; c.stroke(); }); yy += 80; }
+    const r = 140, cy = y + r + 40; anim.halo = { x: cx, y: cy, r: r * 1.3 };
+    halo(cx, cy, r * 1.8, 'rgba(243,220,160,.22)'); rueda(cx, cy, r + 76); anillo(cx, cy, r);
+    c.fillStyle = 'rgba(28,11,46,.55)'; c.beginPath(); c.arc(cx, cy, r - 17, 0, 7); c.fill();
+    c.font = '150px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; c.fillStyle = '#fff'; textoCentrado(c, il.ic, cx, cy);
+    let yy = cy + r + 70;
+    if (il.pal) { const n = il.pal.length; il.pal.forEach((col, i) => { const x = cx + (i - (n - 1) / 2) * 100; c.fillStyle = col; c.beginPath(); c.arc(x, yy + 30, 36, 0, 7); c.fill(); c.strokeStyle = '#D4AF6A'; c.lineWidth = 3; c.stroke(); }); yy += 80; }
     return yy;
   }
   if (il.tipo === 'radar') {
     const cs = il.cs, R = 220, cy = y + R + 50, n = cs.length, pt = (i, r) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; };
-    halo(cx, cy, R * 1.3, 'rgba(185,138,230,.2)');
+    anim.halo = { x: cx, y: cy, r: R };
+    halo(cx, cy, R * 1.3, 'rgba(185,138,230,.22)');
     c.strokeStyle = 'rgba(185,138,230,.35)'; c.lineWidth = 2;
     [.33, .66, 1].forEach(f => { c.beginPath(); cs.forEach((x, i) => c.lineTo(...pt(i, R * f))); c.closePath(); c.stroke(); });
     cs.forEach((x, i) => { c.beginPath(); c.moveTo(cx, cy); c.lineTo(...pt(i, R)); c.stroke(); });
     c.beginPath(); cs.forEach((x, i) => c.lineTo(...pt(i, R * x.v / 10))); c.closePath(); c.fillStyle = 'rgba(212,175,106,.38)'; c.fill(); c.strokeStyle = '#F3DCA0'; c.lineWidth = 4; c.stroke();
+    c.fillStyle = '#F3DCA0'; cs.forEach((x, i) => estrellaPuntas(c, ...pt(i, R * x.v / 10), 10));
     c.fillStyle = '#E3D6F2'; c.font = '500 30px Jost, sans-serif'; c.textAlign = 'center'; cs.forEach((x, i) => { const [lx, ly] = pt(i, R + 52); c.fillText(x.c, lx, ly + 10); });
     return cy + R + 70;
   }
   if (il.tipo === 'matriz') {
-    const mz = il.mz, r = 230, cy = y + r + 40, d = r * .72;
-    halo(cx, cy, r * 1.3, 'rgba(185,138,230,.22)');
-    const pos = { B: [cx, cy - r], C: [cx + r, cy], D: [cx, cy + r], A: [cx - r, cy] }, diag = [[cx - d, cy - d], [cx + d, cy - d], [cx + d, cy + d], [cx - d, cy + d]];
-    c.lineWidth = 3; c.strokeStyle = '#D4AF6A'; c.beginPath(); Object.values(pos).forEach(p => c.lineTo(...p)); c.closePath(); c.stroke();
-    c.strokeStyle = 'rgba(185,138,230,.7)'; c.beginPath(); diag.forEach(p => c.lineTo(...p)); c.closePath(); c.stroke();
-    const bol = (x, yy, n, big) => { c.fillStyle = '#2a1246'; c.beginPath(); c.arc(x, yy, big ? 62 : 48, 0, 7); c.fill(); c.strokeStyle = '#D4AF6A'; c.lineWidth = 3; c.stroke(); c.fillStyle = '#F3DCA0'; c.font = `600 ${big ? 58 : 44}px "Cormorant Garamond", serif`; c.textAlign = 'center'; c.fillText(n, x, yy + (big ? 20 : 15)); };
-    bol(...pos.A, mz.A); bol(...pos.B, mz.B); bol(...pos.C, mz.C); bol(...pos.D, mz.D); bol(cx, cy, mz.E, 1); bol(...diag[3], mz.amor); bol(...diag[2], mz.plata);
+    const mz = il.mz, r = 300, cy = y + r + 40, d = r * .72; anim.halo = { x: cx, y: cy, r: r * .5 };
+    halo(cx, cy, r * 1.2, 'rgba(185,138,230,.22)');
+    c.lineWidth = 3; c.strokeStyle = '#D4AF6A'; c.beginPath(); [[cx - r, cy], [cx, cy - r], [cx + r, cy], [cx, cy + r]].forEach(p => c.lineTo(...p)); c.closePath(); c.stroke();
+    c.strokeStyle = 'rgba(185,138,230,.7)'; c.beginPath(); [[cx - d, cy - d], [cx + d, cy - d], [cx + d, cy + d], [cx - d, cy + d]].forEach(p => c.lineTo(...p)); c.closePath(); c.stroke();
+    c.lineWidth = 1.5; c.strokeStyle = 'rgba(212,175,106,.3)'; c.beginPath(); c.moveTo(cx - r, cy); c.lineTo(cx + r, cy); c.moveTo(cx, cy - r); c.lineTo(cx, cy + r); c.stroke();
+    matrizPuntos(0, r).forEach(([k, x, yy, t]) => { const px = cx + x, py = cy + yy, rr = t === 3 ? 60 : t === 2 ? 44 : 32;
+      c.fillStyle = t === 1 ? '#22103a' : '#2a1246'; c.beginPath(); c.arc(px, py, rr, 0, 7); c.fill(); c.strokeStyle = k === 'P' ? '#9fd8a8' : k === 'O' ? '#f2b8c6' : '#D4AF6A'; c.lineWidth = 3; c.stroke();
+      c.fillStyle = k === 'P' ? '#9fd8a8' : k === 'O' ? '#f2b8c6' : '#F3DCA0'; c.font = `500 ${t === 3 ? 52 : t === 2 ? 38 : 28}px Jost, sans-serif`; textoCentrado(c, String(mz[k]), px, py); });
     return cy + r + 60;
   }
   return y;
 }
-async function compartirImagen(btn, o, nombreArchivo, texto){
-  const original = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…';
-  try {
-    const blob = await tarjetaHistoria(o);
-    const archivo = new File([blob], nombreArchivo, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [archivo] })) await navigator.share({ files: [archivo], text: texto });
-    else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombreArchivo; a.click(); }
-  } catch (e) {}
-  btn.disabled = false; btn.textContent = original;
+// Video de 6 segundos con brillos, estrellas titilando y llamas
+const VIDEO_MIME = (() => { try { return window.MediaRecorder && HTMLCanvasElement.prototype.captureStream ? ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m)) || '' : ''; } catch (e) { return ''; } })();
+async function videoHistoria(o){
+  const { cv: base, anim } = await dibujarTarjeta(o, { video: true });
+  const W = 720, H = 1280, k = W / 1080, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: VIDEO_MIME, videoBitsPerSecond: 6000000 }), partes = [];
+  rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); };
+  const est = Array.from({ length: 70 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: .8 + Math.random() * 2.6, f: Math.random() * 6.3, v: 1.2 + Math.random() * 2.5, oro: Math.random() < .4 }));
+  const ha = anim.halo || { x: 540, y: 800, r: 300 };
+  const nueva = ini => ({ x: (ha.x + (Math.random() - .5) * ha.r * 2.6) * k, y: (ha.y + ha.r * (ini ? (Math.random() * 2 - 1) : 1.1)) * k, vy: .25 + Math.random() * .7, vx: (Math.random() - .5) * .3, r: 1.5 + Math.random() * 3.5, f: Math.random() * 6.3 });
+  const chis = Array.from({ length: 34 }, () => nueva(true));
+  const DUR = 6500; rec.start(200); const t0 = performance.now();
+  await new Promise(fin => {
+    const frame = now => {
+      const t = (now - t0) / 1000;
+      c.drawImage(base, 0, 0, W, H);
+      const pul = .5 + .5 * Math.sin(t * 2.2), gh = c.createRadialGradient(ha.x * k, ha.y * k, 0, ha.x * k, ha.y * k, ha.r * 1.5 * k);
+      gh.addColorStop(0, `rgba(255,236,190,${.05 + .1 * pul})`); gh.addColorStop(1, 'rgba(255,236,190,0)'); c.fillStyle = gh; c.fillRect(0, 0, W, H);
+      if (anim.carta) { const a = anim.carta, p = ((t % 3) / 3) * (a.w + a.h) * 1.6 - a.h; c.save(); c.beginPath(); c.rect(a.x * k, a.y * k, a.w * k, a.h * k); c.clip();
+        const gs = c.createLinearGradient((a.x + p) * k, a.y * k, (a.x + p + 160) * k, (a.y + 160) * k); gs.addColorStop(0, 'rgba(255,255,255,0)'); gs.addColorStop(.5, 'rgba(255,250,230,.35)'); gs.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gs; c.fillRect(a.x * k, a.y * k, a.w * k, a.h * k); c.restore(); }
+      c.save(); c.scale(k, k); anim.llamas.forEach(l => dibujarLlama(c, l.x, l.y, l.s, t, l.f)); c.restore();
+      est.forEach(s => { const al = Math.max(0, Math.sin(t * s.v + s.f)); c.globalAlpha = al; c.fillStyle = s.oro ? '#F3DCA0' : '#FFFFFF'; if (s.r > 2.4) estrellaPuntas(c, s.x, s.y, s.r * 2.6 * (.6 + al * .4)); else { c.beginPath(); c.arc(s.x, s.y, s.r, 0, 7); c.fill(); } });
+      chis.forEach((s, i) => { s.y -= s.vy; s.x += s.vx + Math.sin(t * 2 + s.f) * .2; const al = .5 + .5 * Math.sin(t * 5 + s.f); c.globalAlpha = al; c.fillStyle = '#FFF3C8'; estrellaPuntas(c, s.x, s.y, s.r * (1 + al)); if (s.y < (ha.y - ha.r * 1.4) * k) chis[i] = nueva(false); });
+      c.globalAlpha = 1;
+      if (now - t0 < DUR) requestAnimationFrame(frame); else fin();
+    };
+    requestAnimationFrame(frame);
+  });
+  await new Promise(ok => { rec.onstop = ok; rec.stop(); });
+  return new Blob(partes, { type: VIDEO_MIME.split(';')[0] });
 }
+function elegirFormato(){
+  return new Promise(ok => {
+    $('dlg-titulo').textContent = '¿Cómo lo querés compartir?';
+    $('dlg-texto').textContent = 'La imagen sale al instante. El video tiene brillitos y destellos en movimiento (tarda unos segundos en prepararse).';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt" style="flex-direction:column"><button class="btn" type="button" id="fmt-video">✨ Video con movimiento</button><button class="btn-sec" type="button" id="fmt-img">🖼 Imagen</button><button class="link" type="button" id="fmt-no">Cancelar</button></div>';
+    $('dlg').showModal();
+    $('fmt-video').onclick = () => ok('video'); $('fmt-img').onclick = () => { $('dlg').close(); ok('imagen'); }; $('fmt-no').onclick = () => { $('dlg').close(); ok(null); };
+  });
+}
+async function compartirArchivo(blob, nombreArchivo, texto){
+  const archivo = new File([blob], nombreArchivo, { type: blob.type });
+  if (navigator.canShare && navigator.canShare({ files: [archivo] })) await navigator.share({ files: [archivo], text: texto });
+  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombreArchivo; a.click(); }
+}
+async function compartirImagen(btn, o, nombreArchivo, texto){
+  const formato = VIDEO_MIME ? await elegirFormato() : 'imagen'; if (!formato) return;
+  if (formato === 'imagen') {
+    const original = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…';
+    try { await compartirArchivo(await tarjetaHistoria(o), nombreArchivo, texto); } catch (e) {}
+    btn.disabled = false; btn.textContent = original; return;
+  }
+  $('dlg-titulo').textContent = 'Creando tu video ✨'; $('dlg-texto').textContent = 'Dejá esta pantalla abierta unos segundos…';
+  $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:7.5s"></i></div>';
+  try {
+    const blob = await videoHistoria(o), ext = /mp4/.test(blob.type) ? '.mp4' : '.webm', nom = nombreArchivo.replace(/\.png$/, ext);
+    $('dlg-titulo').textContent = '¡Tu video está listo! ✨'; $('dlg-texto').textContent = 'Tocá compartir y elegí Instagram (historia o reel).';
+    $('dlg-cuerpo').innerHTML = `<video src="${URL.createObjectURL(blob)}" autoplay loop muted playsinline style="width:100%;max-height:46vh;border-radius:12px;border:1px solid var(--linea)"></video><div class="fila-bt"><button class="btn-sec" type="button" id="vid-no">Cerrar</button><button class="btn" type="button" id="vid-si">Compartir</button></div>`;
+    $('vid-no').onclick = () => $('dlg').close();
+    $('vid-si').onclick = async () => { try { await compartirArchivo(blob, nom, texto); } catch (e) {} $('dlg').close(); };
+  } catch (e) { $('dlg-texto').textContent = 'Tu celular no pudo crear el video. Probá con la imagen.'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn-sec" type="button" onclick="document.getElementById(\'dlg\').close()">Cerrar</button></div>'; }
+}
+
 function compartirEnergia(btn){
   const hoy = new Date(), ap = arcanoPersonalDe(hoy); if (!ap) return;
   evento('Compartió', 'Mensaje del día');
@@ -1912,12 +2512,15 @@ function compartirTipo(btn){
   if (tipo === 'ser') { const s = serDe(); if (!s) return;
     o = { kicker: 'SI YO FUERA UN SER SOBRENATURAL…', fecha: 'Sería', ilus: { tipo: 'emoji', ic: s.ic, pal: s.pal }, titulo: s.n, subtitulo: s.txt,
       secciones: [{ t: 'Poderes', x: s.pod.join(' · ') }, { t: 'Debilidad', x: s.deb }, { t: 'Familiar · Objeto · Hogar', x: s.fam + ' · ' + s.obj + ' · ' + s.hog }] }; texto = 'Si yo fuera un ser sobrenatural… ' + s.ic; }
-  if (tipo === 'matriz') { const mz = matrizDe(P.diaMes, P.anioNac); if (!mz) return;
-    o = { kicker: 'MI MATRIZ DEL DESTINO', fecha: '', ilus: { tipo: 'matriz', mz }, titulo: 'Mi centro: ' + NOM[mz.E], secciones: [{ t: 'Mi personalidad', x: NOM[mz.A] }, { t: 'Mi talento', x: NOM[mz.B] }, { t: 'Mi lección', x: NOM[mz.D] }] }; }
+  if (tipo === 'matriz') { const mz = matrizCompleta(P.diaMes, P.anioNac); if (!mz) return;
+    o = { kicker: 'MI MATRIZ DEL DESTINO', fecha: '', ilus: { tipo: 'matriz', mz }, titulo: 'Mi centro: ' + NOM[mz.E], secciones: [{ t: 'Mi talento', x: NOM[mz.B] + ' · ' + ARC[mz.B].luz }, { t: 'Mi dinero', x: NOM[mz.P] }, { t: 'Mi amor', x: NOM[mz.O] }, { t: 'Mi lección', x: NOM[mz.D] }] }; }
   if (tipo === 'chino') { const ch = chinoDe(P.diaMes, P.anioNac); if (!ch) return;
-    o = { kicker: 'MI HORÓSCOPO CHINO', fecha: '', ilus: { tipo: 'emoji', ic: ch.an.ic }, titulo: ch.an.a + ' de ' + ch.el[0], subtitulo: ch.an.r, secciones: [{ t: 'En el amor', x: ch.an.amor }, new Date() < new Date(2027, 1, 6) ? { t: 'Mi 2026, año del Caballo de Fuego', x: ch.an.y26 } : null].filter(Boolean) }; }
+    const yo = CHINO.indexOf(ch.an), hoyC = new Date(), act = chinoDe(String(hoyC.getDate()).padStart(2, '0') + '/' + String(hoyC.getMonth() + 1).padStart(2, '0'), hoyC.getFullYear()).anio, ya = chinoAnio(act), rel = relChina(yo, ya.idx);
+    o = { kicker: 'MI HORÓSCOPO CHINO', fecha: '', ilus: { tipo: 'emoji', ic: ch.an.ic }, titulo: ch.an.a + ' de ' + ch.el[0], subtitulo: ch.an.r, secciones: [{ t: 'En el amor', x: ch.an.amor }, { t: 'Mi ' + act + ' · ' + REL_NOMBRE[rel].toLowerCase() + ' ' + estrellitas(REL_ANIO[rel].e), x: REL_ANIO[rel].tip }] }; }
+  if (tipo === 'animal') { const an = animalDe(); if (!an) return;
+    o = { kicker: 'MI ANIMAL DE PODER', fecha: '', ilus: { tipo: 'emoji', ic: an.ic }, titulo: an.a, subtitulo: an.med, secciones: [{ t: 'Su mensaje para mí', x: an.msg }], afirmacion: an.af }; texto = 'Mi animal de poder: ' + an.a + ' ' + an.ic; }
   if (!o) return;
-  evento('Compartió', { carta: 'Carta del día', ritual: 'Ritual', luna: 'Luna', anio: 'Arcano del año', nacimiento: 'Arcano de nacimiento', nombre: 'Nombre', numeros: 'Numerología', cualidades: 'Cualidades', ser: 'Ser sobrenatural', matriz: 'Matriz', chino: 'Horóscopo chino' }[tipo] || tipo);
+  evento('Compartió', { carta: 'Carta del día', ritual: 'Ritual', luna: 'Luna', anio: 'Arcano del año', nacimiento: 'Arcano de nacimiento', nombre: 'Nombre', numeros: 'Numerología', cualidades: 'Cualidades', ser: 'Ser sobrenatural', matriz: 'Matriz', chino: 'Horóscopo chino', animal: 'Animal de poder' }[tipo] || tipo);
   compartirImagen(btn, o, archivo, texto);
 }
 function compartirDia(btn){
@@ -1998,6 +2601,15 @@ document.addEventListener('click', async e => {
   if (b.dataset.compdia !== undefined) { compartirDia(b); return; }
   if (b.dataset.share) { compartirTipo(b); return; }
   if (b.dataset.vistagratis !== undefined) { VISTA_GRATIS = !VISTA_GRATIS; pintar(); pintarAgenda(); window.scrollTo({ top: 0 }); return; }
+  if (b.dataset.irser !== undefined) { irTab('arcanos', 'ser'); return; }
+  if (b.dataset.medita) { const m = b.dataset.medita; if (m === 'parar') { MED && clearTimeout(MED.t); try { speechSynthesis.cancel(); } catch (x) {} MED = null; const c = $('medita'); if (c) c.outerHTML = premAnimal().match(/<div class="medita"[\s\S]*$/)[0]; return; } if (m === 'sig') { MED && MED.sig(); return; } meditar(m); return; }
+  if (b.dataset.sinastria !== undefined) { const f = $('sin-fecha').value; if (!f) { $('sin-fecha').focus(); return; } try { localStorage.setItem('luzguia_sin', JSON.stringify({ nombre: $('sin-nombre').value.trim(), fecha: f, hora: $('sin-hora').value })); } catch (x) {} evento('Sección', 'Premium: sinastría calculada'); repintarPrem(); return; }
+  if (b.dataset.guardarnac !== undefined) {
+    const hora = $('nac-hora').value, lugar = $('nac-lugar').value; if (!hora) { $('nac-hora').focus(); return; }
+    b.disabled = true; b.textContent = 'Guardando…'; P.horaNac = hora; P.lugarNac = lugar;
+    try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, horaNac: hora, lugarNac: lugar }) }); } catch (x) {}
+    repintarPrem(); return;
+  }
   if (b.dataset.quieroPremium !== undefined) { pedir('Premium', 'Premium', 'Plan Premium de Mi Luz'); return; }
   if (b.dataset.tab) { irTab(b.dataset.tab); return; }
   if (b.dataset.irtab) { irTab(b.dataset.irtab); return; }
