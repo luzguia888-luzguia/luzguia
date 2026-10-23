@@ -1647,6 +1647,9 @@ V.hoy = () => {
         (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
         `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
   });
+  const visHoy = {};
+  H('Visitas').filter(v => v['Tipo'] === 'Apertura' && (fecha(v['Fecha']) || 0) >= HOY).forEach(v => { if (!esOrg(persona(v['ID Persona']))) visHoy[v['Nombre']] = (visHoy[v['Nombre']] || 0) + 1; });
+  if (Object.keys(visHoy).length) T.push({ ico:'👁', txt: 'Hoy abrieron Mi Luz: ' + Object.entries(visHoy).map(([n, c]) => esc(String(n).split(' ')[0]) + (c > 1 ? ' (' + c + ')' : '')).join(', '), sub: 'Detalle en Estadísticas', bt: `<button class="btn-sec" type="button" data-vista="estadisticas">Ver</button>` });
   H('Testimonios').filter(x => { const f = fecha(x['Fecha']); return f && diasEntre(f, HOY) <= 7; }).forEach(x => T.push({ ico:'💬', txt: `${esc(x['Nombre'])} dejó su opinión de ${esc(x['Encuentro'])} ${'★'.repeat(num(x['Puntaje']))}`, sub: esc(String(x['Comentario'] || '').slice(0, 120)), bt: `<button class="btn-sec" type="button" data-vista="miluz">Ver</button>` }));
   const cumples = cumplesProximos(D.params.cumple);
   cumples.forEach(x => T.push({ ico:'🎂', txt: x.c.dias === 0 ? `Hoy cumple ${esc(x.p['Nombre completo'])}` : `${esc(x.p['Nombre completo'])} cumple ${x.c.dias === 1 ? 'mañana' : 'el ' + lindaFecha(x.c.fecha)}`, sub: `Cumple ${x.c.edad}. Arcano de nacimiento: ${esc(x.p['Arcano nacimiento'] || '—')}`, bt: btnWA(x.p['ID Persona'], 'cumpleanos', '', '', 'Saludo de cumpleaños') }));
@@ -1968,6 +1971,25 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Cobrado a quienes no vinieron</span><b class="oro">${pesos(plataAus)}</b></div></div>`
     + '<p class="ayuda" style="margin-top:10px">Lo que pagaron quienes no vinieron cuenta en lo cobrado y en la ganancia, pero no en la cantidad de personas de cada encuentro.</p>';
   h += `<h3>Participantes</h3><div class="cifras" style="margin-top:0"><div class="cifra"><span>Personas registradas</span><b>${ps.length}</b></div><div class="cifra"><span>Volvieron a otro encuentro</span><b>${repiten}${ps.length ? ' (' + Math.round(repiten/ps.length*100) + '%)' : ''}</b></div><div class="cifra"><span>Encuentros realizados</span><b>${ts.length}</b></div><div class="cifra"><span>Asistencias en total</span><b>${asis.filter(a => a['Asistencia'] === 'Asistió').length}</b></div></div>`;
+  const vis = H('Visitas').filter(v => !esOrg(persona(v['ID Persona'])));
+  if (vis.length) {
+    const ap = vis.filter(v => v['Tipo'] === 'Apertura'), mesK = f => f.getFullYear() * 100 + f.getMonth();
+    const kHoy = mesK(HOY), meses = []; for (let i = 5; i >= 0; i--) meses.push(new Date(HOY.getFullYear(), HOY.getMonth() - i, 1));
+    const delMes = ap.filter(v => fecha(v['Fecha']) && mesK(fecha(v['Fecha'])) === kHoy);
+    const comp = vis.filter(v => v['Tipo'] === 'Compartió');
+    const porP = {};
+    const fechaH = x => { const f = fecha(x), m = String(x).match(/\s(\d{1,2}):(\d{2})/); if (f && m) f.setHours(+m[1], +m[2]); return f; };
+    ap.forEach(v => { const f = fechaH(v['Fecha']); if (!f) return; const o = porP[v['ID Persona']] = porP[v['ID Persona']] || { n: v['Nombre'], m: {}, tot: 0, ult: f, disp: {} }; o.tot++; o.m[mesK(f)] = (o.m[mesK(f)] || 0) + 1; if (f > o.ult) o.ult = f; if (v['Dispositivo']) o.disp[v['Dispositivo']] = 1; });
+    h += '<h3>Mi Luz: quién entra</h3><div class="cifras" style="margin-top:0">'
+      + `<div class="cifra"><span>Aperturas este mes</span><b class="oro">${delMes.length}</b></div>`
+      + `<div class="cifra"><span>Personas distintas este mes</span><b>${new Set(delMes.map(v => v['ID Persona'])).size}</b></div>`
+      + `<div class="cifra"><span>Aperturas en total</span><b>${ap.length}</b></div>`
+      + `<div class="cifra"><span>Imágenes compartidas</span><b>${comp.length}</b></div></div>`;
+    h += '<div style="margin-top:14px">' + tabla([{ t:'Persona', k:'n' }].concat(meses.map(m => ({ t: MESES[m.getMonth()].slice(0, 3) + ' ' + String(m.getFullYear()).slice(2), k: 'm' + mesK(m), num:1 }))).concat([{ t:'Total', k:'tot', num:1 }, { t:'Última vez', k:'ult' }, { t:'Desde', k:'disp' }]),
+      Object.values(porP).sort((a, b) => b.tot - a.tot).map(o => { const r = { n: o.n, tot: o.tot, ult: lindaFecha(o.ult) + ' ' + String(o.ult.getHours()).padStart(2, '0') + ':' + String(o.ult.getMinutes()).padStart(2, '0'), disp: Object.keys(o.disp).join(', ') }; meses.forEach(m => r['m' + mesK(m)] = o.m[mesK(m)] || ''); return r; }), '') + '</div>';
+    const secc = contar(vis.filter(v => v['Tipo'] === 'Sección'), 'Detalle'), cmp = contar(comp, 'Detalle');
+    if (secc.length || cmp.length) h += `<div class="dos-col"><div><h3>Qué secciones miran</h3>${barras(secc)}</div><div><h3>Qué comparten</h3>${barras(cmp)}</div></div>`;
+  }
   const ped = H('Pedidos');
   if (ped.length) {
     const g = {};
@@ -2012,7 +2034,7 @@ document.addEventListener('click', async e => {
     $('lk-probar').onclick = async () => {
       const out = document.createElement('p'); out.className = 'ayuda'; out.textContent = 'Probando…'; $('modal-cuerpo').appendChild(out);
       try {
-        const r = await fetch(API + '?accion=portal&codigo=' + encodeURIComponent(pp['Código portal']));
+        const r = await fetch(API + '?accion=portal&prueba=1&codigo=' + encodeURIComponent(pp['Código portal']));
         const t = await r.text(); let d; try { d = JSON.parse(t); } catch (x) { out.textContent = 'El script respondió algo que no son datos: ' + t.slice(0, 160); return; }
         out.textContent = d.ok ? '✓ El portal responde bien: ' + (d.encuentros || []).length + ' encuentros próximos, ' + (d.productos || []).length + ' productos, ' + (d.promos || []).length + ' promociones.' : '✗ El script respondió con un error: ' + d.error;
       } catch (e) { out.textContent = '✗ No hubo respuesta del script (' + (e.message || e) + '). Revisá que la implementación tenga acceso "Cualquier usuario".'; }

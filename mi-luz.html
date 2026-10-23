@@ -367,6 +367,8 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .prod-txt h4{margin:0;font-size:1rem;font-weight:500}
 .prod-txt small{color:var(--bruma)}
 .prod-txt .btn,.prod-txt .btn-sec{margin-top:auto;padding:8px 10px;font-size:.88rem}
+.comp{font-size:.85rem;margin-top:8px}
+.tirada .comp{margin-top:4px}
 footer{text-align:center;color:var(--lila-suave);font-size:.85rem;margin-top:48px}
 
 dialog{border:1px solid var(--linea);border-radius:16px;background:var(--ciruela);color:var(--luna);padding:22px;width:min(460px,92vw)}
@@ -832,6 +834,30 @@ const SEMANA = [
   { pl: 'Venus', tema: 'amor, belleza, placer y armonía', vela: 'rosa o verde' },
   { pl: 'Saturno', tema: 'protección, límites y cierre de ciclos', vela: 'negra o azul oscuro' }
 ];
+const LUNA_CONSEJO = {
+  Aries: 'Buen momento para arrancar algo que venías postergando. Cuidá las reacciones impulsivas y las discusiones.',
+  Tauro: 'Bajá el ritmo y date un gusto: comida rica, naturaleza, tu cuerpo. Ideal para decisiones prácticas y temas de dinero.',
+  Géminis: 'Aprovechá para charlas pendientes, mensajes y aprender algo nuevo. Anotá las ideas antes de que se te escapen.',
+  Cáncer: 'Día para el hogar, la familia y cuidarte. Si te sentís más sensible, no te exijas de más.',
+  Leo: 'Animate a mostrarte, crear y celebrar. Un mimo a tu autoestima hoy rinde el doble.',
+  Virgo: 'Ordená, limpiá y organizá. Los pequeños hábitos de salud tienen mucha fuerza hoy.',
+  Libra: 'Ideal para encuentros, acuerdos y embellecer tu espacio. Buscá el equilibrio entre dar y recibir.',
+  Escorpio: 'Bueno para conversaciones profundas, terapia y soltar. Evitá los celos y querer controlar.',
+  Sagitario: 'Planificá un viaje, estudiá o hacé algo que te expanda. Cuidado con prometer de más.',
+  Capricornio: 'Avanzá con lo importante: trabajo, metas y trámites. La disciplina hoy da frutos.',
+  Acuario: 'Probá algo distinto, conectá con amigas y proyectos grupales. Escuchá también lo que sentís.',
+  Piscis: 'Meditá, descansá y conectá con el arte y la intuición. Leé la letra chica antes de firmar.'
+};
+const SEMANA_CONSEJO = [
+  'Hacé algo que te haga sentir orgullosa de vos y regalate un rato al sol.',
+  'Cuidá tu mundo emocional: hogar, descanso, agua y escuchar lo que sentís.',
+  'Encará esa tarea que venís evitando y poné el cuerpo en movimiento.',
+  'Mandá ese mensaje, estudiá u ordená papeles: la mente está ágil.',
+  'Pensá en grande, agradecé y hacé algo que amplíe tus oportunidades.',
+  'Mimate, embellecé tu espacio y dedicale tiempo a tus vínculos.',
+  'Ordená, poné límites y cerrá lo que quedó abierto en la semana.'
+];
+const FASE_TXT = { crec: 'La Luna crece: es energía para sumar, empezar y hacer crecer lo que querés.', meng: 'La Luna decrece: es energía para soltar, limpiar y terminar lo pendiente.' };
 const LUNA_TONO = {
   Aries: ['fuego', 'impulso, ganas de empezar y algo de impaciencia'], Tauro: ['tierra', 'necesidad de calma, placer y seguridad'],
   Géminis: ['aire', 'curiosidad, charlas y mente inquieta'], Cáncer: ['agua', 'sensibilidad y ganas de hogar y mimos'],
@@ -955,8 +981,9 @@ function detalleDia(d){
   const L2 = [];
   L2.push(li('🌙', `Luna ${d.crec ? 'creciente' : 'menguante'} en <b>${d.signo}</b>${d.lunaHoy ? ` · <b>${d.lunaHoy.llena ? 'Luna llena' : 'Luna nueva'}</b> a las ${hora(new Date(d.lunaHoy.fecha))} hs` : d.fase === 'creciente' ? ' · cuarto creciente' : d.fase === 'menguante' ? ' · cuarto menguante' : ''}`));
   const sem = SEMANA[d.f.getDay()], tono = LUNA_TONO[d.signo];
-  L2.push(li('🪐', `<b>Día de ${sem.pl}</b>: favorece ${sem.tema}. Vela del día: ${sem.vela}.`));
-  L2.push(li('💫', `Luna en un signo de ${tono[0]}: el clima emocional trae ${tono[1]}.`));
+  L2.push(li('🌗', FASE_TXT[d.crec ? 'crec' : 'meng']));
+  L2.push(li('🪐', `<b>Día de ${sem.pl}</b>: favorece ${sem.tema}. ${SEMANA_CONSEJO[d.f.getDay()]} Vela del día: ${sem.vela}.`));
+  L2.push(li('💫', `<b>Luna en ${d.signo}</b> (signo de ${tono[0]}): el clima emocional trae ${tono[1]}. ${LUNA_CONSEJO[d.signo]}`));
   if (d.eclipseHoy) L2.push(li('✴️', `<b>Eclipse ${d.eclipseHoy.llena ? 'lunar' : 'solar'}</b>: cierres y comienzos inesperados. Los días alrededor (±3) no son buenos para decisiones grandes, firmas ni cambios de imagen.`));
   else if (d.ventEclipse) L2.push(li('✴️', 'Temporada de eclipse (±3 días): mejor no tomar decisiones grandes ni hacer cambios importantes.'));
   if (d.voc.length) L2.push(li('⏸', `<b>Luna fuera de curso</b> ${d.voc.map(v => v.desde && v.hasta ? 'de ' + hora(v.desde) + ' a ' + hora(v.hasta) + ' hs' : v.desde ? 'desde las ' + hora(v.desde) + ' hs' : v.hasta ? 'hasta las ' + hora(v.hasta) + ' hs' : 'todo el día').join(' y ')}: no es buen momento para empezar algo, firmar ni comprar cosas importantes (lo que se inicia suele no prosperar). Ideal para descansar, meditar y terminar pendientes.`));
@@ -1039,6 +1066,7 @@ function ritualHTML(k, cuandoTxt){
   return `<div class="ag-ritual">${cuandoTxt ? `<small>${cuandoTxt}</small>` : ''}<b>🕯️ ${r[0]}</b>
     ${r[2] ? `<p class="mat"><span>Vas a necesitar:</span> ${r[2]}.</p>` : ''}<p>${r[1]}</p>
     <p class="seg">Nunca dejes una vela encendida sin supervisión.</p>
+    <button class="btn-sec comp" type="button" data-share="ritual" data-ritual="${k}">✨ Compartir este ritual</button>
     ${P && P.kits ? (P.pedidos.includes('Kit: ' + r[0]) ? '<p class="hecho">✓ Nos contaste que te interesa el kit</p>' : `<button class="btn-sec kit" type="button" data-kit="${esc(r[0])}">✨ Me interesaría el kit de este ritual</button>`) : ''}</div>`;
 }
 
@@ -1100,6 +1128,14 @@ function pedirCodigo(msg){
   };
 }
 
+const DISP = /iphone|ipad|android|mobile/i.test(navigator.userAgent) ? ((matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 'app' : 'celular') : 'compu';
+// Qué secciones mira y qué comparte (una vez por sesión cada cosa)
+const VISTO = new Set();
+function evento(tipo, detalle){
+  const k = tipo + ':' + detalle; if (VISTO.has(k) || !CODIGO) return; VISTO.add(k);
+  try { fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'evento', codigo: CODIGO, tipo, detalle, disp: DISP }) }); } catch (e) {}
+}
+
 function jsonp(url){
   return new Promise((ok, mal) => {
     const nombre = 'luzguia_cb_' + Date.now();
@@ -1117,13 +1153,13 @@ async function cargar(){
   if (!CODIGO) return pedirCodigo();
   let d, detalle = '';
   try {
-    const r = await fetch(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO));
+    const r = await fetch(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO) + '&disp=' + DISP);
     const txt = await r.text();
     try { d = JSON.parse(txt); } catch (x) { detalle = 'respuesta no válida'; }
   } catch (e) { detalle = String(e.message || e); }
   // Si el primer camino falla, probamos el segundo (JSONP)
   if (!d) {
-    try { d = await jsonp(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO)); }
+    try { d = await jsonp(API + '?accion=portal&codigo=' + encodeURIComponent(CODIGO) + '&disp=' + DISP); }
     catch (e) { console.error(detalle, e); return error('No pudimos conectar con Luz Guía (' + detalle + ' / ' + (e.message || e) + '). Avisales a Belu o Mey.'); }
   }
   try {
@@ -1146,6 +1182,7 @@ function irTab(t, ancla){
   history.replaceState(null, '', location.pathname + location.search + '#' + t);
   document.querySelectorAll('.tab').forEach(x => x.hidden = x.dataset.tab !== t);
   document.querySelectorAll('.nav-tabs button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === t ? 'page' : 'false'));
+  evento('Sección', (TABS.find(x => x[0] === t) || [, , t])[2]);
   if (ancla && $(ancla)) $(ancla).scrollIntoView({ behavior: 'smooth' }); else window.scrollTo({ top: 0 });
 }
 const minus = t => String(t || '').charAt(0).toLowerCase() + String(t || '').slice(1);
@@ -1168,7 +1205,7 @@ function tiradaHTML(){
   if (elegida !== null) {
     const n = cartaTirada(+elegida), a = ARC[n];
     return `<div class="tirada revelada"><div class="carta-t"><img src="${cartaSrc(n)}" alt="${esc(NOM[n])}" onerror="this.remove()"><span>${romano(n)}</span></div>
-      <div><small>Tu carta del día</small><h4>${esc(NOM[n])}</h4><p>${a.e.split('. ')[0]}.</p><p class="preg">${a.q}</p><p class="ag-ayuda">Mañana te espera una carta nueva.</p></div></div>`;
+      <div><small>Tu carta del día</small><h4>${esc(NOM[n])}</h4><p>${a.e.split('. ')[0]}.</p><p class="preg">${a.q}</p><p class="ag-ayuda">Mañana te espera una carta nueva.</p><button class="btn-sec comp" type="button" data-share="carta">✨ Compartir mi carta</button></div></div>`;
   }
   return `<div class="tirada"><p>Respirá hondo, pensá en lo que necesitás hoy y elegí una carta.</p>
     <div class="dorsos">${[0, 1, 2].map(i => `<button type="button" class="dorso" data-tirada="${i}" aria-label="Carta ${i + 1}"><span>✦</span></button>`).join('')}</div></div>`;
@@ -1206,8 +1243,8 @@ function hoyHTML(){
       <ul class="msg-datos">
         ${num.dia ? `<li><span>🔢</span><div><b>Tu día personal ${num.dia}:</b> buen día para ${DIA_PERS[num.dia]}.</div></li>` : ''}
         <li><span>🎨</span><div><b>Tus aliados de hoy:</b> color ${a.color} y ${a.cristal}.</div></li>
-        <li><span>🌙</span><div><b>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}:</b> ${tono[1]}.</div></li>
-        <li><span>🪐</span><div><b>Día de ${sem.pl}:</b> favorece ${sem.tema}.</div></li>
+        <li><span>🌙</span><div><b>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}:</b> trae ${tono[1]}. ${LUNA_CONSEJO[d.signo]}</div></li>
+        <li><span>🪐</span><div><b>Día de ${sem.pl}:</b> favorece ${sem.tema}. ${SEMANA_CONSEJO[hoy.getDay()]}</div></li>
       </ul>
       ${verMas(ap, 'dia')}
       <div class="fila-comp"><button class="btn" type="button" id="btn-compartir">✨ Compartir mi mensaje</button></div>
@@ -1219,7 +1256,14 @@ function hoyHTML(){
   if (d.corte === 'si') chips.push('✂️ corte de pelo'); if (d.corte === 'retoque') chips.push('✂️ solo retoques');
   if (d.estetica === 'si') chips.push('💄 estética'); if (d.estetica === 'mantenimiento') chips.push('💄 solo mantenimiento');
   if (d.firma === 'si') chips.push('📝 firmas'); if (d.firma === 'cuidado') chips.push('📝 firmas con cuidado'); if (d.firma === 'evitar') chips.push('⚠️ evitá firmar');
-  if (chips.length) h += `<p class="ag-chips hoy-chips">${chips.map(x => `<span>${x}</span>`).join('')}</p><p class="ag-ayuda"><button class="link" type="button" data-irtab="agenda">Ver el detalle en tu agenda ›</button></p>`;
+  if (chips.length) {
+    const exp = [];
+    Object.keys(d.retro).filter(p => d.retro[p]).forEach(p => exp.push(`<li><span>℞</span><div><b>${p} retrógrado:</b> ${SIGNIF_RETRO[p]}</div></li>`));
+    if (d.voc.length) exp.push(`<li><span>⏸</span><div><b>Luna fuera de curso:</b> durante esas horas lo que se empieza suele no prosperar. Evitá iniciar proyectos, firmar o hacer compras importantes; es ideal para descansar, meditar y terminar pendientes.</div></li>`);
+    if (d.corte === 'retoque') exp.push(`<li><span>✂️</span><div><b>Solo retoques:</b> la Luna favorece el corte, pero con Venus retrógrado conviene evitar cambios drásticos de corte o color.</div></li>`);
+    if (d.firma === 'evitar') exp.push(`<li><span>⚠️</span><div><b>Evitá firmar:</b> si es inevitable, leé todo dos veces y confirmá fechas y montos por escrito.</div></li>`);
+    h += `<p class="ag-chips hoy-chips">${chips.map(x => `<span>${x}</span>`).join('')}</p>${exp.length ? `<details class="mas"><summary>¿Qué significa? <span aria-hidden="true">✦</span></summary><div><ul class="msg-datos" style="margin:0">${exp.join('')}</ul></div></details>` : ''}<p class="ag-ayuda"><button class="link" type="button" data-irtab="agenda">Ver el detalle en tu agenda ›</button></p>`;
+  }
   h += `<h3>Tu carta del día</h3>${tiradaHTML()}`;
   h += `<h3>Ritual de hoy</h3>${ritualHTML(d.ritual)}`;
   const estandar = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -1235,10 +1279,10 @@ function arcanosHTML(){
   if (P.arcano && P.arcano.nombre) {
     h += `<section class="lectura">${constelacion('izq')}${constelacion('der')}<small>Tu arcano de nacimiento</small>
       <div class="carta con-img" role="img" aria-label="Carta ${esc(P.arcano.nombre)}"><img class="carta-foto" src="${cartaSrc(P.arcano.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><div class="carta-in"><span class="romano">${romano(P.arcano.n)}</span><img class="simbolo" src="${document.querySelector('link[rel=icon]').href}" alt=""><span class="nombre">${esc(P.arcano.nombre)}</span></div></div>
-      <p class="texto">${esc(P.arcano.texto)}</p>${verMas(P.arcano.n, 'nacimiento')}</section>`;
+      <p class="texto">${esc(P.arcano.texto)}</p>${verMas(P.arcano.n, 'nacimiento')}<p class="fila-comp"><button class="btn-sec comp" type="button" data-share="nacimiento">✨ Compartir mi arcano</button></p></section>`;
   } else h += `<section class="lectura"><p class="texto">Todavía no tenemos tu fecha de nacimiento. Pasánosla y te calculamos tu arcano.</p></section>`;
   if (P.anual && P.anual.nombre) {
-    h += `<section class="anual"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(P.anual.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(P.anual.n)}</span></div><div><small>La energía de tu ${esc(P.anio)}</small><h2>${esc(P.anual.nombre)}</h2><p>${esc(P.anual.texto)}</p></div></section>${verMas(P.anual.n, 'anual')}`;
+    h += `<section class="anual"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(P.anual.n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(P.anual.n)}</span></div><div><small>La energía de tu ${esc(P.anio)}</small><h2>${esc(P.anual.nombre)}</h2><p>${esc(P.anual.texto)}</p></div></section>${verMas(P.anual.n, 'anual')}<p class="fila-comp"><button class="btn-sec comp" type="button" data-share="anio">✨ Compartir mi año</button></p>`;
   }
   const anio = +P.anio || new Date().getFullYear();
   if (P.diaMes) {
@@ -1255,6 +1299,7 @@ function arcanosHTML(){
   const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre);
   h += `<h3>Tu nombre</h3><div class="nombre-caja"><span class="nombre-script">${esc(P.nombre)}</span>
     <p>${signif ? esc(signif) : 'Todavía no tenemos el significado de tu nombre en nuestro registro. Lo sumamos pronto ✨'}</p>
+    ${signif ? '<p class="fila-comp"><button class="btn-sec comp" type="button" data-share="nombre">✨ Compartir mi nombre</button></p>' : ''}
     ${num.expresion ? `<ul class="num-lista">
       <li><b>${num.expresion}</b><div><span>Número de expresión</span>${NUM_TXT[num.expresion][0]}: tus talentos y la forma en que te mostrás.</div></li>
       <li><b>${num.alma}</b><div><span>Número del alma</span>${NUM_TXT[num.alma][0]}: lo que tu corazón desea en lo profundo.</div></li>
@@ -1266,7 +1311,8 @@ function arcanosHTML(){
       <ul class="num-lista">
         <li><b>${num.anio}</b><div><span>Tu año personal ${new Date().getFullYear()}</span>${ANIO_PERS[num.anio]}</div></li>
         <li><b>${num.mes}</b><div><span>Tu mes personal</span>Energía de ${NUM_TXT[num.mes][0].toLowerCase()}.</div></li>
-      </ul><p class="ag-ayuda">El camino de vida suma todos los números de tu fecha de nacimiento. El año personal se renueva cada 1° de enero.</p></div>`;
+      </ul><p class="ag-ayuda">El camino de vida suma todos los números de tu fecha de nacimiento. El año personal se renueva cada 1° de enero.</p>
+      <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="numeros">✨ Compartir mis números</button></p></div>`;
   }
   return h;
 }
@@ -1279,7 +1325,7 @@ function agendaHTML(){
       <small>${esHoy ? 'Hoy' : DIAS[f.getDay()] + ' ' + f.getDate() + ' de ' + MESES[f.getMonth()]}</small>
       <h4>${lu.llena ? 'Luna llena' : 'Luna nueva'} en ${lu.signo}</h4>
       <p>${lu.llena ? 'Ilumina ' + g.area + ': tiempo de culminar, ver con claridad y soltar lo que ya no suma.' : 'Abre un nuevo ciclo en ' + g.area + ': tiempo de sembrar intenciones y empezar.'}</p>
-      <p><b>Buen momento para:</b> ${g.fav.join(', ')}.<br><b>Cuidado con:</b> ${g.ojo}.</p></div></div>`;
+      <p><b>Buen momento para:</b> ${g.fav.join(', ')}.<br><b>Cuidado con:</b> ${g.ojo}.</p><button class="btn-sec comp" type="button" data-share="luna">✨ Compartir esta luna</button></div></div>`;
   }
   const hoy = new Date();
   AG = AG || { y: hoy.getFullYear(), m: hoy.getMonth(), sel: hoy.getDate() };
@@ -1399,11 +1445,33 @@ async function compartirImagen(btn, o, nombreArchivo, texto){
 }
 function compartirEnergia(btn){
   const hoy = new Date(), ap = arcanoPersonalDe(hoy); if (!ap) return;
+  evento('Compartió', 'Mensaje del día');
   compartirImagen(btn, { kicker: 'MI MENSAJE DEL DÍA', fecha: DIAS[hoy.getDay()] + ' ' + hoy.getDate() + ' de ' + MESES[hoy.getMonth()], carta: ap, titulo: NOM[ap], lineas: [DIA[ap][0], DIA[ap][1]], afirmacion: ARC[ap].af },
     'mi-mensaje-luz-guia.png', 'Mi mensaje de hoy: ' + NOM[ap] + ' ✨');
 }
+function compartirTipo(btn){
+  const tipo = btn.dataset.share, hoy = new Date(), fecha = DIAS[hoy.getDay()] + ' ' + hoy.getDate() + ' de ' + MESES[hoy.getMonth()];
+  let o = null, archivo = 'luz-guia-' + tipo + '.png', texto = '✨ Mi Luz · Luz Guía';
+  if (tipo === 'carta') { let i = 0; try { i = +localStorage.getItem('luzguia_tirada_' + claveDia()); } catch (e) {} const n = cartaTirada(i), a = ARC[n];
+    o = { kicker: 'MI CARTA DEL DÍA', fecha, carta: n, titulo: NOM[n], lineas: [a.e.split('. ')[0] + '.', a.q], afirmacion: a.af }; texto = 'Mi carta del día: ' + NOM[n] + ' ✨'; }
+  if (tipo === 'ritual') { const r = RITUALES[btn.dataset.ritual]; if (!r) return;
+    o = { kicker: 'RITUAL', fecha, titulo: r[0], lineas: [r[2] ? 'Vas a necesitar: ' + r[2] + '.' : '', r[1]].filter(Boolean) }; texto = r[0] + ' 🕯️'; }
+  if (tipo === 'luna') { const lu = proximaLuna(); if (!lu) return; const g = SIGNOS[lu.signo], f = new Date(lu.fecha);
+    o = { kicker: 'LA LUNA DE ESTOS DÍAS', fecha: DIAS[f.getDay()] + ' ' + f.getDate() + ' de ' + MESES[f.getMonth()], titulo: (lu.llena ? 'Luna llena' : 'Luna nueva') + ' en ' + lu.signo,
+      lineas: [(lu.llena ? 'Ilumina ' : 'Abre un nuevo ciclo en ') + g.area + '.', 'Buen momento para: ' + g.fav.join(', ') + '.', 'Cuidado con: ' + g.ojo + '.'] }; texto = o.titulo + ' 🌙'; }
+  if (tipo === 'anio' && P.anual) { const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto);
+    o = { kicker: 'LA ENERGÍA DE MI ' + (P.anio || hoy.getFullYear()), fecha: 'Mi arcano del año', carta: P.anual.n, titulo: P.anual.nombre, lineas: [P.anual.texto, num.anio ? 'Año personal ' + num.anio + ': ' + ANIO_PERS[num.anio] : ''].filter(Boolean), afirmacion: ARC[+P.anual.n].af }; }
+  if (tipo === 'nacimiento' && P.arcano) o = { kicker: 'MI ARCANO DE NACIMIENTO', fecha: 'Mi esencia', carta: P.arcano.n, titulo: P.arcano.nombre, lineas: [ARC[+P.arcano.n].e.split('. ')[0] + '.', 'Mi luz: ' + ARC[+P.arcano.n].luz + '.'], afirmacion: ARC[+P.arcano.n].af };
+  if (tipo === 'nombre') o = { kicker: 'EL SIGNIFICADO DE MI NOMBRE', fecha: '', titulo: P.nombre, lineas: [significadoNombre(P.nombreCompleto || P.nombre, P.significadoNombre)] };
+  if (tipo === 'numeros') { const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre); if (!num.camino) return;
+    o = { kicker: 'MI NUMEROLOGÍA', fecha: 'Camino de vida', titulo: num.camino + ' · ' + NUM_TXT[num.camino][0], lineas: [NUM_TXT[num.camino][1], 'Año personal ' + num.anio + ': ' + ANIO_PERS[num.anio]] }; }
+  if (!o) return;
+  evento('Compartió', { carta: 'Carta del día', ritual: 'Ritual', luna: 'Luna', anio: 'Arcano del año', nacimiento: 'Arcano de nacimiento', nombre: 'Nombre', numeros: 'Numerología' }[tipo] || tipo);
+  compartirImagen(btn, o, archivo, texto);
+}
 function compartirDia(btn){
   const x = DIA_COMPARTIR; if (!x) return;
+  evento('Compartió', 'Día de la agenda');
   const lineas = x.lineas.slice();
   if (x.ritual) lineas.push('Ritual: ' + x.ritual[0] + '. ' + x.ritual[1].split('. ')[0] + '.');
   compartirImagen(btn, { kicker: 'MI AGENDA MÁGICA', fecha: x.fecha, titulo: x.titulo, lineas }, 'mi-dia-luz-guia.png', x.titulo + ' ✨');
@@ -1476,6 +1544,7 @@ document.addEventListener('click', async e => {
   }
   if (b.id === 'btn-compartir') { compartirEnergia(b); return; }
   if (b.dataset.compdia !== undefined) { compartirDia(b); return; }
+  if (b.dataset.share) { compartirTipo(b); return; }
   if (b.dataset.tab) { irTab(b.dataset.tab); return; }
   if (b.dataset.irtab) { irTab(b.dataset.irtab); return; }
   if (b.dataset.guardarig !== undefined) { guardarIG(b); return; }
