@@ -361,13 +361,13 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .prem-cab{text-align:center;border:1px solid var(--oro);border-radius:18px;padding:20px 18px;margin:18px 0;background:radial-gradient(circle at 50% 0,rgba(212,175,106,.22),rgba(39,16,64,.85) 70%)}
 .prem-cab small{color:var(--oro);letter-spacing:.12em}.prem-cab h2{font-family:var(--script);font-weight:400;font-size:3.2rem;color:var(--luna);margin:0;line-height:1.2}
 .prem-cab p{color:var(--bruma);margin:6px 0 0}.prem-org{font-size:.9rem;color:var(--oro)!important}
-.prem-item,.prem-sec summary{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--linea);border-radius:14px;background:rgba(39,16,64,.75);margin-bottom:10px}
-.prem-item > span,.prem-sec summary > span{font-size:1.6rem;text-align:center}
+.prem-item,.prem-sec > summary{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--linea);border-radius:14px;background:rgba(39,16,64,.75);margin-bottom:10px}
+.prem-item > span,.prem-sec > summary > span{font-size:1.6rem;text-align:center}
 .prem-item h4,.prem-sec h4{margin:0;font-family:var(--serif);font-size:1.15rem;color:var(--luna);font-weight:600}
-.prem-item p,.prem-sec summary p{margin:2px 0 0;color:var(--bruma);font-size:.88rem}
+.prem-item p,.prem-sec > summary p{margin:2px 0 0;color:var(--bruma);font-size:.88rem}
 .prem-item.pronto{opacity:.6}
-.prem-sec{margin-bottom:10px}.prem-sec summary{list-style:none;cursor:pointer;margin-bottom:0}.prem-sec summary::-webkit-details-marker{display:none}
-.prem-sec[open] summary{border-color:var(--oro);border-radius:14px 14px 0 0}
+.prem-sec{margin-bottom:10px}.prem-sec > summary{list-style:none;cursor:pointer;margin-bottom:0}.prem-sec > summary::-webkit-details-marker{display:none}
+.prem-sec[open] > summary{border-color:var(--oro);border-radius:14px 14px 0 0}
 .prem-cuerpo{border:1px solid var(--oro);border-top:0;border-radius:0 0 14px 14px;padding:14px 16px;background:rgba(28,11,46,.85);color:var(--luna)}
 .prem-cuerpo .sub{color:var(--oro);font-weight:600;margin:14px 0 4px}.prem-cuerpo ul{margin:4px 0;padding-left:20px}
 .prem-cta{text-align:center;margin:16px 0}.prem-precio{font-family:var(--serif);font-size:1.5rem;color:var(--oro);margin:0 0 10px}
@@ -394,6 +394,8 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .prem-gratis{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;width:100%;text-align:left;padding:14px 16px;border:1px solid var(--oro);border-radius:14px;background:linear-gradient(120deg,rgba(212,175,106,.18),rgba(91,42,134,.4));color:var(--luna);font:inherit;margin-bottom:14px;cursor:pointer}
 .prem-gratis > span{font-size:2rem;text-align:center}.prem-gratis small{color:var(--oro)}.prem-gratis b{display:block;font-family:var(--serif);font-size:1.15rem}.prem-gratis p{margin:2px 0 0;font-size:.85rem;color:var(--bruma)}
 .rueda{display:block;width:100%;max-width:360px;margin:6px auto}
+.corr{margin:6px 0 12px;text-align:center}.corr summary{list-style:none;cursor:pointer;color:var(--oro);font-size:.88rem;text-decoration:underline}.corr summary::-webkit-details-marker{display:none}.corr > div{text-align:left}
+.cuspides{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:.82rem;color:var(--bruma)}.cuspides span{border:1px solid rgba(185,138,230,.18);border-radius:8px;padding:5px 7px}.cuspides b{color:var(--oro);margin-right:6px}
 .tres{display:grid;gap:10px;margin:12px 0}.tres > div{border:1px solid var(--linea);border-radius:12px;padding:12px;background:rgba(91,42,134,.22)}.tres small{color:var(--oro)}.tres b{display:block;font-family:var(--serif);font-size:1.15rem}.tres p{margin:4px 0 0;font-size:.93rem}
 .elem div{display:grid;grid-template-columns:62px 1fr 40px;gap:8px;align-items:center;font-size:.85rem;margin-bottom:6px}.elem i{display:block;height:8px;border-radius:6px;background:linear-gradient(90deg,var(--oro),#B98AE6)}.elem b{color:var(--oro);font-weight:500;text-align:right}
 .areas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.ar-c{border:1px solid var(--linea);border-radius:12px;padding:10px;background:rgba(39,16,64,.5);min-width:0}.ar-c.niv2{border-color:var(--oro);background:rgba(212,175,106,.12)}.ar-c small{display:block;color:var(--luna);font-weight:500}.ar-c p{margin:4px 0 0;font-size:.84rem;color:var(--bruma)}
@@ -640,7 +642,7 @@ function helio(el, T){
   const co = Math.cos(om), so = Math.sin(om), cO = Math.cos(Or), sO = Math.sin(Or), cI = Math.cos(I);
   return [(co*cO - so*sO*cI)*x + (-so*cO - co*sO*cI)*y, (co*sO + so*cO*cI)*x + (-so*sO + co*cO*cI)*y];
 }
-function longPlaneta(nombre, jd){ const T = (jd - 2451545) / 36525, p = helio(EL[nombre], T), t = helio(EL.Tierra, T); return nrm(Math.atan2(p[1] - t[1], p[0] - t[0]) / RP); }
+function longPlaneta(nombre, jd){ const T = (jd - 2451545) / 36525, p = helio(EL[nombre], T), t = helio(EL.Tierra, T); return nrm(Math.atan2(p[1] - t[1], p[0] - t[0]) / RP + 1.396971 * T); }
 function retrogrado(nombre, jd){ let d = longPlaneta(nombre, jd + .5) - longPlaneta(nombre, jd - .5); if (d > 180) d -= 360; if (d < -180) d += 360; return d < 0; }
 const PLANETAS = ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno', 'Urano', 'Neptuno', 'Plutón'];
 
@@ -1898,6 +1900,15 @@ function ascMc(jd, lat, lon){
   return { asc: nrm2(Math.atan2(Math.cos(lst), -(Math.sin(lst) * Math.cos(eps) + Math.tan(lat * RP) * Math.sin(eps))) / RP), mc: nrm2(Math.atan2(Math.sin(lst), Math.cos(lst) * Math.cos(eps)) / RP) };
 }
 const signoDe = l => ZOD[Math.floor(nrm2(l) / 30)];
+// Casas Placidus (el sistema más usado). Devuelve las 12 cúspides, empezando por el ascendente.
+function placidus(jd, lat, lon){
+  const eps = 23.4393 * RP, ramc = nrm2(280.46061837 + 360.98564736629 * (jd - 2451545) + lon), phi = lat * RP, am = ascMc(jd, lat, lon);
+  const lonDeAR = a => nrm2(Math.atan2(Math.sin(a * RP), Math.cos(a * RP) * Math.cos(eps)) / RP);
+  const cusp = (base, k) => { let l = lonDeAR(ramc + base); for (let i = 0; i < 30; i++) { const d = Math.asin(Math.sin(eps) * Math.sin(l * RP)), x = Math.max(-1, Math.min(1, Math.tan(phi) * Math.tan(d))); l = lonDeAR(ramc + base + k * Math.asin(x) / RP); } return l; };
+  const c11 = cusp(30, 1 / 3), c12 = cusp(60, 2 / 3), c2 = cusp(120, 2 / 3), c3 = cusp(150, 1 / 3);
+  return [am.asc, c2, c3, nrm2(am.mc + 180), nrm2(c11 + 180), nrm2(c12 + 180), nrm2(am.asc + 180), nrm2(c2 + 180), nrm2(c3 + 180), am.mc, c11, c12];
+}
+function casaEn(cus, l){ for (let i = 0; i < 12; i++) { const a = cus[i], b = cus[(i + 1) % 12]; if (nrm2(l - a) < nrm2(b - a)) return i; } return 0; }
 function horaDe(t){ const m = String(t || '').match(/(\d{1,2})[:.hH](\d{2})/); return m ? [+m[1], +m[2]] : null; }
 function jdNac(diaMes, anio, hora){ const m = String(diaMes).match(/(\d{2})\/(\d{2})/); const h = horaDe(hora) || [12, 0]; return jdDe(new Date(Date.UTC(+anio, +m[2] - 1, +m[1], h[0] + 3, h[1]))); }
 const ciudad = n => CIUDADES.find(c => c[0] === n) || CIUDADES[0];
@@ -1909,8 +1920,8 @@ function revolucion(){
   let jd = jdNac(P.diaMes, y, P.horaNac);
   for (let i = 0; i < 8; i++) { let d = solN - longSolar(jd); if (d > 180) d -= 360; if (d < -180) d += 360; jd += d / 0.98565; }
   const cd = ciudad(leerLS('luzguia_sr_ciudad') || P.lugarNac || CIUDADES[0][0]), am = ascMc(jd, cd[1], cd[2]), pos = posiciones(jd);
-  const casa = l => Math.floor(nrm2(l - am.asc) / 30);
-  return { jd, fecha: new Date((jd - 2440587.5) * 86400000), y, ciudad: cd[0], asc: am.asc, mc: am.mc, pos, casa, natalSol: solN, hora: !!horaDe(P.horaNac) };
+  const cus = placidus(jd, cd[1], cd[2]), casa = l => casaEn(cus, l);
+  return { cus, jd, fecha: new Date((jd - 2440587.5) * 86400000), y, ciudad: cd[0], asc: am.asc, mc: am.mc, pos, casa, natalSol: solN, hora: !!horaDe(P.horaNac) };
 }
 function periodosRetro(nombre, desde, dias){
   const out = []; let ini = null;
@@ -1955,7 +1966,7 @@ function premRevolucion(){
   const sig = Math.floor(sr.natalSol / 30), dias = [];
   for (let i = 0; i < 95; i++) { const f = new Date(); f.setHours(12, 0, 0, 0); f.setDate(f.getDate() + i); if (Math.floor(longLuna(jdDe(f)) / 30) === sig) { const u = dias[dias.length - 1]; if (u && (f - u[1]) <= 86400000 * 1.5) u[1] = f; else dias.push([f, f]); } }
   h += `<p class="sub">✨ Tus días de poder</p><p>Cuando la Luna pasa por tu signo (${ZOD[sig]}), tu energía se renueva: son días ideales para decisiones, rituales y empezar cosas. Los próximos: ${dias.slice(0, 4).map(([a, b]) => a.getDate() + (b > a ? '–' + b.getDate() : '') + ' de ' + MESES[b.getMonth()]).join(', ')}.</p>
-    <p class="ag-ayuda">Para el día a día (qué conviene hacer cada día), mirá tu Agenda mágica. Carta calculada con casas iguales desde el ascendente y horario de Argentina; tomalo como guía.</p>`;
+    <p class="ag-ayuda">Para el día a día (qué conviene hacer cada día), mirá tu Agenda mágica. Carta calculada con casas Placidus y horario de Argentina; tomalo como guía.</p>`;
   return h;
 }
 
@@ -2104,8 +2115,8 @@ function natal(){
   if (!P.diaMes || !P.anioNac) return null;
   const k = P.diaMes + P.anioNac + P.horaNac + P.lugarNac; if (k === NAT_K) return NAT;
   const jd = jdNac(P.diaMes, P.anioNac, P.horaNac), hora = !!horaDe(P.horaNac), cd = ciudad(P.lugarNac || CIUDADES[0][0]), pos = posTodas(jd);
-  let asc, mc = null; if (hora) { const a = ascMc(jd, cd[1], cd[2]); asc = a.asc; mc = a.mc; } else asc = Math.floor(pos.Sol / 30) * 30;
-  NAT_K = k; NAT = { jd, pos, asc, mc, hora, ciudad: cd[0], casa: l => Math.floor(nrm2(l - asc) / 30) };
+  let asc, mc = null, cus; if (hora) { cus = placidus(jd, cd[1], cd[2]); asc = cus[0]; mc = cus[9]; } else { asc = Math.floor(pos.Sol / 30) * 30; cus = Array.from({ length: 12 }, (x, i) => nrm2(asc + i * 30)); }
+  NAT_K = k; NAT = { jd, pos, asc, mc, hora, cus, ciudad: cd[0], casa: l => casaEn(cus, l) };
   return NAT;
 }
 const gradoTxt = l => Math.floor(nrm2(l) % 30) + '° ' + ZOD[Math.floor(nrm2(l) / 30)];
@@ -2123,7 +2134,7 @@ function ruedaSVG(n, conAspectos){
   let s = `<svg class="rueda" viewBox="-16 -16 ${S + 32} ${S + 32}" role="img" aria-label="Tu carta natal"><circle cx="${c}" cy="${c}" r="${R1}" fill="#1f0d35" stroke="#D4AF6A" stroke-width="1.5"/><circle cx="${c}" cy="${c}" r="${R2}" fill="#170a28" stroke="#D4AF6A" stroke-width="1"/><circle cx="${c}" cy="${c}" r="${R3 - 30}" fill="none" stroke="rgba(185,138,230,.35)"/>`;
   for (let i = 0; i < 12; i++) { const [x1, y1] = xy(i * 30, R1), [x2, y2] = xy(i * 30, R2), [gx, gy] = xy(i * 30 + 15, (R1 + R2) / 2);
     s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(212,175,106,.6)"/><text x="${gx}" y="${gy + 5}" text-anchor="middle" font-size="14" fill="${['#f29a7b', '#a8d08d', '#f3dca0', '#9ec9f2'][i % 4]}">${TXT(GLIFO_SIGNO[i])}</text>`; }
-  for (let i = 0; i < 12; i++) { const l = n.asc + i * 30, [x1, y1] = xy(l, R2), [x2, y2] = xy(l, R3 - 30), [tx, ty] = xy(l + 15, R3 - 18);
+  for (let i = 0; i < 12; i++) { const l = n.cus[i], sig = n.cus[(i + 1) % 12], [x1, y1] = xy(l, R2), [x2, y2] = xy(l, R3 - 30), [tx, ty] = xy(l + nrm2(sig - l) / 2, R3 - 18);
     s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${i % 3 === 0 && n.hora ? '#D4AF6A' : 'rgba(185,138,230,.3)'}" stroke-width="${i % 3 === 0 && n.hora ? 1.4 : .8}"/><text x="${tx}" y="${ty + 3}" text-anchor="middle" font-size="8" fill="#8E7AA8" font-family="Jost">${i + 1}</text>`; }
   if (conAspectos) aspectosNatales(n).filter(a => a.ang && !['ASC', 'MC'].includes(a.a) && !['ASC', 'MC'].includes(a.b)).slice(0, 14).forEach(a => { const [x1, y1] = xy(n.pos[a.a], R3 - 32), [x2, y2] = xy(n.pos[a.b], R3 - 32);
     s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${a.ang === 90 || a.ang === 180 ? 'rgba(242,140,160,.55)' : 'rgba(212,175,106,.55)'}" stroke-width="1"/>`; });
@@ -2139,16 +2150,18 @@ function premNatal(){
   let h = `<p class="intro">Tu carta natal es una foto del cielo en el momento exacto en que naciste. Muestra dónde estaban el Sol, la Luna y los planetas, y en qué área de tu vida (casa) cae cada uno. Es el mapa de tu personalidad, tus talentos y tus desafíos.</p>`;
   if (!n.hora) h += datosNacimientoHTML('Sin tu hora de nacimiento usamos casas solares (tu signo solar como casa 1). Con la hora, calculamos tu ascendente y tus casas reales:');
   h += ruedaSVG(n, true) + `<p class="ag-ayuda" style="text-align:center">Naciste en ${esc(n.ciudad)}${n.hora ? ' a las ' + esc(P.horaNac) + ' hs' : ''}. Líneas doradas: aspectos armónicos · rosas: tensos.</p>`;
+  if (n.hora) h += `<details class="corr"><summary>¿Tu hora o tu lugar no son correctos? Corregilos ›</summary><div>${datosNacimientoHTML('Cargá la hora exacta que figura en tu partida de nacimiento: unos minutos cambian el ascendente y las casas.')}</div></details>`;
   h += `<div class="tres"><div><small>☉ Sol en ${ZOD[si(n.pos.Sol)]}</small><b>Tu esencia</b><p>${SOL_SIGNO[si(n.pos.Sol)]}</p></div><div><small>☽ Luna en ${ZOD[si(n.pos.Luna)]}</small><b>Tus emociones</b><p>${LUNA_SIGNO[si(n.pos.Luna)]}</p></div>${n.hora ? `<div><small>AC Ascendente en ${ZOD[si(n.asc)]}</small><b>Cómo te ven</b><p>${ASC_SIGNO[si(n.asc)]}</p></div>` : ''}</div>`;
   h += '<p class="sub">Tus planetas</p><ul class="num-lista">';
   h += [['Sol', `Tu identidad se juega en ${CASA_SR[n.casa(n.pos.Sol)].area}.`], ['Luna', `Necesitás sentirte segura en ${CASA_SR[n.casa(n.pos.Luna)].area}.`]].map(([p, t]) => `<li><b>${TXT(GLIFO[p])}</b><div><span>${p} en ${gradoTxt(n.pos[p])} · casa ${n.casa(n.pos[p]) + 1}</span>${t}</div></li>`).join('');
   h += PL_NAT.slice(2).concat(['Nodo']).map(p => { const l = n.pos[p], c = n.casa(l); return `<li><b>${TXT(GLIFO[p])}</b><div><span>${p === 'Nodo' ? 'Nodo Norte' : p} en ${gradoTxt(l)} · casa ${c + 1}</span>${PLANETA_ROL[p].charAt(0).toUpperCase() + PLANETA_ROL[p].slice(1)}: se expresa ${SIGNO_ESTILO[si(l)]}, y se juega en ${CASA_SR[c].area}.</div></li>`; }).join('') + '</ul>';
+  if (n.hora) h += `<p class="sub">Tus casas</p><div class="cuspides">${n.cus.map((c, i) => `<span><b>${i + 1}</b>${gradoTxt(c)}</span>`).join('')}</div>`;
   if (n.hora) h += `<p class="ag-ayuda">Medio Cielo en ${gradoTxt(n.mc)}: tu vocación y tu imagen pública se viven de modo ${SIGNO_ADJ[si(n.mc)]}.</p>`;
   const cuenta = { Fuego: 0, Tierra: 0, Aire: 0, Agua: 0 }; ['Sol', 'Luna', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].forEach(p => cuenta[ELEM_SIGNO[si(n.pos[p]) % 4]] += (p === 'Sol' || p === 'Luna') ? 2 : 1);
   const orden = Object.entries(cuenta).sort((a, b) => b[1] - a[1]), tot = orden.reduce((a, x) => a + x[1], 0);
   h += `<p class="sub">Tus elementos</p><div class="elem">${orden.map(([e, v]) => `<div><span>${e}</span><i style="width:${Math.round(v / tot * 100)}%"></i><b>${Math.round(v / tot * 100)}%</b></div>`).join('')}</div><p>${ELEM_TXT[orden[0][0]]}${orden[3][1] === 0 ? ' ' + ELEM_FALTA[orden[3][0]] : ''}</p>`;
   h += '<p class="sub">Tus aspectos más importantes</p><ul class="num-lista">' + aspectosNatales(n).slice(0, 8).map(a => `<li><b>${TXT(a.gl)}</b><div><span>${a.a === 'ASC' ? 'Ascendente' : a.a} en ${a.nom} con ${a.b === 'ASC' ? 'Ascendente' : a.b === 'MC' ? 'Medio Cielo' : a.b}</span>${ROL_CORTO[a.a].charAt(0).toUpperCase() + ROL_CORTO[a.a].slice(1)} y ${ROL_CORTO[a.b] || a.b} ${a.txt}.</div></li>`).join('') + '</ul>';
-  return h + `<p class="ag-ayuda">Carta calculada con fórmulas astronómicas, casas iguales${n.hora ? ' desde el ascendente' : ' (solares)'} y horario de Argentina.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="natal">✨ Compartir mi carta</button></p>`;
+  return h + `<p class="ag-ayuda">Carta calculada con fórmulas astronómicas (verificadas contra la efeméride suiza), ${n.hora ? 'casas Placidus' : 'casas solares'} y horario de Argentina.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="natal">✨ Compartir mi carta</button></p>`;
 }
 
 /* Tránsitos */
