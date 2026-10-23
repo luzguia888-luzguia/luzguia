@@ -896,6 +896,7 @@ const ESQ = {
     {k:'Mensaje de WhatsApp', t:'area', full:1, filas:2, lab:'Mensaje que les llega a ustedes por WhatsApp (opcional)'}]},
   Testimonios: { nombre: 'testimonio', clave: 'Nombre', etiqueta: 'Encuentro', campos: [
     {k:'Comentario', t:'area', full:1, filas:4}, {k:'Se puede publicar', t:'check', lab:'Autorizó publicarlo'}, {k:'Destacado', t:'check', lab:'Destacado'}]},
+  Preguntas: { nombre: 'pregunta', clave: 'Pregunta', etiqueta: 'Pregunta', campos: [{k:'Respuesta', t:'area', full:1}, {k:'Cartas', t:'text'}, {k:'Estado', t:'sel', o:() => ['Nueva','Respondida']}]},
   Pedidos: { nombre: 'pedido', clave: 'Nombre', etiqueta: 'Qué', campos: [
     {k:'Estado', t:'sel', o:() => L('Estados pedido'), req:1}, {k:'Motivo', t:'sel', o:() => L('Motivos sin compra'), lab:'Motivo (si no compró)'}, {k:'Mensaje', t:'area', full:1}]},
   Plantillas: { nombre: 'plantilla', clave: 'Clave', etiqueta: 'Nombre', campos: [
@@ -1658,6 +1659,8 @@ V.hoy = () => {
     const d = diasEntre(HOY, fecha(p['Premium hasta']));
     if (d <= 5 && d >= -3) T.push({ ico:'💎', txt: `El Premium de ${esc(p['Nombre completo'])} ${d < 0 ? 'venció' : d === 0 ? 'vence hoy' : 'vence ' + (d === 1 ? 'mañana' : 'en ' + d + ' días')}`, sub: 'Vence el ' + lindaFecha(fecha(p['Premium hasta'])), bt: btnWA(p['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(p['ID Persona'])}|">Renovar</button>` });
   });
+  H('Preguntas').filter(x => x['Estado'] !== 'Respondida').forEach(x => T.push({ ico:'💌', txt: `${esc(x['Nombre'])} hizo su pregunta del mes`, sub: '"' + esc(x['Pregunta']) + '" · ' + esc(x['Fecha']),
+    bt: `<button class="btn" type="button" data-responder="${x._fila}">Responder con el tarot</button><button class="ic" type="button" title="Borrar" data-borrar="Preguntas|${x._fila}">🗑</button>` }));
   const visHoy = {};
   H('Visitas').filter(v => v['Tipo'] === 'Apertura' && (fecha(v['Fecha']) || 0) >= HOY).forEach(v => { const k = String(v['Nombre']).split(' ')[0] + (esOrg(persona(v['ID Persona'])) ? ' (vos o Mey)' : ''); visHoy[k] = (visHoy[k] || 0) + 1; });
   if (Object.keys(visHoy).length) T.push({ ico:'👁', txt: 'Hoy abrieron Mi Luz: ' + Object.entries(visHoy).map(([n, c]) => esc(n) + (c > 1 ? ' (' + c + ')' : '')).join(', '), sub: 'Detalle en Estadísticas', bt: `<button class="btn-sec" type="button" data-vista="estadisticas">Ver</button>` });
@@ -1990,6 +1993,8 @@ V.estadisticas = () => {
     + `<div class="cifra"><span>Pidieron ser Premium</span><b>${pidenPrem.length}</b></div>`
     + `<div class="cifra"><span>Esperando activación</span><b>${pidenPrem.filter(x => x['Estado'] === 'Nuevo').length}</b></div></div>`
     + (prem.length ? '<p class="ayuda" style="margin-top:10px">' + prem.map(p => esc(p['Nombre completo']) + (fecha(p['Premium hasta']) ? ' (hasta ' + lindaFecha(fecha(p['Premium hasta'])) + ')' : '')).join(' · ') + '</p>' : '<p class="ayuda" style="margin-top:10px">Para dar Premium a alguien, editá la persona y elegí Plan: Premium. Vos y Mey ya tienen acceso a todo.</p>');
+  const preg = H('Preguntas');
+  if (preg.length) h += '<p class="ayuda" style="margin-top:6px">💌 Preguntas del mes: ' + preg.length + ' recibidas · ' + preg.filter(x => x['Estado'] === 'Respondida').length + ' respondidas.</p>';
   if (!visTodas.length) h += '<h3>Mi Luz: quién entra</h3><p class="vacio">Todavía no hay aperturas registradas. Cada vez que alguien abra Mi Luz va a aparecer acá (y te llega un mail). Si ya entraste y no aparece nada, revisá que en Apps Script hayas hecho <b>Nueva versión</b> de la implementación.</p>';
   else {
     const ap = vis.filter(v => v['Tipo'] === 'Apertura'), mesK = f => f.getFullYear() * 100 + f.getMonth();
@@ -2090,6 +2095,23 @@ document.addEventListener('click', async e => {
         if (ped) await enviar({ accion: 'editar', hoja: 'Pedidos', fila: ped._fila, original: ped[ESQ.Pedidos.clave], datos: { 'Estado': 'Atendido' } });
         await guardarCambios('Personas', pr, { 'Plan': 'Premium', 'Premium hasta': hasta }, '💎 Premium activado' + (hasta ? ' hasta el ' + lindaFecha(new Date(hasta + 'T12:00')) : ''));
       } catch (err) { toast(err.message, true); ev.target.disabled = false; }
+    };
+    return;
+  }
+  if (ds.responder) {
+    const r = H('Preguntas').find(x => String(x._fila) === ds.responder); if (!r) return;
+    const NA = ['El Mago','La Sacerdotisa','La Emperatriz','El Emperador','El Hierofante','Los Enamorados','El Carro','La Fuerza','El Ermitaño','La Rueda de la Fortuna','La Justicia','El Colgado','La Muerte','La Templanza','El Diablo','La Torre','La Estrella','La Luna','El Sol','El Juicio','El Mundo','El Loco'];
+    const sel = i => `<select class="campo" id="rp-c${i}"><option value="">—</option>${NA.map((n, k) => `<option value="${k + 1}">${n}</option>`).join('')}</select>`;
+    modal('Responder la pregunta del mes', `<p class="ayuda" style="margin-top:0"><b>${esc(r['Nombre'])}</b> preguntó: <i>"${esc(r['Pregunta'])}"</i></p>
+      <div class="form"><label>Carta 1${sel(1)}</label><label>Carta 2${sel(2)}</label><label>Carta 3${sel(3)}</label>
+      <label class="full">Tu respuesta<textarea class="campo" id="rp-txt" rows="8" placeholder="Lo que te dicen las cartas para ella…"></textarea></label></div>
+      <p class="ayuda">Aparece en su Mi Luz con las cartas, y si tiene mail le avisamos que llegó.</p>`,
+      `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="rp-ok">Enviar respuesta</button>`);
+    $('rp-ok').onclick = async ev => {
+      const txt = $('rp-txt').value.trim(); if (!txt) { $('rp-txt').focus(); return; }
+      ev.target.disabled = true;
+      try { await guardarCambios('Preguntas', r, { 'Respuesta': txt, 'Cartas': [1, 2, 3].map(i => $('rp-c' + i).value).filter(Boolean).join(','), 'Fecha respuesta': iso(HOY), 'Estado': 'Respondida' }, '💌 Respuesta enviada'); }
+      catch (err) { toast(err.message, true); ev.target.disabled = false; }
     };
     return;
   }

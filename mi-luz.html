@@ -393,6 +393,22 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .ser-hist{font-size:.95rem;color:var(--bruma);margin:0 0 10px}
 .prem-gratis{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;width:100%;text-align:left;padding:14px 16px;border:1px solid var(--oro);border-radius:14px;background:linear-gradient(120deg,rgba(212,175,106,.18),rgba(91,42,134,.4));color:var(--luna);font:inherit;margin-bottom:14px;cursor:pointer}
 .prem-gratis > span{font-size:2rem;text-align:center}.prem-gratis small{color:var(--oro)}.prem-gratis b{display:block;font-family:var(--serif);font-size:1.15rem}.prem-gratis p{margin:2px 0 0;font-size:.85rem;color:var(--bruma)}
+.rueda{display:block;width:100%;max-width:360px;margin:6px auto}
+.tres{display:grid;gap:10px;margin:12px 0}.tres > div{border:1px solid var(--linea);border-radius:12px;padding:12px;background:rgba(91,42,134,.22)}.tres small{color:var(--oro)}.tres b{display:block;font-family:var(--serif);font-size:1.15rem}.tres p{margin:4px 0 0;font-size:.93rem}
+.elem div{display:grid;grid-template-columns:62px 1fr 40px;gap:8px;align-items:center;font-size:.85rem;margin-bottom:6px}.elem i{display:block;height:8px;border-radius:6px;background:linear-gradient(90deg,var(--oro),#B98AE6)}.elem b{color:var(--oro);font-weight:500;text-align:right}
+.areas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.ar-c{border:1px solid var(--linea);border-radius:12px;padding:10px;background:rgba(39,16,64,.5);min-width:0}.ar-c.niv2{border-color:var(--oro);background:rgba(212,175,106,.12)}.ar-c small{display:block;color:var(--luna);font-weight:500}.ar-c p{margin:4px 0 0;font-size:.84rem;color:var(--bruma)}
+@media (max-width:360px){.areas{grid-template-columns:1fr}}
+.eventos li > b{font-size:1rem}
+.adelanto{margin-top:16px;border:1px dashed var(--oro);border-radius:14px;padding:14px;background:linear-gradient(160deg,rgba(212,175,106,.12),rgba(28,11,46,.6))}.adelanto small{color:var(--oro)}.adelanto b{display:block;font-family:var(--serif);font-size:1.2rem;margin:4px 0}
+.adelanto ul{list-style:none;padding:0;margin:6px 0}.adelanto li{padding:5px 0;font-size:.9rem;color:var(--luna)}.adelanto li span{color:var(--oro);margin-right:6px}.borroso{filter:blur(4px);user-select:none}.adelanto p{margin:4px 0 0;color:var(--oro);font-style:italic}
+.semana{list-style:none;padding:0;margin:8px 0}.semana li{padding:10px 12px;border:1px solid rgba(185,138,230,.15);border-radius:12px;margin-bottom:8px;background:rgba(39,16,64,.5)}.semana li.ahora{border-color:var(--oro)}.semana small{color:var(--bruma)}.semana b{display:block;font-weight:500;color:var(--luna)}.semana p{margin:3px 0 0;font-size:.88rem;color:var(--bruma)}.semana p.ev{color:var(--oro)}
+.sub-tabs{display:flex;gap:6px;margin-bottom:8px}.sub-tabs button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--linea);background:none;color:var(--bruma);font:inherit;cursor:pointer}.sub-tabs button.on{background:var(--oro);color:#1C0B2E;border-color:var(--oro);font-weight:600}
+.prem-gratis.bloq{border-style:dashed}
+.form-nac textarea{display:block;width:100%;min-height:90px;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--linea);background:#1a0b2e;color:var(--luna);font:inherit}
+.btn-sec.on{background:var(--oro);color:#1C0B2E}
+.int-caja{border-left:3px solid var(--oro);padding:8px 12px;margin:10px 0;background:rgba(212,175,106,.08);border-radius:0 10px 10px 0}.int-caja small{color:var(--oro)}.int-caja p{margin:4px 0 0;white-space:pre-line}.int-caja.rev{border-color:#B98AE6}
+.cartas-mes{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}.cartas-mes > div{width:70px;text-align:center}.cartas-mes small{display:block;font-size:.72rem;color:var(--bruma);margin-top:4px}
+.respuesta{border:1px solid var(--oro);border-radius:14px;padding:14px;margin:12px 0;background:rgba(91,42,134,.25)}.respuesta small{color:var(--oro)}.respuesta .preg{font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--luna)}.firma-r{font-family:var(--script);font-size:1.5rem;color:var(--oro);margin:6px 0 0}
 .chino{display:flex;gap:14px;align-items:center;margin-bottom:8px}.chino > span{font-size:3rem}.chino small{color:var(--bruma)}.chino h4{margin:0;font-family:var(--serif);font-size:1.5rem;color:var(--luna)}
 .num-lista li{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;padding:8px 0;border-top:1px solid rgba(185,138,230,.12);color:var(--bruma);font-size:.93rem}
 .num-lista li > b{width:40px;height:40px;border-radius:50%;border:1px solid var(--oro);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.2rem;color:var(--oro);font-weight:600}
@@ -1419,7 +1435,7 @@ const MATRIZ_POS = [
 
 /* ───── v10: cualidades, ser sobrenatural y Premium ───── */
 let VISTA_GRATIS = false, PREM_ABIERTA = null;
-const PREM_FN = { matriz: () => premMatriz(), vocacion: () => premVocacion(), amor: () => premAmor(), chino: () => premChino(), revolucion: () => premRevolucion(), sinastria: () => premSinastria(), animal: () => premAnimal() };
+const PREM_FN = { mes: () => premMes(), natal: () => premNatal(), pregunta: () => premPregunta(), diario: () => premDiario(), matriz: () => premMatriz(), vocacion: () => premVocacion(), amor: () => premAmor(), chino: () => premChino(), revolucion: () => premRevolucion(), sinastria: () => premSinastria(), animal: () => premAnimal() };
 document.addEventListener('toggle', e => {
   const d = e.target; if (!d.matches || !d.matches('details.prem-sec')) return;
   if (d.open) { PREM_ABIERTA = d.dataset.premsec; const cu = d.querySelector('.prem-cuerpo'); if (!cu.innerHTML) { try { cu.innerHTML = PREM_FN[d.dataset.premsec](); } catch (err) { console.error(err); cu.innerHTML = '<p class="vacio">No se pudo calcular esta sección.</p>'; } } evento('Sección', 'Premium: ' + d.querySelector('h4').textContent); }
@@ -1791,8 +1807,12 @@ const SER_MAS = {
 
 /* ───── v11: Premium completo ───── */
 const PREMIUM_LISTA = [
-  ['matriz', '🔯', 'Tu Matriz del Destino', 'Qué es, tus 20 arcanos y lo que dicen de tu esencia, el dinero, el amor, tu linaje y tu propósito.'],
+  ['mes', '🗓️', 'Tu semana y tu mes', 'Tus tránsitos personales: qué se mueve en tu vida, tus mejores días y lo que se viene.'],
+  ['natal', '🌌', 'Tu carta natal', 'Tu rueda con el Sol, la Luna, el ascendente, cada planeta en su casa y tus aspectos.'],
+  ['pregunta', '💌', 'Tu pregunta del mes', 'Una pregunta por mes, respondida por Belu y Mey con una tirada de tarot para vos.'],
+  ['diario', '📖', 'Tu diario lunar', 'Intenciones de Luna nueva, revisión de Luna llena y tus cartas del mes.'],
   ['revolucion', '☀️', 'Tu Revolución Solar', 'Tu año de cumpleaños a cumpleaños: el tono del año, cada área, mes a mes y fechas clave.'],
+  ['matriz', '🔯', 'Tu Matriz del Destino', 'Qué es, tus 20 arcanos y lo que dicen de tu esencia, el dinero, el amor, tu linaje y tu propósito.'],
   ['chino', '🏮', 'Tu horóscopo chino', 'Tu animal, tu elemento, el año completo por pilares, mes a mes y lo que viene.'],
   ['vocacion', '💼', 'Vocación y dinero', 'Para qué sos buena, ideas para emprender y cómo te llega la plata.'],
   ['amor', '💞', 'Amor y pareja ideal', 'Cómo amás, quién te complementa y dónde podés conocer a esa persona.'],
@@ -2006,6 +2026,272 @@ function serHTML(){
     <p class="fila-comp"><button class="btn-sec comp" type="button" data-share="ser">✨ Compartir mi ser</button></p></div>`;
 }
 
+/* ── v12: Carta natal ── */
+const SOL_SIGNO = [
+  'Tu esencia es de fuego pionero: naciste para empezar, animarte y abrir camino. Tenés coraje, entusiasmo y una energía que contagia. Tu desafío es la paciencia y terminar lo que empezás.',
+  'Tu esencia busca seguridad, belleza y disfrute. Sos constante, sensual y leal; construís despacio pero firme. Tu desafío es soltar el control y animarte al cambio.',
+  'Tu esencia es curiosa, ágil y comunicativa. Aprendés rápido, conectás con todo el mundo y tenés mil ideas. Tu desafío es profundizar y no dispersarte.',
+  'Tu esencia es emocional, protectora y muy intuitiva. Creás hogar donde estés y cuidás a los tuyos como nadie. Tu desafío es no esconderte en tu caparazón.',
+  'Tu esencia brilla: sos generosa, creativa y tenés un corazón enorme. Naciste para expresarte y ser vista. Tu desafío es no depender del aplauso.',
+  'Tu esencia es práctica, detallista y servicial. Ordenás, mejorás y sanás lo que tocás. Tu desafío es soltar la autoexigencia y la autocrítica.',
+  'Tu esencia busca armonía, belleza y vínculos equilibrados. Sos diplomática, encantadora y justa. Tu desafío es decidir sin miedo a desagradar.',
+  'Tu esencia es intensa, profunda y magnética. Ves lo que otros no ven y renacés de cada crisis. Tu desafío es confiar y soltar el control.',
+  'Tu esencia es libre, optimista y buscadora. Te mueven los viajes, el conocimiento y el sentido de la vida. Tu desafío es el compromiso y los detalles.',
+  'Tu esencia es ambiciosa, responsable y perseverante. Llegás lejos paso a paso. Tu desafío es permitirte disfrutar y mostrar tu lado tierno.',
+  'Tu esencia es original, independiente y visionaria. Pensás distinto y te importa lo colectivo. Tu desafío es conectar con tus emociones.',
+  'Tu esencia es sensible, compasiva y mística. Tenés una intuición enorme y un gran mundo interior. Tu desafío es poner límites y bajar a tierra.'];
+const LUNA_SIGNO = [
+  'Emocionalmente sos impulsiva y directa: sentís todo rápido y fuerte, y se te pasa rápido. Necesitás acción y libertad para sentirte bien.',
+  'Necesitás estabilidad, rutina y placeres simples para sentirte en paz. La comida rica, la naturaleza y el contacto físico te calman.',
+  'Necesitás hablar lo que sentís. Las conversaciones, la lectura y el movimiento te ordenan por dentro.',
+  'Sos muy sensible y necesitás sentirte en casa. La familia, los recuerdos y cuidar a otros te nutren.',
+  'Necesitás sentirte valorada y querida. Expresarte, crear y celebrar te llenan el corazón.',
+  'Necesitás orden y sentirte útil para estar tranquila. Una rutina sana y ayudar a otros te equilibran.',
+  'Necesitás armonía y compañía. Los conflictos te desestabilizan; la belleza y los vínculos te sanan.',
+  'Sentís todo con muchísima intensidad, aunque no siempre lo muestres. Necesitás vínculos profundos y verdaderos.',
+  'Necesitás libertad, aventura y sentido. Viajar, aprender y reír te devuelven el ánimo.',
+  'Te cuesta mostrar lo que sentís; necesitás seguridad y metas claras. Lograr cosas te da paz.',
+  'Necesitás espacio y libertad emocional. Las amistades y los proyectos con propósito te nutren.',
+  'Sos una esponja emocional: absorbés lo que pasa a tu alrededor. Necesitás silencio, arte, música y espiritualidad.'];
+const ASC_SIGNO = [
+  'La gente te ve decidida, enérgica y directa. Entrás a los lugares con fuerza y vas al frente.',
+  'Transmitís calma, confianza y elegancia natural. Das la impresión de alguien estable y sensual.',
+  'Te ven curiosa, simpática y conversadora. Tu primera impresión es juvenil y despierta.',
+  'Transmitís dulzura y protección. La gente siente que puede confiar en vos.',
+  'Tenés presencia: te ven segura, cálida y magnética. Es difícil no notarte.',
+  'Te ven prolija, atenta y prudente. Das la impresión de alguien confiable y servicial.',
+  'Transmitís encanto, armonía y buen gusto. La gente se siente cómoda con vos.',
+  'Tu mirada es intensa y misteriosa. Generás atracción y un poco de intriga.',
+  'Te ven alegre, abierta y aventurera. Tu entusiasmo contagia.',
+  'Transmitís seriedad, madurez y capacidad. La gente te ve como alguien que sabe lo que hace.',
+  'Te ven original, distinta y amistosa. Tenés un estilo propio.',
+  'Transmitís sensibilidad, dulzura y algo de misterio. Parecés de otro mundo.'];
+const SIGNO_ESTILO = ['con impulso, coraje y ganas de ir primera', 'con calma, constancia y buscando lo seguro y placentero', 'con curiosidad, palabras e ideas', 'con emoción, cuidado e intuición', 'con brillo, creatividad y generosidad', 'con método, detalle y ganas de mejorar', 'buscando armonía, belleza y acuerdos', 'con intensidad, profundidad y pasión', 'con libertad, optimismo y sentido', 'con disciplina, ambición y paciencia', 'con originalidad, independencia y visión de futuro', 'con sensibilidad, imaginación y compasión'];
+const PLANETA_ROL = {
+  Mercurio: 'tu forma de pensar, aprender y comunicarte', Venus: 'cómo amás, qué te da placer y cómo te llevás con la plata', Marte: 'tu energía, tu deseo y cómo peleás por lo que querés',
+  Júpiter: 'dónde tenés suerte y crecés con facilidad', Saturno: 'tus miedos, tus límites y lo que construís con esfuerzo', Urano: 'dónde sos rebelde, original y buscás libertad',
+  Neptuno: 'dónde soñás, te inspirás o te confundís', Plutón: 'dónde vivís transformaciones profundas y tenés poder', Nodo: 'hacia dónde te lleva tu alma en esta vida'
+};
+const GLIFO = { Sol: '☉', Luna: '☽', Mercurio: '☿', Venus: '♀', Marte: '♂', Júpiter: '♃', Saturno: '♄', Urano: '♅', Neptuno: '♆', Plutón: '♇', Nodo: '☊', ASC: 'AC', MC: 'MC' };
+const GLIFO_SIGNO = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+const ASPECTOS = [[0, 'conjunción', '☌', 8, 'se fusionan: esas dos energías trabajan juntas y se potencian'], [60, 'sextil', '⚹', 4, 'colaboran: hay talento natural si lo aprovechás'], [90, 'cuadratura', '□', 6, 'se tensionan: es una fricción que te empuja a crecer'], [120, 'trígono', '△', 6, 'fluyen con facilidad: es un don que viene de fábrica'], [180, 'oposición', '☍', 7, 'se polarizan: tu aprendizaje es encontrar el equilibrio entre las dos']];
+const ROL_CORTO = { Sol: 'tu identidad', Luna: 'tus emociones', Mercurio: 'tu mente', Venus: 'tu forma de amar', Marte: 'tu energía', Júpiter: 'tu suerte', Saturno: 'tu disciplina', Urano: 'tu libertad', Neptuno: 'tu intuición', Plutón: 'tu poder', ASC: 'tu imagen', MC: 'tu carrera' };
+const ELEM_TXT = { Fuego: 'Predomina el fuego: tenés entusiasmo, coraje e iniciativa.', Tierra: 'Predomina la tierra: sos práctica, concreta y confiable.', Aire: 'Predomina el aire: vivís en las ideas, la comunicación y los vínculos.', Agua: 'Predomina el agua: sentís profundo y tu intuición es tu brújula.' };
+const ELEM_FALTA = { Fuego: 'Te falta fuego: buscá actividades que te enciendan y te den energía.', Tierra: 'Te falta tierra: las rutinas y el contacto con la naturaleza te bajan a tierra.', Aire: 'Te falta aire: hablar, escribir y aprender te ayudan a tomar distancia de lo que sentís.', Agua: 'Te falta agua: darte permiso para sentir y llorar también es sanador.' };
+
+/* ── Tránsitos ── */
+const TRAE = { Sol: 'luz, protagonismo y energía', Luna: 'emociones a flor de piel', Mercurio: 'conversaciones, ideas y trámites', Venus: 'amor, disfrute y plata', Marte: 'acción, deseo y algo de impaciencia', Júpiter: 'expansión, suerte y oportunidades', Saturno: 'responsabilidad, límites y madurez' };
+const TONO = {
+  arm: ['fluye a favor de', 'Aprovechalo: es un buen momento para avanzar.'],
+  tenso: ['tensiona', 'Puede haber roces o presión: respirá antes de reaccionar y usalo para crecer.'],
+  conj: ['activa con fuerza', 'Se enciende un tema importante: prestá atención a lo que aparece.']
+};
+const AREAS_CASA = { amor: [4, 6, 0], plata: [1, 7, 9], trabajo: [5, 9, 2], bien: [0, 5, 11] };
+const AREA_TXT = {
+  amor: ['El amor viene tranquilo: buen momento para cuidar lo que ya tenés.', 'Movimiento en el amor y los vínculos: encuentros, charlas importantes o reconciliaciones.', 'Mes muy intenso para el corazón: lo que sientas va a pedir lugar.'],
+  plata: ['La plata está estable: ordená y planificá.', 'Se mueve la economía: oportunidades, cobros o gastos a decidir con cuidado.', 'Mes clave para tus finanzas: decisiones importantes de dinero.'],
+  trabajo: ['Trabajo sin grandes sobresaltos: constancia.', 'Movimiento en lo laboral: propuestas, cambios o proyectos nuevos.', 'Mes fuerte para tu carrera: momento de mostrarte y decidir.'],
+  bien: ['Energía pareja: mantené tus rutinas.', 'Tu cuerpo te pide atención: descanso, movimiento y agua.', 'Mes de cuidarte mucho: escuchá a tu cuerpo y bajá el ritmo.']
+};
+const ADELANTO = ['Se viene algo fuerte en', 'El mes que viene se activa', 'Atención a lo que llega en', 'Se mueve mucho'];
+
+/* ───── v12: carta natal, tu mes, tu semana, diario y pregunta del mes ───── */
+const PL_NAT = ['Sol', 'Luna', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno', 'Urano', 'Neptuno', 'Plutón'];
+const TXT = s => s + '︎';
+function posTodas(jd){ const o = posiciones(jd); ['Urano', 'Neptuno', 'Plutón'].forEach(p => o[p] = longPlaneta(p, jd)); o.Nodo = nrm2(125.0445479 - 1934.1362891 * (jd - 2451545) / 36525); return o; }
+let NAT_K = '', NAT = null;
+function natal(){
+  if (!P.diaMes || !P.anioNac) return null;
+  const k = P.diaMes + P.anioNac + P.horaNac + P.lugarNac; if (k === NAT_K) return NAT;
+  const jd = jdNac(P.diaMes, P.anioNac, P.horaNac), hora = !!horaDe(P.horaNac), cd = ciudad(P.lugarNac || CIUDADES[0][0]), pos = posTodas(jd);
+  let asc, mc = null; if (hora) { const a = ascMc(jd, cd[1], cd[2]); asc = a.asc; mc = a.mc; } else asc = Math.floor(pos.Sol / 30) * 30;
+  NAT_K = k; NAT = { jd, pos, asc, mc, hora, ciudad: cd[0], casa: l => Math.floor(nrm2(l - asc) / 30) };
+  return NAT;
+}
+const gradoTxt = l => Math.floor(nrm2(l) % 30) + '° ' + ZOD[Math.floor(nrm2(l) / 30)];
+function aspectosNatales(n){
+  const pts = PL_NAT.map(p => [p, n.pos[p]]).concat(n.hora ? [['ASC', n.asc], ['MC', n.mc]] : []), out = [];
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const d = Math.abs(((pts[i][1] - pts[j][1] + 540) % 360) - 180);
+    ASPECTOS.forEach(([ang, nom, gl, orbe, txt]) => { const o = (pts[i][0] === 'Sol' || pts[i][0] === 'Luna' || pts[j][0] === 'Luna') ? orbe + 1 : orbe; if (Math.abs(d - ang) <= o) out.push({ a: pts[i][0], b: pts[j][0], ang, nom, gl, txt, orbe: Math.abs(d - ang) }); });
+  }
+  const peso = x => (['Sol', 'Luna', 'ASC'].includes(x.a) || ['Sol', 'Luna', 'ASC'].includes(x.b) ? 0 : 2) + (['Urano', 'Neptuno', 'Plutón'].includes(x.a) && ['Urano', 'Neptuno', 'Plutón'].includes(x.b) ? 10 : 0) + x.orbe / 2;
+  return out.sort((x, y) => peso(x) - peso(y));
+}
+function ruedaSVG(n, conAspectos){
+  const S = 340, c = S / 2, R1 = 160, R2 = 132, R3 = 100, ang = l => (180 + nrm2(l) - n.asc) * RP, xy = (l, r) => [c + r * Math.cos(ang(l)), c - r * Math.sin(ang(l))];
+  let s = `<svg class="rueda" viewBox="-16 -16 ${S + 32} ${S + 32}" role="img" aria-label="Tu carta natal"><circle cx="${c}" cy="${c}" r="${R1}" fill="#1f0d35" stroke="#D4AF6A" stroke-width="1.5"/><circle cx="${c}" cy="${c}" r="${R2}" fill="#170a28" stroke="#D4AF6A" stroke-width="1"/><circle cx="${c}" cy="${c}" r="${R3 - 30}" fill="none" stroke="rgba(185,138,230,.35)"/>`;
+  for (let i = 0; i < 12; i++) { const [x1, y1] = xy(i * 30, R1), [x2, y2] = xy(i * 30, R2), [gx, gy] = xy(i * 30 + 15, (R1 + R2) / 2);
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(212,175,106,.6)"/><text x="${gx}" y="${gy + 5}" text-anchor="middle" font-size="14" fill="${['#f29a7b', '#a8d08d', '#f3dca0', '#9ec9f2'][i % 4]}">${TXT(GLIFO_SIGNO[i])}</text>`; }
+  for (let i = 0; i < 12; i++) { const l = n.asc + i * 30, [x1, y1] = xy(l, R2), [x2, y2] = xy(l, R3 - 30), [tx, ty] = xy(l + 15, R3 - 18);
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${i % 3 === 0 && n.hora ? '#D4AF6A' : 'rgba(185,138,230,.3)'}" stroke-width="${i % 3 === 0 && n.hora ? 1.4 : .8}"/><text x="${tx}" y="${ty + 3}" text-anchor="middle" font-size="8" fill="#8E7AA8" font-family="Jost">${i + 1}</text>`; }
+  if (conAspectos) aspectosNatales(n).filter(a => a.ang && !['ASC', 'MC'].includes(a.a) && !['ASC', 'MC'].includes(a.b)).slice(0, 14).forEach(a => { const [x1, y1] = xy(n.pos[a.a], R3 - 32), [x2, y2] = xy(n.pos[a.b], R3 - 32);
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${a.ang === 90 || a.ang === 180 ? 'rgba(242,140,160,.55)' : 'rgba(212,175,106,.55)'}" stroke-width="1"/>`; });
+  const lista = PL_NAT.concat(['Nodo']).map(p => ({ p, l: n.pos[p] })).sort((a, b) => a.l - b.l); let ult = -99, nivel = 0;
+  lista.forEach(o => { nivel = (o.l - ult < 7) ? nivel + 1 : 0; ult = o.l; const r = R2 - 16 - nivel * 15, [x, y] = xy(o.l, r), [tx, ty] = xy(o.l, R2);
+    s += `<line x1="${tx}" y1="${ty}" x2="${xy(o.l, R2 - 5)[0]}" y2="${xy(o.l, R2 - 5)[1]}" stroke="#F3DCA0"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="14" fill="#F3DCA0">${TXT(GLIFO[o.p])}</text>`; });
+  if (n.hora) { const [ax, ay] = xy(n.asc, R1 + 9), [mx, my] = xy(n.mc, R1 + 9); s += `<text x="${ax}" y="${ay + 3}" text-anchor="middle" font-size="9" fill="#D4AF6A" font-family="Jost" font-weight="600">AC</text><text x="${mx}" y="${my + 3}" text-anchor="middle" font-size="9" fill="#D4AF6A" font-family="Jost" font-weight="600">MC</text>`; }
+  return s + '</svg>';
+}
+function premNatal(){
+  const n = natal(); if (!n) return faltaFecha;
+  const si = l => Math.floor(nrm2(l) / 30);
+  let h = `<p class="intro">Tu carta natal es una foto del cielo en el momento exacto en que naciste. Muestra dónde estaban el Sol, la Luna y los planetas, y en qué área de tu vida (casa) cae cada uno. Es el mapa de tu personalidad, tus talentos y tus desafíos.</p>`;
+  if (!n.hora) h += datosNacimientoHTML('Sin tu hora de nacimiento usamos casas solares (tu signo solar como casa 1). Con la hora, calculamos tu ascendente y tus casas reales:');
+  h += ruedaSVG(n, true) + `<p class="ag-ayuda" style="text-align:center">Naciste en ${esc(n.ciudad)}${n.hora ? ' a las ' + esc(P.horaNac) + ' hs' : ''}. Líneas doradas: aspectos armónicos · rosas: tensos.</p>`;
+  h += `<div class="tres"><div><small>☉ Sol en ${ZOD[si(n.pos.Sol)]}</small><b>Tu esencia</b><p>${SOL_SIGNO[si(n.pos.Sol)]}</p></div><div><small>☽ Luna en ${ZOD[si(n.pos.Luna)]}</small><b>Tus emociones</b><p>${LUNA_SIGNO[si(n.pos.Luna)]}</p></div>${n.hora ? `<div><small>AC Ascendente en ${ZOD[si(n.asc)]}</small><b>Cómo te ven</b><p>${ASC_SIGNO[si(n.asc)]}</p></div>` : ''}</div>`;
+  h += '<p class="sub">Tus planetas</p><ul class="num-lista">';
+  h += [['Sol', `Tu identidad se juega en ${CASA_SR[n.casa(n.pos.Sol)].area}.`], ['Luna', `Necesitás sentirte segura en ${CASA_SR[n.casa(n.pos.Luna)].area}.`]].map(([p, t]) => `<li><b>${TXT(GLIFO[p])}</b><div><span>${p} en ${gradoTxt(n.pos[p])} · casa ${n.casa(n.pos[p]) + 1}</span>${t}</div></li>`).join('');
+  h += PL_NAT.slice(2).concat(['Nodo']).map(p => { const l = n.pos[p], c = n.casa(l); return `<li><b>${TXT(GLIFO[p])}</b><div><span>${p === 'Nodo' ? 'Nodo Norte' : p} en ${gradoTxt(l)} · casa ${c + 1}</span>${PLANETA_ROL[p].charAt(0).toUpperCase() + PLANETA_ROL[p].slice(1)}: se expresa ${SIGNO_ESTILO[si(l)]}, y se juega en ${CASA_SR[c].area}.</div></li>`; }).join('') + '</ul>';
+  if (n.hora) h += `<p class="ag-ayuda">Medio Cielo en ${gradoTxt(n.mc)}: tu vocación y tu imagen pública se viven de modo ${SIGNO_ADJ[si(n.mc)]}.</p>`;
+  const cuenta = { Fuego: 0, Tierra: 0, Aire: 0, Agua: 0 }; ['Sol', 'Luna', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].forEach(p => cuenta[ELEM_SIGNO[si(n.pos[p]) % 4]] += (p === 'Sol' || p === 'Luna') ? 2 : 1);
+  const orden = Object.entries(cuenta).sort((a, b) => b[1] - a[1]), tot = orden.reduce((a, x) => a + x[1], 0);
+  h += `<p class="sub">Tus elementos</p><div class="elem">${orden.map(([e, v]) => `<div><span>${e}</span><i style="width:${Math.round(v / tot * 100)}%"></i><b>${Math.round(v / tot * 100)}%</b></div>`).join('')}</div><p>${ELEM_TXT[orden[0][0]]}${orden[3][1] === 0 ? ' ' + ELEM_FALTA[orden[3][0]] : ''}</p>`;
+  h += '<p class="sub">Tus aspectos más importantes</p><ul class="num-lista">' + aspectosNatales(n).slice(0, 8).map(a => `<li><b>${TXT(a.gl)}</b><div><span>${a.a === 'ASC' ? 'Ascendente' : a.a} en ${a.nom} con ${a.b === 'ASC' ? 'Ascendente' : a.b === 'MC' ? 'Medio Cielo' : a.b}</span>${ROL_CORTO[a.a].charAt(0).toUpperCase() + ROL_CORTO[a.a].slice(1)} y ${ROL_CORTO[a.b] || a.b} ${a.txt}.</div></li>`).join('') + '</ul>';
+  return h + `<p class="ag-ayuda">Carta calculada con fórmulas astronómicas, casas iguales${n.hora ? ' desde el ascendente' : ' (solares)'} y horario de Argentina.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-share="natal">✨ Compartir mi carta</button></p>`;
+}
+
+/* Tránsitos */
+const difAsp = (a, b, ang) => ((a - b - ang + 540) % 360) - 180;
+const EV_CACHE = {};
+function eventosPeriodo(desde, dias){
+  const n = natal(); if (!n) return [];
+  const k = desde.toDateString() + dias + NAT_K; if (EV_CACHE[k]) return EV_CACHE[k];
+  const TR = ['Sol', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'], OBJ = ['Sol', 'Luna', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].concat(n.hora ? ['ASC', 'MC'] : []);
+  const nl = o => o === 'ASC' ? n.asc : o === 'MC' ? n.mc : n.pos[o], ev = []; let prev = null;
+  for (let i = -1; i <= dias; i++) {
+    const f = new Date(desde.getFullYear(), desde.getMonth(), desde.getDate() + i, 12), jd = jdDe(f), p = { Sol: longSolar(jd) }; TR.slice(1).forEach(x => p[x] = longPlaneta(x, jd));
+    const r = {}; ['Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].forEach(x => r[x] = retrogrado(x, jd));
+    if (prev && i >= 0) {
+      TR.forEach(t => OBJ.forEach(o => ASPECTOS.forEach(([ang, nom, gl]) => [...new Set([ang, (360 - ang) % 360])].forEach(a2 => {
+        const d0 = difAsp(prev.p[t], nl(o), a2), d1 = difAsp(p[t], nl(o), a2);
+        if ((d0 < 0) !== (d1 < 0) && Math.abs(d0 - d1) < 20) ev.push({ tipo: 'asp', f, t, o, ang, nom, gl, cls: ang === 0 ? 'conj' : (ang === 60 || ang === 120) ? 'arm' : 'tenso', peso: ({ Júpiter: 3, Saturno: 3, Sol: 2, Venus: 2, Marte: 2, Mercurio: 1 })[t] * (['Sol', 'Luna', 'ASC'].includes(o) ? 1.5 : 1) });
+      }))));
+      ['Sol', 'Mercurio', 'Venus', 'Marte'].forEach(t => { const c0 = n.casa(prev.p[t]), c1 = n.casa(p[t]); if (c0 !== c1 && !r[t]) ev.push({ tipo: 'casa', f, t, c: c1, peso: t === 'Mercurio' ? 1 : 2 }); });
+      Object.keys(r).forEach(t => { if (r[t] !== prev.r[t]) ev.push({ tipo: 'retro', f, t, r: r[t], peso: 2 }); });
+    }
+    prev = { p, r };
+  }
+  const fin = new Date(desde.getFullYear(), desde.getMonth(), desde.getDate() + dias, 23, 59);
+  lunas(desde, fin).forEach(l => ev.push({ tipo: 'luna', f: l.fecha, l, c: n.casa(ZOD.indexOf(l.signo) * 30 + l.grado), peso: l.eclipse ? 4 : 2 }));
+  return (EV_CACHE[k] = ev.sort((a, b) => a.f - b.f));
+}
+const nomObj = o => o === 'ASC' ? 'tu Ascendente' : o === 'MC' ? 'tu Medio Cielo' : 'tu ' + o + ' natal';
+function eventoTxt(e){
+  if (e.tipo === 'asp') return [`${TXT(GLIFO[e.t])} ${e.t} en ${e.nom} con ${nomObj(e.o)}`, `${e.t} trae ${TRAE[e.t]} y ${TONO[e.cls][0]} ${ROL_CORTO[e.o]}. ${TONO[e.cls][1]}`];
+  if (e.tipo === 'casa') return [`${TXT(GLIFO[e.t])} ${e.t} entra en tu casa ${e.c + 1}`, `Durante las próximas semanas, ${TRAE[e.t]} se concentran en ${CASA_SR[e.c].area}.`];
+  if (e.tipo === 'luna') return [`${e.l.llena ? '🌕 Luna llena' : '🌑 Luna nueva'} en ${e.l.signo}${e.l.eclipse ? ' · eclipse' : ''} en tu casa ${e.c + 1}`, e.l.llena ? `Ilumina ${CASA_SR[e.c].area}: culminaciones, claridad y soltar lo que ya cumplió su ciclo.` : `Abre un ciclo nuevo en ${CASA_SR[e.c].area}: momento ideal para escribir tus intenciones.`];
+  return [`℞ ${e.t} ${e.r ? 'se pone retrógrado' : 'retoma su marcha directa'}`, e.r ? (SIGNIF_RETRO[e.t] || 'Tiempo de revisar antes de avanzar.') : 'Lo que estaba trabado empieza a destrabarse. Avanzá con lo que revisaste.'];
+}
+function areaDe(e){
+  const a = [];
+  if (e.tipo === 'casa' || e.tipo === 'luna') Object.keys(AREAS_CASA).forEach(k => { if (AREAS_CASA[k].includes(e.c)) a.push(k); });
+  if (e.tipo === 'asp') { if (e.t === 'Venus' || e.o === 'Venus') a.push('amor'); if (e.t === 'Júpiter' || (e.t === 'Venus' && ['Sol', 'Júpiter'].includes(e.o))) a.push('plata'); if (['Saturno', 'Marte'].includes(e.t) || e.o === 'MC') a.push('trabajo'); if (e.t === 'Marte' || ['Luna', 'ASC'].includes(e.o)) a.push('bien'); }
+  return a;
+}
+function resumenPeriodo(ev){
+  const pts = { amor: 0, plata: 0, trabajo: 0, bien: 0 }, dias = {};
+  ev.forEach(e => { areaDe(e).forEach(a => pts[a] += e.peso); const k = e.f.getDate() + '/' + e.f.getMonth(); if (e.tipo === 'asp') dias[k] = (dias[k] || { f: e.f, v: 0 }), dias[k].v += e.cls === 'tenso' ? -e.peso : e.peso; });
+  const ds = Object.values(dias).sort((a, b) => b.v - a.v);
+  return { pts, buenos: ds.filter(d => d.v > 0).slice(0, 3), dificiles: ds.filter(d => d.v < 0).slice(-2).reverse() };
+}
+const NOM_AREA = { amor: ['💞', 'Amor'], plata: ['💰', 'Dinero'], trabajo: ['💼', 'Trabajo'], bien: ['🌿', 'Bienestar'] };
+const nivelArea = v => v < 3 ? 0 : v < 7 ? 1 : 2;
+const diaTxt = f => DIAS[f.getDay()] + ' ' + f.getDate();
+function adelantoHTML(ev, abre){
+  const top = ev.slice().sort((a, b) => b.peso - a.peso).slice(0, 3);
+  if (!top.length) return '';
+  const area = (areaDe(top[0])[0] || 'amor');
+  return `<div class="adelanto"><small>🔒 ${abre}</small><b>${ADELANTO[top[0].f.getDate() % ADELANTO.length]} ${NOM_AREA[area][1].toLowerCase()}…</b>
+    <ul>${top.map((e, i) => `<li><span>${fechaCorta(e.f)}</span> ${i === 0 ? eventoTxt(e)[0] : '<i class="borroso">' + eventoTxt(e)[0] + '</i>'}</li>`).join('')}</ul><p>Quedate para ver cómo sigue ✨</p></div>`;
+}
+function tuMesHTML(y, m){
+  const n = natal(); if (!n) return faltaFecha;
+  const desde = new Date(y, m, 1), dias = new Date(y, m + 1, 0).getDate() - 1, ev = eventosPeriodo(desde, dias), rs = resumenPeriodo(ev);
+  const fuerte = Object.entries(rs.pts).sort((a, b) => b[1] - a[1])[0][0];
+  let h = `<div class="sr-cab"><small>Tu mes</small><h4>${MESES[m].charAt(0).toUpperCase() + MESES[m].slice(1)} ${y}</h4><p class="ag-ayuda" style="margin:0">El área más movida del mes: ${NOM_AREA[fuerte][0]} ${NOM_AREA[fuerte][1].toLowerCase()}</p></div>`;
+  h += '<div class="areas">' + Object.keys(NOM_AREA).map(a => { const rk = Object.keys(rs.pts).sort((x, y) => rs.pts[y] - rs.pts[x]).indexOf(a), lv = rs.pts[a] < 3 ? 0 : rk === 0 ? 2 : rk === 3 ? 0 : 1; return `<div class="ar-c niv${lv}"><small>${NOM_AREA[a][0]} ${NOM_AREA[a][1]}</small><span class="estr">${estrellitas(lv + 3)}</span><p>${AREA_TXT[a][lv]}</p></div>`; }).join('') + '</div>';
+  if (rs.buenos.length || rs.dificiles.length) h += `<p class="sub">Días destacados</p><p>${rs.buenos.length ? '<span class="si">Tus mejores días:</span> ' + rs.buenos.map(d => diaTxt(d.f)).join(', ') + '. ' : ''}${rs.dificiles.length ? '<span class="no">Días para ir con calma:</span> ' + rs.dificiles.map(d => diaTxt(d.f)).join(', ') + '.' : ''}</p>`;
+  h += '<p class="sub">Lo que pasa en tu cielo</p><ul class="num-lista eventos">' + ev.slice().sort((a, b) => b.peso - a.peso).slice(0, 12).sort((a, b) => a.f - b.f).map(e => { const [t, x] = eventoTxt(e); return `<li><b>${e.f.getDate()}</b><div><span>${t}</span>${x}</div></li>`; }).join('') + '</ul>';
+  const sig = new Date(y, m + 1, 1), evs = eventosPeriodo(sig, new Date(y, m + 2, 0).getDate() - 1);
+  return h + adelantoHTML(evs, 'Tu ' + MESES[sig.getMonth()] + ' se abre el 1 de ' + MESES[sig.getMonth()]);
+}
+function lunesDe(f){ const d = new Date(f.getFullYear(), f.getMonth(), f.getDate()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+function tuSemanaHTML(){
+  const n = natal(); if (!n) return faltaFecha;
+  const lu = lunesDe(new Date()), ev = eventosPeriodo(lu, 6), hoy = new Date().toDateString();
+  let mejor = null, h = `<div class="sr-cab"><small>Tu semana</small><h4>Del ${fechaCorta(lu)} al ${fechaCorta(new Date(lu.getTime() + 6 * 864e5))}</h4></div><ul class="semana">`;
+  for (let i = 0; i < 7; i++) {
+    const f = new Date(lu.getFullYear(), lu.getMonth(), lu.getDate() + i, 12), ll = longLuna(jdDe(f)), c = n.casa(ll), del = ev.filter(e => e.f.toDateString() === f.toDateString());
+    const v = del.reduce((a, e) => a + (e.tipo === 'asp' ? (e.cls === 'tenso' ? -e.peso : e.peso) : 0), 0) + (Math.floor(ll / 30) === Math.floor(n.pos.Sol / 30) ? 2 : 0);
+    if (!mejor || v > mejor.v) mejor = { f, v };
+    h += `<li class="${f.toDateString() === hoy ? 'ahora' : ''}" data-v="${v}"><div><small>${DIAS[f.getDay()]} ${f.getDate()}${f.toDateString() === hoy ? ' · hoy' : ''}</small><b>Luna en ${ZOD[Math.floor(ll / 30)]}, tu casa ${c + 1}</b><p>El foco emocional del día: ${CASA_SR[c].area}.</p>${del.map(e => `<p class="ev">${eventoTxt(e)[0]}</p>`).join('')}</div></li>`;
+  }
+  h = h.replace(`data-v="${mejor.v}"><div><small>${DIAS[mejor.f.getDay()]} ${mejor.f.getDate()}`, `data-v="${mejor.v}"><div><small>⭐ Tu mejor día · ${DIAS[mejor.f.getDay()]} ${mejor.f.getDate()}`);
+  const prox = new Date(lu.getTime() + 7 * 864e5);
+  return h + '</ul>' + adelantoHTML(eventosPeriodo(prox, 6), 'La semana que viene se abre el lunes ' + prox.getDate());
+}
+function premMes(){
+  const hoy = new Date();
+  return `<div class="sub-tabs"><button type="button" class="${MES_VISTA === 'semana' ? 'on' : ''}" data-mesvista="semana">Tu semana</button><button type="button" class="${MES_VISTA === 'mes' ? 'on' : ''}" data-mesvista="mes">Tu mes</button></div>` +
+    (MES_VISTA === 'semana' ? tuSemanaHTML() : tuMesHTML(hoy.getFullYear(), hoy.getMonth())) + '<p class="ag-ayuda">Calculado con los tránsitos sobre tu carta natal. Cada lunes se renueva tu semana y cada 1° tu mes.</p>';
+}
+let MES_VISTA = 'semana';
+// Anzuelo en Hoy
+function anzueloHTML(){
+  const n = natal(); if (!n) return '';
+  const hoy = new Date();
+  if (P.premium) {
+    const ll = longLuna(jdDe(hoy)), c = n.casa(ll);
+    return `<button class="prem-gratis" type="button" data-irmes><span>✷</span><div><small>Tu semana personal</small><b>Hoy la Luna pasa por tu casa ${c + 1}</b><p>Foco en ${CASA_SR[c].area}. Ver tu semana y tu mes ›</p></div></button>`;
+  }
+  const ev = eventosPeriodo(new Date(hoy.getFullYear(), hoy.getMonth(), 1), new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate() - 1).filter(e => e.f >= hoy).sort((a, b) => b.peso - a.peso);
+  if (!ev.length) return '';
+  return `<button class="prem-gratis bloq" type="button" data-irtab="premium"><span>🔒</span><div><small>Tu ${MESES[hoy.getMonth()]} ya está calculado</small><b>${fechaCorta(ev[0].f)}: ${eventoTxt(ev[0])[0]}</b><p>Desbloqueá tu mes y tu semana personal con Premium ›</p></div></button>`;
+}
+
+/* Diario lunar */
+function diarioDe(tipo){ return (P.diario || []).filter(x => x.tipo === tipo); }
+function cicloLunar(){
+  const hoy = new Date(), ls = lunas(new Date(hoy.getTime() - 32 * 864e5), new Date(hoy.getTime() + 32 * 864e5));
+  const nueva = ls.filter(l => !l.llena && l.fecha <= hoy).pop(), llena = nueva && ls.find(l => l.llena && l.fecha > nueva.fecha), prox = ls.find(l => !l.llena && l.fecha > hoy);
+  return { nueva, llena, prox, k: nueva ? nueva.fecha.toISOString().slice(0, 10) : '' };
+}
+function premDiario(){
+  const cl = cicloLunar(); if (!cl.nueva) return '';
+  const int = diarioDe('Intención').find(x => x.luna === cl.k), rev = diarioDe('Revisión').find(x => x.luna === cl.k), yaLlena = cl.llena && cl.llena.fecha <= new Date();
+  let h = `<p class="intro">Cada Luna nueva sembrás tus intenciones; en la Luna llena revisás cómo van. Con el tiempo, acá queda la historia de todo lo que fuiste manifestando.</p>`;
+  if (!int) h += `<div class="form-nac"><p><b>🌑 Luna nueva en ${cl.nueva.signo}</b> (${fechaCorta(cl.nueva.fecha)}): ¿qué querés sembrar en este ciclo?</p><label>Tus intenciones<textarea id="dia-int" maxlength="600" placeholder="Escribilas en presente, como si ya fueran realidad: Me permito…, Recibo…, Elijo…"></textarea></label><button class="btn" type="button" data-diario="Intención">Guardar mis intenciones</button></div>`;
+  else {
+    h += `<div class="int-caja"><small>🌑 Tus intenciones de la Luna nueva en ${cl.nueva.signo}</small><p>${esc(int.texto)}</p></div>`;
+    if (yaLlena && !rev) h += `<div class="form-nac"><p><b>🌕 Llegó la Luna llena en ${cl.llena.signo}.</b> ¿Cómo van tus intenciones?</p><div class="fila-bt" style="flex-wrap:wrap;justify-content:flex-start">${['Se están cumpliendo ✨', 'Avanzan despacio 🌱', 'Todavía no 🌑'].map(o => `<button class="btn-sec" type="button" data-revopc="${o}">${o}</button>`).join('')}</div><label>¿Qué aprendiste en estas semanas? (opcional)<textarea id="dia-rev" maxlength="600"></textarea></label><button class="btn" type="button" data-diario="Revisión">Guardar</button></div>`;
+    else if (rev) h += `<div class="int-caja rev"><small>🌕 Tu revisión</small><p><b>${esc(rev.valor)}</b>${rev.texto ? ' · ' + esc(rev.texto) : ''}</p></div>`;
+    else if (cl.llena) h += `<p class="ag-ayuda">El ${fechaCorta(cl.llena.fecha)} llega la Luna llena en ${cl.llena.signo}: ese día te voy a preguntar cómo van.</p>`;
+  }
+  const hist = diarioDe('Intención').filter(x => x.luna !== cl.k).slice(-6).reverse();
+  if (hist.length) h += '<p class="sub">Tus ciclos anteriores</p><ul class="num-lista">' + hist.map(x => { const r = diarioDe('Revisión').find(y => y.luna === x.luna); return `<li><b>🌑</b><div><span>${fechaCorta(new Date(x.luna + 'T12:00'))}${r ? ' · ' + esc(r.valor) : ''}</span>${esc(x.texto)}</div></li>`; }).join('') + '</ul>';
+  const hoy = new Date(), cartas = diarioDe('Carta').filter(x => { const f = new Date(x.f); return f.getMonth() === hoy.getMonth() && f.getFullYear() === hoy.getFullYear(); });
+  if (cartas.length) {
+    const cnt = {}; cartas.forEach(x => cnt[x.valor] = (cnt[x.valor] || 0) + 1); const top = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
+    h += `<p class="sub">Tus cartas de ${MESES[hoy.getMonth()]}</p><div class="cartas-mes">${top.slice(0, 6).map(([n, c]) => `<div><div class="mini-c"><img src="${cartaSrc(+n)}" alt="" onerror="this.remove()"><span>${romano(+n)}</span></div><small>${esc(NOM[+n])}${c > 1 ? ' ×' + c : ''}</small></div>`).join('')}</div>`;
+    if (top[0][1] > 1) h += `<p>Este mes ${esc(NOM[+top[0][0]])} te salió ${top[0][1]} veces: ${ARC[+top[0][0]].e.split('. ')[0].toLowerCase()}. ¿Qué te está queriendo decir?</p>`;
+  }
+  return h;
+}
+
+/* Pregunta del mes */
+function premPregunta(){
+  const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), ps = P.preguntas || [], esta = ps.find(x => x.mes === mk);
+  let h = `<p class="intro">Una vez por mes podés hacernos una pregunta, y Belu o Mey te la responden con una tirada de tarot hecha para vos.</p>`;
+  if (!esta) h += `<div class="form-nac"><label>Tu pregunta de ${MESES[hoy.getMonth()]}<textarea id="preg-txt" maxlength="400" placeholder="Por ejemplo: ¿Qué necesito saber sobre mi trabajo este mes?"></textarea></label><p class="ag-ayuda">Tip: las preguntas abiertas ("¿qué necesito saber…?", "¿cómo puedo…?") dan lecturas más ricas que las de sí o no.</p><button class="btn" type="button" data-pregunta>Enviar mi pregunta</button></div>`;
+  else if (!esta.respuesta) h += `<div class="int-caja"><small>Tu pregunta de ${MESES[hoy.getMonth()]}</small><p>${esc(esta.pregunta)}</p><p class="ag-ayuda">✨ Belu y Mey están preparando tu tirada. Te avisamos cuando esté lista.</p></div>`;
+  ps.filter(x => x.respuesta).slice().reverse().forEach(x => {
+    const cs = String(x.cartas || '').split(',').map(s => +s).filter(Boolean);
+    h += `<div class="respuesta"><small>${esc(x.fechaResp || '')} · Tu pregunta</small><p class="preg">${esc(x.pregunta)}</p>${cs.length ? `<div class="cartas-mes">${cs.map(n => `<div><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><small>${esc(NOM[n])}</small></div>`).join('')}</div>` : ''}<p>${esc(x.respuesta).replace(/\n/g, '<br>')}</p><p class="firma-r">Con luz, Belu y Mey 💜</p></div>`;
+  });
+  return h;
+}
+
 /* ───── Secciones ───── */
 const TABS = [['hoy', '☉', 'Hoy'], ['arcanos', '✧', 'Arcanos'], ['agenda', '☾', 'Agenda'], ['novedades', '✦', 'Novedades'], ['productos', '◈', 'Productos'], ['premium', '✷', 'Premium']];
 let TAB = (location.hash || '').replace('#', '');
@@ -2099,6 +2385,7 @@ function hoyHTML(){
     if (d.firma === 'evitar') exp.push(`<li><span>⚠️</span><div><b>Evitá firmar:</b> si es inevitable, leé todo dos veces y confirmá fechas y montos por escrito.</div></li>`);
     h += `<p class="ag-chips hoy-chips">${chips.map(x => `<span>${x}</span>`).join('')}</p>${exp.length ? `<details class="mas"><summary>¿Qué significa? <span aria-hidden="true">✦</span></summary><div><ul class="msg-datos" style="margin:0">${exp.join('')}</ul></div></details>` : ''}<p class="ag-ayuda"><button class="link" type="button" data-irtab="agenda">Ver el detalle en tu agenda ›</button></p>`;
   }
+  try { h += anzueloHTML(); } catch (e) { console.error(e); }
   h += `<h3>Tu carta del día</h3>${tiradaHTML()}`;
   h += `<h3>Ritual de hoy</h3>${ritualHTML(d.ritual)}`;
   const estandar = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -2289,6 +2576,11 @@ async function dibujarTarjeta(o, modo){
     if (img) c.drawImage(img, cx, y, cw, ch); else { c.fillStyle = '#D4AF6A'; c.font = '600 150px "Cormorant Garamond", serif'; textoCentrado(c, romano(o.carta), W / 2, y + ch / 2); }
     anim.carta = { x: cx, y, w: cw, h: ch }; anim.halo = { x: W / 2, y: y + ch / 2, r: cw * .7 };
     y += ch + 90;
+  } else if (o.ilus && o.ilus.tipo === 'svg') {
+    const im = await cargarImg('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(o.ilus.svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" ')));
+    anim.halo = { x: W / 2, y: y + 400, r: 380 };
+    const gl = c.createRadialGradient(W / 2, y + 400, 50, W / 2, y + 400, 480); gl.addColorStop(0, 'rgba(243,220,160,.22)'); gl.addColorStop(1, 'rgba(243,220,160,0)'); c.fillStyle = gl; c.fillRect(0, y - 100, W, 1000);
+    if (im) c.drawImage(im, W / 2 - 380, y + 20, 760, 760); y += 860;
   } else if (o.ilus) y = ilustrar(c, o.ilus, W / 2, y + 20, anim, modo) + 70;
   else y += 120;
   const piso = H - 250;
@@ -2517,10 +2809,12 @@ function compartirTipo(btn){
   if (tipo === 'chino') { const ch = chinoDe(P.diaMes, P.anioNac); if (!ch) return;
     const yo = CHINO.indexOf(ch.an), hoyC = new Date(), act = chinoDe(String(hoyC.getDate()).padStart(2, '0') + '/' + String(hoyC.getMonth() + 1).padStart(2, '0'), hoyC.getFullYear()).anio, ya = chinoAnio(act), rel = relChina(yo, ya.idx);
     o = { kicker: 'MI HORÓSCOPO CHINO', fecha: '', ilus: { tipo: 'emoji', ic: ch.an.ic }, titulo: ch.an.a + ' de ' + ch.el[0], subtitulo: ch.an.r, secciones: [{ t: 'En el amor', x: ch.an.amor }, { t: 'Mi ' + act + ' · ' + REL_NOMBRE[rel].toLowerCase() + ' ' + estrellitas(REL_ANIO[rel].e), x: REL_ANIO[rel].tip }] }; }
+  if (tipo === 'natal') { const n = natal(); if (!n) return; const si = l => Math.floor(nrm2(l) / 30);
+    o = { kicker: 'MI CARTA NATAL', fecha: '', ilus: { tipo: 'svg', svg: ruedaSVG(n, true) }, titulo: 'Sol en ' + ZOD[si(n.pos.Sol)], subtitulo: 'Luna en ' + ZOD[si(n.pos.Luna)] + (n.hora ? ' · Ascendente en ' + ZOD[si(n.asc)] : ''), secciones: [{ t: 'Mi esencia', x: SOL_SIGNO[si(n.pos.Sol)].split('. ').slice(0, 2).join('. ') + '.' }, { t: 'Mis emociones', x: LUNA_SIGNO[si(n.pos.Luna)].split('. ')[0] + '.' }] }; texto = 'Mi carta natal ✨'; }
   if (tipo === 'animal') { const an = animalDe(); if (!an) return;
     o = { kicker: 'MI ANIMAL DE PODER', fecha: '', ilus: { tipo: 'emoji', ic: an.ic }, titulo: an.a, subtitulo: an.med, secciones: [{ t: 'Su mensaje para mí', x: an.msg }], afirmacion: an.af }; texto = 'Mi animal de poder: ' + an.a + ' ' + an.ic; }
   if (!o) return;
-  evento('Compartió', { carta: 'Carta del día', ritual: 'Ritual', luna: 'Luna', anio: 'Arcano del año', nacimiento: 'Arcano de nacimiento', nombre: 'Nombre', numeros: 'Numerología', cualidades: 'Cualidades', ser: 'Ser sobrenatural', matriz: 'Matriz', chino: 'Horóscopo chino', animal: 'Animal de poder' }[tipo] || tipo);
+  evento('Compartió', { carta: 'Carta del día', ritual: 'Ritual', luna: 'Luna', anio: 'Arcano del año', nacimiento: 'Arcano de nacimiento', nombre: 'Nombre', numeros: 'Numerología', cualidades: 'Cualidades', ser: 'Ser sobrenatural', matriz: 'Matriz', chino: 'Horóscopo chino', animal: 'Animal de poder', natal: 'Carta natal' }[tipo] || tipo);
   compartirImagen(btn, o, archivo, texto);
 }
 function compartirDia(btn){
@@ -2601,6 +2895,26 @@ document.addEventListener('click', async e => {
   if (b.dataset.compdia !== undefined) { compartirDia(b); return; }
   if (b.dataset.share) { compartirTipo(b); return; }
   if (b.dataset.vistagratis !== undefined) { VISTA_GRATIS = !VISTA_GRATIS; pintar(); pintarAgenda(); window.scrollTo({ top: 0 }); return; }
+  if (b.dataset.mesvista) { MES_VISTA = b.dataset.mesvista; const cu = document.querySelector('details[data-premsec=mes] .prem-cuerpo'); if (cu) cu.innerHTML = premMes(); return; }
+  if (b.dataset.irmes !== undefined) { PREM_ABIERTA = 'mes'; irTab('premium'); repintarPrem(); return; }
+  if (b.dataset.revopc) { b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); return; }
+  if (b.dataset.diario) {
+    const tipo = b.dataset.diario, cl = cicloLunar(); let texto = '', valor = '';
+    if (tipo === 'Intención') { texto = $('dia-int').value.trim(); if (!texto) { $('dia-int').focus(); return; } }
+    else { const on = document.querySelector('[data-revopc].on'); if (!on) return; valor = on.dataset.revopc; texto = $('dia-rev').value.trim(); }
+    b.disabled = true; b.textContent = 'Guardando…';
+    (P.diario = P.diario || []).push({ f: new Date().toISOString(), tipo, luna: cl.k, texto, valor });
+    try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'diario', codigo: CODIGO, tipo, luna: cl.k, texto, valor }) }); } catch (x) {}
+    repintarPrem(); return;
+  }
+  if (b.dataset.pregunta !== undefined) {
+    const t = $('preg-txt').value.trim(); if (t.length < 8) { $('preg-txt').focus(); return; }
+    b.disabled = true; b.textContent = 'Enviando…';
+    try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'pregunta', codigo: CODIGO, texto: t }) }); const d = await r.json(); if (!d.ok) throw new Error(d.error); const hoy = new Date();
+      (P.preguntas = P.preguntas || []).push({ mes: hoy.getFullYear() + '-' + (hoy.getMonth() + 1), pregunta: t, respuesta: '' }); repintarPrem(); }
+    catch (x) { b.disabled = false; b.textContent = 'Enviar mi pregunta'; b.insertAdjacentHTML('afterend', '<p class="ag-ayuda">No se pudo enviar. ' + esc(x.message || 'Probá de nuevo en un momento.') + '</p>'); }
+    return;
+  }
   if (b.dataset.irser !== undefined) { irTab('arcanos', 'ser'); return; }
   if (b.dataset.medita) { const m = b.dataset.medita; if (m === 'parar') { MED && clearTimeout(MED.t); try { speechSynthesis.cancel(); } catch (x) {} MED = null; const c = $('medita'); if (c) c.outerHTML = premAnimal().match(/<div class="medita"[\s\S]*$/)[0]; return; } if (m === 'sig') { MED && MED.sig(); return; } meditar(m); return; }
   if (b.dataset.sinastria !== undefined) { const f = $('sin-fecha').value; if (!f) { $('sin-fecha').focus(); return; } try { localStorage.setItem('luzguia_sin', JSON.stringify({ nombre: $('sin-nombre').value.trim(), fecha: f, hora: $('sin-hora').value })); } catch (x) {} evento('Sección', 'Premium: sinastría calculada'); repintarPrem(); return; }
@@ -2619,6 +2933,8 @@ document.addEventListener('click', async e => {
   if (b.dataset.aviso) { pedir('Aviso de stock', b.dataset.aviso, 'Avisame cuando vuelva: ' + b.dataset.aviso); return; }
   if (b.dataset.tirada !== undefined) {
     try { localStorage.setItem('luzguia_tirada_' + claveDia(), b.dataset.tirada); } catch (e) {}
+    const nCarta = cartaTirada(+b.dataset.tirada); (P.diario = P.diario || []).push({ f: new Date().toISOString(), tipo: 'Carta', valor: String(nCarta), texto: '', luna: '' });
+    try { fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'diario', codigo: CODIGO, tipo: 'Carta', valor: String(nCarta) }) }); } catch (e) {}
     b.classList.add('girando');
     setTimeout(() => { const t = b.closest('.tirada'); t.outerHTML = tiradaHTML(); }, 650);
     return;
