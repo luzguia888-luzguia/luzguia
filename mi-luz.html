@@ -394,6 +394,8 @@ details.mas .aliados{color:var(--bruma);font-size:.88rem}
 .prem-gratis{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;width:100%;text-align:left;padding:14px 16px;border:1px solid var(--oro);border-radius:14px;background:linear-gradient(120deg,rgba(212,175,106,.18),rgba(91,42,134,.4));color:var(--luna);font:inherit;margin-bottom:14px;cursor:pointer}
 .prem-gratis > span{font-size:2rem;text-align:center}.prem-gratis small{color:var(--oro)}.prem-gratis b{display:block;font-family:var(--serif);font-size:1.15rem}.prem-gratis p{margin:2px 0 0;font-size:.85rem;color:var(--bruma)}
 .rueda{display:block;width:100%;max-width:360px;margin:6px auto}
+.form-nac input,.form-nac select,.form-nac textarea{box-sizing:border-box;max-width:100%}
+.sug{display:flex;flex-direction:column;gap:4px;margin:-4px 0 8px}.sug button{text-align:left;padding:9px 10px;border-radius:9px;border:1px solid var(--linea);background:#1a0b2e;color:var(--luna);font:inherit;cursor:pointer}.sug button small{display:block;color:var(--bruma);font-size:.75rem}.lugar-ok{color:var(--oro)!important;margin:0 0 8px}
 .corr{margin:6px 0 12px;text-align:center}.corr summary{list-style:none;cursor:pointer;color:var(--oro);font-size:.88rem;text-decoration:underline}.corr summary::-webkit-details-marker{display:none}.corr > div{text-align:left}
 .cuspides{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:.82rem;color:var(--bruma)}.cuspides span{border:1px solid rgba(185,138,230,.18);border-radius:8px;padding:5px 7px}.cuspides b{color:var(--oro);margin-right:6px}
 .tres{display:grid;gap:10px;margin:12px 0}.tres > div{border:1px solid var(--linea);border-radius:12px;padding:12px;background:rgba(91,42,134,.22)}.tres small{color:var(--oro)}.tres b{display:block;font-family:var(--serif);font-size:1.15rem}.tres p{margin:4px 0 0;font-size:.93rem}
@@ -1919,7 +1921,8 @@ function revolucion(){
   const hoy = new Date(); let y = hoy.getFullYear(); if (hoy < new Date(y, +m[2] - 1, +m[1])) y--;
   let jd = jdNac(P.diaMes, y, P.horaNac);
   for (let i = 0; i < 8; i++) { let d = solN - longSolar(jd); if (d > 180) d -= 360; if (d < -180) d += 360; jd += d / 0.98565; }
-  const cd = ciudad(leerLS('luzguia_sr_ciudad') || P.lugarNac || CIUDADES[0][0]), am = ascMc(jd, cd[1], cd[2]), pos = posiciones(jd);
+  let srL = null; try { srL = JSON.parse(leerLS('luzguia_sr_lugar') || 'null'); } catch (e) {}
+  const cd = srL ? lugarCoord(srL.nombre, srL.coord) : lugarCoord(P.lugarNac, P.coordNac), am = ascMc(jd, cd[1], cd[2]), pos = posiciones(jd);
   const cus = placidus(jd, cd[1], cd[2]), casa = l => casaEn(cus, l);
   return { cus, jd, fecha: new Date((jd - 2440587.5) * 86400000), y, ciudad: cd[0], asc: am.asc, mc: am.mc, pos, casa, natalSol: solN, hora: !!horaDe(P.horaNac) };
 }
@@ -1929,10 +1932,47 @@ function periodosRetro(nombre, desde, dias){
     if (r && !ini) ini = f; if (!r && ini) { out.push([ini, f]); ini = null; } }
   if (ini) out.push([ini, null]); return out;
 }
+const PROVINCIAS = [['06', 'Buenos Aires', -34.92, -57.95], ['02', 'Ciudad de Buenos Aires', -34.60, -58.38], ['10', 'Catamarca', -28.47, -65.78], ['22', 'Chaco', -27.45, -58.99], ['26', 'Chubut', -43.30, -65.10], ['14', 'Córdoba', -31.42, -64.18], ['18', 'Corrientes', -27.47, -58.83], ['30', 'Entre Ríos', -31.73, -60.53], ['34', 'Formosa', -26.18, -58.17], ['38', 'Jujuy', -24.19, -65.30], ['42', 'La Pampa', -36.62, -64.29], ['46', 'La Rioja', -29.41, -66.86], ['50', 'Mendoza', -32.89, -68.84], ['54', 'Misiones', -27.37, -55.90], ['58', 'Neuquén', -38.95, -68.06], ['62', 'Río Negro', -40.81, -62.99], ['66', 'Salta', -24.78, -65.41], ['70', 'San Juan', -31.54, -68.53], ['74', 'San Luis', -33.30, -66.34], ['78', 'Santa Cruz', -51.62, -69.22], ['82', 'Santa Fe', -31.63, -60.70], ['86', 'Santiago del Estero', -27.80, -64.26], ['94', 'Tierra del Fuego', -54.80, -68.30], ['90', 'Tucumán', -26.82, -65.22]];
+const sinT = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function provDe(nombre){ const t = sinT(nombre); return PROVINCIAS.slice().sort((a, b) => b[1].length - a[1].length).find(p => t.includes(sinT(p[1]))) || (/caba|capital federal/.test(t) ? PROVINCIAS[1] : null); }
+// Devuelve [nombre, lat, lon] con las coordenadas guardadas o, si no hay, con la mejor aproximación
+function lugarCoord(nombre, coord){
+  const m = String(coord || '').match(/(-?\d+\.?\d*),\s*(-?\d+\.?\d*)/); if (m) return [nombre || 'Tu lugar', +m[1], +m[2]];
+  const c = CIUDADES.find(x => sinT(x[0]) === sinT(nombre)); if (c) return c;
+  const pv = provDe(nombre); if (pv) return [nombre, pv[2], pv[3]];
+  return CIUDADES[0];
+}
+function selectorLugar(pre, nombre, coord){
+  const pv = provDe(nombre) || PROVINCIAS[10], loc = String(nombre || '').split(',')[0].trim();
+  return `<div class="lugar"><label>Provincia<select id="${pre}-prov">${PROVINCIAS.map(p => `<option value="${p[0]}"${p === pv ? ' selected' : ''}>${p[1]}</option>`).join('')}</select></label>
+    <label>Localidad<input id="${pre}-loc" data-lugar="${pre}" autocomplete="off" placeholder="Escribí y elegí de la lista" value="${esc(nombre && provDe(nombre) ? loc : '')}"></label>
+    <div class="sug" id="${pre}-sug"></div><input type="hidden" id="${pre}-coord" value="${esc(coord || '')}"><p class="ag-ayuda lugar-ok" id="${pre}-ok">${nombre ? '📍 ' + esc(nombre) : ''}</p></div>`;
+}
+function lugarElegido(pre){
+  const pv = PROVINCIAS.find(p => p[0] === $(pre + '-prov').value), loc = $(pre + '-loc').value.trim(), co = $(pre + '-coord').value;
+  return { nombre: (loc ? loc + ', ' : '') + pv[1], coord: co || (pv[2] + ',' + pv[3]) };
+}
+let LOC_T = null;
+async function buscarLoc(q, prov){
+  const u = 'https://apis.datos.gob.ar/georef/api/localidades?max=10&campos=nombre,provincia.nombre,departamento.nombre,centroide&nombre=' + encodeURIComponent(q) + '&provincia=' + prov;
+  try { const r = await fetch(u); const d = await r.json(); return (d.localidades || []).map(x => ({ n: x.nombre, p: x.provincia.nombre, d: x.departamento ? x.departamento.nombre : '', lat: x.centroide.lat, lon: x.centroide.lon })); }
+  catch (e) { const d = await jsonp(API + '?accion=localidades&q=' + encodeURIComponent(q) + '&prov=' + prov); return d.localidades || []; }
+}
+document.addEventListener('input', e => {
+  const pre = e.target.dataset && e.target.dataset.lugar; if (!pre) return;
+  $(pre + '-coord').value = ''; $(pre + '-ok').textContent = '';
+  clearTimeout(LOC_T); const q = e.target.value.trim(), sug = $(pre + '-sug'); if (q.length < 2) { sug.innerHTML = ''; return; }
+  LOC_T = setTimeout(async () => {
+    sug.innerHTML = '<span class="ag-ayuda">Buscando…</span>';
+    try { const ls = await buscarLoc(q, $(pre + '-prov').value);
+      sug.innerHTML = ls.length ? ls.map(l => `<button type="button" data-lugarpick="${pre}" data-n="${esc(l.n)}" data-p="${esc(l.p)}" data-c="${(+l.lat).toFixed(4)},${(+l.lon).toFixed(4)}">${esc(l.n)}<small>${esc(l.d)}</small></button>`).join('') : '<span class="ag-ayuda">No encontramos esa localidad en esta provincia. Probá con otro nombre o dejá solo la provincia.</span>';
+    } catch (x) { sug.innerHTML = '<span class="ag-ayuda">No pudimos buscar ahora. Si guardás, usamos la capital de la provincia.</span>'; }
+  }, 350);
+});
+document.addEventListener('change', e => { if (/-prov$/.test(e.target.id)) { const pre = e.target.id.replace(/-prov$/, ''); if ($(pre + '-loc')) { $(pre + '-loc').value = ''; $(pre + '-coord').value = ''; $(pre + '-sug').innerHTML = ''; $(pre + '-ok').textContent = ''; } } });
 function datosNacimientoHTML(motivo){
-  const op = sel => CIUDADES.map(c => `<option${c[0] === sel ? ' selected' : ''}>${c[0]}</option>`).join('');
   return `<div class="form-nac"><p>${motivo}</p><label>Hora de nacimiento<input type="time" id="nac-hora" value="${esc((horaDe(P.horaNac) || []).map(x => String(x).padStart(2, '0')).join(':'))}"></label>
-    <label>Lugar de nacimiento<select id="nac-lugar">${op(P.lugarNac || CIUDADES[0][0])}</select></label>
+    ${selectorLugar('nac', P.lugarNac, P.coordNac)}
     <p class="ag-ayuda">Si no sabés la hora exacta, fijate en tu partida de nacimiento o preguntale a tu familia. Sin la hora igual calculamos todo, pero el ascendente y las casas pueden variar.</p>
     <button class="btn" type="button" data-guardarnac>Guardar mis datos</button></div>`;
 }
@@ -1943,7 +1983,7 @@ function premRevolucion(){
   let h = `<p class="intro">La Revolución Solar es la carta del momento exacto en que el Sol vuelve al mismo lugar donde estaba cuando naciste. Pasa una vez por año, cerca de tu cumpleaños, y describe la energía de tu año personal: de cumpleaños a cumpleaños.</p>`;
   if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:');
   h += `<div class="sr-cab"><small>Tu revolución ${sr.y}–${sr.y + 1}</small><h4>${fechaCorta(sr.fecha)} de ${sr.y}, ${String(sr.fecha.getHours()).padStart(2, '0')}:${String(sr.fecha.getMinutes()).padStart(2, '0')} hs</h4>
-    <label class="sr-ciudad">Dónde pasaste tu cumpleaños <select id="sr-ciudad">${CIUDADES.map(c => `<option${c[0] === sr.ciudad ? ' selected' : ''}>${c[0]}</option>`).join('')}</select></label></div>`;
+    <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details></div>`;
   h += `<p class="sub">🌅 El tono de tu año · Ascendente en ${ZOD[ascI]}</p><p>${ASC_SR[ascI]}</p>`;
   h += `<p class="sub">☀️ El tema central · Sol en casa ${solC + 1}</p><p>${SOL_CASA_SR[solC]}</p>`;
   h += `<p class="sub">🌙 Tus emociones · Luna en ${signoDe(sr.pos.Luna)}, casa ${lunC + 1}</p><p>Tu mundo emocional este año se mueve en torno a ${CASA_SR[lunC].area}. ${LUNA_TONO[signoDe(sr.pos.Luna)] ? 'La Luna en ' + signoDe(sr.pos.Luna) + ' trae ' + LUNA_TONO[signoDe(sr.pos.Luna)][1] + '.' : ''} Ahí vas a necesitar contención y cuidado.</p>`;
@@ -2113,8 +2153,8 @@ function posTodas(jd){ const o = posiciones(jd); ['Urano', 'Neptuno', 'Plutón']
 let NAT_K = '', NAT = null;
 function natal(){
   if (!P.diaMes || !P.anioNac) return null;
-  const k = P.diaMes + P.anioNac + P.horaNac + P.lugarNac; if (k === NAT_K) return NAT;
-  const jd = jdNac(P.diaMes, P.anioNac, P.horaNac), hora = !!horaDe(P.horaNac), cd = ciudad(P.lugarNac || CIUDADES[0][0]), pos = posTodas(jd);
+  const k = P.diaMes + P.anioNac + P.horaNac + P.lugarNac + P.coordNac; if (k === NAT_K) return NAT;
+  const jd = jdNac(P.diaMes, P.anioNac, P.horaNac), hora = !!horaDe(P.horaNac), cd = lugarCoord(P.lugarNac, P.coordNac), pos = posTodas(jd);
   let asc, mc = null, cus; if (hora) { cus = placidus(jd, cd[1], cd[2]); asc = cus[0]; mc = cus[9]; } else { asc = Math.floor(pos.Sol / 30) * 30; cus = Array.from({ length: 12 }, (x, i) => nrm2(asc + i * 30)); }
   NAT_K = k; NAT = { jd, pos, asc, mc, hora, cus, ciudad: cd[0], casa: l => casaEn(cus, l) };
   return NAT;
@@ -2931,10 +2971,12 @@ document.addEventListener('click', async e => {
   if (b.dataset.irser !== undefined) { irTab('arcanos', 'ser'); return; }
   if (b.dataset.medita) { const m = b.dataset.medita; if (m === 'parar') { MED && clearTimeout(MED.t); try { speechSynthesis.cancel(); } catch (x) {} MED = null; const c = $('medita'); if (c) c.outerHTML = premAnimal().match(/<div class="medita"[\s\S]*$/)[0]; return; } if (m === 'sig') { MED && MED.sig(); return; } meditar(m); return; }
   if (b.dataset.sinastria !== undefined) { const f = $('sin-fecha').value; if (!f) { $('sin-fecha').focus(); return; } try { localStorage.setItem('luzguia_sin', JSON.stringify({ nombre: $('sin-nombre').value.trim(), fecha: f, hora: $('sin-hora').value })); } catch (x) {} evento('Sección', 'Premium: sinastría calculada'); repintarPrem(); return; }
+  if (b.dataset.lugarpick) { const pre = b.dataset.lugarpick; $(pre + '-loc').value = b.dataset.n; $(pre + '-coord').value = b.dataset.c; $(pre + '-ok').textContent = '📍 ' + b.dataset.n + ', ' + b.dataset.p; $(pre + '-sug').innerHTML = ''; return; }
+  if (b.dataset.guardarsr !== undefined) { const lg = lugarElegido('sr'); try { localStorage.setItem('luzguia_sr_lugar', JSON.stringify(lg)); } catch (x) {} repintarPrem(); return; }
   if (b.dataset.guardarnac !== undefined) {
-    const hora = $('nac-hora').value, lugar = $('nac-lugar').value; if (!hora) { $('nac-hora').focus(); return; }
-    b.disabled = true; b.textContent = 'Guardando…'; P.horaNac = hora; P.lugarNac = lugar;
-    try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, horaNac: hora, lugarNac: lugar }) }); } catch (x) {}
+    const hora = $('nac-hora').value, lg = lugarElegido('nac'); if (!hora) { $('nac-hora').focus(); return; }
+    b.disabled = true; b.textContent = 'Guardando…'; P.horaNac = hora; P.lugarNac = lg.nombre; P.coordNac = lg.coord;
+    try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, horaNac: hora, lugarNac: lg.nombre, coordNac: lg.coord }) }); } catch (x) {}
     repintarPrem(); return;
   }
   if (b.dataset.quieroPremium !== undefined) { pedir('Premium', 'Premium', 'Plan Premium de Mi Luz'); return; }
