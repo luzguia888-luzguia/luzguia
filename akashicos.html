@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registros Akáshicos con Mey · Luz Guía</title>
+<meta name="description" content="Cómo es una lectura de Registros Akáshicos con Mey, de Luz Guía: preguntas en privado, una hora de videollamada y tus respuestas por escrito.">
+<meta name="theme-color" content="#120621">
+<link rel="icon" href="icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#120621; --violeta:#2a1046; --ciruela:#3a1763; --oro:#D4AF6A; --oro-claro:#F3DCA0; --luna:#EDE6F5; --bruma:#B6A7C9; --agua:#8FD9CF; --linea:rgba(185,138,230,.25);
+  --serif:'Cormorant Garamond', Georgia, serif; --script:'Great Vibes', 'Segoe Script', cursive; --sans:'Jost', system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--noche);color:var(--luna);font-family:var(--sans);font-size:17px;line-height:1.65;overflow-x:hidden}
+#estrellas{position:fixed;inset:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1}
+.ancho{max-width:720px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+/* Portada */
+.hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;padding:0 0 56px;overflow:hidden}
+.hero .foto{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(243,220,160,.35),transparent 55%),linear-gradient(180deg,#1b0b33,#120621);background-size:cover;background-position:center}
+.hero .foto img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,6,33,.2) 0%,rgba(18,6,33,.35) 45%,rgba(18,6,33,.95) 88%,var(--noche) 100%)}
+.hero .ancho{position:relative;z-index:2;text-align:center}
+.volver{position:absolute;top:calc(14px + env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));z-index:3;color:var(--luna);text-decoration:none;font-size:.9rem;background:rgba(18,6,33,.55);border:1px solid var(--linea);border-radius:999px;padding:7px 14px;backdrop-filter:blur(6px)}
+.marca{display:inline-flex;align-items:center;gap:8px;color:var(--oro);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+.marca img{width:26px;height:26px;border-radius:50%}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.4rem,9vw,3.6rem);line-height:1.05;margin:14px 0 6px;text-wrap:balance;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+.con{display:block;font-family:var(--script);font-weight:400;color:var(--oro-claro);font-size:clamp(2.4rem,10vw,3.4rem);line-height:1.1}
+.bajada{color:var(--luna);font-family:var(--serif);font-style:italic;font-size:1.3rem;margin:10px auto 22px;max-width:30ch}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#F3DCA0,#D4AF6A);color:#1C0B2E;font-weight:600;border-radius:999px;padding:13px 24px;text-decoration:none;box-shadow:0 8px 30px rgba(212,175,106,.35);border:0;font:600 1rem var(--sans);cursor:pointer}
+.btn.sec{background:transparent;color:var(--oro-claro);border:1px solid var(--oro);box-shadow:none}
+.bajar{display:block;margin-top:26px;color:var(--bruma);font-size:.85rem;text-decoration:none}
+/* Secciones */
+section{padding:56px 0 8px}
+.eyebrow{color:var(--agua);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,6vw,2.4rem);line-height:1.15;margin:0 0 14px;text-wrap:balance}
+p{margin:0 0 1em}
+.lead{font-family:var(--serif);font-size:1.3rem;line-height:1.55;color:var(--luna)}
+.suave{color:var(--bruma)}
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:46px 0 0;color:var(--oro)}
+.orn::before,.orn::after{content:"";height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--oro))}
+.orn::after{transform:scaleX(-1)}
+.sirve{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px}
+.sirve div{border:1px solid var(--linea);border-radius:16px;padding:16px;background:linear-gradient(160deg,rgba(58,23,99,.55),rgba(18,6,33,.6))}
+.sirve b{display:block;font-family:var(--serif);font-size:1.2rem;color:var(--oro-claro);margin-bottom:4px}
+.sirve span{color:var(--bruma);font-size:.95rem}
+/* Lo mágico */
+.magia{margin-top:22px;border-radius:22px;padding:26px 22px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(143,217,207,.22),transparent 60%),linear-gradient(160deg,#2f1352,#160828);border:1px solid rgba(143,217,207,.35);position:relative;overflow:hidden}
+.magia .ojo{font-size:2rem;color:var(--agua)}
+.magia p{font-family:var(--serif);font-size:1.45rem;line-height:1.45;margin:8px 0 0}
+.magia em{color:var(--oro-claro);font-style:normal}
+/* Pasos */
+.pasos{list-style:none;padding:0;margin:20px 0 0;position:relative}
+.pasos::before{content:"";position:absolute;left:21px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--oro),var(--agua))}
+.pasos li{position:relative;padding:0 0 26px 62px}
+.pasos .n{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--violeta);border:2px solid var(--oro);color:var(--oro-claro);font-family:var(--serif);font-size:1.3rem;font-weight:600;box-shadow:0 0 18px rgba(212,175,106,.35)}
+.pasos h3{margin:6px 0 4px;font-size:1.1rem;font-weight:600;color:var(--luna)}
+.pasos p{color:var(--bruma);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chips span{border:1px solid var(--linea);border-radius:999px;padding:5px 12px;font-size:.85rem;color:var(--luna);background:rgba(58,23,99,.45)}
+/* Preguntas guía */
+.preguntas{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.preguntas li{padding:14px 16px 14px 46px;border-radius:14px;background:rgba(42,16,70,.7);border:1px solid var(--linea);position:relative;font-family:var(--serif);font-size:1.15rem;line-height:1.4}
+.preguntas li::before{content:"✦";position:absolute;left:16px;top:14px;color:var(--oro)}
+.tip{margin-top:16px;padding:14px 16px;border-left:3px solid var(--agua);background:rgba(143,217,207,.08);border-radius:0 12px 12px 0;color:var(--luna);font-size:.95rem}
+/* Preparar y llevar */
+.dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
+.caja{border-radius:18px;padding:20px;background:linear-gradient(160deg,rgba(58,23,99,.6),rgba(18,6,33,.7));border:1px solid var(--linea)}
+.caja h3{margin:0 0 10px;font-family:var(--serif);font-size:1.4rem;color:var(--oro-claro);font-weight:600}
+.caja ul{margin:0;padding-left:20px;color:var(--bruma)}
+.caja li{margin-bottom:6px}
+/* FAQ */
+details{border-bottom:1px solid var(--linea);padding:14px 0}
+summary{cursor:pointer;list-style:none;font-weight:500;font-size:1.05rem;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--oro);font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--bruma);margin:8px 0 0}
+/* Cierre */
+.cierre{text-align:center;padding:60px 0 40px}
+.cierre .firma{font-family:var(--script);font-size:2.6rem;color:var(--oro-claro);line-height:1.2;margin:6px 0 18px}
+.botones{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.nota{font-size:.8rem;color:var(--bruma);text-align:center;margin:34px auto 0;max-width:46ch;opacity:.85}
+footer{text-align:center;color:var(--bruma);font-size:.8rem;padding:20px 0 calc(30px + env(safe-area-inset-bottom))}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--agua);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion:no-preference){
+  .hero .foto img{animation:respira 18s ease-in-out infinite alternate}
+  @keyframes respira{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+  .aparece{opacity:1;transform:none;transition:opacity .9s ease,transform .9s ease}
+  .js .aparece:not(.visto){opacity:.001;transform:translateY(18px)}
+}
+</style>
+</head>
+<body>
+<canvas id="estrellas" aria-hidden="true"></canvas>
+<main>
+  <header class="hero">
+    <div class="foto"><img src="img/akashicos.jpg" alt="" onerror="this.remove()"></div>
+    <a class="volver" id="volver" href="mi-luz.html">‹ Mi Luz</a>
+    <div class="ancho">
+      <span class="marca"><img src="icono-192.png" alt="">Luz Guía</span>
+      <h1>Registros Akáshicos <span class="con">con Mey</span></h1>
+      <p class="bajada">La memoria de tu alma, puesta en palabras para vos.</p>
+      <a class="btn" href="#como">Cómo es una lectura ✦</a>
+      <a class="bajar" href="#que">Deslizá para descubrirlo ↓</a>
+    </div>
+  </header>
+
+  <div class="ancho">
+    <section id="que" class="aparece">
+      <p class="eyebrow">El origen</p>
+      <h2>¿Qué son los Registros Akáshicos?</h2>
+      <p class="lead">"Akasha" es una palabra en sánscrito que significa éter: aquello que todo lo contiene.</p>
+      <p>Según esta tradición espiritual, los Registros Akáshicos son la memoria energética de tu alma: un gran libro donde queda guardado todo lo que viviste, lo que sentís hoy y las posibilidades que se abren delante tuyo. Abrirlos es como consultar esa biblioteca con amor y respeto, para traer claridad a tu camino.</p>
+      <div class="sirve">
+        <div><b>Claridad</b><span>Entender qué está pasando en tu vida y por qué.</span></div>
+        <div><b>Patrones</b><span>Ver lo que se repite en tus vínculos, tu trabajo o tu dinero.</span></div>
+        <div><b>Propósito</b><span>Reconectar con tus dones y con lo que viniste a hacer.</span></div>
+        <div><b>Sanación</b><span>Soltar cargas del pasado y avanzar más liviana.</span></div>
+      </div>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section id="como" class="aparece">
+      <p class="eyebrow">La forma de Mey</p>
+      <h2>Una lectura distinta a todas</h2>
+      <p>Hay muchas maneras de leer los Registros. Mey trabaja de una forma muy especial: <b>tus preguntas son solo tuyas</b>.</p>
+      <div class="magia">
+        <div class="ojo" aria-hidden="true">☾</div>
+        <p>Mey <em>nunca lee tus preguntas</em>.<br>Y aun así, llega con tus respuestas.</p>
+      </div>
+      <ol class="pasos">
+        <li><span class="n">1</span><h3>Escribís tus preguntas, en privado</h3><p>Todas las que quieras, sobre tu pasado, tu presente o tu futuro. Mey te comparte una guía de preguntas que podés usar, y sumás las tuyas.</p></li>
+        <li><span class="n">2</span><h3>No se las mandás a nadie</h3><p>Las guardás vos. Mey no las ve en ningún momento: ni antes, ni durante, ni después.</p></li>
+        <li><span class="n">3</span><h3>Mey abre tus Registros</h3><p>Quince minutos antes de la sesión abre tus Registros con tus datos y recibe la información: las respuestas a esas preguntas que nunca leyó. Las escribe en un texto para vos.</p></li>
+        <li><span class="n">4</span><h3>Se encuentran por videollamada</h3><p>Una hora por videollamada de WhatsApp, desde donde estés. Mey te comparte lo que recibió y podés sumar todas las preguntas nuevas que te surjan.</p>
+          <div class="chips"><span>⏳ 1 hora</span><span>📱 WhatsApp</span><span>🌎 Desde cualquier lugar</span></div></li>
+        <li><span class="n">5</span><h3>Te quedás con todo</h3><p>Podés grabar la sesión completa y Mey te envía el texto escrito con tus respuestas, para volver a leerlo cuando lo necesites.</p></li>
+      </ol>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section class="aparece">
+      <p class="eyebrow">Para inspirarte</p>
+      <h2>Preguntas que suelen hacerse</h2>
+      <p class="suave">Algunas de las preguntas guía más usadas. Elegí las que resuenen con vos y agregá las tuyas.</p>
+      <ul class="preguntas">
+        <li>¿Cuál es el propósito de mi alma en esta vida?</li>
+        <li>¿Qué dones traigo y cómo puedo desarrollarlos?</li>
+        <li>¿Qué patrón se repite en mis vínculos y qué vino a enseñarme?</li>
+        <li>¿Qué me está frenando para avanzar en mi trabajo o con el dinero?</li>
+        <li>¿Qué necesito sanar o soltar en este momento?</li>
+        <li>¿Qué necesito saber sobre la decisión que estoy por tomar?</li>
+      </ul>
+      <p class="tip">💡 Las preguntas abiertas ("¿qué…?", "¿cómo…?", "¿para qué…?") abren respuestas más ricas que las de sí o no. Escribilas con calma y desde el corazón.</p>
+    </section>
+
+    <section class="aparece">
+      <div class="dos">
+        <div class="caja"><h3>Para prepararte</h3>
+          <ul><li>Escribí tus preguntas unos días antes, a mano o en el celular.</li><li>Buscá un lugar tranquilo donde nadie te interrumpa.</li><li>Tené cerca agua, auriculares y un cuaderno.</li><li>Revisá tu conexión y la batería del celular.</li><li>Unos minutos antes, respirá hondo y conectá con tu intención.</li></ul></div>
+        <div class="caja"><h3>Lo que te llevás</h3>
+          <ul><li>Las respuestas a tus preguntas, por escrito.</li><li>La grabación completa de la sesión, si querés hacerla.</li><li>La posibilidad de preguntar en vivo todo lo que te surja.</li><li>Más claridad y paz para tus próximos pasos.</li></ul></div>
+      </div>
+    </section>
+
+    <section class="aparece">
+      <p class="eyebrow">Dudas frecuentes</p>
+      <h2>Lo que más nos preguntan</h2>
+      <details><summary>¿Tengo que mandarle mis preguntas a Mey?</summary><p>No, nunca. Las escribís y las guardás vos. Esa es la magia de esta forma de trabajar.</p></details>
+      <details><summary>¿Es presencial?</summary><p>No, es por videollamada de WhatsApp, así que podés hacerla desde cualquier ciudad.</p></details>
+      <details><summary>¿Cuánto dura?</summary><p>Alrededor de una hora.</p></details>
+      <details><summary>¿Puedo grabar la sesión?</summary><p>Sí, Mey te deja grabarla completa para que la escuches las veces que quieras.</p></details>
+      <details><summary>¿Y si en el momento me surge otra pregunta?</summary><p>Podés hacerla durante la sesión, sin problema.</p></details>
+      <details><summary>¿Qué datos necesita Mey?</summary><p>Cuando reservás tu lectura, Mey te dice qué datos tuyos necesita para abrir tus Registros.</p></details>
+      <details><summary>¿Necesito saber algo de espiritualidad?</summary><p>Nada. Solo venir con el corazón abierto y tus preguntas.</p></details>
+    </section>
+
+    <section class="cierre aparece">
+      <p class="eyebrow">Tu lectura te espera</p>
+      <h2>¿Querés abrir tus Registros?</h2>
+      <p class="suave">Escribinos y coordinamos el día y el horario de tu lectura con Mey.</p>
+      <p class="firma">Con luz, Mey</p>
+      <div class="botones">
+        <a class="btn" id="cta-wa" href="mi-luz.html#novedades">Quiero mi lectura ✦</a>
+        <a class="btn sec" id="cta-luz" href="mi-luz.html#novedades">Volver a Mi Luz</a>
+      </div>
+      <p class="nota">Las lecturas de Registros Akáshicos son una práctica espiritual de autoconocimiento. No reemplazan la atención médica, psicológica ni legal.</p>
+    </section>
+  </div>
+  <footer>Belu y Mey · Luz Guía</footer>
+</main>
+<script>
+document.documentElement.classList.add('js');
+// Vuelve a Mi Luz con el código de la persona y arma el WhatsApp si hay número
+(function(){
+  const q = new URLSearchParams(location.search), cod = q.get('codigo') || '', tel = (q.get('tel') || '').replace(/\D/g, '');
+  const luz = 'mi-luz.html' + (cod ? '?codigo=' + encodeURIComponent(cod) : '') + '#novedades';
+  document.getElementById('volver').href = luz; document.getElementById('cta-luz').href = luz;
+  if (tel) {
+    const n = tel.startsWith('54') ? tel : '549' + tel.replace(/^0/, '').replace(/^15/, '');
+    document.getElementById('cta-wa').href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Hola! Leí cómo es la lectura de Registros Akáshicos con Mey y quiero reservar la mía 🌙');
+    document.getElementById('cta-wa').target = '_blank';
+  } else document.getElementById('cta-wa').href = luz;
+})();
+// Estrellas suaves de fondo
+(function(){
+  const cv = document.getElementById('estrellas'), c = cv.getContext('2d'); let W, H, es = [];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tam(){ W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; es = Array.from({ length: Math.round(W * H / 9000 / devicePixelRatio) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 1.3 + .3) * devicePixelRatio, f: Math.random() * 6.3, v: .5 + Math.random() * 1.5, oro: Math.random() < .3 })); }
+  function dibujar(t){ c.clearRect(0, 0, W, H); es.forEach(s => { c.globalAlpha = quieto ? .7 : .35 + .65 * Math.abs(Math.sin(t / 1000 * s.v + s.f)); c.fillStyle = s.oro ? '#F3DCA0' : '#fff'; c.beginPath(); c.arc(s.x, s.y, s.r, 0, 7); c.fill(); }); if (!quieto) requestAnimationFrame(dibujar); }
+  addEventListener('resize', tam); tam(); requestAnimationFrame(dibujar);
+})();
+// Aparición suave de cada sección
+(function(){
+  const els = document.querySelectorAll('.aparece');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('visto')); return; }
+  const io = new IntersectionObserver(en => en.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } }), { threshold: .12 });
+  els.forEach(e => io.observe(e));
+  setTimeout(() => els.forEach(e => e.classList.add('visto')), 2500);
+})();
+</script>
+</body>
+</html>
