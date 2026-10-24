@@ -871,7 +871,7 @@ const ESQ = {
   Productos: { nombre: 'producto', clave: 'Producto', campos: [
     {k:'Producto', t:'text', req:1, full:1}, {k:'Categoría', t:'sel', o:() => L('Categorías producto')}, {k:'Costo de compra', t:'money'},
     {k:'Precio de venta', t:'money'}, {k:'Unidades compradas', t:'num'}, {k:'Stock mínimo', t:'num'},
-    {k:'Imagen', t:'foto', full:1, publica:1}, {k:'Notas', t:'area', full:1}]},
+    {k:'Imagen', t:'foto', full:1, publica:1}, {k:'Destacar en Novedades', t:'check', lab:'Destacarlo en Novedades de Mi Luz (con su foto)'}, {k:'Notas', t:'area', full:1}]},
   Insumos: { nombre: 'insumo', clave: 'Insumo', campos: [
     {k:'Insumo', t:'text', req:1}, {k:'Tipo', t:'sel', o:() => L('Tipos de insumo'), def:'Consumible'}, {k:'Unidad', t:'text', def:'unidades'}, {k:'Costo unitario', t:'money'},
     {k:'Stock actual', t:'num'}, {k:'Stock mínimo', t:'num'},

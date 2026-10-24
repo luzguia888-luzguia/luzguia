@@ -1146,7 +1146,7 @@ let SLIDES = [];
 function armarSlides(){
   const L2 = P.promos.map(x => Object.assign({ accion: x.tipo === 'Nuevas fechas' ? 'fechas' : x.tipo === 'Producto' && P.productos.length ? 'productos' : 'promo' }, x));
   P.encuentros.filter(e => !e.inscripta && !P.pedidos.includes(e.id)).slice(0, 2).forEach(e => L2.push({ titulo: e.nombre, frase: cuando(e.fecha) + (e.hora ? ', ' + e.hora + ' h' : '') + (e.lugares <= 3 ? ' · ¡quedan ' + e.lugares + (e.lugares === 1 ? ' lugar!' : ' lugares!') : ''), tipo: 'Nuevas fechas', boton: 'Quiero mi lugar', accion: 'reservar', ref: e.id }));
-  P.productos.filter(x => x.imagen && !x.agotado && !P.pedidos.includes(x.nombre)).slice(0, 3).forEach(x => L2.push({ titulo: x.nombre, frase: (x.categoria ? x.categoria + ' · ' : '') + 'consultá disponibilidad', tipo: 'Producto', imagen: x.imagen, boton: 'Me interesa', accion: 'producto', ref: x.nombre }));
+  P.productos.filter(x => x.destacado && x.imagen && !x.agotado && !P.pedidos.includes(x.nombre)).slice(0, 3).forEach(x => L2.push({ titulo: x.nombre, frase: (x.categoria ? x.categoria + ' · ' : '') + 'consultá disponibilidad', tipo: 'Producto', imagen: x.imagen, boton: 'Me interesa', accion: 'producto', ref: x.nombre }));
   if (P.instagram) L2.push({ titulo: 'Seguinos en Instagram', frase: 'Lecturas del día, lunas, fechas nuevas y todo lo que pasa en Luz Guía.', tipo: 'Instagram', boton: '@' + ((P.instagram.match(/instagram\.com\/([^/?#]+)/) || [, 'luzguia'])[1]), accion: 'link', ref: P.instagram });
   return L2;
 }
