@@ -1643,6 +1643,11 @@ V.hoy = () => {
   // Tareas del día
   const T = [];
   H('Pedidos').filter(x => x['Estado'] === 'Nuevo').forEach(x => {
+    if (x['Tipo'] === 'Pregunta extra') {
+      T.push({ ico:'💌', txt: `${esc(x['Nombre'])} quiere una pregunta extra este mes`, sub: esc(x['Fecha']) + ' · habilitala cuando confirmes el pago',
+        bt: btnWA(x['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-habpreg="${esc(x['ID Persona'])}|${x._fila}">Habilitar pregunta extra</button><button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button><button class="ic" type="button" title="Borrar" data-borrar="Pedidos|${x._fila}">🗑</button>` });
+      return;
+    }
     if (x['Tipo'] === 'Premium') {
       T.push({ ico:'💎', txt: `${esc(x['Nombre'])} quiere ser Premium`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : '') + ' · activalo cuando confirmes el pago',
         bt: btnWA(x['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(x['ID Persona'])}|${x._fila}">Activar Premium</button><button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
@@ -2096,6 +2101,14 @@ document.addEventListener('click', async e => {
         await guardarCambios('Personas', pr, { 'Plan': 'Premium', 'Premium hasta': hasta }, '💎 Premium activado' + (hasta ? ' hasta el ' + lindaFecha(new Date(hasta + 'T12:00')) : ''));
       } catch (err) { toast(err.message, true); ev.target.disabled = false; }
     };
+    return;
+  }
+  if (ds.habpreg) {
+    const [pid, fp] = ds.habpreg.split('|'), pr = persona(pid), ped = H('Pedidos').find(x => String(x._fila) === fp); if (!pr) return;
+    t.disabled = true;
+    try { if (ped) await enviar({ accion: 'editar', hoja: 'Pedidos', fila: ped._fila, original: ped[ESQ.Pedidos.clave], datos: { 'Estado': 'Atendido' } });
+      await guardarCambios('Personas', pr, { 'Preguntas extra': (num(pr['Preguntas extra']) || 0) + 1 }, '💌 Pregunta extra habilitada'); }
+    catch (err) { toast(err.message, true); t.disabled = false; }
     return;
   }
   if (ds.responder) {

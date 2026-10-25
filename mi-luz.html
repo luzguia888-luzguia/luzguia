@@ -63,6 +63,9 @@ main{max-width:560px;margin:0 auto;padding:28px 22px 64px}
 
 h3{font-family:var(--serif);font-weight:600;font-size:1.6rem;margin:48px 0 14px;color:var(--lila)}
 .slide-bt{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.slide-bt .btn-sec{text-decoration:none;display:inline-flex;align-items:center}
+.lugar-mes{border:1px solid #f2b8c6;border-radius:14px;padding:12px 14px;margin:12px 0;background:linear-gradient(135deg,rgba(242,184,198,.16),rgba(91,42,134,.3))}.lugar-mes small{color:#f2b8c6;font-weight:600}.lugar-mes p{margin:4px 0;color:var(--luna)}.lugar-mes span{font-size:.82rem;color:var(--bruma)}
+.nav-per{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0 8px}.nav-per .btn-sec[disabled]{opacity:.35;cursor:default}.nav-per .btn-sec,.nav-per .link{white-space:nowrap;font-size:.85rem}.nav-per .btn-sec{padding:8px 12px}
+.meses-ch li.futuro{opacity:.75;border-style:dashed}.meses-ch li.pasado{opacity:.85}.det-ch{color:var(--luna)!important;margin-top:6px!important;line-height:1.6}
 .nl-caja{display:block;text-decoration:none;color:var(--luna);border:1px solid var(--oro);border-radius:16px;padding:16px 18px;margin:16px 0;background:radial-gradient(circle at 85% 20%,rgba(243,220,160,.22),transparent 45%),linear-gradient(160deg,#2a1046,#14061f)}
 .nl-caja small{color:var(--oro);letter-spacing:.06em}.nl-caja b{display:block;font-family:var(--script);font-weight:400;font-size:2.4rem;line-height:1.2;color:#fff}.nl-caja p{margin:4px 0 10px;color:var(--bruma);font-size:.92rem}.nl-caja span{color:var(--oro);font-weight:600}
 .encuentro{border:1px solid var(--linea);border-radius:14px;background:var(--ciruela);padding:18px 18px 16px;margin-bottom:12px}
@@ -1489,7 +1492,7 @@ function premVocacion(){
 function premAmor(){
   const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre); const k = num.alma || num.camino; if (!k) return faltaFecha;
   const a = AMOR_NUM[k], mz = matrizDe(P.diaMes, P.anioNac);
-  return `<p>${a.como} ${num.camino ? NUM_MAS[num.camino].amor : ''}</p>
+  return lugarDelMes() + `<p>${a.como} ${num.camino ? NUM_MAS[num.camino].amor : ''}</p>
     <p class="sub">Tu pareja ideal</p><p>Te complementa ${a.ideal}.</p>
     <p class="sub">Dónde conocerla</p><p>Tenés más chances ${a.donde}.</p>
     ${mz ? `<p class="sub">Tu energía en el amor: ${esc(NOM[mz.amor])}</p><p>${ARC[mz.amor].e.split('. ')[0]}. ${ARC[mz.amor].a[1] || ''}</p>` : ''}
@@ -1889,7 +1892,10 @@ function premChino(){
   const meses = inicioMesesChinos(act);
   h += `<p class="sub">Mes a mes</p><p class="ag-ayuda" style="margin-top:0">Los meses chinos empiezan alrededor del día 4 al 8 de cada mes, cuando el Sol cambia de término solar.</p><ul class="meses-ch">`;
   meses.slice(0, 12).forEach((m, i) => { const hasta = meses[i + 1] ? meses[i + 1].desde : null, r = REL_MES[relChina(yo, m.animal)], esAhora = hoy >= m.desde && (!hasta || hoy < hasta);
-    h += `<li class="${esAhora ? 'ahora' : ''}"><div><small>${fechaCorta(m.desde)}${hasta ? ' al ' + fechaCorta(new Date(hasta.getTime() - 86400000)) : ''}${esAhora ? ' · ahora' : ''}</small><b>${MES_TEMA[m.animal]}</b><p>${r[1]}</p></div><span class="estr">${estrellitas(r[0])}</span></li>`; });
+    const rel = relChina(yo, m.animal), det = REL_MES_DET[rel], futuro = m.desde > hoy;
+    if (futuro) { h += `<li class="futuro"><div><small>🔒 ${fechaCorta(m.desde)}${hasta ? ' al ' + fechaCorta(new Date(hasta.getTime() - 86400000)) : ''}</small><b>${MES_TEMA[m.animal]}</b><p class="borroso">${r[1]}</p></div><span class="estr borroso">${estrellitas(r[0])}</span></li>`; return; }
+    h += `<li class="${esAhora ? 'ahora' : 'pasado'}"><div><small>${fechaCorta(m.desde)}${hasta ? ' al ' + fechaCorta(new Date(hasta.getTime() - 86400000)) : ''}${esAhora ? ' · ahora' : ''}</small><b>${MES_TEMA[m.animal]}</b><p>${r[1]}</p>${esAhora ? `<p class="det-ch">💞 ${det[0]}<br>💰 ${det[1]}<br>🌿 ${det[2]}</p>` : ''}</div><span class="estr">${estrellitas(r[0])}</span></li>`; });
+  h += '</ul><p class="ag-ayuda">Cada mes chino se abre cuando empieza. Los que ya pasaron quedan para que los vuelvas a leer.</p><ul class="meses-ch" style="display:none">';
   h += '</ul>';
   const yn = chinoAnio(act + 1), reln = relChina(yo, yn.idx), rn = REL_ANIO[reln];
   h += `<div class="anio-chino prox"><small>Lo que viene · ${act + 1}</small><h4>${CHINO[yn.idx].ic} Año ${ART_CH[yn.idx]} ${CHINO[yn.idx].a} de ${yn.el[0]} · ${REL_NOMBRE[reln].toLowerCase()} <span class="estr">${estrellitas(rn.e)}</span></h4>
@@ -1987,6 +1993,7 @@ function premRevolucion(){
   if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:');
   h += `<div class="sr-cab"><small>Tu revolución ${sr.y}–${sr.y + 1}</small><h4>${fechaCorta(sr.fecha)} de ${sr.y}, ${String(sr.fecha.getHours()).padStart(2, '0')}:${String(sr.fecha.getMinutes()).padStart(2, '0')} hs</h4>
     <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details></div>`;
+  h += lugarDelMes();
   h += `<p class="sub">🌅 El tono de tu año · Ascendente en ${ZOD[ascI]}</p><p>${ASC_SR[ascI]}</p>`;
   h += `<p class="sub">☀️ El tema central · Sol en casa ${solC + 1}</p><p>${SOL_CASA_SR[solC]}</p>`;
   h += `<p class="sub">🌙 Tus emociones · Luna en ${signoDe(sr.pos.Luna)}, casa ${lunC + 1}</p><p>Tu mundo emocional este año se mueve en torno a ${CASA_SR[lunC].area}. ${LUNA_TONO[signoDe(sr.pos.Luna)] ? 'La Luna en ' + signoDe(sr.pos.Luna) + ' trae ' + LUNA_TONO[signoDe(sr.pos.Luna)][1] + '.' : ''} Ahí vas a necesitar contención y cuidado.</p>`;
@@ -2016,32 +2023,6 @@ function premRevolucion(){
 /* Sinastría */
 function signosPersona(diaMes, anio, hora){ const p = posiciones(jdNac(diaMes, anio, hora)), o = {}; Object.keys(p).forEach(k => o[k] = Math.floor(p[k] / 30)); return o; }
 function catAspecto(a, b){ const d = (b - a + 12) % 12; return d === 0 ? 'conj' : [2, 4, 8, 10].includes(d) ? 'arm' : [3, 9].includes(d) ? 'tenso' : d === 6 ? 'opos' : 'neutro'; }
-function premSinastria(){
-  if (!P.diaMes || !P.anioNac) return faltaFecha;
-  let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
-  let h = `<p class="intro">La sinastría compara dos cartas para ver cómo se combinan dos personas: dónde fluyen, dónde se desafían y qué vienen a aprender juntas. Sumamos también la numerología y el horóscopo chino.</p>
-    <div class="form-nac"><label>Nombre de la otra persona<input id="sin-nombre" value="${esc(o ? o.nombre : '')}" maxlength="40"></label><label>Fecha de nacimiento<input type="date" id="sin-fecha" value="${esc(o ? o.fecha : '')}"></label><label>Hora (opcional)<input type="time" id="sin-hora" value="${esc(o ? o.hora : '')}"></label>
-    <button class="btn" type="button" data-sinastria>Ver nuestra sinastría</button><p class="ag-ayuda">Estos datos quedan solo en tu celular.</p></div>`;
-  if (!o || !o.fecha) return h;
-  const [yy, mm, dd] = o.fecha.split('-'), dm2 = dd + '/' + mm, yo = signosPersona(P.diaMes, P.anioNac, P.horaNac), el = signosPersona(dm2, yy, o.hora);
-  let pts = 0, n = 0;
-  h += `<div class="sr-cab"><small>Vos y ${esc(o.nombre || 'tu persona')}</small><h4>${ZOD[yo.Sol]} + ${ZOD[el.Sol]}</h4></div><ul class="num-lista">`;
-  SIN_PARES.forEach(([a, b, t]) => { const ca = catAspecto(yo[a], el[b]); pts += { conj: 2, arm: 2, tenso: -1, opos: 1, neutro: 0 }[ca] * (a === 'Venus' && b === 'Marte' || a === 'Marte' && b === 'Venus' || a === 'Sol' && b === 'Luna' || a === 'Luna' && b === 'Sol' ? 1.5 : 1); n++;
-    h += `<li><b>${{ conj: '☌', arm: '△', tenso: '□', opos: '☍', neutro: '·' }[ca]}</b><div><span>${t}: tu ${a} en ${ZOD[yo[a]]}, su ${b} en ${ZOD[el[b]]}</span>${SIN_TXT[ca]}</div></li>`; });
-  const e1 = ELEM_SIGNO[yo.Sol % 4], e2 = ELEM_SIGNO[el.Sol % 4], compat = e1 === e2 || [e1, e2].sort().join() === 'Aire,Fuego' || [e1, e2].sort().join() === 'Agua,Tierra';
-  h += `<li><b>🜁</b><div><span>Elementos: ${e1} y ${e2}</span>${e1 === e2 ? 'Mismo elemento: hablan el mismo idioma.' : compat ? 'Elementos compatibles: se alimentan mutuamente.' : 'Elementos distintos: se complementan si respetan sus diferencias.'}</div></li>`;
-  pts += compat ? 2 : 0;
-  const n1 = numerologia(P.diaMes, P.anioNac, '').camino, n2 = numerologia(dm2, yy, '').camino, r = x => x > 9 ? reducirNum(x, false) : x, g = x => [1, 5, 7].includes(r(x)) ? 0 : [2, 4, 8].includes(r(x)) ? 1 : 2;
-  h += `<li><b>🔢</b><div><span>Numerología: camino ${n1} y ${n2}</span>${r(n1) === r(n2) ? 'El mismo número: se entienden profundamente, aunque pueden potenciar los mismos defectos.' : g(n1) === g(n2) ? 'Números de la misma familia: hay afinidad natural.' : 'Números distintos: se enseñan mutuamente lo que al otro le falta.'}</div></li>`;
-  pts += r(n1) === r(n2) || g(n1) === g(n2) ? 2 : 0;
-  const c1 = chinoDe(P.diaMes, P.anioNac), c2 = chinoDe(dm2, yy), rc = relChina(CHINO.indexOf(c1.an), CHINO.indexOf(c2.an));
-  h += `<li><b>🏮</b><div><span>Horóscopo chino: ${c1.an.a} y ${c2.an.a}</span>${{ mismo: 'Mismo animal: se reconocen, aunque pueden chocar por parecerse.', aliado: 'Son aliados (mismo trígono): una de las mejores combinaciones.', amigo: 'Amigos secretos: se protegen y se sostienen.', choque: 'Animales opuestos: mucha atracción y mucho aprendizaje.', dano: 'Relación de roce: cuiden los malentendidos.', neutro: 'Combinación neutra: depende de lo que construyan.' }[rc]}</div></li></ul>`;
-  pts += { mismo: 1, aliado: 3, amigo: 3, choque: -1, dano: 0, neutro: 1 }[rc];
-  const pct = Math.max(52, Math.min(97, Math.round(62 + pts * 2.6)));
-  h += `<div class="sin-pct"><b>${pct}%</b><span>de afinidad</span></div><p class="ag-ayuda">${o.hora ? '' : 'Sin la hora de nacimiento, la Luna puede variar. '}La compatibilidad no define una relación: muestra la energía de base. Lo demás lo construyen ustedes 💜</p>`;
-  return h;
-}
-
 /* Animal de poder */
 function animalDe(){ if (!P.diaMes || !P.anioNac) return null; return ANIMAL_PODER[Math.floor(longSolar(jdNac(P.diaMes, P.anioNac, P.horaNac)) / 30)]; }
 function premAnimal(){
@@ -2195,6 +2176,7 @@ function premNatal(){
   h += ruedaSVG(n, true) + `<p class="ag-ayuda" style="text-align:center">Naciste en ${esc(n.ciudad)}${n.hora ? ' a las ' + esc(P.horaNac) + ' hs' : ''}. Líneas doradas: aspectos armónicos · rosas: tensos.</p>`;
   if (n.hora) h += `<details class="corr"><summary>¿Tu hora o tu lugar no son correctos? Corregilos ›</summary><div>${datosNacimientoHTML('Cargá la hora exacta que figura en tu partida de nacimiento: unos minutos cambian el ascendente y las casas.')}</div></details>`;
   h += `<div class="tres"><div><small>☉ Sol en ${ZOD[si(n.pos.Sol)]}</small><b>Tu esencia</b><p>${SOL_SIGNO[si(n.pos.Sol)]}</p></div><div><small>☽ Luna en ${ZOD[si(n.pos.Luna)]}</small><b>Tus emociones</b><p>${LUNA_SIGNO[si(n.pos.Luna)]}</p></div>${n.hora ? `<div><small>AC Ascendente en ${ZOD[si(n.asc)]}</small><b>Cómo te ven</b><p>${ASC_SIGNO[si(n.asc)]}</p></div>` : ''}</div>`;
+  h += lugarDelMes();
   h += '<p class="sub">Tus planetas</p><ul class="num-lista">';
   h += [['Sol', `Tu identidad se juega en ${CASA_SR[n.casa(n.pos.Sol)].area}.`], ['Luna', `Necesitás sentirte segura en ${CASA_SR[n.casa(n.pos.Luna)].area}.`]].map(([p, t]) => `<li><b>${TXT(GLIFO[p])}</b><div><span>${p} en ${gradoTxt(n.pos[p])} · casa ${n.casa(n.pos[p]) + 1}</span>${t}</div></li>`).join('');
   h += PL_NAT.slice(2).concat(['Nodo']).map(p => { const l = n.pos[p], c = n.casa(l); return `<li><b>${TXT(GLIFO[p])}</b><div><span>${p === 'Nodo' ? 'Nodo Norte' : p} en ${gradoTxt(l)} · casa ${c + 1}</span>${PLANETA_ROL[p].charAt(0).toUpperCase() + PLANETA_ROL[p].slice(1)}: se expresa ${SIGNO_ESTILO[si(l)]}, y se juega en ${CASA_SR[c].area}.</div></li>`; }).join('') + '</ul>';
@@ -2261,7 +2243,7 @@ function adelantoHTML(ev, abre){
   return `<div class="adelanto"><small>🔒 ${abre}</small><b>${ADELANTO[top[0].f.getDate() % ADELANTO.length]} ${NOM_AREA[area][1].toLowerCase()}…</b>
     <ul>${top.map((e, i) => `<li><span>${fechaCorta(e.f)}</span> ${i === 0 ? eventoTxt(e)[0] : '<i class="borroso">' + eventoTxt(e)[0] + '</i>'}</li>`).join('')}</ul><p>Quedate para ver cómo sigue ✨</p></div>`;
 }
-function tuMesHTML(y, m){
+function tuMesHTML(y, m, actual){ if (actual === undefined) actual = true;
   const n = natal(); if (!n) return faltaFecha;
   const desde = new Date(y, m, 1), dias = new Date(y, m + 1, 0).getDate() - 1, ev = eventosPeriodo(desde, dias), rs = resumenPeriodo(ev);
   const fuerte = Object.entries(rs.pts).sort((a, b) => b[1] - a[1])[0][0];
@@ -2270,28 +2252,9 @@ function tuMesHTML(y, m){
   if (rs.buenos.length || rs.dificiles.length) h += `<p class="sub">Días destacados</p><p>${rs.buenos.length ? '<span class="si">Tus mejores días:</span> ' + rs.buenos.map(d => diaTxt(d.f)).join(', ') + '. ' : ''}${rs.dificiles.length ? '<span class="no">Días para ir con calma:</span> ' + rs.dificiles.map(d => diaTxt(d.f)).join(', ') + '.' : ''}</p>`;
   h += '<p class="sub">Lo que pasa en tu cielo</p><ul class="num-lista eventos">' + ev.slice().sort((a, b) => b.peso - a.peso).slice(0, 12).sort((a, b) => a.f - b.f).map(e => { const [t, x] = eventoTxt(e); return `<li><b>${e.f.getDate()}</b><div><span>${t}</span>${x}</div></li>`; }).join('') + '</ul>';
   const sig = new Date(y, m + 1, 1), evs = eventosPeriodo(sig, new Date(y, m + 2, 0).getDate() - 1);
-  return h + adelantoHTML(evs, 'Tu ' + MESES[sig.getMonth()] + ' se abre el 1 de ' + MESES[sig.getMonth()]);
+  return h + (actual ? adelantoHTML(evs, 'Tu ' + MESES[sig.getMonth()] + ' se abre el 1 de ' + MESES[sig.getMonth()]) : '');
 }
 function lunesDe(f){ const d = new Date(f.getFullYear(), f.getMonth(), f.getDate()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
-function tuSemanaHTML(){
-  const n = natal(); if (!n) return faltaFecha;
-  const lu = lunesDe(new Date()), ev = eventosPeriodo(lu, 6), hoy = new Date().toDateString();
-  let mejor = null, h = `<div class="sr-cab"><small>Tu semana</small><h4>Del ${fechaCorta(lu)} al ${fechaCorta(new Date(lu.getTime() + 6 * 864e5))}</h4></div><ul class="semana">`;
-  for (let i = 0; i < 7; i++) {
-    const f = new Date(lu.getFullYear(), lu.getMonth(), lu.getDate() + i, 12), ll = longLuna(jdDe(f)), c = n.casa(ll), del = ev.filter(e => e.f.toDateString() === f.toDateString());
-    const v = del.reduce((a, e) => a + (e.tipo === 'asp' ? (e.cls === 'tenso' ? -e.peso : e.peso) : 0), 0) + (Math.floor(ll / 30) === Math.floor(n.pos.Sol / 30) ? 2 : 0);
-    if (!mejor || v > mejor.v) mejor = { f, v };
-    h += `<li class="${f.toDateString() === hoy ? 'ahora' : ''}" data-v="${v}"><div><small>${DIAS[f.getDay()]} ${f.getDate()}${f.toDateString() === hoy ? ' · hoy' : ''}</small><b>Luna en ${ZOD[Math.floor(ll / 30)]}, tu casa ${c + 1}</b><p>El foco emocional del día: ${CASA_SR[c].area}.</p>${del.map(e => `<p class="ev">${eventoTxt(e)[0]}</p>`).join('')}</div></li>`;
-  }
-  h = h.replace(`data-v="${mejor.v}"><div><small>${DIAS[mejor.f.getDay()]} ${mejor.f.getDate()}`, `data-v="${mejor.v}"><div><small>⭐ Tu mejor día · ${DIAS[mejor.f.getDay()]} ${mejor.f.getDate()}`);
-  const prox = new Date(lu.getTime() + 7 * 864e5);
-  return h + '</ul>' + adelantoHTML(eventosPeriodo(prox, 6), 'La semana que viene se abre el lunes ' + prox.getDate());
-}
-function premMes(){
-  const hoy = new Date();
-  return `<div class="sub-tabs"><button type="button" class="${MES_VISTA === 'semana' ? 'on' : ''}" data-mesvista="semana">Tu semana</button><button type="button" class="${MES_VISTA === 'mes' ? 'on' : ''}" data-mesvista="mes">Tu mes</button></div>` +
-    (MES_VISTA === 'semana' ? tuSemanaHTML() : tuMesHTML(hoy.getFullYear(), hoy.getMonth())) + '<p class="ag-ayuda">Calculado con los tránsitos sobre tu carta natal. Cada lunes se renueva tu semana y cada 1° tu mes.</p>';
-}
 let MES_VISTA = 'semana';
 // Anzuelo en Hoy
 function anzueloHTML(){
@@ -2337,16 +2300,129 @@ function premDiario(){
 
 /* Pregunta del mes */
 function premPregunta(){
-  const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), ps = P.preguntas || [], esta = ps.find(x => x.mes === mk);
-  let h = `<p class="intro">Una vez por mes podés hacernos una pregunta, y Belu o Mey te la responden con una tirada de tarot hecha para vos.</p>`;
-  if (!esta) h += `<div class="form-nac"><label>Tu pregunta de ${MESES[hoy.getMonth()]}<textarea id="preg-txt" maxlength="400" placeholder="Por ejemplo: ¿Qué necesito saber sobre mi trabajo este mes?"></textarea></label><p class="ag-ayuda">Tip: las preguntas abiertas ("¿qué necesito saber…?", "¿cómo puedo…?") dan lecturas más ricas que las de sí o no.</p><button class="btn" type="button" data-pregunta>Enviar mi pregunta</button></div>`;
-  else if (!esta.respuesta) h += `<div class="int-caja"><small>Tu pregunta de ${MESES[hoy.getMonth()]}</small><p>${esc(esta.pregunta)}</p><p class="ag-ayuda">✨ Belu y Mey están preparando tu tirada. Te avisamos cuando esté lista.</p></div>`;
+  const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), ps = P.preguntas || [], delMes = ps.filter(x => x.mes === mk), esta = delMes.find(x => !x.respuesta), puede = delMes.length < 1 + (+P.preguntasExtra || 0);
+  let h = `<p class="intro">Una vez por mes podés hacernos una pregunta, y Belu o Mey te la responden con una tirada de tarot hecha para vos. ¿Necesitás más? Podés pedir preguntas extra.</p>`;
+  if (puede && !esta) h += `<div class="form-nac">${delMes.length ? '<p>✨ Tenés una pregunta extra habilitada.</p>' : ''}<label>Tu pregunta de ${MESES[hoy.getMonth()]}<textarea id="preg-txt" maxlength="400" placeholder="Por ejemplo: ¿Qué necesito saber sobre mi trabajo este mes?"></textarea></label><p class="ag-ayuda">Tip: las preguntas abiertas ("¿qué necesito saber…?", "¿cómo puedo…?") dan lecturas más ricas que las de sí o no.</p><button class="btn" type="button" data-pregunta>Enviar mi pregunta</button></div>`;
+  if (esta) h += `<div class="int-caja"><small>Tu pregunta de ${MESES[hoy.getMonth()]}</small><p>${esc(esta.pregunta)}</p><p class="ag-ayuda">✨ Belu y Mey están preparando tu tirada. Te avisamos cuando esté lista.</p></div>`;
+  if (!puede) h += P.pedidos.includes('Pregunta extra ' + mk) ? '<p class="hecho">✓ Pediste una pregunta extra. Te escribimos para coordinarla ✨</p>' : `<div class="prem-cta"><p class="ag-ayuda">Ya usaste tu pregunta de ${MESES[hoy.getMonth()]}. La próxima se habilita el 1 de ${MESES[(hoy.getMonth() + 1) % 12]}.</p><button class="btn-sec" type="button" data-preguntaextra>Quiero una pregunta extra</button></div>`;
   ps.filter(x => x.respuesta).slice().reverse().forEach(x => {
     const cs = String(x.cartas || '').split(',').map(s => +s).filter(Boolean);
     h += `<div class="respuesta"><small>${esc(x.fechaResp || '')} · Tu pregunta</small><p class="preg">${esc(x.pregunta)}</p>${cs.length ? `<div class="cartas-mes">${cs.map(n => `<div><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><small>${esc(NOM[n])}</small></div>`).join('')}</div>` : ''}<p>${esc(x.respuesta).replace(/\n/g, '<br>')}</p><p class="firma-r">Con luz, Belu y Mey 💜</p></div>`;
   });
   return h;
 }
+
+/* ───── v13: historial semana a semana, sinastría mensual, lugar del mes ───── */
+let SEM_OFF = 0, MESN_OFF = 0;
+const LUGAR_CASA = [
+  'en lugares donde te muestres tal cual sos: una actividad nueva, un cambio de look que te dé confianza',
+  'en ferias, mercados, restaurantes y lugares de disfrute',
+  'en cursos, talleres, charlas, tu barrio o a través de mensajes y redes',
+  'en reuniones familiares, en casa de amigos o en algo relacionado con tu hogar',
+  'en fiestas, salidas, recitales y espacios de arte',
+  'en el trabajo, el gimnasio, clases de yoga o actividades de bienestar',
+  'por presentación de alguien, en eventos sociales o en ámbitos de negocios',
+  'en espacios de terapia, círculos íntimos o experiencias intensas y profundas',
+  'en viajes, escapadas, cursos de formación o espacios de espiritualidad',
+  'en el ámbito profesional y en eventos de trabajo, donde se luce lo que hacés',
+  'a través de amistades, grupos, comunidades online o proyectos colectivos',
+  'en retiros, meditaciones, encuentros espirituales (como los de Luz Guía) o lugares tranquilos'];
+function lugarDelMes(){
+  const n = natal(); if (!n) return '';
+  const hoy = new Date(), mitad = new Date(hoy.getFullYear(), hoy.getMonth(), 15, 12), jd = jdDe(mitad), c = n.casa(longPlaneta('Venus', jd)), r = retrogrado('Venus', jd);
+  return `<div class="lugar-mes"><small>💘 Este mes, en ${MESES[hoy.getMonth()]}</small><p>Podés conocer a alguien especial <b>${LUGAR_CASA[c]}</b>.</p><span>Venus pasa por tu casa ${c + 1}${r ? ' y está retrógrada: también pueden volver personas del pasado' : ''}. El mes que viene cambia ✨</span></div>`;
+}
+// Navegación entre semanas y meses ya vividos (lo futuro queda como adelanto)
+function navPeriodo(tipo, off, maxAtras, etiquetaAhora){
+  return `<div class="nav-per"><button type="button" class="btn-sec" data-navper="${tipo}|-1"${off <= -maxAtras ? ' disabled' : ''}>‹ Anterior</button>${off < 0 ? `<button type="button" class="link" data-navper="${tipo}|0">${etiquetaAhora}</button>` : '<span></span>'}<button type="button" class="btn-sec" data-navper="${tipo}|1"${off >= 0 ? ' disabled' : ''}>Siguiente ›</button></div>`;
+}
+function tuSemanaHTML(){
+  const n = natal(); if (!n) return faltaFecha;
+  const lu = lunesDe(new Date()); lu.setDate(lu.getDate() + SEM_OFF * 7);
+  const ev = eventosPeriodo(lu, 6), hoy = new Date().toDateString();
+  let mejor = null, h = navPeriodo('sem', SEM_OFF, 52, 'Volver a esta semana') + `<div class="sr-cab"><small>${SEM_OFF === 0 ? 'Tu semana' : 'Una semana que ya viviste'}</small><h4>Del ${fechaCorta(lu)} al ${fechaCorta(new Date(lu.getTime() + 6 * 864e5))}</h4></div><ul class="semana">`;
+  for (let i = 0; i < 7; i++) {
+    const f = new Date(lu.getFullYear(), lu.getMonth(), lu.getDate() + i, 12), ll = longLuna(jdDe(f)), c = n.casa(ll), del = ev.filter(e => e.f.toDateString() === f.toDateString());
+    const v = del.reduce((a, e) => a + (e.tipo === 'asp' ? (e.cls === 'tenso' ? -e.peso : e.peso) : 0), 0) + (Math.floor(ll / 30) === Math.floor(n.pos.Sol / 30) ? 2 : 0);
+    if (!mejor || v > mejor.v) mejor = { f, v, i };
+    h += `<li class="${f.toDateString() === hoy ? 'ahora' : ''}" data-dia="${i}"><div><small>${DIAS[f.getDay()]} ${f.getDate()}${f.toDateString() === hoy ? ' · hoy' : ''}</small><b>Luna en ${ZOD[Math.floor(ll / 30)]}, tu casa ${c + 1}</b><p>El foco emocional del día: ${CASA_SR[c].area}.</p>${del.map(e => `<p class="ev">${eventoTxt(e)[0]}</p>`).join('')}</div></li>`;
+  }
+  h = h.replace(`data-dia="${mejor.i}"><div><small>`, `data-dia="${mejor.i}"><div><small>⭐ ${SEM_OFF === 0 ? 'Tu mejor día' : 'Fue tu mejor día'} · `);
+  const prox = new Date(lu.getTime() + 7 * 864e5);
+  return h + '</ul>' + (SEM_OFF === 0 ? adelantoHTML(eventosPeriodo(prox, 6), 'La semana que viene se abre el lunes ' + prox.getDate()) : '');
+}
+function premMes(){
+  const hoy = new Date(), ref = new Date(hoy.getFullYear(), hoy.getMonth() + MESN_OFF, 1);
+  return `<div class="sub-tabs"><button type="button" class="${MES_VISTA === 'semana' ? 'on' : ''}" data-mesvista="semana">Tu semana</button><button type="button" class="${MES_VISTA === 'mes' ? 'on' : ''}" data-mesvista="mes">Tu mes</button></div>` +
+    (MES_VISTA === 'semana' ? tuSemanaHTML() : navPeriodo('mes', MESN_OFF, 12, 'Volver a este mes') + tuMesHTML(ref.getFullYear(), ref.getMonth(), MESN_OFF === 0)) +
+    '<p class="ag-ayuda">Calculado con los tránsitos sobre tu carta natal. Podés volver a ver las semanas y los meses que ya viviste. Cada lunes se abre tu semana nueva y cada 1° tu mes.</p>';
+}
+// Sinastría: textos sobre la otra persona
+const SIN_GUSTOS = ['la espontaneidad, los desafíos, que tomes la iniciativa y las sorpresas', 'la buena comida, los mimos, los regalos con valor y el contacto físico', 'las charlas largas, el humor, los mensajes y aprender cosas nuevas juntos', 'los gestos de cuidado, la intimidad del hogar y cocinar juntos', 'los halagos sinceros, los planes con brillo y la generosidad', 'los detalles, que recuerdes lo que te contó y que le hagas la vida más fácil', 'la belleza, la armonía, las salidas elegantes y la buena conversación', 'la intensidad, la lealtad, los secretos compartidos y la conexión profunda', 'la aventura, los viajes, la risa y la libertad', 'los planes a futuro, la puntualidad y los hechos más que las palabras', 'la originalidad, la amistad dentro del amor y el espacio propio', 'el romanticismo, la música, el arte y los momentos mágicos'];
+const SIN_SALIDAS = { Fuego: 'algo con movimiento: un recital, una caminata, un plan improvisado o un juego divertido', Tierra: 'una cena rica, una escapada a la naturaleza, una feria o una tarde de spa', Aire: 'una muestra de arte, un café con charla larga, un taller juntos o una salida con amigos', Agua: 'una noche en casa con velas, una película emotiva, el mar o un río, o un ritual juntos' };
+const SIN_ENTENDER = ['Necesita espacio para reaccionar: se enciende rápido y se le pasa rápido. No le guardes rencor por un momento de impulso.', 'Necesita calma, rutina y seguridad. Los cambios bruscos le desestabilizan; avisale con tiempo.', 'Necesita hablar lo que siente y que le escuches. El silencio le inquieta.', 'Necesita sentir cuidado y pertenencia. Es más sensible de lo que muestra.', 'Necesita sentirse especial. Un reconocimiento sincero le cambia el día.', 'Demuestra amor ayudando y resolviendo. Necesita orden y sentirse útil.', 'Necesita armonía: los conflictos le afectan mucho. Valora la delicadeza.', 'Necesita confianza total. Siente muy profundo aunque no lo diga.', 'Necesita libertad y optimismo. Si siente encierro, se aleja.', 'Le cuesta mostrar lo que siente: necesita tiempo y hechos para abrirse.', 'Necesita espacio y que se respete su forma distinta de ser.', 'Es una esponja emocional: necesita ternura, paciencia y momentos de silencio.'];
+const SIN_HERIDA = ['el miedo a no ser suficiente. Se sana cuando reconocés su coraje.', 'la inseguridad o el miedo a perder lo que tiene. Se sana con estabilidad y constancia.', 'el miedo a que no le escuchen o no le tomen en serio. Se sana con escucha real.', 'heridas familiares o de desamparo. Se sana cuando siente que con vos está en casa.', 'el miedo a no ser querida por quien es. Se sana con admiración sincera.', 'la autoexigencia y el miedo a equivocarse. Se sana con aceptación, sin críticas.', 'el miedo al rechazo y a la soledad. Se sana con compromiso claro.', 'heridas de traición. Se sana con lealtad y verdad.', 'el miedo a perder la libertad o la fe. Se sana con confianza.', 'la presión por cumplir y el miedo al fracaso. Se sana cuando la valorás más allá de sus logros.', 'el miedo a no encajar. Se sana cuando celebrás su autenticidad.', 'la sensación de incomprensión o de tener que sacrificarse. Se sana con ternura y límites claros.'];
+const ROL_PAREJA = { Sol: 'su identidad', Luna: 'sus emociones', Venus: 'su forma de amar' };
+function eventosSobre(objetivos, desde, dias){
+  const TR = ['Sol', 'Venus', 'Marte', 'Júpiter'], ev = []; let prev = null;
+  for (let i = -1; i <= dias; i++) {
+    const f = new Date(desde.getFullYear(), desde.getMonth(), desde.getDate() + i, 12), jd = jdDe(f), p = { Sol: longSolar(jd) }; TR.slice(1).forEach(x => p[x] = longPlaneta(x, jd));
+    if (prev && i >= 0) TR.forEach(t => Object.keys(objetivos).forEach(o => ASPECTOS.forEach(([ang, nom]) => [...new Set([ang, (360 - ang) % 360])].forEach(a2 => {
+      const d0 = difAsp(prev[t], objetivos[o].l, a2), d1 = difAsp(p[t], objetivos[o].l, a2);
+      if ((d0 < 0) !== (d1 < 0) && Math.abs(d0 - d1) < 20) ev.push({ f, t, o, quien: objetivos[o].quien, nom, cls: ang === 0 ? 'conj' : (ang === 60 || ang === 120) ? 'arm' : 'tenso', peso: (t === 'Venus' ? 3 : t === 'Júpiter' ? 2.5 : 2) });
+    }))));
+    prev = p;
+  }
+  return ev.sort((a, b) => a.f - b.f);
+}
+function premSinastria(){
+  if (!P.diaMes || !P.anioNac) return faltaFecha;
+  let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
+  const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), proxMes = MESES[(hoy.getMonth() + 1) % 12], bloqueada = o && o.mes === mk && !P.organizadora;
+  let h = `<p class="intro">La sinastría compara dos cartas para ver cómo se combinan dos personas: dónde fluyen, dónde se desafían y qué vienen a aprender juntas. Cada mes podés elegir una persona y te mostramos cómo se mueve el vínculo en ese mes.</p>`;
+  if (bloqueada) h += `<div class="int-caja"><small>Tu sinastría de ${MESES[hoy.getMonth()]}</small><p>Este mes elegiste a <b>${esc(o.nombre || 'tu persona')}</b>. A partir del 1 de ${proxMes} podés elegir otra persona (o la misma, con las predicciones del mes nuevo).</p></div>`;
+  else h += `<div class="form-nac">${o && o.mes && o.mes !== mk ? `<p>✨ ¡Empezó un mes nuevo! Podés elegir otra persona o mantener a ${esc(o.nombre || 'la misma')}.</p>` : ''}${P.organizadora ? '<p class="ag-ayuda">Vista de organizadora: podés cambiarla todas las veces que quieras para probar.</p>' : ''}
+    <label>Nombre de la otra persona<input id="sin-nombre" value="${esc(o ? o.nombre : '')}" maxlength="40"></label><label>Fecha de nacimiento<input type="date" id="sin-fecha" value="${esc(o ? o.fecha : '')}"></label><label>Hora (opcional)<input type="time" id="sin-hora" value="${esc(o ? o.hora : '')}"></label>
+    <button class="btn" type="button" data-sinastria>Ver nuestra sinastría de ${MESES[hoy.getMonth()]}</button><p class="ag-ayuda">Una persona por mes. Estos datos quedan solo en tu celular.</p></div>`;
+  if (!o || !o.fecha) return h;
+  const [yy, mm, dd] = o.fecha.split('-'), dm2 = dd + '/' + mm, yo = signosPersona(P.diaMes, P.anioNac, P.horaNac), el = signosPersona(dm2, yy, o.hora);
+  const posEl = posiciones(jdNac(dm2, yy, o.hora)), posYo = posiciones(jdNac(P.diaMes, P.anioNac, P.horaNac)), nom = esc(o.nombre || 'tu persona');
+  let pts = 0; const favor = [], cuidar = [], filas = [];
+  SIN_PARES.forEach(([a, b, t]) => { const ca = catAspecto(yo[a], el[b]); pts += { conj: 2, arm: 2, tenso: -1, opos: 1, neutro: 0 }[ca] * (a === 'Venus' && b === 'Marte' || a === 'Marte' && b === 'Venus' || a === 'Sol' && b === 'Luna' || a === 'Luna' && b === 'Sol' ? 1.5 : 1);
+    if (ca === 'arm' || ca === 'conj') favor.push(t.toLowerCase()); if (ca === 'tenso' || ca === 'opos') cuidar.push(t.toLowerCase());
+    filas.push(`<li><b>${{ conj: '☌', arm: '△', tenso: '□', opos: '☍', neutro: '·' }[ca]}</b><div><span>${t}: tu ${a} en ${ZOD[yo[a]]}, su ${b} en ${ZOD[el[b]]}</span>${SIN_TXT[ca]}</div></li>`); });
+  const e1 = ELEM_SIGNO[yo.Sol % 4], e2 = ELEM_SIGNO[el.Sol % 4], compat = e1 === e2 || [e1, e2].sort().join() === 'Aire,Fuego' || [e1, e2].sort().join() === 'Agua,Tierra'; pts += compat ? 2 : 0;
+  const n1 = numerologia(P.diaMes, P.anioNac, '').camino, n2 = numerologia(dm2, yy, '').camino, r = x => x > 9 ? reducirNum(x, false) : x, g = x => [1, 5, 7].includes(r(x)) ? 0 : [2, 4, 8].includes(r(x)) ? 1 : 2; pts += r(n1) === r(n2) || g(n1) === g(n2) ? 2 : 0;
+  const c1 = chinoDe(P.diaMes, P.anioNac), c2 = chinoDe(dm2, yy), rc = relChina(CHINO.indexOf(c1.an), CHINO.indexOf(c2.an)); pts += { mismo: 1, aliado: 3, amigo: 3, choque: -1, dano: 0, neutro: 1 }[rc];
+  const pct = Math.max(52, Math.min(97, Math.round(62 + pts * 2.6))), nivel = pct >= 85 ? 'muy alta' : pct >= 72 ? 'alta' : 'con desafíos que hacen crecer';
+  h += `<div class="sr-cab"><small>Vos y ${nom}</small><h4>${ZOD[yo.Sol]} + ${ZOD[el.Sol]}</h4></div><div class="sin-pct"><b>${pct}%</b><span>de afinidad</span></div>`;
+  h += `<p class="sub">✨ En resumen</p><p>Una conexión ${nivel}. ${favor.length ? 'Lo que más los une: ' + favor.slice(0, 2).join(' y ') + '.' : ''} ${cuidar.length ? 'Lo que más trabajo les pide: ' + cuidar.slice(0, 2).join(' y ') + '.' : ''} ${compat ? 'Sus elementos (' + e1 + ' y ' + e2 + ') se alimentan.' : 'Sus elementos (' + e1 + ' y ' + e2 + ') son distintos: se complementan si respetan sus tiempos.'}</p>`;
+  if (favor.length) h += `<p class="sub">💚 Donde se favorecen</p><ul>${favor.map(x => `<li>${x.charAt(0).toUpperCase() + x.slice(1)}</li>`).join('')}</ul>`;
+  if (cuidar.length) h += `<p class="sub">⚠️ Puntos a tener en cuenta</p><ul>${cuidar.map(x => `<li>${x.charAt(0).toUpperCase() + x.slice(1)}: hablen las diferencias antes de que se acumulen.</li>`).join('')}</ul>`;
+  h += `<p class="sub">🔮 Cómo entender a ${nom}</p><p>Su Luna está en ${ZOD[el.Luna]}. ${SIN_ENTENDER[el.Luna]}</p>
+    <p class="sub">🎁 Qué le puede gustar</p><p>Con Venus en ${ZOD[el.Venus]}, le enamoran ${SIN_GUSTOS[el.Venus]}.</p>
+    <p class="sub">🥂 Salidas ideales</p><p>${SIN_SALIDAS[ELEM_SIGNO[el.Venus % 4]].charAt(0).toUpperCase() + SIN_SALIDAS[ELEM_SIGNO[el.Venus % 4]].slice(1)}.</p>
+    <p class="sub">🩹 Su herida</p><p>Con Saturno en ${ZOD[Math.floor(posEl.Saturno / 30)]}, su herida más profunda suele ser ${SIN_HERIDA[Math.floor(posEl.Saturno / 30)]}</p>`;
+  const desde = new Date(hoy.getFullYear(), hoy.getMonth(), 1), dias = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate() - 1;
+  const ev = eventosSobre({ Sol: { l: posEl.Sol, quien: 'su' }, Luna: { l: posEl.Luna, quien: 'su' }, Venus: { l: posEl.Venus, quien: 'su' }, VenusYo: { l: posYo.Venus, quien: 'tu' } }, desde, dias);
+  const txtEv = e => { const obj = e.o === 'VenusYo' ? 'tu Venus' : 'su ' + e.o, rol = e.o === 'VenusYo' ? 'tu forma de amar' : ROL_PAREJA[e.o]; return `<li><b>${e.f.getDate()}</b><div><span>${e.t} en ${e.nom} con ${obj}</span>${e.t} trae ${TRAE[e.t]} y ${TONO[e.cls][0]} ${rol}. ${e.cls === 'tenso' ? 'Mejor evitar discusiones ese día.' : 'Buen momento para un plan juntos.'}</div></li>`; };
+  const buenos = [...new Set(ev.filter(e => e.cls !== 'tenso' && (e.t === 'Venus' || e.t === 'Júpiter')).map(e => e.f.getDate()))];
+  h += `<p class="sub">📅 Predicciones de ${MESES[hoy.getMonth()]}</p>${ev.length ? '<ul class="num-lista eventos">' + ev.slice().sort((a, b) => b.peso - a.peso).slice(0, 6).sort((a, b) => a.f - b.f).map(txtEv).join('') + '</ul>' : '<p>Un mes tranquilo para el vínculo: ideal para la rutina compartida.</p>'}
+    ${buenos.length ? `<p><span class="si">Mejores días para salir juntos:</span> ${buenos.slice(0, 4).join(', ')} de ${MESES[hoy.getMonth()]}.</p>` : ''}${retrogrado('Venus', jdDe(new Date(hoy.getFullYear(), hoy.getMonth(), 15))) ? '<p class="ag-ayuda">Venus está retrógrada este mes: tiempo de revisar el vínculo más que de dar grandes pasos.</p>' : ''}`;
+  h += `<p class="sub">El detalle de sus cartas</p><ul class="num-lista">${filas.join('')}
+    <li><b>🔢</b><div><span>Numerología: camino ${n1} y ${n2}</span>${r(n1) === r(n2) ? 'El mismo número: se entienden profundamente, aunque pueden potenciar los mismos defectos.' : g(n1) === g(n2) ? 'Números de la misma familia: hay afinidad natural.' : 'Números distintos: se enseñan mutuamente lo que al otro le falta.'}</div></li>
+    <li><b>🏮</b><div><span>Horóscopo chino: ${c1.an.a} y ${c2.an.a}</span>${{ mismo: 'Mismo animal: se reconocen, aunque pueden chocar por parecerse.', aliado: 'Son aliados: una de las mejores combinaciones.', amigo: 'Amigos secretos: se protegen y se sostienen.', choque: 'Animales opuestos: mucha atracción y mucho aprendizaje.', dano: 'Relación de roce: cuiden los malentendidos.', neutro: 'Combinación neutra: depende de lo que construyan.' }[rc]}</div></li></ul>`;
+  return h + `<p class="ag-ayuda">${o.hora ? '' : 'Sin la hora de nacimiento, la Luna puede variar. '}La compatibilidad no define una relación: muestra la energía de base. Lo demás lo construyen ustedes 💜</p>`;
+}
+// Horóscopo chino: detalle de cada mes
+const REL_MES_DET = {
+  mismo: ['Mirá hacia adentro antes de decidir en pareja.', 'Cuidá los gastos impulsivos.', 'Descansá más de lo habitual.'],
+  aliado: ['Encuentros y reconciliaciones favorecidos.', 'Buen mes para cobrar, vender o pedir.', 'Mucha energía: empezá algo nuevo.'],
+  amigo: ['Apoyo mutuo y gestos lindos.', 'Llegan oportunidades por contactos.', 'Bienestar si mantenés tus rutinas.'],
+  choque: ['Evitá discusiones por orgullo.', 'Nada de préstamos ni gastos grandes.', 'Bajá el ritmo y cuidá los accidentes.'],
+  dano: ['Aclará los malentendidos a tiempo.', 'Ordená, no arriesgues.', 'Dormí bien y alimentate rico.'],
+  neutro: ['El amor responde a tu iniciativa.', 'Mes estable: planificá.', 'Mantené tus rutinas.']
+};
 
 /* ───── Secciones ───── */
 const TABS = [['hoy', '☉', 'Hoy'], ['arcanos', '✧', 'Arcanos'], ['agenda', '☾', 'Agenda'], ['novedades', '✦', 'Novedades'], ['productos', '◈', 'Productos'], ['premium', '✷', 'Premium']];
@@ -2958,6 +3034,7 @@ document.addEventListener('click', async e => {
   if (b.dataset.compdia !== undefined) { compartirDia(b); return; }
   if (b.dataset.share) { compartirTipo(b); return; }
   if (b.dataset.vistagratis !== undefined) { VISTA_GRATIS = !VISTA_GRATIS; pintar(); pintarAgenda(); window.scrollTo({ top: 0 }); return; }
+  if (b.dataset.navper) { const [t, d] = b.dataset.navper.split('|'); if (t === 'sem') SEM_OFF = d === '0' ? 0 : Math.min(0, SEM_OFF + +d); else MESN_OFF = d === '0' ? 0 : Math.min(0, MESN_OFF + +d); const cu = document.querySelector('details[data-premsec=mes] .prem-cuerpo'); if (cu) cu.innerHTML = premMes(); evento('Sección', 'Premium: ' + (t === 'sem' ? 'semana' : 'mes') + ' anterior'); return; }
   if (b.dataset.mesvista) { MES_VISTA = b.dataset.mesvista; const cu = document.querySelector('details[data-premsec=mes] .prem-cuerpo'); if (cu) cu.innerHTML = premMes(); return; }
   if (b.dataset.irmes !== undefined) { PREM_ABIERTA = 'mes'; irTab('premium'); repintarPrem(); return; }
   if (b.dataset.revopc) { b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); return; }
@@ -2978,9 +3055,10 @@ document.addEventListener('click', async e => {
     catch (x) { b.disabled = false; b.textContent = 'Enviar mi pregunta'; b.insertAdjacentHTML('afterend', '<p class="ag-ayuda">No se pudo enviar. ' + esc(x.message || 'Probá de nuevo en un momento.') + '</p>'); }
     return;
   }
+  if (b.dataset.preguntaextra !== undefined) { const hoyP = new Date(); pedir('Pregunta extra', 'Pregunta extra ' + hoyP.getFullYear() + '-' + (hoyP.getMonth() + 1), 'Una pregunta extra del mes con tarot'); return; }
   if (b.dataset.irser !== undefined) { irTab('arcanos', 'ser'); return; }
   if (b.dataset.medita) { const m = b.dataset.medita; if (m === 'parar') { MED && clearTimeout(MED.t); try { speechSynthesis.cancel(); } catch (x) {} MED = null; const c = $('medita'); if (c) c.outerHTML = premAnimal().match(/<div class="medita"[\s\S]*$/)[0]; return; } if (m === 'sig') { MED && MED.sig(); return; } meditar(m); return; }
-  if (b.dataset.sinastria !== undefined) { const f = $('sin-fecha').value; if (!f) { $('sin-fecha').focus(); return; } try { localStorage.setItem('luzguia_sin', JSON.stringify({ nombre: $('sin-nombre').value.trim(), fecha: f, hora: $('sin-hora').value })); } catch (x) {} evento('Sección', 'Premium: sinastría calculada'); repintarPrem(); return; }
+  if (b.dataset.sinastria !== undefined) { const f = $('sin-fecha').value; if (!f) { $('sin-fecha').focus(); return; } const hoyS = new Date(); try { localStorage.setItem('luzguia_sin', JSON.stringify({ nombre: $('sin-nombre').value.trim(), fecha: f, hora: $('sin-hora').value, mes: hoyS.getFullYear() + '-' + (hoyS.getMonth() + 1) })); } catch (x) {} evento('Sección', 'Premium: sinastría calculada'); repintarPrem(); return; }
   if (b.dataset.lugarpick) { const pre = b.dataset.lugarpick; $(pre + '-loc').value = b.dataset.n; $(pre + '-coord').value = b.dataset.c; $(pre + '-ok').textContent = '📍 ' + b.dataset.n + ', ' + b.dataset.p; $(pre + '-sug').innerHTML = ''; return; }
   if (b.dataset.guardarsr !== undefined) { const lg = lugarElegido('sr'); try { localStorage.setItem('luzguia_sr_lugar', JSON.stringify(lg)); } catch (x) {} repintarPrem(); return; }
   if (b.dataset.guardarnac !== undefined) {
