@@ -1,5 +1,7 @@
 // Mi Luz · funciona como app: guarda la página y las imágenes para abrir rápido
-const CACHE = 'miluz-v1';
+// Avisos al celular (OneSignal) en el mismo service worker
+try { importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js'); } catch (e) {}
+const CACHE = 'miluz-v2';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['mi-luz.html', 'icono-192.png', 'icono-512.png']).catch(() => {}))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

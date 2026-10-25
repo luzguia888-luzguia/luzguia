@@ -459,6 +459,38 @@ dialog textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid v
   #estado.cargando img{animation:girar 9s linear infinite}
   @keyframes girar{to{transform:rotate(360deg)}}
 }
+
+/* v14 */
+.racha{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin:22px 0 4px;border:1px solid var(--oro-suave);border-radius:16px;padding:12px 14px;background:rgba(39,16,64,.8)}
+.racha-n b{display:block;font-family:var(--serif);font-size:1.6rem;line-height:1;color:var(--oro);font-variant-numeric:lining-nums}.racha-n small{color:var(--bruma);font-size:.78rem}
+.racha-sem{display:flex;gap:5px;justify-content:center}.racha-sem i{font-style:normal;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--bruma);border:1px solid var(--linea)}
+.racha-sem i.on{background:radial-gradient(circle at 35% 35%,#F3DCA0,#B8893E);color:var(--noche);border-color:transparent;font-weight:600}.racha-sem i.hoy{outline:1px solid var(--oro);outline-offset:2px}
+.racha .link{font-size:.9rem;white-space:nowrap}
+.logros{grid-column:1/-1;margin-top:6px}.logros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.logro{border:1px solid var(--linea);border-radius:12px;padding:10px;text-align:center;opacity:.55}.logro.on{opacity:1;border-color:var(--oro-suave);background:rgba(212,175,106,.08)}
+.logro span{font-size:1.5rem;display:block}.logro b{display:block;font-size:.86rem;line-height:1.25;margin:4px 0 2px}.logro small{color:var(--bruma);font-size:.74rem;line-height:1.3;display:block}
+#toast-logro{position:fixed;left:50%;top:18px;transform:translate(-50%,-140%);z-index:60;display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#3B1760,#1C0B2E);border:1px solid var(--oro);border-radius:16px;padding:10px 18px;box-shadow:0 12px 40px rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.2,.9,.3,1.3)}
+#toast-logro.ver{transform:translate(-50%,0)}#toast-logro span{font-size:1.8rem}#toast-logro small{display:block;color:var(--oro);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}#toast-logro b{font-family:var(--serif);font-size:1.15rem}
+.avisos-caja{display:flex;gap:12px;margin:16px 0 0;border:1px solid var(--lila-suave);border-radius:16px;padding:14px 16px;background:rgba(59,23,96,.55)}.avisos-caja>span{font-size:1.6rem}.avisos-caja p{margin:4px 0 8px;color:var(--bruma);font-size:.92rem}.avisos-caja .fila-bt{justify-content:flex-start;margin:0}
+.invitar{margin:34px 0 0;text-align:center;border:1px solid var(--oro-suave);border-radius:18px;padding:20px 18px 16px;background:radial-gradient(ellipse at 50% 0,rgba(185,138,230,.22),rgba(39,16,64,.85) 70%)}
+.invitar .inv-ic{font-size:2rem}.invitar h4{font-family:var(--serif);font-size:1.45rem;font-weight:500;margin:4px 0 6px}.invitar p{margin:0 0 10px;color:var(--luna)}.invitar .inv-ya{color:var(--oro)}.invitar small{color:var(--bruma)}
+.invitar .btn svg{width:18px;height:18px;vertical-align:-3px;margin-right:4px}
+#tour{position:fixed;inset:0;z-index:55;background:rgba(10,4,20,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px 16px 110px}
+.tour-card{max-width:380px;width:100%;text-align:center;background:linear-gradient(170deg,#3B1760,#1C0B2E 75%);border:1px solid var(--oro);border-radius:22px;padding:26px 22px 16px;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:tourIn .4s ease}
+@keyframes tourIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.tour-ic{font-size:2.4rem;color:var(--oro);font-family:var(--serif)}.tour-card h3{font-family:var(--serif);font-size:1.7rem;font-weight:500;margin:6px 0 8px}.tour-card p{color:var(--luna);margin:0 0 14px}
+.tour-puntos{display:flex;gap:6px;justify-content:center;margin-bottom:14px}.tour-puntos i{width:7px;height:7px;border-radius:50%;background:var(--linea)}.tour-puntos i.on{background:var(--oro);width:20px;border-radius:4px}
+.tour-saltar{margin-top:10px;font-size:.88rem;color:var(--bruma)}
+.nav-tabs button.tour-foco{position:relative;z-index:56;color:var(--oro);text-shadow:0 0 12px rgba(212,175,106,.9)}
+.nav-tabs:has(.tour-foco){z-index:56}
+.prueba-caja{text-align:center;margin:18px 0 6px;border:1px dashed var(--oro);border-radius:18px;padding:18px;background:rgba(212,175,106,.07)}.prueba-caja small{color:var(--oro);letter-spacing:.1em;text-transform:uppercase;font-size:.75rem}.prueba-caja h4{font-family:var(--serif);font-size:1.6rem;font-weight:500;margin:4px 0}.prueba-caja p{color:var(--bruma);margin:0 0 12px}
+.cont-item{border:1px solid var(--linea);border-radius:14px;margin:10px 0;background:rgba(28,11,46,.5)}.cont-item>summary{cursor:pointer;padding:12px 14px;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:baseline}.cont-item>summary::-webkit-details-marker{display:none}.cont-item>summary small{color:var(--bruma);white-space:nowrap}.cont-item>div{padding:0 14px 14px}
+.video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}.video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0}
+iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item audio{width:100%}
+.seg-lab{display:block;color:var(--bruma);margin:4px 0 8px;text-align:center}.seg-motivos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip-m{background:transparent;border:1px solid var(--lila-suave);border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--luna);font-size:.92rem}.chip-m:hover{border-color:var(--oro);color:var(--oro)}
+#dlg .campo-codigo{display:block;margin:0 auto}
+@media (max-width:420px){.racha{grid-template-columns:auto 1fr;}.racha .link{grid-column:1/-1;justify-self:center}.racha-sem i{width:22px;height:22px}}
 </style>
 </head>
 <body>
@@ -1242,6 +1274,7 @@ async function cargar(){
     P = d; P.arcano = completar(P.arcano); P.anual = completar(P.anual); P.encuentros = P.encuentros || []; P.productos = P.productos || []; P.pedidos = P.pedidos || []; P.promos = P.promos || []; P.paraOpinar = P.paraOpinar || []; try { if (!P.igPersona) P.igPersona = localStorage.getItem('luzguia_ig') || ''; } catch (e) {}
     pintar(); pintarAgenda(); setTimeout(auto, 50);
     $('estado').classList.add('oculto'); $('portal').classList.remove('oculto');
+    try { postCarga(); } catch (e) { console.error(e); }
   } catch (e) { console.error(e); error('Hubo un problema al mostrar tu espacio (' + (e.message || e) + '). Avisales a Belu o Mey.'); }
 }
 
@@ -3133,6 +3166,323 @@ document.addEventListener('click', async e => {
   };
   setTimeout(lanzar, 2500);
 })();
+
+/* ───── v14: racha y logros, invitar, recorrido, avisos al celular, prueba gratis,
+         tirada del mes, meditaciones y "¿pudiste reservar?" ───── */
+const isoLocal = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const ES_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && 'ontouchend' in document);
+const ES_APP = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+function lsGet(k, def){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+/* Racha y logros (se guardan en el celular de cada una) */
+const RK = 'luzguia_racha_v1';
+let RACHA = null;
+function estadoRacha(){
+  const s = lsGet(RK, null) || { dias: [], arc: [], comp: 0, inv: 0, logros: {} };
+  s.dias = s.dias || []; s.arc = s.arc || []; s.logros = s.logros || {};
+  return s;
+}
+function calcRacha(s){
+  const set = new Set(s.dias), d = new Date(); d.setHours(0, 0, 0, 0);
+  let n = 0; while (set.has(isoLocal(d))) { n++; d.setDate(d.getDate() - 1); }
+  let max = 0, cur = 0, prev = null;
+  s.dias.slice().sort().forEach(k => { const f = new Date(k + 'T12:00'); cur = prev && Math.round((f - prev) / 86400000) === 1 ? cur + 1 : 1; prev = f; if (cur > max) max = cur; });
+  return { n, max: Math.max(max, n), total: set.size };
+}
+const LOGROS = [
+  ['r3', '🔥', 'Tres días seguidos', 'Abriste Mi Luz tres días seguidos.', (s, r) => r.n >= 3],
+  ['r7', '✨', 'Una semana de luz', 'Siete días seguidos con vos misma.', (s, r) => r.n >= 7],
+  ['a7', '🃏', 'Siete arcanos', 'Descubriste 7 arcanos distintos en tu carta del día.', s => s.arc.length >= 7],
+  ['comp', '📣', 'Compartiste tu luz', 'Compartiste una imagen de Mi Luz.', s => s.comp >= 1],
+  ['inv', '💜', 'Invitaste a una amiga', 'Le mandaste tu invitación a alguien.', s => s.inv >= 1],
+  ['preg', '💌', 'Tu primera pregunta', 'Hiciste tu pregunta del mes.', () => (P.preguntas || []).length >= 1],
+  ['diario', '📖', 'Intención sembrada', 'Escribiste en tu diario lunar.', () => (P.diario || []).some(x => x.tipo === 'Intención' || x.tipo === 'Revisión')],
+  ['r21', '🌿', 'Veintiún días', 'Tres semanas seguidas: ya es un hábito.', (s, r) => r.n >= 21],
+  ['lunar', '🌙', 'Un ciclo lunar', 'Entraste 29 días distintos, lo que dura una luna.', (s, r) => r.total >= 29],
+  ['a22', '🔮', 'Los 22 arcanos', 'Descubriste todos los Arcanos Mayores.', s => s.arc.length >= 22],
+  ['r33', '👑', 'Maestra 33', 'Treinta y tres días seguidos.', (s, r) => r.n >= 33]
+];
+function revisarLogros(silencioso){
+  const s = RACHA || estadoRacha(), r = calcRacha(s), nuevos = [];
+  LOGROS.forEach(([k, ic, t]) => { if (!s.logros[k] && LOGROS.find(x => x[0] === k)[4](s, r)) { s.logros[k] = isoLocal(new Date()); nuevos.push([ic, t]); } });
+  lsSet(RK, s); RACHA = s;
+  if (!silencioso) nuevos.forEach((x, i) => setTimeout(() => { toastLogro(x[0], x[1]); evento('Logro', x[1]); }, 900 + i * 3200));
+  else nuevos.forEach(x => evento('Logro', x[1]));
+  const caja = document.querySelector('.racha'); if (caja && nuevos.length) caja.outerHTML = rachaHTML();
+}
+function toastLogro(ic, t){
+  let el = $('toast-logro'); if (!el) { el = document.createElement('div'); el.id = 'toast-logro'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+  el.innerHTML = `<span>${ic}</span><div><small>Nuevo logro</small><b>${esc(t)}</b></div>`;
+  el.className = 'ver'; clearTimeout(el._t); el._t = setTimeout(() => el.className = '', 3000);
+}
+function registrarDia(){
+  const s = estadoRacha(), hoy = isoLocal(new Date());
+  if (!s.dias.includes(hoy)) s.dias.push(hoy);
+  s.dias = s.dias.sort().slice(-400);
+  RACHA = s; lsSet(RK, s);
+}
+function rachaHTML(){
+  const s = RACHA || estadoRacha(), r = calcRacha(s), d = new Date(); d.setHours(0, 0, 0, 0);
+  const set = new Set(s.dias), sem = [];
+  for (let i = 6; i >= 0; i--) { const f = new Date(d); f.setDate(d.getDate() - i); sem.push(`<i class="${set.has(isoLocal(f)) ? 'on' : ''}${i === 0 ? ' hoy' : ''}" title="${DIAS[f.getDay()]}">${'DLMMJVS'[f.getDay()]}</i>`); }
+  const hechos = LOGROS.filter(x => s.logros[x[0]]).length;
+  return `<section class="racha"><div class="racha-n"><b>🔥 ${r.n}</b><small>${r.n === 1 ? 'día seguido' : 'días seguidos'}</small></div>
+    <div class="racha-sem" aria-label="Tus últimos 7 días">${sem.join('')}</div>
+    <button class="link" type="button" data-logros aria-expanded="false">🏅 ${hechos}/${LOGROS.length}</button>
+    <div class="logros oculto" id="logros-caja"><p class="ag-ayuda" style="margin:0 0 10px">Tu mejor racha: ${r.max} ${r.max === 1 ? 'día' : 'días'} · Entraste ${r.total} ${r.total === 1 ? 'día' : 'días'} · ${s.arc.length} de 22 arcanos descubiertos</p>
+    <div class="logros-grid">${LOGROS.map(([k, ic, t, txt]) => `<div class="logro${s.logros[k] ? ' on' : ''}"><span>${s.logros[k] ? ic : '🔒'}</span><b>${t}</b><small>${txt}</small></div>`).join('')}</div></div></section>`;
+}
+
+/* Invitar a una amiga */
+const codigoInv = () => 'LUZ-' + String(P.idPersona || '').replace(/\D/g, '').replace(/^0+/, '');
+function textoInvitacion(){
+  const linkLuz = waLuz('Hola! Vengo de parte de ' + P.nombre + ' (' + codigoInv() + ') y quiero conocer Luz Guía ✨');
+  return '✨ Te invito a Luz Guía: encuentros de tarot, lecturas y Mi Luz, una app con tu carta del día, tu energía personal y tu agenda mágica.\n\nEscribiles y deciles que vas de parte mía 💜' + (linkLuz ? '\n' + linkLuz : P.instagram ? '\n' + P.instagram : '');
+}
+function invitarHTML(){
+  if (!P.idPersona || !(P.telLuz || P.instagram)) return '';
+  const ya = P.referidas || 0;
+  return `<section class="invitar"><span class="inv-ic" aria-hidden="true">💜</span><h4>Invitá a una amiga</h4>
+    <p>Si se suma a Luz Guía, a un encuentro o a Mi Luz Premium, <b>te regalamos una semana de Premium</b>.</p>
+    ${ya ? `<p class="inv-ya">Ya ${ya === 1 ? 'se sumó 1 persona' : 'se sumaron ' + ya + ' personas'} por vos${P.regalos ? ' · ganaste ' + P.regalos + (P.regalos === 1 ? ' semana' : ' semanas') : ''} ✨</p>` : ''}
+    <div class="fila-bt" style="justify-content:center"><button class="btn" type="button" data-invitar>${WA_SVG} Invitar por WhatsApp</button>${navigator.share ? '<button class="btn-sec" type="button" data-invitar="otro">Otra app</button>' : ''}</div>
+    <small>Tu código: <b>${codigoInv()}</b></small></section>`;
+}
+
+/* Avisos al celular (OneSignal) */
+let OS_LISTO = null;
+function iniciarAvisos(){
+  if (!P.onesignal || OS_LISTO) return OS_LISTO;
+  const base = location.pathname.replace(/[^/]*$/, '');
+  OS_LISTO = new Promise(ok => {
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(async OneSignal => {
+      try {
+        await OneSignal.init({ appId: P.onesignal, serviceWorkerPath: base.slice(1) + 'sw.js', serviceWorkerParam: { scope: base }, allowLocalhostAsSecureOrigin: true });
+        if (P.idPersona) await OneSignal.login(P.idPersona);
+        ok(OneSignal);
+      } catch (e) { console.error(e); ok(null); }
+    });
+    const sc = document.createElement('script'); sc.src = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js'; sc.defer = true; sc.onerror = () => ok(null); document.head.appendChild(sc);
+  });
+  return OS_LISTO;
+}
+const avisosActivos = () => 'Notification' in window && Notification.permission === 'granted';
+function avisosHTML(){
+  if (!P.onesignal || avisosActivos() || lsGet('luzguia_avisos_no', '') === isoLocal(new Date())) return '';
+  if (!('Notification' in window) && !ES_IOS) return '';
+  return `<section class="avisos-caja"><span aria-hidden="true">🔔</span><div><b>Activá tus avisos</b><p>Te avisamos de tu carta del día, las lunas y cuando respondamos tu pregunta.${ES_IOS && !ES_APP() ? ' En iPhone primero instalá Mi Luz en tu pantalla de inicio.' : ''}</p>
+    <div class="fila-bt"><button class="btn" type="button" data-avisos>Activar avisos</button><button class="link" type="button" data-avisosno>Ahora no</button></div></div></section>`;
+}
+async function activarAvisos(btn){
+  if (ES_IOS && !ES_APP()) { guiaInstalar(); $('dlg-texto').textContent = 'En iPhone, los avisos funcionan con Mi Luz instalada. Son tres toques, y después tocá "Activar avisos" desde la app:'; return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Un momento…'; }
+  const os = await iniciarAvisos();
+  try {
+    if (os) await os.Notifications.requestPermission(); else if ('Notification' in window) await Notification.requestPermission();
+  } catch (e) { console.error(e); }
+  if (avisosActivos()) { evento('Avisos', 'Activó los avisos'); const c = document.querySelector('.avisos-caja'); if (c) c.outerHTML = '<p class="hecho" style="text-align:center;margin:18px 0">🔔 ¡Listo! Te vamos a avisar de lo importante.</p>'; }
+  else if (btn) { btn.disabled = false; btn.textContent = 'Activar avisos'; $('dlg-titulo').textContent = 'Los avisos están bloqueados'; $('dlg-texto').textContent = 'Tu navegador no dio permiso. Podés habilitarlos tocando el candado junto a la dirección (o en Ajustes del celular → Notificaciones) y volver a intentar.'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>'; $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close(); }
+}
+
+/* Recorrido de bienvenida */
+function pasosTour(){
+  const p = [
+    ['✨', 'Bienvenida a Mi Luz', 'Tu espacio personal en Luz Guía. Te mostramos lo esencial en medio minuto.', ''],
+    ['☉', 'Hoy', 'Cada día: tu mensaje, tu carta del día, la luna y un ritual. Volvé todos los días y sumá a tu racha 🔥', 'hoy'],
+    ['✧', 'Arcanos y Agenda', 'Tu arcano de nacimiento, la energía de tu año, tu nombre y tu agenda mágica con lunas y días favorables.', 'arcanos'],
+    ['✦', 'Novedades y Productos', 'Encuentros, lecturas, kits, tarots y oráculos. Tocá "Me interesa" y te escribimos.', 'novedades'],
+    ['✷', 'Premium', 'Tu carta natal, tu semana y tu mes, sinastría, revolución solar, la tirada del mes y tu pregunta respondida con tarot.' + (P.pruebaDias && !P.pruebaUsada && !P.premium ? ' Podés probarlo gratis ' + P.pruebaDias + ' días.' : ''), 'premium']
+  ];
+  if (P.onesignal && !avisosActivos()) p.push(['🔔', 'Un último paso', 'Activá los avisos y te contamos cuando sale tu carta del día, cuando hay luna nueva o llena y cuando respondemos tu pregunta.', 'avisos']);
+  else if (!ES_APP()) p.push(['📲', 'Llevala en tu celular', 'Instalá Mi Luz como app y abrila con un toque, todos los días.', 'instalar']);
+  return p;
+}
+let TOUR_I = 0;
+function mostrarTour(){
+  const pasos = pasosTour(), x = pasos[TOUR_I];
+  let el = $('tour'); if (!el) { el = document.createElement('div'); el.id = 'tour'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); document.body.appendChild(el); }
+  document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.toggle('tour-foco', b.dataset.tab === x[3] || (x[3] === 'arcanos' && b.dataset.tab === 'agenda') || (x[3] === 'novedades' && b.dataset.tab === 'productos')));
+  const ult = TOUR_I === pasos.length - 1;
+  const accion = x[3] === 'avisos' ? '<button class="btn" type="button" data-tour="avisos">Activar avisos</button>' : x[3] === 'instalar' ? '<button class="btn" type="button" data-tour="instalar">Instalar Mi Luz</button>' : '';
+  el.innerHTML = `<div class="tour-card"><div class="tour-ic">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p>
+    <div class="tour-puntos">${pasos.map((_, i) => `<i class="${i === TOUR_I ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="fila-bt" style="justify-content:center">${TOUR_I ? '<button class="btn-sec" type="button" data-tour="atras">Atrás</button>' : ''}${accion || `<button class="btn" type="button" data-tour="${ult ? 'fin' : 'sig'}">${ult ? '¡Empezar!' : 'Siguiente'}</button>`}</div>
+    <button class="link tour-saltar" type="button" data-tour="fin">${accion ? 'Ahora no' : 'Saltar'}</button></div>`;
+  el.className = 'ver';
+}
+function cerrarTour(){ const el = $('tour'); if (el) el.remove(); document.querySelectorAll('.tour-foco').forEach(b => b.classList.remove('tour-foco')); lsSet('luzguia_tour_v1', 1); }
+
+/* Prueba gratis y Premium */
+function pruebaHTML(){
+  if (P.premium || P.organizadora || !P.pruebaDias || P.pruebaUsada || P.premiumVencido) return '';
+  return `<div class="prueba-caja"><small>Sin pagar nada</small><h4>Probalo gratis ${P.pruebaDias} días</h4><p>Abrí todas las secciones Premium por ${P.pruebaDias} días. Cuando termina, decidís si querés seguir.</p><button class="btn" type="button" data-prueba>✨ Empezar mi prueba gratis</button></div>`;
+}
+function diasHasta(t){ const m = String(t || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return null; const h = new Date(+m[3], +m[2] - 1, +m[1]), hoy = new Date(); hoy.setHours(0, 0, 0, 0); return Math.round((h - hoy) / 86400000); }
+async function empezarPrueba(btn){
+  btn.disabled = true; btn.textContent = 'Activando…';
+  try {
+    const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'prueba', codigo: CODIGO }) });
+    const d = await r.json(); if (!d.ok) throw new Error(d.error);
+    PREM_ABIERTA = 'natal'; TAB = 'premium';
+    await cargar();
+    $('dlg-titulo').textContent = '¡Tu prueba empezó! ✷';
+    $('dlg-texto').textContent = 'Tenés todo Premium hasta el ' + d.hasta + '. Empezá por tu carta natal, tu semana o la sinastría con quien quieras.';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Ver mi Premium</button></div>';
+    $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close();
+  } catch (e) { btn.disabled = false; btn.textContent = '✨ Empezar mi prueba gratis'; alert(e.message || 'No se pudo activar la prueba.'); }
+}
+
+/* Tirada del mes y meditaciones */
+const MES_N = { enero: 1, febrero: 2, marzo: 3, abril: 4, mayo: 5, junio: 6, julio: 7, agosto: 8, septiembre: 9, setiembre: 9, octubre: 10, noviembre: 11, diciembre: 12 };
+function mesDe(x){
+  const t = String(x.mes || '').trim().toLowerCase(); let m;
+  if ((m = t.match(/^(\d{4})-(\d{1,2})/))) return +m[1] * 12 + (+m[2] - 1);
+  if ((m = t.match(/(\d{1,2})\/(\d{4})$/))) return +m[2] * 12 + (+m[1] - 1);
+  if ((m = t.match(/([a-zé]+)\s*(?:de\s*)?(\d{4})/)) && MES_N[m[1]]) return +m[2] * 12 + MES_N[m[1]] - 1;
+  if ((m = String(x.fecha || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/))) return +m[3] * 12 + (+m[2] - 1);
+  return null;
+}
+const nombreMes = k => MESES[k % 12].charAt(0).toUpperCase() + MESES[k % 12].slice(1) + ' ' + Math.floor(k / 12);
+function embedHTML(url, titulo){
+  const u = String(url || '').trim(); if (!u) return '';
+  let m;
+  if ((m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/|live\/))([\w-]{11})/))) return `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}?rel=0" title="${esc(titulo)}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+  if ((m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([-\w]{20,})/))) return `<div class="video"><iframe src="https://drive.google.com/file/d/${m[1]}/preview" title="${esc(titulo)}" loading="lazy" allow="autoplay" allowfullscreen></iframe></div>`;
+  if ((m = u.match(/open\.spotify\.com\/(episode|track|show|playlist)\/(\w+)/))) return `<iframe class="spotify" src="https://open.spotify.com/embed/${m[1]}/${m[2]}" title="${esc(titulo)}" loading="lazy" allow="encrypted-media"></iframe>`;
+  if (/\.(mp3|m4a|ogg|wav|aac)(\?|$)/i.test(u)) return `<audio controls preload="none" src="${esc(u)}"></audio>`;
+  if (/\.(mp4|webm|mov)(\?|$)/i.test(u)) return `<div class="video"><video controls preload="none" src="${esc(u)}"></video></div>`;
+  const red = /instagram/.test(u) ? 'Instagram' : /tiktok/.test(u) ? 'TikTok' : /soundcloud/.test(u) ? 'SoundCloud' : '';
+  return `<p><a class="btn-sec" href="${esc(u)}" target="_blank" rel="noopener">${red ? 'Ver en ' + red : 'Abrir'} ↗</a></p>`;
+}
+function itemContenido(x, abierto){
+  return `<details class="cont-item"${abierto ? ' open' : ''}><summary><b>${esc(x.titulo)}</b>${x.k != null ? `<small>${nombreMes(x.k)}</small>` : ''}</summary>
+    <div>${x.desc ? `<p>${esc(x.desc)}</p>` : ''}${x.enlace ? embedHTML(x.enlace, x.titulo) : '<p class="ag-ayuda">El enlace todavía no está cargado.</p>'}</div></details>`;
+}
+function premTirada(){
+  const hoy = new Date(), kHoy = hoy.getFullYear() * 12 + hoy.getMonth();
+  const L = (P.contenido || []).filter(x => /tirada/i.test(x.tipo || '')).map(x => Object.assign({ k: mesDe(x) }, x)).filter(x => x.k == null || x.k <= kHoy).sort((a, b) => (b.k || 0) - (a.k || 0));
+  const actual = L.find(x => x.k === kHoy), pasadas = L.filter(x => x !== actual);
+  let h = '<p>Cada mes, Mey tira las cartas para la energía colectiva: qué se mueve, qué conviene soltar y qué se abre. Las de meses anteriores quedan guardadas para volver a verlas.</p>';
+  h += actual ? `<p class="sub">${nombreMes(kHoy)}</p>` + itemContenido(actual, true)
+    : `<div class="lugar-mes"><b>🔮 La tirada de ${MESES[hoy.getMonth()]} está por llegar</b><p>Mey la publica en los primeros días del mes. Te avisamos apenas esté.</p></div>`;
+  if (pasadas.length) h += '<p class="sub">Meses anteriores</p>' + pasadas.map(x => itemContenido(x, false)).join('');
+  return h;
+}
+function premMeditaciones(){
+  const L = (P.contenido || []).filter(x => !/tirada/i.test(x.tipo || '')).map(x => Object.assign({ k: null }, x)).reverse();
+  let h = '<p>Meditaciones guiadas grabadas por Belu y Mey: para la Luna nueva, para soltar, para la abundancia, para conectar con tus guías. Ponete auriculares, buscá un lugar tranquilo y dejate llevar.</p>';
+  if (!L.length) return h + '<div class="lugar-mes"><b>🎧 La primera meditación llega muy pronto</b><p>Estamos grabándolas con mucho amor. Te avisamos cuando esté.</p></div>';
+  const med = L.filter(x => /medita/i.test(x.tipo || '')), otros = L.filter(x => !/medita/i.test(x.tipo || ''));
+  h += med.map((x, i) => itemContenido(x, i === 0)).join('');
+  if (otros.length) h += '<p class="sub">Más para vos</p>' + otros.map(x => itemContenido(x, false)).join('');
+  return h;
+}
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'meditaciones');
+  if (i > -1) PREMIUM_LISTA[i] = ['meditaciones', '🎧', 'Meditaciones de Luz Guía', 'Meditaciones guiadas grabadas por Belu y Mey para cada momento.'];
+  const j = PREMIUM_LISTA.findIndex(x => x[0] === 'mes');
+  PREMIUM_LISTA.splice(j + 1, 0, ['tirada', '🎥', 'La tirada del mes', 'Mey tira las cartas para la energía colectiva de cada mes, en video.']);
+  PREM_FN.tirada = () => premTirada(); PREM_FN.meditaciones = () => premMeditaciones();
+})();
+
+/* "¿Pudiste reservar?" al día siguiente de consultar */
+const SEG_MOTIVOS = ['Todavía no me respondieron', 'Lo estoy pensando', 'Por el precio', 'Ya no me interesa', 'Otro'];
+function preguntaSeguimiento(){
+  const L = (P.seguimientos || []).filter(x => !(lsGet('luzguia_seg_ok', []) || []).includes(x.fila));
+  if (!L.length || lsGet('luzguia_seg_despues', '') === isoLocal(new Date()) || $('dlg').open) return;
+  const x = L[0], prod = /Producto|Kit/.test(x.tipo);
+  $('dlg-titulo').textContent = x.tipo === 'Encuentro' ? '¿Pudiste reservar tu lugar?' : prod ? '¿Pudiste concretar tu compra?' : '¿Pudiste reservar?';
+  $('dlg-texto').innerHTML = `Hace poco nos consultaste por <b>${esc(x.que)}</b>. Contanos cómo te fue así te ayudamos mejor 💜`;
+  $('dlg-cuerpo').innerHTML = `<div class="fila-bt seg-bt"><button class="btn" type="button" data-seg="si">Sí ✨</button><button class="btn-sec" type="button" data-seg="no">Todavía no</button></div>
+    <div class="seg-paso oculto" id="seg-si">${x.tipo === 'Promoción' ? '<label class="seg-lab" for="seg-dia">¿Para qué día quedó?</label><input type="date" id="seg-dia" class="campo-codigo">' : ''}<div class="fila-bt"><button class="btn" type="button" data-segenviar="Sí">Listo</button></div></div>
+    <div class="seg-paso oculto" id="seg-no"><p class="seg-lab">¿Qué pasó?</p><div class="seg-motivos">${SEG_MOTIVOS.map(m => `<button class="chip-m" type="button" data-segmotivo="${esc(m)}">${esc(m)}</button>`).join('')}</div></div>
+    <p style="text-align:center;margin:12px 0 0"><button class="link" type="button" data-seg="despues">Preguntame otro día</button></p>`;
+  $('dlg').dataset.segFila = x.fila; $('dlg').dataset.segTipo = x.tipo;
+  $('dlg').showModal();
+}
+async function enviarSeguimiento(reservo, motivo){
+  const fila = +$('dlg').dataset.segFila, dia = $('seg-dia') ? $('seg-dia').value : '';
+  $('dlg-cuerpo').innerHTML = '<p style="text-align:center">Guardando…</p>';
+  let ok = false;
+  try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'seguimiento', codigo: CODIGO, fila, reservo, dia, motivo: motivo || '' }) }); const d = await r.json(); ok = d.ok; } catch (e) {}
+  const hechos = lsGet('luzguia_seg_ok', []) || []; hechos.push(fila); lsSet('luzguia_seg_ok', hechos.slice(-60));
+  P.seguimientos = (P.seguimientos || []).filter(x => x.fila !== fila);
+  $('dlg-titulo').textContent = reservo === 'Sí' ? '¡Qué lindo! ✨' : '¡Gracias por contarnos! 💜';
+  const wa = waLuz('Hola! Soy ' + P.nombre + '. Les había consultado desde Mi Luz y quería saber si pudieron verlo 🌙');
+  $('dlg-texto').textContent = reservo === 'Sí' ? 'Nos alegra muchísimo. Te esperamos.' : motivo === 'Todavía no me respondieron' ? 'Perdón por la demora. Ya les avisamos a Belu y Mey para que te escriban hoy.' : 'Cuando quieras, acá estamos.';
+  $('dlg-cuerpo').innerHTML = `<div class="fila-bt" style="justify-content:center">${motivo === 'Todavía no me respondieron' && wa ? `<a class="wa" href="${wa}" target="_blank" rel="noopener">${WA_SVG} Escribirles</a>` : ''}<button class="btn-sec" type="button" id="dlg-ok">Cerrar</button></div>${ok ? '' : '<p class="ag-ayuda">No pudimos guardarlo ahora, pero no te preocupes.</p>'}`;
+  $('dlg-ok').onclick = () => { $('dlg').close(); setTimeout(preguntaSeguimiento, 600); };
+}
+
+/* Lo que pasa al abrir */
+function postCarga(){
+  registrarDia(); revisarLogros(true);
+  const r = document.querySelector('.racha'); if (r) r.outerHTML = rachaHTML();
+  if (P.onesignal && avisosActivos()) iniciarAvisos();
+  if (!lsGet('luzguia_tour_v1', 0)) { TOUR_I = 0; setTimeout(mostrarTour, 700); }
+  else setTimeout(preguntaSeguimiento, 1800);
+}
+
+// Agrega lo nuevo a Hoy y a Premium sin tocar lo que ya funcionaba
+const _hoyBase = hoyHTML;
+hoyHTML = function(){
+  let h = _hoyBase();
+  const inv = invitarHTML();
+  h = h.includes('<div class="instalar">') ? h.replace('<div class="instalar">', inv + '<div class="instalar">') : h + inv;
+  return rachaHTML() + avisosHTML() + h;
+};
+const _premBase = premiumHTML;
+premiumHTML = function(){
+  let h = _premBase();
+  if (P.premium && !P.organizadora && P.pruebaUsada && P.premiumHasta && !VISTA_GRATIS) {
+    const d = diasHasta(P.premiumHasta);
+    if (d !== null && d <= (P.pruebaDias || 7)) h = h.replace(/<p class="prem-org">Tu Premium está activo hasta el [^<]*<\/p>/, `<p class="prem-org">Estás usando tu prueba gratis: ${d <= 0 ? 'termina hoy' : d === 1 ? 'te queda 1 día' : 'te quedan ' + d + ' días'} (hasta el ${esc(P.premiumHasta)}) ✨<br><button class="btn-sec" type="button" data-quiero-premium style="margin-top:8px">Quiero seguir con Premium</button></p>`);
+  }
+  const pr = pruebaHTML();
+  if (pr) h = h.replace('<div class="prem-cta">', pr + '<div class="prem-cta">');
+  return h;
+};
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.tirada !== undefined && P) {
+    const s = RACHA || estadoRacha(), n = cartaTirada(+b.dataset.tirada);
+    if (!s.arc.includes(n)) s.arc.push(n); RACHA = s; lsSet(RK, s); setTimeout(() => revisarLogros(), 900); return;
+  }
+  if (b.dataset.share || b.id === 'btn-compartir' || b.dataset.compdia !== undefined) { const s = RACHA || estadoRacha(); s.comp = (s.comp || 0) + 1; RACHA = s; lsSet(RK, s); setTimeout(() => revisarLogros(), 2500); return; }
+  if (b.dataset.logros !== undefined) { const c = $('logros-caja'); c.classList.toggle('oculto'); b.setAttribute('aria-expanded', !c.classList.contains('oculto')); return; }
+  if (b.dataset.invitar !== undefined) {
+    const txt = textoInvitacion(), s = RACHA || estadoRacha(); s.inv = (s.inv || 0) + 1; RACHA = s; lsSet(RK, s);
+    evento('Invitó', b.dataset.invitar === 'otro' ? 'Otra app' : 'WhatsApp');
+    if (b.dataset.invitar === 'otro' && navigator.share) { try { await navigator.share({ text: txt }); } catch (x) {} }
+    else window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+    setTimeout(() => revisarLogros(), 1500); return;
+  }
+  if (b.dataset.avisos !== undefined) { activarAvisos(b); return; }
+  if (b.dataset.avisosno !== undefined) { lsSet('luzguia_avisos_no', isoLocal(new Date())); const c = b.closest('.avisos-caja'); if (c) c.remove(); return; }
+  if (b.dataset.tour) {
+    const a = b.dataset.tour, n = pasosTour().length;
+    if (a === 'sig') { TOUR_I = Math.min(n - 1, TOUR_I + 1); mostrarTour(); }
+    else if (a === 'atras') { TOUR_I = Math.max(0, TOUR_I - 1); mostrarTour(); }
+    else if (a === 'avisos') { cerrarTour(); activarAvisos(null); }
+    else if (a === 'instalar') { cerrarTour(); const bi = $('btn-instalar'); if (bi) bi.click(); else guiaInstalar(); }
+    else cerrarTour();
+    return;
+  }
+  if (b.dataset.prueba !== undefined) { empezarPrueba(b); return; }
+  if (b.dataset.seg) {
+    const a = b.dataset.seg;
+    if (a === 'despues') { lsSet('luzguia_seg_despues', isoLocal(new Date())); $('dlg').close(); return; }
+    if (a === 'si' && /Producto|Kit|Encuentro/.test($('dlg').dataset.segTipo)) { enviarSeguimiento('Sí'); return; }
+    document.querySelector('.seg-bt').classList.add('oculto');
+    $(a === 'si' ? 'seg-si' : 'seg-no').classList.remove('oculto'); return;
+  }
+  if (b.dataset.segenviar) { enviarSeguimiento(b.dataset.segenviar); return; }
+  if (b.dataset.segmotivo) { enviarSeguimiento('No', b.dataset.segmotivo); return; }
+});
+
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
 </script>

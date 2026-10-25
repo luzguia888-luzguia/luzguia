@@ -203,12 +203,16 @@ document.documentElement.classList.add('js');
 // Vuelve a Mi Luz con el código de la persona y arma el WhatsApp si hay número
 (function(){
   const q = new URLSearchParams(location.search), cod = q.get('codigo') || '', tel = (q.get('tel') || '').replace(/\D/g, '');
-  const luz = 'mi-luz.html' + (cod ? '?codigo=' + encodeURIComponent(cod) : '') + '#novedades';
+  const luz = 'mi-luz.html' + (cod ? '?c=' + encodeURIComponent(cod) : '') + '#novedades';
   document.getElementById('volver').href = luz; document.getElementById('cta-luz').href = luz;
   if (tel) {
     const n = tel.startsWith('54') ? tel : '549' + tel.replace(/^0/, '').replace(/^15/, '');
     document.getElementById('cta-wa').href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Hola! Leí cómo es la lectura de Registros Akáshicos con Mey y quiero reservar la mía 🌙');
     document.getElementById('cta-wa').target = '_blank';
+    // Queda registrado en el CRM (y al día siguiente Mi Luz le pregunta si pudo reservar)
+    if (cod) document.getElementById('cta-wa').addEventListener('click', () => {
+      try { fetch('https://script.google.com/macros/s/AKfycbxy_R5kw6Ee6-WWokJQSvab2L2C-PVQfADBKsm_nlIhp2ic2KuFbwWl_zz5L-rlGCUbyQ/exec', { method: 'POST', keepalive: true, body: JSON.stringify({ accion: 'pedido', codigo: cod, tipo: 'Promoción', ref: 'Lectura de Registros Akáshicos', que: 'Lectura de Registros Akáshicos', mensaje: 'Escribió por WhatsApp desde la página de los registros' }) }); } catch (e) {}
+    });
   } else document.getElementById('cta-wa').href = luz;
 })();
 // Estrellas suaves de fondo

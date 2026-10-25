@@ -343,6 +343,20 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
   .arcano-dia{grid-template-columns:auto 1fr}
   .arcano-dia .bt{grid-column:1/-1}
 }
+
+/* v14 */
+.cifra .mini{display:block;color:var(--bruma);font-size:.78rem;margin-top:4px;line-height:1.35}.cifra .mini.sube{color:#8FD3A8}.cifra .mini.baja{color:var(--debe)}.cifra b.rojo{color:var(--debe)}
+.cifra .pt{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.proy-chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 16px}.proy-chips .chip{font-size:.9rem;padding:6px 14px}.chip.on{background:var(--oro);color:var(--noche);border-color:var(--oro)}
+.proy-params{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;border:1px solid var(--linea);border-radius:14px;padding:14px 16px;background:var(--ciruela)}
+.proy-params label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--bruma)}.proy-in{display:flex;align-items:center;gap:6px}.proy-in i{font-style:normal;color:var(--bruma)}.proy-in .campo{width:100%}
+.spy-hoy{display:flex;justify-content:space-between;gap:16px;align-items:center;border:1px solid var(--oro);border-radius:16px;padding:18px 20px;background:linear-gradient(135deg,rgba(212,175,106,.12),rgba(39,16,64,.6));margin:6px 0 18px}
+.spy-hoy small{color:var(--bruma)}.spy-hoy>div>b{display:block;font-size:2rem;font-weight:500;color:var(--oro);font-variant-numeric:lining-nums}.spy-hoy p b{color:var(--oro);font-weight:600}.spy-hoy p{margin:6px 0 0}.spy-ic{font-size:2.6rem}
+.inv-ctrl{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end}.inv-ctrl label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--bruma);min-width:190px}
+.graf-inv{position:relative}.grid-inv{stroke:rgba(185,138,230,.14);stroke-width:1}.cruz-inv{stroke:rgba(237,230,245,.5);stroke-width:1;pointer-events:none}
+.tip-inv{position:absolute;top:8px;min-width:170px;background:#1C0B2E;border:1px solid var(--linea);border-radius:10px;padding:8px 10px;font-size:.8rem;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.tip-inv>b{display:block;margin-bottom:4px;color:var(--luna)}.tip-inv span{display:flex;align-items:center;gap:6px;color:var(--bruma)}.tip-inv span b{margin-left:auto;color:var(--luna);font-weight:500}.tip-inv i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.mas-tabla{margin-top:16px}.mas-tabla summary{cursor:pointer;color:var(--oro)}
 </style>
 </head>
 <body>
@@ -385,6 +399,8 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
       <button class="pestana" role="tab" data-vista="contenido">Contenido</button>
       <button class="pestana" role="tab" data-vista="mensajes">Mensajes</button>
       <button class="pestana" role="tab" data-vista="estadisticas">Estadísticas</button>
+      <button class="pestana" role="tab" data-vista="proyeccion">Proyección</button>
+      <button class="pestana" role="tab" data-vista="inversion">Inversión</button>
       <button class="pestana" role="tab" data-vista="historial">Historial</button>
     </nav>
   </header>
@@ -1017,7 +1033,7 @@ function abrirForm(hoja, rec, pre){
       if (!el) continue;
       let v;
       if (c.t === 'check') v = el.checked;
-      else if (c.t === 'money') v = el.value === '' ? '' : revisarMonto(Number(el.value), c.lab || c.k);
+      else if (c.t === 'money') v = el.value === '' ? '' : c.chico ? Number(el.value) : revisarMonto(Number(el.value), c.lab || c.k);
       else if (c.t === 'num') v = el.value === '' ? '' : Number(el.value);
       else v = el.value.trim();
       const saltear = c.k === 'ID Persona' && $('np-toggle') && $('np-toggle').checked;
@@ -1655,14 +1671,14 @@ V.hoy = () => {
     }
     const esT = x['Tipo'] === 'Encuentro', esPromo = /Promoción|Kit|Aviso/.test(x['Tipo']);
     const pre = esT ? { 'ID Encuentro': x['Referencia'], 'ID Persona': x['ID Persona'] } : { 'Producto': x['Referencia'], 'Comprador/a': x['Nombre'] };
-    T.push({ ico: x['Tipo'] === 'Kit' ? '🕯️' : x['Tipo'] === 'Aviso de stock' ? '🔔' : '✨', txt: `${esc(x['Nombre'])} ${x['Tipo'] === 'Kit' ? 'se interesó por un kit' : x['Tipo'] === 'Aviso de stock' ? 'quiere que le avisen' : 'pidió desde su portal'}: ${esc(x['Qué'])}`, sub: esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
+    T.push({ ico: x['Tipo'] === 'Kit' ? '🕯️' : x['Tipo'] === 'Aviso de stock' ? '🔔' : '✨', txt: `${esc(x['Nombre'])} ${x['Tipo'] === 'Kit' ? 'se interesó por un kit' : x['Tipo'] === 'Aviso de stock' ? 'quiere que le avisen' : 'pidió desde su portal'}: ${esc(x['Qué'])}`, sub: (x['Motivo'] === 'No le respondimos' ? '<b style="color:var(--debe)">⚠️ Dice que todavía no le respondieron</b> · ' : x['¿Reservó?'] === 'Sí' ? '<b style="color:var(--oro)">✓ Dice que ya reservó' + (x['Día reservado'] ? ' para el ' + esc(x['Día reservado']) : '') + '</b> · ' : '') + esc(x['Fecha']) + (x['Mensaje'] ? ' · "' + esc(x['Mensaje']) + '"' : ''),
       bt: btnWA(x['ID Persona'], esT ? 'invitacion' : 'invitacion', esT ? x['Referencia'] : '', '', 'Responderle') +
         (esPromo ? '' : `<button class="btn" type="button" data-nuevo="${esT ? 'Asistencias' : 'Ventas'}" data-pre='${esc(JSON.stringify(pre))}' data-cierra-pedido="${x._fila}">${esT ? 'Inscribir' : 'Registrar venta'}</button>`) +
         `<button class="btn-sec" type="button" data-pedido="${x._fila}|Atendido">Listo</button>${esT || x['Tipo'] === 'Producto' ? `<button class="btn-sec" type="button" data-nocompro="${x._fila}">No compró</button>` : ''}<button class="btn-sec" type="button" data-pedido="${x._fila}|Descartado">Descartar</button><button class="ic" type="button" title="Borrar (por ejemplo, si fue una prueba)" data-borrar="Pedidos|${x._fila}">🗑</button>` });
   });
   H('Personas').filter(p => !esOrg(p) && /premium/i.test(p['Plan'] || '') && fecha(p['Premium hasta'])).forEach(p => {
     const d = diasEntre(HOY, fecha(p['Premium hasta']));
-    if (d <= 5 && d >= -3) T.push({ ico:'💎', txt: `El Premium de ${esc(p['Nombre completo'])} ${d < 0 ? 'venció' : d === 0 ? 'vence hoy' : 'vence ' + (d === 1 ? 'mañana' : 'en ' + d + ' días')}`, sub: 'Vence el ' + lindaFecha(fecha(p['Premium hasta'])), bt: btnWA(p['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(p['ID Persona'])}|">Renovar</button>` });
+    if (d <= 5 && d >= -3) T.push({ ico:'💎', txt: `${String(p['Prueba Premium'] || '').trim() && !H('Suscripciones').some(x => x['ID Persona'] === p['ID Persona'] && /^(Alta|Renovaci)/.test(x['Tipo'])) ? 'La prueba gratis' : 'El Premium'} de ${esc(p['Nombre completo'])} ${d < 0 ? 'venció' : d === 0 ? 'vence hoy' : 'vence ' + (d === 1 ? 'mañana' : 'en ' + d + ' días')}`, sub: 'Vence el ' + lindaFecha(fecha(p['Premium hasta'])), bt: btnWA(p['ID Persona'], 'invitacion', '', '', 'Escribirle') + `<button class="btn" type="button" data-premium="${esc(p['ID Persona'])}|">Renovar</button>` });
   });
   H('Preguntas').filter(x => x['Estado'] !== 'Respondida').forEach(x => T.push({ ico:'💌', txt: `${esc(x['Nombre'])} hizo su pregunta del mes`, sub: '"' + esc(x['Pregunta']) + '" · ' + esc(x['Fecha']),
     bt: `<button class="btn" type="button" data-responder="${x._fila}">Responder con el tarot</button><button class="ic" type="button" title="Borrar" data-borrar="Preguntas|${x._fila}">🗑</button>` }));
@@ -1865,7 +1881,7 @@ V.gastos = () => {
   h += `<div class="dos-col"><div><h3>Por categoría</h3>${barras(ord(porCat), pesos)}</div><div><h3>Por destino</h3>${barras(ord(porDest), pesos)}</div></div>`;
   h += '<h3>Detalle</h3>' + tabla([
     { t:'Fecha', k:'Fecha' }, { t:'Destino', f: g => { const t = encuentro(g[DEST]); return esc(t ? t['Nombre / temática'] : g[DEST]); } }, { t:'Categoría', k:'Categoría' },
-    { t:'Ítem', k:'Ítem' }, { t:'Cant.', k:'Cantidad', num:1 }, { t:'Total', k:'Total', num:1 }, { t:'Pagó', k:'Pagó' },
+    { t:'Ítem', k:'Ítem' }, { t:'Proveedor', k:'Proveedor' }, { t:'Cant.', k:'Cantidad', num:1 }, { t:'Total', k:'Total', num:1 }, { t:'Pagó', k:'Pagó' },
     { t:'Reintegro', f: g => !g['Pagó'] ? '' : g['Reintegro'] === 'Devuelto' ? '<span class="estado e-ok">Devuelto</span>' : g['Reintegro'] === 'No corresponde' ? '<span class="estado e-neutro">No corresponde</span>' : `<button class="chip" type="button" data-reintegro="${g._fila}" title="Marcar que se devolvió la mitad">Pendiente · ½ ${pesos(num(g['Total']) / 2)}</button>` },
     { t:'', acc:1, f: g => (g['Comprobante'] ? `<button class="ic" type="button" title="Ver comprobante" data-foto="${esc(g['Comprobante'])}">🧾</button>` : '') + acciones('Gastos', g) }
   ], gs.slice().reverse(), 'Todavía no hay gastos cargados.');
@@ -2091,13 +2107,14 @@ document.addEventListener('click', async e => {
     const base = fecha(pr['Premium hasta']) && fecha(pr['Premium hasta']) > HOY ? fecha(pr['Premium hasta']) : HOY;
     const mas = m => { const d = new Date(base); d.setMonth(d.getMonth() + m); return iso(d); };
     modal('Activar Premium', `<p class="ayuda" style="margin-top:0">${esc(pr['Nombre completo'])} va a ver todas las secciones Premium de Mi Luz apenas la vuelva a abrir.</p>
-      <div class="form"><label class="full">¿Por cuánto tiempo?<select class="campo" id="pm-dur"><option value="${mas(1)}">1 mes</option><option value="${mas(3)}">3 meses</option><option value="${mas(6)}">6 meses</option><option value="${mas(12)}">1 año</option><option value="">Sin vencimiento</option></select></label></div>`,
+      <div class="form"><label class="full">¿Por cuánto tiempo?<select class="campo" id="pm-dur"><option value="${mas(1)}">1 mes</option><option value="${mas(3)}">3 meses</option><option value="${mas(6)}">6 meses</option><option value="${mas(12)}">1 año</option><option value="">Sin vencimiento</option></select></label><label class="full">Cuánto pagó<input class="campo" type="number" min="0" step="any" id="pm-monto" value="${num(D.params.precioPremium) || ''}" placeholder="$"></label></div><p class="ayuda" style="margin:8px 0 0">Queda registrado en Suscripciones para las estadísticas de altas y renovaciones.</p>`,
       `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pm-ok">Activar</button>`);
     $('pm-ok').onclick = async ev => {
       ev.target.disabled = true;
       try {
         const hasta = $('pm-dur').value;
         if (ped) await enviar({ accion: 'editar', hoja: 'Pedidos', fila: ped._fila, original: ped[ESQ.Pedidos.clave], datos: { 'Estado': 'Atendido' } });
+        if (D.h.Suscripciones) { const yaPago = H('Suscripciones').some(x => x['ID Persona'] === pid && /^(Alta|Renovaci)/.test(x['Tipo'])); try { await enviar({ accion: 'agregar', hoja: 'Suscripciones', datos: { 'Fecha': iso(HOY), 'ID Persona': pid, 'Nombre': pr['Nombre completo'], 'Tipo': yaPago ? 'Renovación' : 'Alta', 'Desde': iso(base), 'Hasta': hasta, 'Monto': Number($('pm-monto').value) || 0 } }); } catch (x) { console.error(x); } }
         await guardarCambios('Personas', pr, { 'Plan': 'Premium', 'Premium hasta': hasta }, '💎 Premium activado' + (hasta ? ' hasta el ' + lindaFecha(new Date(hasta + 'T12:00')) : ''));
       } catch (err) { toast(err.message, true); ev.target.disabled = false; }
     };
@@ -2203,6 +2220,402 @@ $('form-ingreso').addEventListener('submit', e => {
 });
 $('btn-actualizar').addEventListener('click', () => cargar(true).then(() => toast('Datos actualizados')));
 $('btn-salir').addEventListener('click', () => { borrarLS(LS_CLAVE); borrarLS(LS_QUIEN); D = null; CLAVE = ''; $('clave').value = ''; mostrar('ingreso'); });
+
+
+/* ═════ v14: Proyección, Inversión, negocio Mi Luz, invitaciones, reservas, contenido Premium y avisos ═════ */
+const MES_CORTO = k => MESES[+k.slice(5) - 1].slice(0, 3) + ' ' + k.slice(2, 4);
+const claveMes = f => f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0');
+const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '—';
+const codigoInv = p => p ? 'LUZ-' + String(p['ID Persona'] || '').replace(/\D/g, '').replace(/^0+/, '') : '';
+function resolverReferente(txt){
+  const r = String(txt || '').trim(); if (!r) return null;
+  const ps = H('Personas'), d = (r.match(/LUZ-?(\d+)/i) || [])[1];
+  return ps.find(p => p['ID Persona'] === r) || ps.find(p => String(p['Nombre completo']).trim().toLowerCase() === r.toLowerCase())
+    || (d ? ps.find(p => String(p['ID Persona']).replace(/\D/g, '').replace(/^0+/, '') === d) : null) || null;
+}
+const optReferentes = () => optPersonas().map(([id, n]) => [id, n + ' (' + codigoInv(persona(id)) + ')']);
+const proveedoresConocidos = () => [...new Set(['Gastos', 'Insumos', 'Materiales', 'Proyección insumos'].flatMap(h => H(h).map(x => String(x['Proveedor'] || '').trim())).filter(x => x))].sort((a, b) => a.localeCompare(b));
+
+/* Esquemas nuevos y ajustes */
+Object.assign(ESQ, {
+  'Contenido Premium': { nombre: 'contenido Premium', clave: 'Título', campos: [
+    {k:'Título', t:'text', req:1, full:1, ph:'Ej: La energía de noviembre'}, {k:'Tipo', t:'sel', o:() => ['Tirada del mes','Meditación','Otro video o audio'], def:'Tirada del mes', req:1},
+    {k:'Mes', t:'text', ph:'11/2026', def:String(HOY.getMonth() + 1).padStart(2, '0') + '/' + HOY.getFullYear(), lab:'Mes (MM/AAAA)'},
+    {k:'Enlace', t:'text', req:1, full:1, ph:'Link de YouTube, Drive (compartido "cualquiera con el enlace"), Spotify o mp3', lab:'Enlace del video o audio'},
+    {k:'Descripción', t:'area', full:1, filas:3}, {k:'Fecha', t:'date', def:'hoy', lab:'Fecha de carga'}, {k:'Activo', t:'check', def:true, lab:'Se ve en Mi Luz'}]},
+  Suscripciones: { nombre: 'suscripción', clave: 'ID Persona', etiqueta: 'Nombre', campos: [
+    {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'ID Persona', t:'sel', o:optPersonas, req:1, lab:'Persona', full:1}, {k:'Tipo', t:'sel', o:() => ['Alta','Renovación','Prueba gratis','Regalo por invitar','Regalo'], req:1},
+    {k:'Desde', t:'date'}, {k:'Hasta', t:'date'}, {k:'Monto', t:'money', chico:1}, {k:'Notas', t:'area', full:1}]},
+  'Proyección insumos': { nombre: 'insumo', clave: 'Insumo', campos: [
+    {k:'Producto', t:'sel', o:() => H('Proyección productos').map(x => x['Producto']), req:1, full:1}, {k:'Insumo', t:'text', req:1, full:1},
+    {k:'Proveedor', t:'text', sug:proveedoresConocidos}, {k:'Dónde comprar', t:'text'}, {k:'Presentación', t:'text', ph:'Pack x100'},
+    {k:'Precio del pack', t:'money', req:1, chico:1, dec:1}, {k:'Rinde (unidades por pack)', t:'num', req:1, dec:1, def:1}, {k:'Uso por unidad', t:'num', dec:1, def:1, lab:'Uso por unidad de producto'},
+    {k:'Dato', t:'sel', o:() => ['Verificado','Estimado'], def:'Estimado'}, {k:'Notas', t:'area', full:1, filas:2}]},
+  'Proyección productos': { nombre: 'producto a proyectar', clave: 'Producto', campos: [
+    {k:'Producto', t:'text', req:1, full:1, ph:'Ej: Vela intencionada de abundancia'}, {k:'Unidades por tanda', t:'num', def:20}, {k:'Precio de venta', t:'money', chico:1},
+    {k:'Merma %', t:'num', dec:1, def:10}, {k:'Minutos por unidad', t:'num', def:20}, {k:'Valor de la hora', t:'money', chico:1, def:8000}, {k:'Comisión %', t:'num', dec:1, def:0, lab:'Comisión de la plataforma %'}, {k:'Notas', t:'area', full:1, filas:2}]}
+});
+(function(){
+  const ref = ESQ.Personas.campos.find(c => c.k === 'Referida por');
+  if (ref) Object.assign(ref, { t:'sel', o:optReferentes, lab:'Referida por (quién la invitó)' });
+  ['Gastos', 'Insumos', 'Materiales'].forEach(h => { const c = ESQ[h].campos.find(x => x.k === 'Proveedor'); if (c) c.sug = proveedoresConocidos; });
+})();
+const _campoBase = campoHTML;
+campoHTML = function(c, i, v){
+  let h = _campoBase(c, i, v);
+  if (c.dec) h = h.replace(/step="[^"]*"/, 'step="any"');
+  if (c.sug && c.t === 'text') { const ops = c.sug(); h = h.replace(`id="f${i}"`, `id="f${i}" list="dl-f${i}" autocomplete="off"`) .replace('</label>', `<datalist id="dl-f${i}">${ops.map(o => `<option value="${esc(o)}">`).join('')}</datalist></label>`); }
+  return h;
+};
+const _revisarBase = revisarMonto;
+revisarMonto = function(v, que){
+  const c = Object.values(ESQ).flatMap(e => e.campos).find(x => (x.lab || x.k) === que && x.chico);
+  return c ? v : _revisarBase(v, que);
+};
+
+/* ───── Proyección: costeo de productos ───── */
+let PROY_SEL = '';
+function calcProy(prod){
+  const ins = H('Proyección insumos').filter(x => x['Producto'] === prod['Producto']);
+  const u = num(prod['Unidades por tanda']) || 1, merma = num(prod['Merma %']) / 100, com = num(prod['Comisión %']) / 100;
+  const filas = ins.map(x => {
+    const precio = num(x['Precio del pack']), rinde = num(x['Rinde (unidades por pack)']) || 1, uso = x['Uso por unidad'] === '' ? 1 : num(x['Uso por unidad']);
+    const costo = precio / rinde * uso, packs = uso ? Math.ceil(uso * u / rinde - 1e-9) : 0, inv = packs * precio;
+    const sobra = packs * rinde - uso * u, alcanza = uso ? Math.floor(packs * rinde / uso + 1e-9) : Infinity;
+    return { x, precio, rinde, uso, costo, packs, inv, sobraValor: sobra > 0 ? sobra / rinde * precio : 0, alcanza };
+  });
+  const mat = filas.reduce((a, f) => a + f.costo, 0), mo = num(prod['Minutos por unidad']) / 60 * num(prod['Valor de la hora']);
+  const costo = mat * (1 + merma) + mo, inversion = filas.reduce((a, f) => a + f.inv, 0);
+  const precio = num(prod['Precio de venta']), neto = precio * (1 - com), gan = neto - costo;
+  const recupero = neto > 0 ? Math.ceil(inversion / neto - 1e-9) : null;
+  const escenarios = [['Para validar', 2], ['Recomendado', 2.5], ['Premium', 3]].map(([n, m]) => { const p = Math.round(mat * m / 1000) * 1000, nt = p * (1 - com); return { n, m, p, gan: nt - costo, margen: p ? (nt - costo) / p : 0, rec: nt > 0 ? Math.ceil(inversion / nt) : null }; });
+  return { filas, u, mat, mo, costo, inversion, precio, neto, gan, margen: precio ? gan / precio : 0, recupero, limpio: neto * u - inversion, real: neto * u - inversion - mo * u,
+    sobra: filas.reduce((a, f) => a + f.sobraValor, 0), salen: Math.min(...filas.filter(f => f.uso).map(f => f.alcanza)), escenarios };
+}
+V.proyeccion = () => {
+  const prods = H('Proyección productos');
+  let h = cabeza('Proyección', `<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-sec" type="button" data-proyimport>Importar Excel</button>${btnNuevo('Proyección productos', 'Nuevo producto')}</span>`);
+  h += '<p class="ayuda">Calculá cuánto cuesta hacer cada producto (velas, kits, lo que sumen), cuánto hay que invertir en la primera tanda, a qué precio venderlo y cuándo se recupera. Los cambios se guardan solos.</p>';
+  if (!prods.length) return h + `<div class="tabla-caja"><div class="vacio">Todavía no hay productos. Tocá "Nuevo producto" o importá el Excel del kit.${D.h['Proyección productos'] ? '' : '<br><br>Si no aparece nada, en el Sheet andá a 🌙 Luz Guía → Actualizar estructura.'}</div></div>`;
+  if (!prods.find(p => p['Producto'] === PROY_SEL)) PROY_SEL = prods[0]['Producto'];
+  const prod = prods.find(p => p['Producto'] === PROY_SEL), c = calcProy(prod);
+  h += '<div class="proy-chips">' + prods.map(p => `<button class="chip${p['Producto'] === PROY_SEL ? ' on' : ''}" type="button" data-proysel="${esc(p['Producto'])}">${esc(p['Producto'])}</button>`).join('') + '</div>';
+  const inp = (k, lab, suf, paso) => `<label>${lab}<span class="proy-in">${suf === '$' ? '<i>$</i>' : ''}<input class="campo" type="number" step="${paso || 'any'}" min="0" value="${String(prod[k] == null ? '' : prod[k]).trim() === '' ? '' : num(prod[k])}" data-proyparam="${esc(k)}">${suf && suf !== '$' ? '<i>' + suf + '</i>' : ''}</span></label>`;
+  h += `<div class="proy-params">${inp('Unidades por tanda', 'Unidades por tanda', 'u.', 1)}${inp('Precio de venta', 'Precio de venta', '$', 500)}${inp('Merma %', 'Merma / roturas', '%')}${inp('Minutos por unidad', 'Minutos de armado', 'min', 1)}${inp('Valor de la hora', 'Valor de tu hora', '$', 500)}${inp('Comisión %', 'Comisión de venta', '%')}</div>`;
+  h += '<div class="cifras" style="margin-top:18px">'
+    + `<div class="cifra"><span>Materiales por unidad</span><b>${pesos(c.mat)}</b></div>`
+    + `<div class="cifra"><span>Costo total por unidad</span><b>${pesos(c.costo)}</b><small class="mini">con merma y ${pesos(c.mo)} de trabajo</small></div>`
+    + `<div class="cifra"><span>Inversión para ${c.u} unidades</span><b class="oro">${pesos(c.inversion)}</b></div>`
+    + `<div class="cifra"><span>Ganancia por unidad</span><b class="${c.gan >= 0 ? 'oro' : 'rojo'}">${c.precio ? pesos(c.gan) : '—'}</b><small class="mini">${c.precio ? 'margen ' + Math.round(c.margen * 100) + '%' : 'cargá el precio de venta'}</small></div>`
+    + `<div class="cifra"><span>Recuperás la inversión</span><b>${c.recupero ? 'en la unidad nº ' + c.recupero : '—'}</b><small class="mini">${c.recupero && c.recupero > c.u ? '⚠️ más que las ' + c.u + ' de la tanda' : c.recupero ? 'las siguientes ' + (c.u - c.recupero) + ' son ganancia' : ''}</small></div>`
+    + `<div class="cifra"><span>Te queda limpio vendiendo todo</span><b class="oro">${c.precio ? pesos(c.limpio) : '—'}</b><small class="mini">${c.precio ? pesos(c.real) + ' descontando tu trabajo' : ''}</small></div></div>`;
+  if (c.sobra > 1 || (isFinite(c.salen) && c.salen > c.u)) h += `<p class="ayuda" style="margin-top:10px">Con lo que se compra ${isFinite(c.salen) ? 'salen <b>' + c.salen + '</b> unidades completas' : ''}${c.sobra > 1 ? ' y queda stock por unos <b>' + pesos(c.sobra) + '</b> para la próxima tanda (insumos que vienen en packs grandes)' : ''}.</p>`;
+  h += '<h3>Precios sugeridos</h3>' + tabla([{ t:'Escenario', k:'n' }, { t:'Multiplica materiales', f: e => e.m.toString().replace('.', ',') + 'x', num:1 }, { t:'Precio', f: e => '<b>' + pesos(e.p) + '</b>', num:1 }, { t:'Ganancia por unidad', f: e => pesos(e.gan), num:1 }, { t:'Margen', f: e => Math.round(e.margen * 100) + '%', num:1 }, { t:'Recuperás en la unidad', f: e => e.rec || '—', num:1 }, { t:'', acc:1, f: e => `<button class="btn-sec" type="button" data-proyprecio="${e.p}">Usar este</button>` }], c.escenarios, '');
+  h += `<div class="cabeza" style="margin-top:28px"><h3 style="margin:0">Insumos de ${esc(prod['Producto'])}</h3><span style="display:flex;gap:8px;flex-wrap:wrap">${btnNuevo('Proyección insumos', '+ Insumo', { 'Producto': prod['Producto'] })}<button class="btn-sec" type="button" data-proydup>Duplicar producto</button><button class="ic" type="button" title="Editar producto" data-editar="Proyección productos|${prod._fila}">✎</button></span></div>`;
+  h += tabla([
+    { t:'Insumo', f: f => `${esc(f.x['Insumo'])}${f.x['Presentación'] ? `<br><small style="color:var(--bruma)">${esc(f.x['Presentación'])}</small>` : ''}` },
+    { t:'Proveedor', f: f => esc(f.x['Proveedor'] || f.x['Dónde comprar'] || '') },
+    { t:'Precio pack', f: f => pesos(f.precio), num:1 }, { t:'Rinde', f: f => String(f.rinde).replace('.', ','), num:1 }, { t:'Uso', f: f => String(f.uso).replace('.', ','), num:1 },
+    { t:'Costo por unidad', f: f => pesos(f.costo), num:1 }, { t:'Packs', f: f => f.packs, num:1 }, { t:'Inversión', f: f => pesos(f.inv), num:1 },
+    { t:'', f: f => f.x['Dato'] === 'Verificado' ? '<span class="estado e-ok">Verificado</span>' : f.x['Dato'] ? '<span class="estado e-sena">' + esc(f.x['Dato']) + '</span>' : '' },
+    { t:'', acc:1, f: f => acciones('Proyección insumos', f.x) }
+  ], c.filas.slice().sort((a, b) => b.inv - a.inv), 'Este producto todavía no tiene insumos. Tocá "+ Insumo".');
+  const porProv = {}; c.filas.forEach(f => { const k = f.x['Proveedor'] || 'Sin proveedor'; porProv[k] = (porProv[k] || 0) + f.inv; });
+  if (Object.keys(porProv).length > 1) h += '<h3>Qué comprarle a cada proveedor</h3>' + barras(Object.entries(porProv).sort((a, b) => b[1] - a[1]), pesos);
+  h += `<p class="ayuda" style="margin-top:14px">Costo por unidad = precio del pack ÷ rinde × uso. Costo total = materiales + ${num(prod['Merma %'])}% de merma + tu trabajo. El envío no está incluido.</p>`;
+  return h;
+};
+async function guardarParamProy(k, v){
+  const prod = H('Proyección productos').find(p => p['Producto'] === PROY_SEL); if (!prod) return;
+  try { await enviar({ accion: 'editar', hoja: 'Proyección productos', fila: prod._fila, original: prod['Producto'], datos: { [k]: v } }); prod[k] = String(v); if (VISTA === 'proyeccion') { const y = scrollY; pintar(); scrollTo(0, y); } toast('Guardado ✓'); }
+  catch (e) { toast(e.message, true); }
+}
+document.addEventListener('change', ev => { const el = ev.target; if (el.dataset && el.dataset.proyparam) guardarParamProy(el.dataset.proyparam, el.value === '' ? '' : Number(el.value)); });
+async function importarExcelProy(){
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.xlsx,.xls,.csv';
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    try { await cargarXLSX(); } catch (e) { toast(e.message, true); return; }
+    const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' });
+    let encontrado = null;
+    for (const n of wb.SheetNames) {
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, defval: '' });
+      const ih = aoa.findIndex(r => r.some(c => /^insumo$/i.test(String(c).trim())));
+      if (ih < 0) continue;
+      const cab = aoa[ih].map(c => String(c).toLowerCase());
+      const col = re => cab.findIndex(c => re.test(c));
+      const C = { ins: col(/^insumo/), donde: col(/d[oó]nde/), pres: col(/presentaci/), precio: col(/precio/), rinde: col(/rinde/), uso: col(/^uso/), prov: col(/proveedor/), dato: col(/^dato/), nota: col(/fuente|nota/) };
+      const ins = [];
+      for (let i = ih + 1; i < aoa.length; i++) { const r = aoa[i], nom = String(r[C.ins] || '').trim(); if (!nom) break; ins.push(r); }
+      const buscar = re => { const r = aoa.find(r => re.test(String(r[0]))); return r ? r.slice(1).map(Number).find(x => !isNaN(x) && x !== 0) : undefined; };
+      const recom = aoa.find(r => /recomendado/i.test(String(r[0])));
+      encontrado = { hoja: n, C, ins, unidades: buscar(/kits a armar|unidades|cantidad/i), merma: buscar(/merma/i), minutos: buscar(/minutos/i), hora: buscar(/valor de (tu|la) hora/i), com: buscar(/comisi/i), precio: recom ? recom.slice(1).map(Number).find(x => x > 1000) : undefined };
+      break;
+    }
+    if (!encontrado || !encontrado.ins.length) { toast('No encontré una tabla con la columna "Insumo" en ese Excel.', true); return; }
+    const e = encontrado, nombre0 = f.name.replace(/\.\w+$/, '').replace(/[_-]+/g, ' ');
+    const fx = v => v === undefined ? '—' : v;
+    modal('Importar Excel', `<p class="ayuda" style="margin-top:0">Encontré <b>${e.ins.length} insumos</b> en la hoja "${esc(e.hoja)}"${e.unidades ? ', ' + e.unidades + ' unidades por tanda' : ''}${e.precio ? ' y un precio recomendado de ' + pesos(e.precio) : ''}.</p>
+      <div class="form"><label class="full">Nombre del producto<input class="campo" id="imp-nom" value="${esc(nombre0)}"></label></div>
+      <p class="ayuda">Merma: ${fx(e.merma !== undefined ? Math.round(e.merma * (e.merma < 1 ? 100 : 1)) + '%' : undefined)} · Minutos: ${fx(e.minutos)} · Valor hora: ${e.hora ? pesos(e.hora) : '—'} · Comisión: ${e.com !== undefined ? Math.round(e.com * (e.com < 1 ? 100 : 1)) + '%' : '0%'}</p>`,
+      `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="imp-ok">Importar</button>`);
+    $('imp-ok').onclick = async ev => {
+      const nom = $('imp-nom').value.trim(); if (!nom) return;
+      if (H('Proyección productos').some(p => p['Producto'] === nom)) { toast('Ya existe un producto con ese nombre: cambiale el nombre.', true); return; }
+      ev.target.disabled = true; ev.target.textContent = 'Importando…';
+      try {
+        const v = (r, i) => i > -1 ? r[i] : '';
+        const filas = e.ins.map(r => { const donde = String(v(r, e.C.donde) || ''); return { 'Producto': nom, 'Insumo': String(v(r, e.C.ins)).trim(), 'Proveedor': String(v(r, e.C.prov) || donde.split(/ \(| \/ | o /)[0]).trim(), 'Dónde comprar': donde, 'Presentación': v(r, e.C.pres), 'Precio del pack': num(v(r, e.C.precio)), 'Rinde (unidades por pack)': num(v(r, e.C.rinde)) || 1, 'Uso por unidad': e.C.uso > -1 ? num(v(r, e.C.uso)) : 1, 'Dato': v(r, e.C.dato), 'Notas': v(r, e.C.nota) }; });
+        await enviar({ accion: 'agregar', hoja: 'Proyección productos', datos: { 'Producto': nom, 'Unidades por tanda': e.unidades || 20, 'Merma %': e.merma !== undefined ? e.merma * (e.merma < 1 ? 100 : 1) : 10, 'Minutos por unidad': e.minutos || '', 'Valor de la hora': e.hora || '', 'Comisión %': e.com !== undefined ? e.com * (e.com < 1 ? 100 : 1) : 0, 'Precio de venta': e.precio || '', 'Notas': 'Importado de ' + f.name } });
+        for (let i = 0; i < filas.length; i += 40) await enviar({ accion: 'lote', hoja: 'Proyección insumos', filas: filas.slice(i, i + 40) });
+        PROY_SEL = nom; $('modal').close(); toast('Importado ✓ · actualizando…'); await cargar(true);
+      } catch (err) { toast(err.message, true); ev.target.disabled = false; ev.target.textContent = 'Importar'; }
+    };
+  };
+  inp.click();
+}
+
+/* ───── Inversión: ¿y si esa plata se invertía? ───── */
+let INV = null, INV_CARGANDO = false, INV_ERR = '';
+const INVC = { fuente: 'ganancia', monto: 50000, desde: HOY.getFullYear() + '-01', unico: 270000, cuando: claveMes(new Date(HOY.getFullYear(), HOY.getMonth() - 6, 1)) };
+const COL_INV = { spy: '#BF8A26', fci: '#9B6FE0', usd: '#2FA898', ap: '#8E7FA3' };
+async function cargarInversion(forzar){
+  if (INV_CARGANDO) return; INV_CARGANDO = true; INV_ERR = '';
+  try { const r = await fetch(API + '?accion=inversion&clave=' + encodeURIComponent(CLAVE) + (forzar ? '&forzar=1' : '')); const d = await r.json(); if (!d.ok) throw new Error(d.error || 'sin datos'); INV = d; }
+  catch (e) { INV_ERR = e.message || String(e); }
+  INV_CARGANDO = false; if (VISTA === 'inversion') pintar();
+}
+function movimientosPorMes(){
+  const m = {}, sumar = (f, k, v) => { if (!f) return; const c = claveMes(f); m[c] = m[c] || { e: 0, g: 0 }; m[c][k] += v; };
+  H('Asistencias').forEach(a => { const t = encuentro(a['ID Encuentro']); sumar(t && fecha(t['Fecha']), 'e', num(a['Total pagado'])); });
+  H('Ventas').forEach(v => sumar(fecha(v['Fecha']), 'e', num(v['Total'])));
+  H('Suscripciones').forEach(s => { if (/Alta|Renovaci/.test(s['Tipo'])) sumar(fecha(s['Fecha']), 'e', num(s['Monto'])); });
+  H('Gastos').forEach(g => sumar(fecha(g['Fecha']), 'g', num(g['Total'])));
+  return m;
+}
+function aportesInv(){
+  const kHoy = claveMes(HOY), out = [];
+  if (INVC.fuente === 'ganancia' || INVC.fuente === 'gastos') {
+    const m = movimientosPorMes();
+    Object.keys(m).sort().forEach(k => { if (k > kHoy) return; const v = INVC.fuente === 'ganancia' ? m[k].e - m[k].g : m[k].g; if (v > 0) out.push([k, v]); });
+  } else if (INVC.fuente === 'fijo') {
+    let [y, mo] = INVC.desde.split('-').map(Number);
+    while (y + '-' + String(mo).padStart(2, '0') <= kHoy && out.length < 240) { out.push([y + '-' + String(mo).padStart(2, '0'), INVC.monto]); mo++; if (mo > 12) { mo = 1; y++; } }
+  } else if (INVC.cuando <= kHoy) out.push([INVC.cuando, INVC.unico]);
+  return out;
+}
+function valorEn(serie, k){ if (serie[k]) return serie[k]; const ks = Object.keys(serie).filter(x => x <= k).sort(); return ks.length ? serie[ks[ks.length - 1]] : 0; }
+function simularInv(){
+  const d = INV, ap = aportesInv(), kHoy = claveMes(HOY), spyHoy = d.spyHoy || valorEn(d.spy, kHoy), mepHoy = d.mepHoy || valorEn(d.mep, kHoy);
+  const finMes = k => { const [y, m] = k.split('-').map(Number); const f = new Date(y, m, 0); return f > HOY ? HOY : f; };
+  const filas = ap.map(([k, a]) => {
+    const mep = valorEn(d.mep, k) || mepHoy, spy = valorEn(d.spy, k) || spyHoy, usd = mep ? a / mep : 0, acc = spy ? usd / spy : 0;
+    const dias = Math.max(0, diasEntre(finMes(k), HOY)), fci = a * Math.pow(1 + d.tna / 100 / 365, dias);
+    let infl = 1; Object.keys(d.inflacion).filter(x => x > k && x <= kHoy).forEach(x => infl *= 1 + d.inflacion[x] / 100);
+    return { k, a, acc, spyUsd: acc * spyHoy, spy: acc * spyHoy * mepHoy, fci, usd: usd * mepHoy, real: a / infl, mep, spyThen: spy };
+  });
+  const tot = c => filas.reduce((s, f) => s + f[c], 0);
+  // evolución mes a mes del total acumulado (para el gráfico)
+  const meses = [...new Set(filas.map(f => f.k))].sort(), serie = [];
+  if (meses.length) { let [y, m] = meses[0].split('-').map(Number); while (true) { const k = y + '-' + String(m).padStart(2, '0'); if (k > kHoy) break; const fin = finMes(k), mepK = valorEn(d.mep, k) || mepHoy, spyK = k === kHoy ? spyHoy : (valorEn(d.spy, k) || spyHoy);
+    const hasta = filas.filter(f => f.k <= k); serie.push({ k, ap: hasta.reduce((s, f) => s + f.a, 0), spy: hasta.reduce((s, f) => s + f.acc * spyK * mepK, 0), fci: hasta.reduce((s, f) => s + f.a * Math.pow(1 + d.tna / 100 / 365, Math.max(0, diasEntre(finMes(f.k), fin))), 0), usd: hasta.reduce((s, f) => s + (f.mep ? f.a / f.mep : 0) * mepK, 0) });
+    m++; if (m > 12) { m = 1; y++; } if (serie.length > 240) break; } }
+  return { filas, serie, ap: tot('a'), spy: tot('spy'), spyUsd: tot('spyUsd'), fci: tot('fci'), usd: tot('usd'), real: tot('real'), acc: tot('acc'), spyHoy, mepHoy };
+}
+function grafLineasInv(serie){
+  if (serie.length < 2) return '';
+  const W = 680, H = 270, L = 64, R = 96, T = 16, B = 34, max = Math.max(...serie.flatMap(s => [s.ap, s.spy, s.fci, s.usd])) * 1.08 || 1;
+  const x = i => L + i * (W - L - R) / (serie.length - 1), y = v => T + (1 - v / max) * (H - T - B);
+  const ticks = [0, .25, .5, .75, 1].map(f => max * f);
+  let g = ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid-inv"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" class="gl">${corto(v)}</text>`).join('');
+  const paso = Math.ceil(serie.length / 8);
+  serie.forEach((s, i) => { if (i % paso === 0 || i === serie.length - 1) g += `<text x="${x(i)}" y="${H - 12}" text-anchor="middle" class="gl">${MES_CORTO(s.k)}</text>`; });
+  const linea = (c, col, dash) => `<path d="${serie.map((s, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(s[c]).toFixed(1)).join('')}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"${dash ? ' stroke-dasharray="5 4"' : ''}/>`;
+  const ult = serie[serie.length - 1], etis = [['spy', 'S&P 500'], ['fci', 'Fondo común'], ['usd', 'Dólares'], ['ap', 'Aportado']].map(([c, n]) => ({ c, n, y: y(ult[c]) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < etis.length; i++) if (etis[i].y - etis[i - 1].y < 14) etis[i].y = etis[i - 1].y + 14;
+  g += linea('ap', COL_INV.ap, 1) + linea('usd', COL_INV.usd) + linea('fci', COL_INV.fci) + linea('spy', COL_INV.spy);
+  g += etis.map(e => `<circle cx="${x(serie.length - 1)}" cy="${y(ult[e.c])}" r="4" fill="${COL_INV[e.c]}" stroke="#271040" stroke-width="2"/><text x="${W - R + 8}" y="${e.y + 4}" class="gl" style="fill:var(--luna)">${e.n}</text>`).join('');
+  g += `<line id="inv-cruz" x1="0" x2="0" y1="${T}" y2="${H - B}" class="cruz-inv" style="opacity:0"/><rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" id="inv-hit"/>`;
+  window.SERIE_INV = { serie, x, L, R, W };
+  return `<div class="graf graf-inv"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cuánto valdría lo aportado en cada alternativa, mes a mes">${g}</svg><div id="inv-tip" class="tip-inv oculto"></div>
+    <div class="leyenda-g"><span><i style="background:${COL_INV.spy}"></i>S&P 500</span><span><i style="background:${COL_INV.fci}"></i>Fondo común</span><span><i style="background:${COL_INV.usd}"></i>Dólares guardados</span><span><i style="background:${COL_INV.ap};height:2px"></i>Lo aportado</span></div></div>`;
+}
+document.addEventListener('pointermove', ev => {
+  const hit = ev.target.id === 'inv-hit' ? ev.target : null, tip = $('inv-tip'), cruz = $('inv-cruz');
+  if (!tip || !cruz) return;
+  if (!hit) { tip.classList.add('oculto'); cruz.style.opacity = 0; return; }
+  const S = window.SERIE_INV, svg = hit.ownerSVGElement, r = svg.getBoundingClientRect(), vx = (ev.clientX - r.left) / r.width * S.W;
+  const i = Math.max(0, Math.min(S.serie.length - 1, Math.round((vx - S.L) / ((S.W - S.L - S.R) / (S.serie.length - 1))))), s = S.serie[i], px = S.x(i);
+  cruz.setAttribute('x1', px); cruz.setAttribute('x2', px); cruz.style.opacity = 1;
+  tip.innerHTML = `<b>${MESES[+s.k.slice(5) - 1]} ${s.k.slice(0, 4)}</b>${[['spy', 'S&P 500'], ['fci', 'Fondo común'], ['usd', 'Dólares'], ['ap', 'Aportado']].map(([c, n]) => `<span><i style="background:${COL_INV[c]}"></i>${n}<b>${pesos(s[c])}</b></span>`).join('')}`;
+  tip.classList.remove('oculto');
+  const box = svg.parentNode.getBoundingClientRect(), left = px / S.W * r.width + (r.left - box.left);
+  tip.style.left = Math.min(box.width - 190, Math.max(0, left + 12)) + 'px';
+});
+V.inversion = () => {
+  let h = cabeza('Inversión', '<button class="btn-sec" type="button" data-invforzar>Actualizar precios</button>');
+  h += '<p class="ayuda">Para tomar conciencia: cuánto valdría hoy la plata de Luz Guía si cada mes se hubiera puesto en el S&P 500, en un fondo común de inversión o en dólares, comparado con dejarla quieta en pesos.</p>';
+  if (!INV) { if (!INV_CARGANDO && !INV_ERR) cargarInversion(); return h + (INV_ERR ? `<div class="aviso"><p>No se pudieron traer los precios del mercado (${esc(INV_ERR)}). Revisá que hayas pegado el Code.gs nuevo y hecho <b>Nueva versión</b>.</p><button class="btn" type="button" data-invforzar>Reintentar</button></div>` : '<p class="vacio">Consultando el S&P 500, el dólar MEP y los fondos…</p>'); }
+  const d = INV, kHoy = claveMes(HOY), spyHoy = d.spyHoy || valorEn(d.spy, kHoy), mepHoy = d.mepHoy || valorEn(d.mep, kHoy);
+  const k12 = claveMes(new Date(HOY.getFullYear() - 1, HOY.getMonth(), 1)), spy12 = d.spy[k12], var12 = spy12 ? (spyHoy / spy12 - 1) * 100 : null;
+  h += `<section class="spy-hoy"><div><small>Hoy, una acción del S&P 500 (SPY) cuesta</small><b>US$ ${spyHoy ? spyHoy.toLocaleString('es-AR', { maximumFractionDigits: 2 }) : '—'}</b>
+    <p>${mepHoy && spyHoy ? 'Son unos <b>' + pesos(spyHoy * mepHoy) + '</b> al dólar MEP (' + pesos(mepHoy) + '). Con un CEDEAR de SPY (equivale a 1/20 de acción) entrás con unos <b>' + pesos(spyHoy * mepHoy / 20) + '</b>.' : ''}
+    ${var12 !== null ? ' En los últimos 12 meses ' + (var12 >= 0 ? 'subió' : 'bajó') + ' <b>' + Math.abs(var12).toFixed(1).replace('.', ',') + '%</b> en dólares.' : ''}</p></div><span class="spy-ic" aria-hidden="true">📈</span></section>`;
+  const sel = (v, t) => `<option value="${v}"${INVC.fuente === v ? ' selected' : ''}>${t}</option>`;
+  h += `<div class="inv-ctrl"><label>¿Qué plata simulamos?<select class="campo" data-invc="fuente">${sel('ganancia', 'La ganancia de cada mes')}${sel('gastos', 'Lo que se gastó/invirtió cada mes')}${sel('fijo', 'Un monto fijo todos los meses')}${sel('unico', 'Un monto único')}</select></label>`
+    + (INVC.fuente === 'fijo' ? `<label>Monto por mes<input class="campo" type="number" min="0" step="1000" value="${INVC.monto}" data-invc="monto"></label><label>Desde<input class="campo" type="month" value="${INVC.desde}" max="${kHoy}" data-invc="desde"></label>` : '')
+    + (INVC.fuente === 'unico' ? `<label>Monto<input class="campo" type="number" min="0" step="1000" value="${INVC.unico}" data-invc="unico"></label><label>En<input class="campo" type="month" value="${INVC.cuando}" max="${kHoy}" data-invc="cuando"></label>` : '') + '</div>';
+  const s = simularInv();
+  if (!s.filas.length) return h + `<p class="vacio">${INVC.fuente === 'ganancia' ? 'Todavía no hay meses con ganancia registrada. Probá con "Un monto fijo todos los meses".' : 'No hay montos para simular con esta opción.'}</p>`;
+  const dif = (v) => `<small class="mini ${v >= s.ap ? 'sube' : 'baja'}">${v >= s.ap ? '+' : ''}${pesos(v - s.ap)} (${v >= s.ap ? '+' : ''}${s.ap ? ((v / s.ap - 1) * 100).toFixed(1).replace('.', ',') : 0}%)</small>`;
+  h += '<div class="cifras" style="margin-top:18px">'
+    + `<div class="cifra"><span>Lo aportado</span><b>${pesos(s.ap)}</b><small class="mini">${s.filas.length} ${s.filas.length === 1 ? 'aporte' : 'aportes'}</small></div>`
+    + `<div class="cifra"><span><i class="pt" style="background:${COL_INV.spy}"></i>En el S&P 500 hoy</span><b class="oro">${pesos(s.spy)}</b>${dif(s.spy)}<small class="mini">${s.acc.toFixed(2).replace('.', ',')} acciones · US$ ${Math.round(s.spyUsd).toLocaleString('es-AR')}</small></div>`
+    + `<div class="cifra"><span><i class="pt" style="background:${COL_INV.fci}"></i>En un fondo común hoy</span><b>${pesos(s.fci)}</b>${dif(s.fci)}<small class="mini">TNA ${String(d.tna).replace('.', ',')}% · ${esc(d.fuenteTna)}</small></div>`
+    + `<div class="cifra"><span><i class="pt" style="background:${COL_INV.usd}"></i>En dólares guardados</span><b>${pesos(s.usd)}</b>${dif(s.usd)}</div>`
+    + `<div class="cifra"><span>Quieta en pesos</span><b>${pesos(s.ap)}</b><small class="mini baja">${s.real < s.ap - 1 ? 'hoy compra lo que ' + pesos(s.real) + ' de antes (inflación)' : 'sin datos de inflación todavía'}</small></div></div>`;
+  h += '<h3>Mes a mes</h3>' + grafLineasInv(s.serie);
+  h += '<details class="mas-tabla"><summary>Ver la tabla de cada aporte</summary>' + tabla([{ t:'Mes', f: f => MES_CORTO(f.k) }, { t:'Aporte', f: f => pesos(f.a), num:1 }, { t:'Dólar MEP', f: f => f.mep ? pesos(f.mep) : '—', num:1 }, { t:'SPY ese mes', f: f => f.spyThen ? 'US$ ' + f.spyThen.toFixed(0) : '—', num:1 }, { t:'S&P 500 hoy', f: f => pesos(f.spy), num:1 }, { t:'Fondo común hoy', f: f => pesos(f.fci), num:1 }, { t:'Dólares hoy', f: f => pesos(f.usd), num:1 }], s.filas.slice().reverse(), '') + '</details>';
+  h += `<p class="ayuda" style="margin-top:14px">Supone que cada aporte se compra al cierre de su mes al dólar MEP de ese momento. El S&P 500 incluye los dividendos reinvertidos; el fondo común usa una tasa anual constante. Es una simulación para tomar conciencia, no una recomendación de inversión: los rendimientos pasados no garantizan los futuros.</p>
+    <p class="ayuda" style="font-size:.8rem">Fuentes: ${esc(d.fuentes.join(' · ') || '—')}. Actualizado ${new Date(d.actualizado).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}.${d.avisos && d.avisos.length ? ' Avisos: ' + esc(d.avisos.join(' · ')) : ''}</p>`;
+  return h;
+};
+document.addEventListener('change', ev => { const el = ev.target; if (!el.dataset || !el.dataset.invc) return; const k = el.dataset.invc; INVC[k] = /monto|unico/.test(k) ? Number(el.value) || 0 : el.value; if (VISTA === 'inversion') pintar(); });
+
+/* ───── Hoy: tareas nuevas ───── */
+const _hoyBaseCRM = V.hoy;
+V.hoy = () => {
+  let h = _hoyBaseCRM();
+  const T = [];
+  H('Personas').filter(p => String(p['Referida por'] || '').trim() && !String(p['Regalo por invitar'] || '').trim()).forEach(p => {
+    const r = resolverReferente(p['Referida por']); if (!r || r['ID Persona'] === p['ID Persona']) return;
+    T.push({ ico:'🎁', txt: `${esc(r['Nombre completo'])} invitó a ${esc(p['Nombre completo'])}`, sub: 'Si ya se sumó a un encuentro o a Premium, regalale una semana de Premium a quien la invitó',
+      bt: `<button class="btn" type="button" data-regalo="${esc(r['ID Persona'])}|${esc(p['ID Persona'])}">Regalar 1 semana Premium</button><button class="btn-sec" type="button" data-regalono="${esc(p['ID Persona'])}">No corresponde</button>` });
+  });
+  H('Pedidos').filter(x => x['¿Reservó?'] === 'Sí' && fecha(x['Día reservado'])).forEach(x => { const d = diasEntre(HOY, fecha(x['Día reservado'])); if (d >= 0 && d <= 3) T.push({ ico:'📅', txt: `${esc(x['Nombre'])} reservó ${esc(x['Qué'])} para ${d === 0 ? 'hoy' : d === 1 ? 'mañana' : lindaFecha(fecha(x['Día reservado']))}`, sub: 'Lo confirmó desde Mi Luz', bt: btnWA(x['ID Persona'], 'invitacion', '', '', 'Escribirle') }); });
+  const kHoy = claveMes(HOY), hayTirada = H('Contenido Premium').some(x => /tirada/i.test(x['Tipo']) && (() => { const m = String(x['Mes'] || '').match(/(\d{1,2})\/(\d{4})/); return m && +m[2] === HOY.getFullYear() && +m[1] === HOY.getMonth() + 1; })());
+  if (D.h['Contenido Premium'] && !hayTirada && HOY.getDate() <= 10) T.push({ ico:'🎥', txt: `Falta cargar la tirada de ${MESES[HOY.getMonth()]} para Premium`, sub: 'Mey graba el video, lo suben a YouTube (oculto) o a Drive y pegan el enlace', bt: btnNuevo('Contenido Premium', 'Cargar tirada') });
+  if (!T.length) return h;
+  const lis = T.map(x => `<li class="tarea"><span class="ico">${x.ico}</span><div class="txt">${x.txt}<small>${x.sub}</small></div><div class="bt">${x.bt}</div></li>`).join('');
+  const vacio = '<p class="ayuda">No hay pendientes para hoy. Buen momento para planear el próximo encuentro.</p>';
+  return h.includes('<ul class="tareas">') ? h.replace('<ul class="tareas">', '<ul class="tareas">' + lis) : h.replace(vacio, '<ul class="tareas">' + lis + '</ul>');
+};
+
+/* ───── Mi Luz: contenido Premium y avisos al celular ───── */
+const _miluzBase = V.miluz;
+V.miluz = () => {
+  let h = _miluzBase();
+  const cont = H('Contenido Premium').slice().reverse();
+  h += `<div class="cabeza" style="margin-top:34px"><h3 style="margin:0">Tirada del mes y meditaciones</h3>${btnNuevo('Contenido Premium', 'Cargar video o audio')}</div>
+    <p class="ayuda" style="margin-top:6px">Lo que cargan acá aparece en Premium. Sirve un enlace de YouTube (puede ser "oculto"), de Drive (compartido como "cualquier persona con el enlace"), de Spotify o un mp3. Las tiradas de meses anteriores quedan disponibles; la del mes actual se destaca.</p>`;
+  h += tabla([{ t:'', f: x => `<span class="estado ${si(x['Activo']) || x['Activo'] === '' ? 'e-ok' : 'e-neutro'}">${si(x['Activo']) || x['Activo'] === '' ? 'Visible' : 'Oculto'}</span>` }, { t:'Título', f: x => `<b>${esc(x['Título'])}</b>` }, { t:'Tipo', k:'Tipo' }, { t:'Mes', k:'Mes' },
+    { t:'', acc:1, f: x => (x['Enlace'] ? `<a class="ic" href="${esc(x['Enlace'])}" target="_blank" rel="noopener" title="Abrir">↗</a>` : '') + acciones('Contenido Premium', x) }], cont, 'Todavía no cargaron contenido. La primera tirada del mes puede ir acá.');
+  const ok = D.params.avisosCelular;
+  h += `<h3 style="margin-top:34px">Avisos al celular</h3>`;
+  if (!ok) h += `<div class="tabla-caja" style="padding:16px 18px"><p style="margin:0 0 8px"><b>Todavía no están configurados.</b> Se hace una sola vez (es gratis):</p><ol class="ayuda" style="margin:0;padding-left:20px;line-height:1.7"><li>Creá una cuenta en <a href="https://onesignal.com" target="_blank" rel="noopener">onesignal.com</a> con el mail de Luz Guía.</li><li>New App → nombre "Mi Luz" → plataforma <b>Web</b> → Typical Site. Site URL: <code>https://luzguia888-luzguia.github.io</code>. Subí el ícono de Luz Guía.</li><li>Copiá el <b>App ID</b> y pegalo en el Sheet, hoja Config, celda <b>B19</b>.</li><li>En Settings → Keys & IDs creá una <b>API Key</b> y pegala en <b>B20</b>.</li><li>Menú 🌙 Luz Guía → <b>Activar avisos diarios al celular</b>.</li></ol></div>`;
+  else {
+    const actv = new Set(H('Visitas').filter(v => v['Tipo'] === 'Avisos').map(v => v['ID Persona'])).size;
+    h += `<p class="ayuda" style="margin-top:0">${actv ? actv + (actv === 1 ? ' persona activó' : ' personas activaron') + ' los avisos desde Mi Luz.' : 'Cuando alguien active los avisos desde Mi Luz, aparece acá.'} Todos los días a las 10 sale uno automático (carta del día, lunas, "tu semana" los lunes).</p>
+      <div class="form" style="max-width:640px"><label class="full">Título<input class="campo" id="av-tit" maxlength="60" placeholder="🌕 Esta noche es Luna llena"></label>
+      <label class="full">Mensaje<textarea class="campo" id="av-txt" rows="2" maxlength="180" placeholder="Abrí Mi Luz y mirá el ritual para soltar."></textarea></label>
+      <label>Para<select class="campo" id="av-dest"><option value="todas">Todas las que activaron avisos</option><option value="premium">Solo Premium</option>${optPersonas().map(([id, n]) => `<option value="${esc(id)}">${esc(n)}</option>`).join('')}</select></label>
+      <label>Abre en<select class="campo" id="av-ancla"><option value="hoy">Hoy</option><option value="novedades">Novedades</option><option value="productos">Productos</option><option value="premium">Premium</option><option value="agenda">Agenda</option></select></label>
+      <p class="full" style="margin:0"><button class="btn" type="button" data-avisoenviar>Enviar aviso</button></p></div>`;
+  }
+  return h;
+};
+
+/* ───── Estadísticas de negocio ───── */
+const _estBase = V.estadisticas;
+V.estadisticas = () => {
+  let h = _estBase();
+  const ps = H('Personas').filter(p => !esOrg(p)), sus = H('Suscripciones').filter(s => !esOrg(persona(s['ID Persona'])));
+  const pagos = sus.filter(s => /^(Alta|Renovaci)/.test(s['Tipo'])), precio = num(D.params.precioPremium);
+  const activas = ps.filter(p => /premium/i.test(p['Plan'] || '') && (!fecha(p['Premium hasta']) || fecha(p['Premium hasta']) >= HOY));
+  const pagoDe = id => pagos.filter(s => s['ID Persona'] === id);
+  const enPrueba = activas.filter(p => String(p['Prueba Premium'] || '').trim() && !pagoDe(p['ID Persona']).some(s => (fecha(s['Fecha']) || 0) >= (fecha(p['Prueba Premium']) || 0)));
+  const probaron = ps.filter(p => String(p['Prueba Premium'] || '').trim()), convirtieron = probaron.filter(p => pagoDe(p['ID Persona']).length);
+  const conAlta = [...new Set(pagos.map(s => s['ID Persona']))], renovaron = conAlta.filter(id => pagoDe(id).length >= 2);
+  const vencidas = ps.filter(p => /premium/i.test(p['Plan'] || '') && fecha(p['Premium hasta']) && diasEntre(fecha(p['Premium hasta']), HOY) > 3);
+  const kHoy = claveMes(HOY), cobradoMes = pagos.filter(s => fecha(s['Fecha']) && claveMes(fecha(s['Fecha'])) === kHoy).reduce((a, s) => a + num(s['Monto']), 0);
+  let n = '<h3>Negocio de Mi Luz Premium</h3><p class="ayuda" style="margin-top:0">Altas, renovaciones y bajas salen de la hoja Suscripciones: se carga sola al activar Premium desde Hoy, con la prueba gratis y con los regalos por invitar.</p><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Pagando hoy</span><b class="oro">${activas.length - enPrueba.length}</b><small class="mini">${enPrueba.length ? '+ ' + enPrueba.length + ' en prueba gratis' : 'nadie en prueba ahora'}</small></div>`
+    + `<div class="cifra"><span>Ingreso mensual estimado</span><b class="oro">${precio ? pesos((activas.length - enPrueba.length) * precio) : '—'}</b><small class="mini">${precio ? 'a ' + pesos(precio) + ' por mes' : 'cargá el precio en Config B14'}</small></div>`
+    + `<div class="cifra"><span>Cobrado en Premium</span><b>${pesos(pagos.reduce((a, s) => a + num(s['Monto']), 0))}</b><small class="mini">${pesos(cobradoMes)} este mes</small></div>`
+    + `<div class="cifra"><span>Prueba gratis → pagaron</span><b>${convirtieron.length}/${probaron.length}</b><small class="mini">${pct(convirtieron.length, probaron.length)} de conversión</small></div>`
+    + `<div class="cifra"><span>Renovaron</span><b>${renovaron.length}/${conAlta.length}</b><small class="mini">${pct(renovaron.length, conAlta.length)} volvió a pagar</small></div>`
+    + `<div class="cifra"><span>Se fueron</span><b>${vencidas.length}</b><small class="mini">vencieron y no renovaron</small></div></div>`;
+  const meses = []; for (let i = 5; i >= 0; i--) meses.push(claveMes(new Date(HOY.getFullYear(), HOY.getMonth() - i, 1)));
+  n += grafColumnas(meses.map(k => ({ l: MES_CORTO(k), v: pagos.filter(s => fecha(s['Fecha']) && claveMes(fecha(s['Fecha'])) === k).length, v2: vencidas.filter(p => claveMes(fecha(p['Premium hasta'])) === k).length })), { doble: 1, n1: 'Altas y renovaciones', n2: 'Vencieron sin renovar', titulo: 'Altas y bajas de Premium por mes', fmt: v => v + '' });
+  if (vencidas.length) n += '<p class="ayuda">Se fueron: ' + vencidas.map(p => esc(p['Nombre completo']) + ' (' + esc(p['Premium hasta']) + ')').join(' · ') + '. Un mensaje personal con una lectura de regalo suele traer de vuelta a varias.</p>';
+  // Invitaciones
+  const refs = ps.map(p => ({ p, r: resolverReferente(p['Referida por']) })).filter(x => x.r);
+  const vis = H('Visitas').filter(v => !esOrg(persona(v['ID Persona'])));
+  const top = {}; refs.forEach(x => { const k = x.r['Nombre completo']; top[k] = (top[k] || 0) + 1; });
+  n += '<h3>Invitaciones</h3><div class="cifras" style="margin-top:0">'
+    + `<div class="cifra"><span>Invitaciones enviadas desde Mi Luz</span><b>${vis.filter(v => v['Tipo'] === 'Invitó').length}</b></div>`
+    + `<div class="cifra"><span>Personas que llegaron invitadas</span><b class="oro">${refs.length}</b></div>`
+    + `<div class="cifra"><span>Semanas Premium regaladas</span><b>${sus.filter(s => s['Tipo'] === 'Regalo por invitar').length}</b></div></div>`
+    + (Object.keys(top).length ? '<div style="margin-top:12px">' + barras(Object.entries(top).sort((a, b) => b[1] - a[1]).slice(0, 8)) + '</div>' : '<p class="ayuda" style="margin-top:10px">Cuando cargues a alguien nuevo, elegí en "Referida por" quién la invitó (te escriben con un código tipo LUZ-12).</p>');
+  // Reservas
+  const ped = H('Pedidos').filter(x => /Encuentro|Promoción|Producto|Kit/.test(x['Tipo']));
+  if (ped.length && D.cab.Pedidos && D.cab.Pedidos.includes('¿Reservó?')) {
+    const g = {}; ped.forEach(x => { const k = x['Qué'] || x['Referencia']; const o = g[k] = g[k] || { que: k, tipo: x['Tipo'], n: 0, si: 0, no: 0, sin: 0, nores: 0 }; o.n++; if (x['¿Reservó?'] === 'Sí') o.si++; else if (x['¿Reservó?'] === 'No') { o.no++; if (x['Motivo'] === 'No le respondimos') o.nores++; } else o.sin++; });
+    const filas = Object.values(g).sort((a, b) => b.n - a.n);
+    n += '<h3>¿Pudieron reservar?</h3><p class="ayuda" style="margin-top:0">Al día siguiente de consultar, Mi Luz le pregunta a cada persona si pudo reservar. Así saben cuántas consultas terminan en reserva sin depender de lo que pasa en WhatsApp.</p>'
+      + tabla([{ t:'Qué', k:'que' }, { t:'Tipo', k:'tipo' }, { t:'Consultas', k:'n', num:1 }, { t:'Dijeron que sí', k:'si', num:1 }, { t:'Dijeron que no', k:'no', num:1 }, { t:'"No me respondieron"', f: o => o.nores ? `<b style="color:var(--debe)">${o.nores}</b>` : '0', num:1 }, { t:'Todavía no contestaron', k:'sin', num:1 }, { t:'Reservaron', f: o => pct(o.si, o.si + o.no), num:1 }], filas, '');
+  }
+  // Hábitos
+  const logros = contar(vis.filter(v => v['Tipo'] === 'Logro'), 'Detalle'), porP = contar(vis.filter(v => v['Tipo'] === 'Logro'), 'Nombre');
+  if (logros.length) n += `<div class="dos-col"><div><h3>Logros que desbloquean</h3>${barras(logros)}</div><div><h3>Las más constantes</h3>${barras(porP.slice(0, 8))}</div></div>`;
+  return h.replace('<h3>Por formato</h3>', n + '<h3>Por formato</h3>');
+};
+
+/* ───── Botones ───── */
+document.addEventListener('click', async e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const ds = t.dataset;
+  if (ds.proysel) { PROY_SEL = ds.proysel; pintar(); return; }
+  if (ds.proyimport !== undefined) { importarExcelProy(); return; }
+  if (ds.proyprecio) { guardarParamProy('Precio de venta', Number(ds.proyprecio)); return; }
+  if (ds.proydup !== undefined) {
+    const nom = prompt('Nombre del nuevo producto (se copian todos los insumos):', PROY_SEL + ' (copia)'); if (!nom || !nom.trim()) return;
+    if (H('Proyección productos').some(p => p['Producto'] === nom.trim())) { toast('Ya existe un producto con ese nombre.', true); return; }
+    const prod = H('Proyección productos').find(p => p['Producto'] === PROY_SEL), datos = {}; ESQ['Proyección productos'].campos.forEach(c => datos[c.k] = prod[c.k]); datos['Producto'] = nom.trim();
+    const ins = H('Proyección insumos').filter(x => x['Producto'] === PROY_SEL).map(x => { const o = {}; ESQ['Proyección insumos'].campos.forEach(c => o[c.k] = x[c.k]); o['Producto'] = nom.trim(); ['Precio del pack', 'Rinde (unidades por pack)', 'Uso por unidad'].forEach(k => o[k] = num(o[k])); return o; });
+    ['Unidades por tanda', 'Merma %', 'Minutos por unidad', 'Valor de la hora', 'Comisión %', 'Precio de venta'].forEach(k => datos[k] = datos[k] === '' ? '' : num(datos[k]));
+    t.disabled = true;
+    try { await enviar({ accion: 'agregar', hoja: 'Proyección productos', datos }); for (let i = 0; i < ins.length; i += 40) await enviar({ accion: 'lote', hoja: 'Proyección insumos', filas: ins.slice(i, i + 40) }); PROY_SEL = nom.trim(); toast('Producto duplicado ✓'); await cargar(true); }
+    catch (err) { toast(err.message, true); t.disabled = false; }
+    return;
+  }
+  if (ds.invforzar !== undefined) { INV = null; INV_ERR = ''; pintar(); cargarInversion(true); return; }
+  if (ds.regalo) {
+    const [rid, pid] = ds.regalo.split('|'), r = persona(rid), p = persona(pid); if (!r || !p) return;
+    t.disabled = true;
+    try {
+      const sinVto = /premium/i.test(r['Plan'] || '') && !fecha(r['Premium hasta']);
+      const base = fecha(r['Premium hasta']) && fecha(r['Premium hasta']) > HOY ? fecha(r['Premium hasta']) : new Date(HOY), hasta = new Date(base); hasta.setDate(hasta.getDate() + 7);
+      await enviar({ accion: 'editar', hoja: 'Personas', fila: p._fila, original: p['ID Persona'], datos: { 'Regalo por invitar': iso(HOY) } });
+      await enviar({ accion: 'agregar', hoja: 'Suscripciones', datos: { 'Fecha': iso(HOY), 'ID Persona': rid, 'Nombre': r['Nombre completo'], 'Tipo': 'Regalo por invitar', 'Desde': iso(base), 'Hasta': sinVto ? '' : iso(hasta), 'Monto': 0, 'Notas': 'Invitó a ' + p['Nombre completo'] } });
+      if (!sinVto) await guardarCambios('Personas', r, { 'Plan': 'Premium', 'Premium hasta': iso(hasta) }, '🎁 Semana regalada: Premium hasta el ' + lindaFecha(hasta));
+      else { toast('🎁 Registrado (ya tenía Premium sin vencimiento)'); await cargar(true); }
+      modal('¡Regalo listo! 🎁', `<p>Avisale a ${esc(String(r['Nombre completo']).split(' ')[0])} que ganó una semana de Premium por invitar a ${esc(String(p['Nombre completo']).split(' ')[0])}.</p>`, btnWA(rid, 'invitacion', '', '', 'Escribirle') + '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
+    } catch (err) { toast(err.message, true); t.disabled = false; }
+    return;
+  }
+  if (ds.regalono) { const p = persona(ds.regalono); if (!p) return; t.disabled = true; try { await guardarCambios('Personas', p, { 'Regalo por invitar': 'No' }, 'Listo'); } catch (err) { toast(err.message, true); t.disabled = false; } return; }
+  if (ds.avisoenviar !== undefined) {
+    const titulo = $('av-tit').value.trim(), texto = $('av-txt').value.trim(), dest = $('av-dest').value;
+    if (!texto) { toast('Escribí el mensaje', true); return; }
+    const ids = dest === 'todas' ? [] : dest === 'premium' ? H('Personas').filter(p => /premium/i.test(p['Plan'] || '') && (!fecha(p['Premium hasta']) || fecha(p['Premium hasta']) >= HOY) || esOrg(p)).map(p => p['ID Persona']) : [dest];
+    if (!confirm('¿Mandar este aviso ' + (dest === 'todas' ? 'a todas las que activaron avisos' : dest === 'premium' ? 'a las Premium' : 'a ' + persona(dest)['Nombre completo']) + '?')) return;
+    t.disabled = true; t.textContent = 'Enviando…';
+    try { const r = await enviar({ accion: 'notificar', titulo: titulo || 'Luz Guía', texto, ids, ancla: $('av-ancla').value }); toast(r.sinDestino ? 'Enviado, pero esa persona todavía no activó los avisos.' : '🔔 Aviso enviado'); $('av-tit').value = ''; $('av-txt').value = ''; }
+    catch (err) { toast(err.message, true); }
+    t.disabled = false; t.textContent = 'Enviar aviso'; return;
+  }
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 CLAVE = leerLS(LS_CLAVE); QUIEN = leerLS(LS_QUIEN);
