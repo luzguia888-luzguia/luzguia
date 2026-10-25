@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Encuentros de tarot · Luz Guía</title>
+<meta name="description" content="Noche Vino & Tarot y Merienda & Tarot: encuentros íntimos de Luz Guía en Santa Rosa, con lectura personalizada para cada una.">
+<meta name="theme-color" content="#120621">
+<link rel="icon" href="icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#120621; --violeta:#2a1046; --ciruela:#3a1763; --oro:#D4AF6A; --oro-claro:#F3DCA0; --luna:#EDE6F5; --bruma:#B6A7C9; --agua:#E8A0B4; --linea:rgba(185,138,230,.25);
+  --serif:'Cormorant Garamond', Georgia, serif; --script:'Great Vibes', 'Segoe Script', cursive; --sans:'Jost', system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--noche);color:var(--luna);font-family:var(--sans);font-size:17px;line-height:1.65;overflow-x:hidden}
+#estrellas{position:fixed;inset:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1}
+.ancho{max-width:720px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+/* Portada */
+.hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;padding:0 0 56px;overflow:hidden}
+.hero .foto{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(243,220,160,.35),transparent 55%),linear-gradient(180deg,#1b0b33,#120621);background-size:cover;background-position:center}
+.hero .foto img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,6,33,.2) 0%,rgba(18,6,33,.35) 45%,rgba(18,6,33,.95) 88%,var(--noche) 100%)}
+.hero .ancho{position:relative;z-index:2;text-align:center}
+.volver{position:absolute;top:calc(14px + env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));z-index:3;color:var(--luna);text-decoration:none;font-size:.9rem;background:rgba(18,6,33,.55);border:1px solid var(--linea);border-radius:999px;padding:7px 14px;backdrop-filter:blur(6px)}
+.marca{display:inline-flex;align-items:center;gap:8px;color:var(--oro);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+.marca img{width:26px;height:26px;border-radius:50%}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.4rem,9vw,3.6rem);line-height:1.05;margin:14px 0 6px;text-wrap:balance;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+.con{display:block;font-family:var(--script);font-weight:400;color:var(--oro-claro);font-size:clamp(2.4rem,10vw,3.4rem);line-height:1.1}
+.bajada{color:var(--luna);font-family:var(--serif);font-style:italic;font-size:1.3rem;margin:10px auto 22px;max-width:30ch}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#F3DCA0,#D4AF6A);color:#1C0B2E;font-weight:600;border-radius:999px;padding:13px 24px;text-decoration:none;box-shadow:0 8px 30px rgba(212,175,106,.35);border:0;font:600 1rem var(--sans);cursor:pointer}
+.btn.sec{background:transparent;color:var(--oro-claro);border:1px solid var(--oro);box-shadow:none}
+.bajar{display:block;margin-top:26px;color:var(--bruma);font-size:.85rem;text-decoration:none}
+/* Secciones */
+section{padding:56px 0 8px}
+.eyebrow{color:var(--agua);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,6vw,2.4rem);line-height:1.15;margin:0 0 14px;text-wrap:balance}
+p{margin:0 0 1em}
+.lead{font-family:var(--serif);font-size:1.3rem;line-height:1.55;color:var(--luna)}
+.suave{color:var(--bruma)}
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:46px 0 0;color:var(--oro)}
+.orn::before,.orn::after{content:"";height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--oro))}
+.orn::after{transform:scaleX(-1)}
+.sirve{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px}
+.sirve div{border:1px solid var(--linea);border-radius:16px;padding:16px;background:linear-gradient(160deg,rgba(58,23,99,.55),rgba(18,6,33,.6))}
+.sirve b{display:block;font-family:var(--serif);font-size:1.2rem;color:var(--oro-claro);margin-bottom:4px}
+.sirve span{color:var(--bruma);font-size:.95rem}
+/* Lo mágico */
+.magia{margin-top:22px;border-radius:22px;padding:26px 22px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(232,160,180,.18),transparent 60%),linear-gradient(160deg,#2f1352,#160828);border:1px solid rgba(232,160,180,.35);position:relative;overflow:hidden}
+.magia .ojo{font-size:2rem;color:var(--agua)}
+.magia p{font-family:var(--serif);font-size:1.45rem;line-height:1.45;margin:8px 0 0}
+.magia em{color:var(--oro-claro);font-style:normal}
+/* Pasos */
+.pasos{list-style:none;padding:0;margin:20px 0 0;position:relative}
+.pasos::before{content:"";position:absolute;left:21px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--oro),var(--agua))}
+.pasos li{position:relative;padding:0 0 26px 62px}
+.pasos .n{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--violeta);border:2px solid var(--oro);color:var(--oro-claro);font-family:var(--serif);font-size:1.3rem;font-weight:600;box-shadow:0 0 18px rgba(212,175,106,.35)}
+.pasos h3{margin:6px 0 4px;font-size:1.1rem;font-weight:600;color:var(--luna)}
+.pasos p{color:var(--bruma);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chips span{border:1px solid var(--linea);border-radius:999px;padding:5px 12px;font-size:.85rem;color:var(--luna);background:rgba(58,23,99,.45)}
+/* Preguntas guía */
+.preguntas{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.preguntas li{padding:14px 16px 14px 46px;border-radius:14px;background:rgba(42,16,70,.7);border:1px solid var(--linea);position:relative;font-family:var(--serif);font-size:1.15rem;line-height:1.4}
+.preguntas li::before{content:"✦";position:absolute;left:16px;top:14px;color:var(--oro)}
+.tip{margin-top:16px;padding:14px 16px;border-left:3px solid var(--agua);background:rgba(232,160,180,.08);border-radius:0 12px 12px 0;color:var(--luna);font-size:.95rem}
+/* Preparar y llevar */
+.dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
+.caja{border-radius:18px;padding:20px;background:linear-gradient(160deg,rgba(58,23,99,.6),rgba(18,6,33,.7));border:1px solid var(--linea)}
+.caja h3{margin:0 0 10px;font-family:var(--serif);font-size:1.4rem;color:var(--oro-claro);font-weight:600}
+.caja ul{margin:0;padding-left:20px;color:var(--bruma)}
+.caja li{margin-bottom:6px}
+/* FAQ */
+details{border-bottom:1px solid var(--linea);padding:14px 0}
+summary{cursor:pointer;list-style:none;font-weight:500;font-size:1.05rem;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--oro);font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--bruma);margin:8px 0 0}
+/* Cierre */
+.cierre{text-align:center;padding:60px 0 40px}
+.cierre .firma{font-family:var(--script);font-size:2.6rem;color:var(--oro-claro);line-height:1.2;margin:6px 0 18px}
+.botones{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.nota{font-size:.8rem;color:var(--bruma);text-align:center;margin:34px auto 0;max-width:46ch;opacity:.85}
+footer{text-align:center;color:var(--bruma);font-size:.8rem;padding:20px 0 calc(30px + env(safe-area-inset-bottom))}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--agua);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion:no-preference){
+  .hero .foto img{animation:respira 18s ease-in-out infinite alternate}
+  @keyframes respira{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+  .aparece{opacity:1;transform:none;transition:opacity .9s ease,transform .9s ease}
+  .js .aparece:not(.visto){opacity:.001;transform:translateY(18px)}
+}
+
+.hero .arte{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:calc(54px + env(safe-area-inset-top))}
+.hero .arte svg{width:min(300px,70vw);max-height:42vh;height:auto}
+.hero .foto img + .arte{display:none}
+.llama{transform-origin:150px 92px;animation:llama 1.6s ease-in-out infinite alternate}
+@keyframes llama{0%{transform:scale(1,1) skewX(0)}50%{transform:scale(.94,1.06) skewX(3deg)}100%{transform:scale(1.04,.96) skewX(-3deg)}}
+.halo-v{animation:halo 2.4s ease-in-out infinite alternate}@keyframes halo{from{opacity:.45}to{opacity:.85}}
+/* Formatos */
+.formatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
+.formato{border-radius:22px;padding:22px 20px;border:1px solid var(--linea);background:linear-gradient(165deg,rgba(58,23,99,.75),rgba(18,6,33,.85));position:relative;overflow:hidden}
+.formato::before{content:"";position:absolute;inset:-40% -20% auto auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(243,220,160,.18),transparent 70%)}
+.formato .ic{font-size:2.2rem}.formato h3{font-family:var(--serif);font-size:1.7rem;font-weight:600;margin:6px 0 2px;color:var(--oro-claro)}
+.formato .cuando{color:var(--agua);font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 12px}
+.formato ul{list-style:none;padding:0;margin:0}.formato li{padding:6px 0 6px 28px;position:relative;color:var(--luna)}.formato li::before{content:"✦";position:absolute;left:4px;color:var(--oro)}
+.formato .secreto{margin-top:12px;color:var(--bruma);font-style:italic;font-family:var(--serif);font-size:1.15rem}
+/* Cartas que se dan vuelta */
+.cartas{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;perspective:900px}
+.carta{aspect-ratio:2/3.1;border:0;padding:0;background:none;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,.7,.3,1);font:inherit;color:inherit}
+.carta.vuelta{transform:rotateY(180deg)}
+.carta .cara{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center;border:1px solid var(--oro)}
+.carta .dorso{background:repeating-linear-gradient(45deg,rgba(243,220,160,.07) 0 6px,transparent 6px 12px),radial-gradient(circle at 50% 50%,#4a1f7c,#1b0b33 75%);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.carta .dorso span{font-size:1.8rem;color:var(--oro-claro);text-shadow:0 0 14px rgba(243,220,160,.7)}
+.carta .dorso small{color:var(--bruma);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;margin-top:8px}
+.carta .frente{transform:rotateY(180deg);background:linear-gradient(170deg,#3a1763,#1b0b33)}
+.carta .frente b{font-size:1.9rem}.carta .frente p{margin:6px 0 0;font-family:var(--serif);font-size:1.02rem;line-height:1.25}
+.carta.oculta .frente{background:linear-gradient(170deg,#2a1046,#120621)}.carta.oculta .frente p{color:var(--bruma);font-style:italic}
+@media (max-width:420px){.carta .frente p{font-size:.92rem}.carta .frente b{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<canvas id="estrellas" aria-hidden="true"></canvas>
+<main>
+  <header class="hero">
+    <div class="foto"><img src="encuentros.jpg" alt="" onerror="if(!this.dataset.p){this.dataset.p=1;this.src='encuentros.png'}else{this.remove()}"><div class="arte"><svg viewBox="0 0 300 250" aria-hidden="true"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a1f7c"/><stop offset="1" stop-color="#1b0b33"/></linearGradient><linearGradient id="vn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9b2c4f"/><stop offset="1" stop-color="#5a0f2a"/></linearGradient><radialGradient id="lz"><stop offset="0" stop-color="rgba(255,214,140,.7)"/><stop offset="1" stop-color="rgba(255,170,80,0)"/></radialGradient><linearGradient id="fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6d6"/><stop offset=".55" stop-color="#FFC768"/><stop offset="1" stop-color="#ff8a3c"/></linearGradient></defs>
+<circle class="halo-v" cx="150" cy="86" r="70" fill="url(#lz)"/>
+<g stroke="#D4AF6A" stroke-width="1.4"><rect x="58" y="96" width="62" height="98" rx="8" fill="url(#cg)" transform="rotate(-16 89 145)"/><rect x="180" y="96" width="62" height="98" rx="8" fill="url(#cg)" transform="rotate(16 211 145)"/></g>
+<g fill="#F3DCA0" opacity=".85"><path d="M89 136l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" transform="rotate(-16 89 145)"/><path d="M211 136l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" transform="rotate(16 211 145)"/></g>
+<rect x="136" y="100" width="28" height="70" rx="4" fill="#EDE6F5" opacity=".92"/><path d="M136 108c8 4 20 4 28 0" stroke="#d8cdea" fill="none"/>
+<path class="llama" d="M150 60c8 10 10 18 6 26-2 5-10 7-12 0-3-8 2-16 6-26z" fill="url(#fl)"/><line x1="150" y1="92" x2="150" y2="100" stroke="#3a2a1a" stroke-width="1.5"/>
+<g transform="translate(206 150)"><path d="M0 0h34c0 22-6 34-17 36C6 34 0 22 0 0z" fill="rgba(237,230,245,.12)" stroke="#F3DCA0" stroke-width="1.3"/><path d="M2 14h30c-1 12-6 19-15 20C8 33 3 26 2 14z" fill="url(#vn)"/><path d="M17 36v26M5 64h24" stroke="#F3DCA0" stroke-width="1.3" stroke-linecap="round"/></g>
+<rect x="60" y="196" width="180" height="10" rx="5" fill="#D4AF6A" opacity=".85"/>
+<g fill="#F3DCA0"><circle cx="40" cy="60" r="1.8"/><circle cx="262" cy="44" r="1.5"/><path d="M252 100l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><path d="M44 112l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></g></svg></div></div>
+    <a class="volver" id="volver" href="mi-luz.html">‹ Mi Luz</a>
+    <div class="ancho">
+      <span class="marca"><img src="icono-192.png" alt="">Luz Guía</span>
+      <h1>Encuentros <span class="con">de tarot</span></h1>
+      <p class="bajada">Una mesa pequeña, velas encendidas y las cartas esperándote.</p>
+      <a class="btn" href="#formatos">Conocé los encuentros ✦</a>
+      <a class="bajar" href="#que">Deslizá para descubrirlo ↓</a>
+    </div>
+  </header>
+
+  <div class="ancho">
+    <section id="que" class="aparece">
+      <p class="eyebrow">Una invitación</p>
+      <h2>No es una clase. Es un ritual compartido.</h2>
+      <p class="lead">Llegás, te sentás a la mesa y, por unas horas, el mundo de afuera queda en pausa.</p>
+      <p>Los encuentros de Luz Guía son reuniones íntimas para conectar con el tarot, con otras mujeres y con vos misma. No necesitás saber nada de cartas: Belu y Mey te guían en cada momento.</p>
+      <div class="magia">
+        <div class="ojo" aria-hidden="true">☾</div>
+        <p>Te contamos algunas cosas.<br><em>Las demás, se viven.</em></p>
+      </div>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section id="formatos" class="aparece">
+      <p class="eyebrow">Elegí tu momento</p>
+      <h2>Dos formas de vivirlo</h2>
+      <div class="formatos">
+        <article class="formato"><div class="ic" aria-hidden="true">🍷</div><h3>Noche Vino &amp; Tarot</h3><p class="cuando">Sábados a la noche</p>
+          <ul><li>Vino para brindar</li><li>Una picada para compartir</li><li>Tu lectura de tarot personalizada</li><li>Velas, sahumo y buena compañía</li></ul>
+          <p class="secreto">…y una noche que no se cuenta: se vive.</p></article>
+        <article class="formato"><div class="ic" aria-hidden="true">☕</div><h3>Merienda &amp; Tarot</h3><p class="cuando">Domingos a la tarde</p>
+          <ul><li>Merienda dulce y salada</li><li>Tu lectura de tarot personalizada</li><li>Pintás tu propia carta, como quieras</li><li>Una tarde para frenar y mirarte</li></ul>
+          <p class="secreto">…y una carta que va a ser solo tuya.</p></article>
+      </div>
+      <p class="tip">✨ Cada tanto hay ediciones especiales, como la noche de Samhain, con su propia magia. Las anunciamos primero en Mi Luz.</p>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section class="aparece">
+      <p class="eyebrow">Pistas</p>
+      <h2>Dalas vuelta, si te animás</h2>
+      <p class="suave">Algunas cartas cuentan lo que te espera. Otras guardan el secreto hasta que llegues.</p>
+      <div class="cartas"><button class="carta" type="button" aria-label="Carta 1: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🍷</b><p>Vino para brindar (en la Noche)</p></span></button><button class="carta" type="button" aria-label="Carta 2: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🧁</b><p>Merienda dulce y salada (en la Merienda)</p></span></button><button class="carta" type="button" aria-label="Carta 3: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🧀</b><p>Una picada para compartir</p></span></button><button class="carta" type="button" aria-label="Carta 4: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🃏</b><p>Una lectura de tarot hecha solo para vos</p></span></button><button class="carta" type="button" aria-label="Carta 5: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>👭</b><p>Somos pocas: máximo 6</p></span></button><button class="carta" type="button" aria-label="Carta 6: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🎨</b><p>En la Merienda pintás tu propia carta, como quieras</p></span></button><button class="carta oculta" type="button" aria-label="Carta 7: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🕯️</b><p>Lo que pasa cuando se apagan las luces… se descubre allá</p></span></button><button class="carta oculta" type="button" aria-label="Carta 8: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🎁</b><p>Algo preparado con tu nombre. No te vamos a contar qué</p></span></button><button class="carta oculta" type="button" aria-label="Carta 9: tocá para darla vuelta"><span class="cara dorso"><span>✦</span><small>Tocá</small></span><span class="cara frente"><b>🌙</b><p>La carta que te elige esa noche</p></span></button></div>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section class="aparece">
+      <p class="eyebrow">Tu lugar en la mesa</p>
+      <h2>Cómo reservar</h2>
+      <ol class="pasos">
+        <li><span class="n">1</span><h3>Elegís tu fecha</h3><p>Las próximas fechas están en Mi Luz, en Novedades. También podés escribirnos.</p></li>
+        <li><span class="n">2</span><h3>Reservás tu lugar</h3><p>Somos máximo 6 por encuentro, así que los lugares vuelan.</p>
+          <div class="chips"><span>👭 Máximo 6</span><span>📍 Santa Rosa</span></div></li>
+        <li><span class="n">3</span><h3>Te contamos dónde y cuándo</h3><p>Te confirmamos el lugar, la hora y todo lo que necesitás saber.</p></li>
+        <li><span class="n">4</span><h3>Venís con el corazón abierto</h3><p>Lo demás lo preparamos nosotras.</p></li>
+      </ol>
+    </section>
+
+    <section class="aparece">
+      <p class="eyebrow">Dudas frecuentes</p>
+      <h2>Lo que más nos preguntan</h2>
+      <details><summary>¿Tengo que saber de tarot?</summary><p>Nada. Venís a vivirlo; nosotras te guiamos.</p></details>
+      <details><summary>¿Puedo ir sola?</summary><p>¡Claro! Muchas vienen solas y se van con amigas nuevas.</p></details>
+      <details><summary>¿Puedo ir con una amiga?</summary><p>Sí, reserven juntas así les guardamos dos lugares.</p></details>
+      <details><summary>¿Cuántas personas van?</summary><p>Máximo 6, para que cada una tenga su momento.</p></details>
+      <details><summary>¿Dónde es?</summary><p>En Santa Rosa. Te pasamos la dirección cuando confirmás tu lugar.</p></details>
+      <details><summary>¿Qué pasa en el encuentro?</summary><p>Algunas cosas te las contamos acá arriba. Las otras… te esperan en la mesa ✦</p></details>
+    </section>
+
+    <section class="cierre aparece">
+      <p class="eyebrow">La mesa está servida</p>
+      <h2>¿Te guardamos un lugar?</h2>
+      <p class="suave">Escribinos y te contamos las próximas fechas.</p>
+      <p class="firma">Con luz, Belu y Mey</p>
+      <div class="botones">
+        <a class="btn" id="cta-wa" href="mi-luz.html#novedades">Quiero mi lugar ✦</a>
+        <a class="btn sec" id="cta-luz" href="mi-luz.html#novedades">Ver fechas en Mi Luz</a>
+      </div>
+    </section>
+  </div>
+  <footer>Belu y Mey · Luz Guía</footer>
+</main>
+<script>
+document.documentElement.classList.add('js');
+// Vuelve a Mi Luz con el código de la persona y arma el WhatsApp si hay número
+(function(){
+  const q = new URLSearchParams(location.search), cod = q.get('codigo') || '', tel = (q.get('tel') || '').replace(/\D/g, '');
+  const luz = 'mi-luz.html' + (cod ? '?c=' + encodeURIComponent(cod) : '') + '#novedades';
+  document.getElementById('volver').href = luz; document.getElementById('cta-luz').href = luz;
+  if (tel) {
+    const n = tel.startsWith('54') ? tel : '549' + tel.replace(/^0/, '').replace(/^15/, '');
+    document.getElementById('cta-wa').href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Hola! Leí cómo son los encuentros de Luz Guía y quiero reservar mi lugar 🌙');
+    document.getElementById('cta-wa').target = '_blank';
+  } else { const ig = (q.get('ig') || 'luzguia2020').replace(/[^\w.]/g, ''); const a = document.getElementById('cta-wa'); a.href = 'https://ig.me/m/' + ig; a.target = '_blank'; a.rel = 'noopener'; }
+})();
+// Estrellas suaves de fondo
+(function(){
+  const cv = document.getElementById('estrellas'), c = cv.getContext('2d'); let W, H, es = [];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tam(){ W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; es = Array.from({ length: Math.round(W * H / 9000 / devicePixelRatio) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 1.3 + .3) * devicePixelRatio, f: Math.random() * 6.3, v: .5 + Math.random() * 1.5, oro: Math.random() < .3 })); }
+  function dibujar(t){ c.clearRect(0, 0, W, H); es.forEach(s => { c.globalAlpha = quieto ? .7 : .35 + .65 * Math.abs(Math.sin(t / 1000 * s.v + s.f)); c.fillStyle = s.oro ? '#F3DCA0' : '#fff'; c.beginPath(); c.arc(s.x, s.y, s.r, 0, 7); c.fill(); }); if (!quieto) requestAnimationFrame(dibujar); }
+  addEventListener('resize', tam); tam(); requestAnimationFrame(dibujar);
+})();
+// Cartas que se dan vuelta
+document.querySelectorAll('.carta').forEach(c => c.addEventListener('click', () => c.classList.toggle('vuelta')));
+// Aparición suave de cada sección
+(function(){
+  const els = document.querySelectorAll('.aparece');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('visto')); return; }
+  const io = new IntersectionObserver(en => en.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } }), { threshold: .12 });
+  els.forEach(e => io.observe(e));
+  setTimeout(() => els.forEach(e => e.classList.add('visto')), 2500);
+})();
+</script>
+</body>
+</html>

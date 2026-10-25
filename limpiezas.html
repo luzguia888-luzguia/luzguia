@@ -244,7 +244,7 @@ document.documentElement.classList.add('js');
     if (cod) document.getElementById('cta-wa').addEventListener('click', () => {
       try { fetch('https://script.google.com/macros/s/AKfycbxy_R5kw6Ee6-WWokJQSvab2L2C-PVQfADBKsm_nlIhp2ic2KuFbwWl_zz5L-rlGCUbyQ/exec', { method: 'POST', keepalive: true, body: JSON.stringify({ accion: 'pedido', codigo: cod, tipo: 'Promoción', ref: 'Limpiezas energéticas', que: 'Limpiezas energéticas', mensaje: 'Escribió por WhatsApp desde la página de las limpiezas' }) }); } catch (e) {}
     });
-  } else document.getElementById('cta-wa').href = luz;
+  } else { const ig = (q.get('ig') || 'luzguia2020').replace(/[^\w.]/g, ''); const a = document.getElementById('cta-wa'); a.href = 'https://ig.me/m/' + ig; a.target = '_blank'; a.rel = 'noopener'; }
 })();
 // Estrellas suaves de fondo
 (function(){

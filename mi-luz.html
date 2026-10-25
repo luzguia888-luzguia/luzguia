@@ -460,6 +460,7 @@ dialog textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid v
   @keyframes girar{to{transform:rotate(360deg)}}
 }
 
+.enc-como{margin:-4px 0 14px}.enc-como .btn-sec{text-decoration:none;display:inline-block;font-size:.92rem}
 /* v14 */
 .racha{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin:22px 0 4px;border:1px solid var(--oro-suave);border-radius:16px;padding:12px 14px;background:rgba(39,16,64,.8)}
 .racha-n b{display:block;font-family:var(--serif);font-size:1.6rem;line-height:1;color:var(--oro);font-variant-numeric:lining-nums}.racha-n small{color:var(--bruma);font-size:.78rem}
@@ -2624,7 +2625,8 @@ function agendaHTML(){
   return h;
 }
 // Páginas explicativas de cada servicio (se suman acá a medida que estén listas)
-const PAGINAS = [[/ak[aá]shic/i, 'akashicos.html'], [/limpieza/i, 'limpiezas.html']];
+const PAGINAS = [[/ak[aá]shic/i, 'akashicos.html'], [/limpieza/i, 'limpiezas.html'], [/encuentro|vino|merienda|samhain|nuevas fechas/i, 'encuentros.html']];
+const linkPagina = pg => pg + '?codigo=' + encodeURIComponent(CODIGO) + '&tel=' + encodeURIComponent(P.telLuz || '') + (usuarioIG() ? '&ig=' + encodeURIComponent(usuarioIG()) : '');
 function paginaDe(t){ const m = PAGINAS.find(x => x[0].test(t || '')); return m ? m[1] : ''; }
 function newsletterHTML(){
   const u = (P.newsletter || 'https://luzguia.substack.com').replace(/\/+$/, '');
@@ -2638,10 +2640,10 @@ function novedadesHTML(){
       <article class="slide${i === 0 ? ' activa' : ''}" aria-label="${i + 1} de ${SLIDES.length}">
         <div class="arte">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy" onerror="this.replaceWith(document.createRange().createContextualFragment(artePara('${esc(x.tipo)}', ${i}, '${esc(x.titulo).replace(/'/g, '')}')))">` : artePara(x.tipo, i, x.titulo)}${chispas(7)}</div>
         <div class="cuerpo"><h4>${esc(x.titulo)}</h4><p>${esc(x.frase)}</p>
-        <div class="slide-bt"><button class="btn" type="button" data-promo="${i}">${esc(x.boton || (x.tipo === 'Nuevas fechas' ? 'Ver fechas' : 'Quiero saber más'))}</button>${paginaDe(x.titulo) ? `<a class="btn-sec" href="${paginaDe(x.titulo)}?codigo=${encodeURIComponent(CODIGO)}&tel=${encodeURIComponent(P.telLuz || '')}" onclick="evento('Sección','Leyó: ${esc(x.titulo).replace(/'/g, '')}')">¿Cómo es? ✦</a>` : ''}</div></div></article>`).join('')}
+        <div class="slide-bt"><button class="btn" type="button" data-promo="${i}">${esc(x.boton || (x.tipo === 'Nuevas fechas' ? 'Ver fechas' : 'Quiero saber más'))}</button>${paginaDe(x.titulo + ' ' + (x.tipo || '') + ' ' + (x.accion === 'reservar' ? 'encuentro' : '')) ? `<a class="btn-sec" href="${linkPagina(paginaDe(x.titulo + ' ' + (x.tipo || '') + ' ' + (x.accion === 'reservar' ? 'encuentro' : '')))}" onclick="evento('Sección','Leyó: ${esc(x.titulo).replace(/'/g, '')}')">¿Cómo es? ✦</a>` : ''}</div></div></article>`).join('')}
       ${SLIDES.length > 1 ? `<div class="puntos">${SLIDES.map((x, i) => `<button type="button" data-ir="${i}" aria-label="Novedad ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div>` : ''}</div>`;
   }
-  h += '<h3 id="encuentros">Próximos encuentros</h3>';
+  h += `<h3 id="encuentros">Próximos encuentros</h3><p class="enc-como"><a class="btn-sec" href="${linkPagina('encuentros.html')}" onclick="evento('Sección','Leyó: cómo son los encuentros')">¿Cómo es un encuentro? ✦</a></p>`;
   h += P.encuentros.length ? P.encuentros.map(t => {
     const pedido = P.pedidos.includes(t.id);
     const accion = t.inscripta ? '<span class="hecho">✓ Ya tenés tu lugar</span>'
