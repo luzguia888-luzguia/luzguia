@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Limpieza energética · Luz Guía</title>
+<meta name="description" content="Cómo es una limpieza energética a distancia con Mey, de Luz Guía: péndulo por cada chakra, piedras, mensajes canalizados, oráculos y tarot.">
+<meta name="theme-color" content="#120621">
+<link rel="icon" href="icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#120621; --violeta:#2a1046; --ciruela:#3a1763; --oro:#D4AF6A; --oro-claro:#F3DCA0; --luna:#EDE6F5; --bruma:#B6A7C9; --agua:#B9E4A8; --linea:rgba(185,138,230,.25);
+  --serif:'Cormorant Garamond', Georgia, serif; --script:'Great Vibes', 'Segoe Script', cursive; --sans:'Jost', system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--noche);color:var(--luna);font-family:var(--sans);font-size:17px;line-height:1.65;overflow-x:hidden}
+#estrellas{position:fixed;inset:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1}
+.ancho{max-width:720px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+/* Portada */
+.hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;padding:0 0 56px;overflow:hidden}
+.hero .foto{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(243,220,160,.35),transparent 55%),linear-gradient(180deg,#1b0b33,#120621);background-size:cover;background-position:center}
+.hero .foto img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,6,33,.2) 0%,rgba(18,6,33,.35) 45%,rgba(18,6,33,.95) 88%,var(--noche) 100%)}
+.hero .ancho{position:relative;z-index:2;text-align:center}
+.volver{position:absolute;top:calc(14px + env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));z-index:3;color:var(--luna);text-decoration:none;font-size:.9rem;background:rgba(18,6,33,.55);border:1px solid var(--linea);border-radius:999px;padding:7px 14px;backdrop-filter:blur(6px)}
+.marca{display:inline-flex;align-items:center;gap:8px;color:var(--oro);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+.marca img{width:26px;height:26px;border-radius:50%}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.4rem,9vw,3.6rem);line-height:1.05;margin:14px 0 6px;text-wrap:balance;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+.con{display:block;font-family:var(--script);font-weight:400;color:var(--oro-claro);font-size:clamp(2.4rem,10vw,3.4rem);line-height:1.1}
+.bajada{color:var(--luna);font-family:var(--serif);font-style:italic;font-size:1.3rem;margin:10px auto 22px;max-width:30ch}
+.btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#F3DCA0,#D4AF6A);color:#1C0B2E;font-weight:600;border-radius:999px;padding:13px 24px;text-decoration:none;box-shadow:0 8px 30px rgba(212,175,106,.35);border:0;font:600 1rem var(--sans);cursor:pointer}
+.btn.sec{background:transparent;color:var(--oro-claro);border:1px solid var(--oro);box-shadow:none}
+.bajar{display:block;margin-top:26px;color:var(--bruma);font-size:.85rem;text-decoration:none}
+/* Secciones */
+section{padding:56px 0 8px}
+.eyebrow{color:var(--agua);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin:0 0 6px}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,6vw,2.4rem);line-height:1.15;margin:0 0 14px;text-wrap:balance}
+p{margin:0 0 1em}
+.lead{font-family:var(--serif);font-size:1.3rem;line-height:1.55;color:var(--luna)}
+.suave{color:var(--bruma)}
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:46px 0 0;color:var(--oro)}
+.orn::before,.orn::after{content:"";height:1px;width:80px;background:linear-gradient(90deg,transparent,var(--oro))}
+.orn::after{transform:scaleX(-1)}
+.sirve{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px}
+.sirve div{border:1px solid var(--linea);border-radius:16px;padding:16px;background:linear-gradient(160deg,rgba(58,23,99,.55),rgba(18,6,33,.6))}
+.sirve b{display:block;font-family:var(--serif);font-size:1.2rem;color:var(--oro-claro);margin-bottom:4px}
+.sirve span{color:var(--bruma);font-size:.95rem}
+/* Lo mágico */
+.magia{margin-top:22px;border-radius:22px;padding:26px 22px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(185,228,168,.2),transparent 60%),linear-gradient(160deg,#2f1352,#160828);border:1px solid rgba(185,228,168,.35);position:relative;overflow:hidden}
+.magia .ojo{font-size:2rem;color:var(--agua)}
+.magia p{font-family:var(--serif);font-size:1.45rem;line-height:1.45;margin:8px 0 0}
+.magia em{color:var(--oro-claro);font-style:normal}
+/* Pasos */
+.pasos{list-style:none;padding:0;margin:20px 0 0;position:relative}
+.pasos::before{content:"";position:absolute;left:21px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--oro),var(--agua))}
+.pasos li{position:relative;padding:0 0 26px 62px}
+.pasos .n{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--violeta);border:2px solid var(--oro);color:var(--oro-claro);font-family:var(--serif);font-size:1.3rem;font-weight:600;box-shadow:0 0 18px rgba(212,175,106,.35)}
+.pasos h3{margin:6px 0 4px;font-size:1.1rem;font-weight:600;color:var(--luna)}
+.pasos p{color:var(--bruma);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chips span{border:1px solid var(--linea);border-radius:999px;padding:5px 12px;font-size:.85rem;color:var(--luna);background:rgba(58,23,99,.45)}
+/* Preguntas guía */
+.preguntas{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.preguntas li{padding:14px 16px 14px 46px;border-radius:14px;background:rgba(42,16,70,.7);border:1px solid var(--linea);position:relative;font-family:var(--serif);font-size:1.15rem;line-height:1.4}
+.preguntas li::before{content:"✦";position:absolute;left:16px;top:14px;color:var(--oro)}
+.tip{margin-top:16px;padding:14px 16px;border-left:3px solid var(--agua);background:rgba(185,228,168,.08);border-radius:0 12px 12px 0;color:var(--luna);font-size:.95rem}
+/* Preparar y llevar */
+.dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
+.caja{border-radius:18px;padding:20px;background:linear-gradient(160deg,rgba(58,23,99,.6),rgba(18,6,33,.7));border:1px solid var(--linea)}
+.caja h3{margin:0 0 10px;font-family:var(--serif);font-size:1.4rem;color:var(--oro-claro);font-weight:600}
+.caja ul{margin:0;padding-left:20px;color:var(--bruma)}
+.caja li{margin-bottom:6px}
+/* FAQ */
+details{border-bottom:1px solid var(--linea);padding:14px 0}
+summary{cursor:pointer;list-style:none;font-weight:500;font-size:1.05rem;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--oro);font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--bruma);margin:8px 0 0}
+/* Cierre */
+.cierre{text-align:center;padding:60px 0 40px}
+.cierre .firma{font-family:var(--script);font-size:2.6rem;color:var(--oro-claro);line-height:1.2;margin:6px 0 18px}
+.botones{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.nota{font-size:.8rem;color:var(--bruma);text-align:center;margin:34px auto 0;max-width:46ch;opacity:.85}
+footer{text-align:center;color:var(--bruma);font-size:.8rem;padding:20px 0 calc(30px + env(safe-area-inset-bottom))}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--agua);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion:no-preference){
+  .hero .foto img{animation:respira 18s ease-in-out infinite alternate}
+  @keyframes respira{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+  .aparece{opacity:1;transform:none;transition:opacity .9s ease,transform .9s ease}
+  .js .aparece:not(.visto){opacity:.001;transform:translateY(18px)}
+}
+
+/* Portada sin foto: péndulo dibujado */
+.hero .arte{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:calc(56px + env(safe-area-inset-top))}
+.hero .arte svg{width:min(230px,52vw);max-height:38vh;height:auto;opacity:.95}
+.hero .foto img + .arte{display:none}
+/* Chakras */
+.chakras{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:22px;align-items:start;margin-top:20px}
+.cuerpo{position:sticky;top:20px;border-radius:22px;background:radial-gradient(ellipse at 50% 40%,rgba(185,138,230,.18),transparent 70%),linear-gradient(170deg,#2a1046,#140726);border:1px solid var(--linea);padding:10px}
+.cuerpo svg{width:100%;height:auto;display:block}
+.cuerpo .silueta{fill:rgba(237,230,245,.05);stroke:rgba(243,220,160,.55);stroke-width:1.4}
+.cuerpo .ch{cursor:pointer;outline:none}
+.cuerpo .ch circle.halo{opacity:.0;transition:opacity .4s}
+.cuerpo .ch.on circle.halo{opacity:.55}
+.cuerpo .ch:focus-visible{outline:none}.cuerpo .ch:focus-visible circle.punto{stroke:#fff;stroke-width:2}
+#pendulo{transition:transform 1s cubic-bezier(.45,.05,.3,1)}
+.lista-ch{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.lista-ch button{width:100%;text-align:left;display:grid;grid-template-columns:16px 1fr;gap:12px;align-items:start;background:rgba(42,16,70,.6);border:1px solid var(--linea);border-radius:14px;padding:12px 14px;color:var(--luna);font:inherit;cursor:pointer;transition:border-color .3s,background .3s}
+.lista-ch button i{width:14px;height:14px;border-radius:50%;margin-top:6px;box-shadow:0 0 12px currentColor}
+.lista-ch b{font-family:var(--serif);font-size:1.2rem;font-weight:600}
+.lista-ch small{color:var(--bruma);display:block;font-size:.85rem}
+.lista-ch .det{display:none;color:var(--luna);font-size:.95rem;margin-top:6px}
+.lista-ch button[aria-expanded=true]{border-color:var(--oro);background:rgba(58,23,99,.85)}
+.lista-ch button[aria-expanded=true] .det{display:block}
+.lista-ch .piedra{color:var(--oro-claro)}
+@media (max-width:640px){.chakras{grid-template-columns:1fr}.cuerpo{position:relative;top:0;max-width:300px;margin:0 auto}}
+</style>
+</head>
+<body>
+<canvas id="estrellas" aria-hidden="true"></canvas>
+<main>
+  <header class="hero">
+    <div class="foto"><img src="limpiezas.jpg" alt="" onerror="if(!this.dataset.p){this.dataset.p=1;this.src='limpiezas.png'}else{this.remove()}"><div class="arte"><svg viewBox="0 0 200 230" aria-hidden="true"><defs><linearGradient id="cr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DCA0"/><stop offset=".5" stop-color="#D9B8FF"/><stop offset="1" stop-color="#7B4BB0"/></linearGradient><radialGradient id="br"><stop offset="0" stop-color="rgba(243,220,160,.55)"/><stop offset="1" stop-color="rgba(243,220,160,0)"/></radialGradient></defs>
+<circle cx="100" cy="196" r="34" fill="url(#br)"/><g><animateTransform attributeName="transform" type="rotate" values="-14 100 6;14 100 6;-14 100 6" dur="3.6s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+<line x1="100" y1="6" x2="100" y2="160" stroke="#F3DCA0" stroke-width="1.2" stroke-dasharray="2 2.5"/><circle cx="100" cy="160" r="4" fill="none" stroke="#F3DCA0" stroke-width="1.5"/>
+<path d="M100 164l13 14-13 34-13-34z" fill="url(#cr)" stroke="#F3DCA0" stroke-width="1"/><path d="M87 178h26M100 164v48" stroke="rgba(255,255,255,.35)" stroke-width=".8"/></g>
+<g fill="#F3DCA0"><path d="M38 60l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M164 110l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/><circle cx="150" cy="40" r="1.6"/><circle cx="48" cy="150" r="1.4"/></g></svg></div></div>
+    <a class="volver" id="volver" href="mi-luz.html">‹ Mi Luz</a>
+    <div class="ancho">
+      <span class="marca"><img src="icono-192.png" alt="">Luz Guía</span>
+      <h1>Limpieza energética <span class="con">con Mey</span></h1>
+      <p class="bajada">A distancia, chakra por chakra, para que vuelvas a sentirte liviana.</p>
+      <a class="btn" href="#como">Cómo es una limpieza ✦</a>
+      <a class="bajar" href="#que">Deslizá para descubrirlo ↓</a>
+    </div>
+  </header>
+
+  <div class="ancho">
+    <section id="que" class="aparece">
+      <p class="eyebrow">Para qué sirve</p>
+      <h2>¿Qué es una limpieza energética?</h2>
+      <p class="lead">Así como el cuerpo se cansa, la energía también se carga: con preocupaciones, discusiones, ambientes pesados o etapas difíciles.</p>
+      <p>Una limpieza energética es un trabajo espiritual para soltar esas cargas y equilibrar tus centros de energía, los chakras. Mey recorre cada uno, ve cómo está, lo limpia y te trae los mensajes que aparecen en el camino.</p>
+      <div class="sirve">
+        <div><b>Liviandad</b><span>Soltar lo que cargás y no es tuyo.</span></div>
+        <div><b>Equilibrio</b><span>Armonizar tus chakras para que la energía fluya.</span></div>
+        <div><b>Claridad</b><span>Entender qué te está pasando a través de los mensajes.</span></div>
+        <div><b>Protección</b><span>Cerrar el trabajo con tu energía cuidada.</span></div>
+      </div>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section id="como" class="aparece">
+      <p class="eyebrow">La forma de Mey</p>
+      <h2>Paso a paso, a distancia</h2>
+      <p>No hace falta que estés en el mismo lugar. Mey trabaja con tus datos y con su planilla del cuerpo humano, donde están marcados tus chakras.</p>
+      <div class="magia">
+        <div class="ojo" aria-hidden="true">☾</div>
+        <p>La energía <em>no conoce distancias</em>.<br>El péndulo va mostrando dónde hace falta luz.</p>
+      </div>
+      <ol class="pasos">
+        <li><span class="n">1</span><h3>Le pasás tus datos</h3><p>Cuando reservás, Mey te pide algunos datos tuyos. Con ellos se conecta con tu energía aunque estés lejos.</p></li>
+        <li><span class="n">2</span><h3>Mey prepara el espacio</h3><p>Antes de empezar sahuma el lugar, lo limpia energéticamente, usa sprays y se protege ella también. Así el trabajo se hace en un espacio limpio y cuidado.</p>
+          <div class="chips"><span>🌿 Sahumo</span><span>✨ Sprays</span><span>🛡️ Protección</span></div></li>
+        <li><span class="n">3</span><h3>El péndulo recorre tus chakras</h3><p>Sobre su planilla del cuerpo, Mey pasa el péndulo por cada chakra. Su movimiento le muestra cómo está esa energía, y ella va canalizando y escribiendo los mensajes que aparecen en cada zona.</p></li>
+        <li><span class="n">4</span><h3>Piedras, oráculos y tarot</h3><p>Posa piedras según lo que necesita cada zona, y suma mensajes de oráculos y alguna carta de tarot que explica lo que se está moviendo.</p>
+          <div class="chips"><span>💎 Piedras</span><span>🔮 Oráculos</span><span>🃏 Tarot</span></div></li>
+        <li><span class="n">5</span><h3>Tu devolución</h3><p>Al terminar, Mey te da la devolución de todo: lo que vio en cada chakra, los mensajes que canalizó y lo que dicen las cartas.</p></li>
+      </ol>
+    </section>
+
+    <div class="orn" aria-hidden="true">✦</div>
+
+    <section class="aparece">
+      <p class="eyebrow">La planilla del cuerpo</p>
+      <h2>Los siete chakras que recorre el péndulo</h2>
+      <p class="suave">Tocá cada chakra para ver qué rige y con qué piedras suele trabajarse.</p>
+      <div class="chakras">
+        <div class="cuerpo"><svg viewBox="0 0 300 290" role="img" aria-label="La planilla del cuerpo con los siete chakras">
+<circle cx="150" cy="62" r="25" class="silueta"/>
+<path class="silueta" d="M150 90c-22 0-36 10-38 30l-4 52c-2 18 2 34 6 50-20 10-48 18-60 30 18 14 66 20 96 20s78-6 96-20c-12-12-40-20-60-30 4-16 8-32 6-50l-4-52c-2-20-16-30-38-30z"/>
+<path class="silueta" style="fill:none" d="M116 112c-18 30-26 70-12 116M184 112c18 30 26 70 12 116"/>
+<g class="ch" tabindex="0" role="button" aria-label="Chakra Corona" data-i="0" data-y="30"><circle class="halo" cx="150" cy="30" r="17" fill="#C9A7FF"/><circle class="punto" cx="150" cy="30" r="7.5" fill="#C9A7FF" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Tercer ojo" data-i="1" data-y="60"><circle class="halo" cx="150" cy="60" r="17" fill="#7C7CF0"/><circle class="punto" cx="150" cy="60" r="7.5" fill="#7C7CF0" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Garganta" data-i="2" data-y="100"><circle class="halo" cx="150" cy="100" r="17" fill="#6EC6F0"/><circle class="punto" cx="150" cy="100" r="7.5" fill="#6EC6F0" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Corazón" data-i="3" data-y="142"><circle class="halo" cx="150" cy="142" r="17" fill="#7FD69A"/><circle class="punto" cx="150" cy="142" r="7.5" fill="#7FD69A" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Plexo solar" data-i="4" data-y="176"><circle class="halo" cx="150" cy="176" r="17" fill="#F2CF5B"/><circle class="punto" cx="150" cy="176" r="7.5" fill="#F2CF5B" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Sacro" data-i="5" data-y="206"><circle class="halo" cx="150" cy="206" r="17" fill="#F39A4E"/><circle class="punto" cx="150" cy="206" r="7.5" fill="#F39A4E" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g><g class="ch" tabindex="0" role="button" aria-label="Chakra Raíz" data-i="6" data-y="236"><circle class="halo" cx="150" cy="236" r="17" fill="#E85B5B"/><circle class="punto" cx="150" cy="236" r="7.5" fill="#E85B5B" stroke="rgba(255,255,255,.6)" stroke-width="1"/></g>
+<g id="pendulo" style="transform:translate(150px,30px)"><g><animateTransform attributeName="transform" type="rotate" values="-9 0 -80;9 0 -80;-9 0 -80" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/><line x1="0" y1="-80" x2="0" y2="-34" stroke="#F3DCA0" stroke-width="1" stroke-dasharray="2 2"/><path d="M0 -34l7 8-7 16-7-16z" fill="url(#crp)" stroke="#F3DCA0" stroke-width=".8"/></g></g><defs><linearGradient id="crp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3DCA0"/><stop offset="1" stop-color="#9B6FE0"/></linearGradient></defs>
+</svg></div>
+        <ul class="lista-ch"><li><button type="button" data-i="0" aria-expanded="true"><i style="background:#C9A7FF;color:#C9A7FF"></i><span><b>Corona</b> <small>Sahasrara · En la coronilla</small><span class="det">Tu conexión espiritual, tu fe y tu sentido de propósito. <span class="piedra">Piedras: Cuarzo cristal, amatista.</span></span></span></button></li><li><button type="button" data-i="1" aria-expanded="false"><i style="background:#7C7CF0;color:#7C7CF0"></i><span><b>Tercer ojo</b> <small>Ajna · En el entrecejo</small><span class="det">Tu intuición, tu claridad mental y la capacidad de ver más allá. <span class="piedra">Piedras: Amatista, lapislázuli.</span></span></span></button></li><li><button type="button" data-i="2" aria-expanded="false"><i style="background:#6EC6F0;color:#6EC6F0"></i><span><b>Garganta</b> <small>Vishuddha · En la garganta</small><span class="det">Tu forma de comunicarte y de expresar tu verdad. <span class="piedra">Piedras: Sodalita, aguamarina.</span></span></span></button></li><li><button type="button" data-i="3" aria-expanded="false"><i style="background:#7FD69A;color:#7FD69A"></i><span><b>Corazón</b> <small>Anahata · En el centro del pecho</small><span class="det">El amor, tus vínculos, el perdón y la compasión, también hacia vos. <span class="piedra">Piedras: Cuarzo rosa, aventurina.</span></span></span></button></li><li><button type="button" data-i="4" aria-expanded="false"><i style="background:#F2CF5B;color:#F2CF5B"></i><span><b>Plexo solar</b> <small>Manipura · En la boca del estómago</small><span class="det">Tu poder personal, tu autoestima y tu capacidad de decidir. <span class="piedra">Piedras: Citrino, ojo de tigre.</span></span></span></button></li><li><button type="button" data-i="5" aria-expanded="false"><i style="background:#F39A4E;color:#F39A4E"></i><span><b>Sacro</b> <small>Svadhisthana · Debajo del ombligo</small><span class="det">La creatividad, el placer, las emociones y el disfrute. <span class="piedra">Piedras: Cornalina, piedra luna.</span></span></span></button></li><li><button type="button" data-i="6" aria-expanded="false"><i style="background:#E85B5B;color:#E85B5B"></i><span><b>Raíz</b> <small>Muladhara · En la base de la columna</small><span class="det">Tu seguridad, tu arraigo, el cuerpo, la casa y el dinero. <span class="piedra">Piedras: Turmalina negra, jaspe rojo.</span></span></span></button></li></ul>
+      </div>
+      <p class="tip">💡 En cada limpieza las piedras, las cartas y los mensajes son distintos: dependen de lo que el péndulo muestre en tu energía ese día.</p>
+    </section>
+
+    <section class="aparece">
+      <div class="dos">
+        <div class="caja"><h3>Para acompañarla</h3>
+          <ul><li>Ese día, regalate un momento tranquilo para vos.</li><li>Tomá mucha agua antes y después.</li><li>Si podés, ventilá tu casa y prendé una vela o un sahumerio.</li><li>Anotá cómo te sentís antes y después.</li><li>Recibí la devolución con calma y el corazón abierto.</li></ul></div>
+        <div class="caja"><h3>Lo que te llevás</h3>
+          <ul><li>Tus chakras limpios y equilibrados.</li><li>Los mensajes canalizados de cada zona.</li><li>Los mensajes de los oráculos y la carta de tarot.</li><li>La devolución completa de Mey.</li></ul></div>
+      </div>
+    </section>
+
+    <section class="aparece">
+      <p class="eyebrow">Dudas frecuentes</p>
+      <h2>Lo que más nos preguntan</h2>
+      <details><summary>¿Tengo que estar presente?</summary><p>No. La limpieza es a distancia: Mey trabaja con tus datos y su planilla del cuerpo, estés donde estés.</p></details>
+      <details><summary>¿Qué datos necesita Mey?</summary><p>Cuando reservás, Mey te dice exactamente qué datos tuyos necesita.</p></details>
+      <details><summary>¿Qué es el péndulo?</summary><p>Un cristal o pieza de metal que cuelga de una cadena. Al pasarlo sobre cada chakra, su movimiento le muestra a Mey cómo está esa energía.</p></details>
+      <details><summary>¿Cómo recibo la devolución?</summary><p>Al terminar la limpieza Mey te da la devolución de todo lo que apareció: chakras, mensajes, oráculos y tarot.</p></details>
+      <details><summary>¿Cada cuánto conviene hacerla?</summary><p>Muchas personas la hacen en cambios de etapa, después de momentos difíciles o cuando se sienten cargadas. Mey te puede orientar según tu caso.</p></details>
+      <details><summary>¿Necesito saber algo de espiritualidad?</summary><p>Nada. Solo ganas de soltar y el corazón abierto.</p></details>
+    </section>
+
+    <section class="cierre aparece">
+      <p class="eyebrow">Tu energía te lo va a agradecer</p>
+      <h2>¿Querés tu limpieza energética?</h2>
+      <p class="suave">Escribinos y coordinamos el día de tu limpieza con Mey.</p>
+      <p class="firma">Con luz, Mey</p>
+      <div class="botones">
+        <a class="btn" id="cta-wa" href="mi-luz.html#novedades">Quiero mi limpieza ✦</a>
+        <a class="btn sec" id="cta-luz" href="mi-luz.html#novedades">Volver a Mi Luz</a>
+      </div>
+      <p class="nota">Las limpiezas energéticas son una práctica espiritual de bienestar. No reemplazan la atención médica, psicológica ni legal.</p>
+    </section>
+  </div>
+  <footer>Belu y Mey · Luz Guía</footer>
+</main>
+<script>
+document.documentElement.classList.add('js');
+// Vuelve a Mi Luz con el código de la persona y arma el WhatsApp si hay número
+(function(){
+  const q = new URLSearchParams(location.search), cod = q.get('codigo') || '', tel = (q.get('tel') || '').replace(/\D/g, '');
+  const luz = 'mi-luz.html' + (cod ? '?c=' + encodeURIComponent(cod) : '') + '#novedades';
+  document.getElementById('volver').href = luz; document.getElementById('cta-luz').href = luz;
+  if (tel) {
+    const n = tel.startsWith('54') ? tel : '549' + tel.replace(/^0/, '').replace(/^15/, '');
+    document.getElementById('cta-wa').href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Hola! Leí cómo es la limpieza energética con Mey y quiero reservar la mía 🌙');
+    document.getElementById('cta-wa').target = '_blank';
+    // Queda registrado en el CRM (y al día siguiente Mi Luz le pregunta si pudo reservar)
+    if (cod) document.getElementById('cta-wa').addEventListener('click', () => {
+      try { fetch('https://script.google.com/macros/s/AKfycbxy_R5kw6Ee6-WWokJQSvab2L2C-PVQfADBKsm_nlIhp2ic2KuFbwWl_zz5L-rlGCUbyQ/exec', { method: 'POST', keepalive: true, body: JSON.stringify({ accion: 'pedido', codigo: cod, tipo: 'Promoción', ref: 'Limpiezas energéticas', que: 'Limpiezas energéticas', mensaje: 'Escribió por WhatsApp desde la página de las limpiezas' }) }); } catch (e) {}
+    });
+  } else document.getElementById('cta-wa').href = luz;
+})();
+// Estrellas suaves de fondo
+(function(){
+  const cv = document.getElementById('estrellas'), c = cv.getContext('2d'); let W, H, es = [];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tam(){ W = cv.width = innerWidth * devicePixelRatio; H = cv.height = innerHeight * devicePixelRatio; es = Array.from({ length: Math.round(W * H / 9000 / devicePixelRatio) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 1.3 + .3) * devicePixelRatio, f: Math.random() * 6.3, v: .5 + Math.random() * 1.5, oro: Math.random() < .3 })); }
+  function dibujar(t){ c.clearRect(0, 0, W, H); es.forEach(s => { c.globalAlpha = quieto ? .7 : .35 + .65 * Math.abs(Math.sin(t / 1000 * s.v + s.f)); c.fillStyle = s.oro ? '#F3DCA0' : '#fff'; c.beginPath(); c.arc(s.x, s.y, s.r, 0, 7); c.fill(); }); if (!quieto) requestAnimationFrame(dibujar); }
+  addEventListener('resize', tam); tam(); requestAnimationFrame(dibujar);
+})();
+// Chakras: el péndulo va al que tocás
+(function(){
+  const pend = document.getElementById('pendulo'), btns = document.querySelectorAll('.lista-ch button'), chs = document.querySelectorAll('.cuerpo .ch');
+  function elegir(i, desdeLista){
+    const g = chs[i]; if (!g) return;
+    pend.style.transform = 'translate(150px,' + g.dataset.y + 'px)';
+    chs.forEach((c, k) => c.classList.toggle('on', k === i));
+    btns.forEach((b, k) => b.setAttribute('aria-expanded', k === i ? 'true' : 'false'));
+    if (!desdeLista && matchMedia('(max-width:640px)').matches) btns[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  btns.forEach(b => b.addEventListener('click', () => elegir(+b.dataset.i, true)));
+  chs.forEach(c => { c.addEventListener('click', () => elegir(+c.dataset.i)); c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegir(+c.dataset.i); } }); });
+  elegir(0, true);
+  // Recorrido solo, de la corona a la raíz, hasta que la persona toque uno
+  let i = 0, auto = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const t = setInterval(() => { if (!auto) return clearInterval(t); i = (i + 1) % chs.length; pend.style.transform = 'translate(150px,' + chs[i].dataset.y + 'px)'; chs.forEach((c, k) => c.classList.toggle('on', k === i)); }, 3200);
+  document.querySelector('.chakras').addEventListener('pointerdown', () => auto = false, { once: true });
+})();
+// Aparición suave de cada sección
+(function(){
+  const els = document.querySelectorAll('.aparece');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('visto')); return; }
+  const io = new IntersectionObserver(en => en.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } }), { threshold: .12 });
+  els.forEach(e => io.observe(e));
+  setTimeout(() => els.forEach(e => e.classList.add('visto')), 2500);
+})();
+</script>
+</body>
+</html>
