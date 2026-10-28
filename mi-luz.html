@@ -461,6 +461,7 @@ dialog textarea{width:100%;min-height:90px;border-radius:10px;border:1px solid v
 }
 
 .enc-como{margin:-4px 0 14px}.enc-como .btn-sec{text-decoration:none;display:inline-block;font-size:.92rem}
+.sr-nota{margin:6px auto 4px;max-width:46ch;font-size:.85rem;line-height:1.45}
 /* v14 */
 .racha{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin:22px 0 4px;border:1px solid var(--oro-suave);border-radius:16px;padding:12px 14px;background:rgba(39,16,64,.8)}
 .racha-n b{display:block;font-family:var(--serif);font-size:1.6rem;line-height:1;color:var(--oro);font-variant-numeric:lining-nums}.racha-n small{color:var(--bruma);font-size:.78rem}
@@ -2027,7 +2028,7 @@ function premRevolucion(){
   let h = `<p class="intro">La Revolución Solar es la carta del momento exacto en que el Sol vuelve al mismo lugar donde estaba cuando naciste. Pasa una vez por año, cerca de tu cumpleaños, y describe la energía de tu año personal: de cumpleaños a cumpleaños.</p>`;
   if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:', 'srn');
   h += `<div class="sr-cab"><small>Tu revolución ${sr.y}–${sr.y + 1}</small><h4>${fechaCorta(sr.fecha)} de ${sr.y}, ${String(sr.fecha.getHours()).padStart(2, '0')}:${String(sr.fecha.getMinutes()).padStart(2, '0')} hs</h4>
-    <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details>${sr.hora ? `<details class="corr"><summary>¿Tu hora o tu lugar de nacimiento no son correctos? Corregilos ›</summary><div>${datosNacimientoHTML('Con tus datos de nacimiento se calcula el momento exacto de tu revolución: cargá la hora que figura en tu partida.', 'srn')}</div></details>` : ''}</div>`;
+    <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><p class="ag-ayuda sr-nota">✦ Esta fecha y hora no se cargan: son el momento exacto en que el Sol vuelve al mismo grado en que estaba cuando naciste. Se calculan solas con tus datos de nacimiento${P.diaMes && P.anioNac ? ' (' + esc(P.diaMes) + '/' + esc(P.anioNac) + (P.horaNac ? ', ' + esc(P.horaNac) + ' hs' : '') + ')' : ''}, por eso casi nunca coinciden con tu hora de nacimiento ni con el día exacto de tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details>${sr.hora ? `<details class="corr"><summary>¿Tu hora o tu lugar de nacimiento no son correctos? Corregilos ›</summary><div>${datosNacimientoHTML('Con tus datos de nacimiento se calcula el momento exacto de tu revolución: cargá la hora que figura en tu partida.', 'srn')}</div></details>` : ''}</div>`;
   h += lugarDelMes();
   h += `<p class="sub">🌅 El tono de tu año · Ascendente en ${ZOD[ascI]}</p><p>${ASC_SR[ascI]}</p>`;
   h += `<p class="sub">☀️ El tema central · Sol en casa ${solC + 1}</p><p>${SOL_CASA_SR[solC]}</p>`;
