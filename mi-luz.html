@@ -2013,20 +2013,21 @@ document.addEventListener('input', e => {
   }, 350);
 });
 document.addEventListener('change', e => { if (/-prov$/.test(e.target.id)) { const pre = e.target.id.replace(/-prov$/, ''); if ($(pre + '-loc')) { $(pre + '-loc').value = ''; $(pre + '-coord').value = ''; $(pre + '-sug').innerHTML = ''; $(pre + '-ok').textContent = ''; } } });
-function datosNacimientoHTML(motivo){
-  return `<div class="form-nac"><p>${motivo}</p><label>Hora de nacimiento<input type="time" id="nac-hora" value="${esc((horaDe(P.horaNac) || []).map(x => String(x).padStart(2, '0')).join(':'))}"></label>
-    ${selectorLugar('nac', P.lugarNac, P.coordNac)}
+function datosNacimientoHTML(motivo, pre){
+  pre = pre || 'nac';
+  return `<div class="form-nac"><p>${motivo}</p>${P.diaMes && P.anioNac ? `<p class="ag-ayuda" style="margin:0 0 8px">Fecha de nacimiento: <b>${esc(P.diaMes)}/${esc(P.anioNac)}</b>. Si no es correcta, avisales a Belu y Mey y la corrigen.</p>` : ''}<label>Hora de nacimiento<input type="time" id="${pre}-hora" value="${esc((horaDe(P.horaNac) || []).map(x => String(x).padStart(2, '0')).join(':'))}"></label>
+    ${selectorLugar(pre, P.lugarNac, P.coordNac)}
     <p class="ag-ayuda">Si no sabés la hora exacta, fijate en tu partida de nacimiento o preguntale a tu familia. Sin la hora igual calculamos todo, pero el ascendente y las casas pueden variar.</p>
-    <button class="btn" type="button" data-guardarnac>Guardar mis datos</button></div>`;
+    <button class="btn" type="button" data-guardarnac="${pre}">Guardar mis datos</button></div>`;
 }
 function premRevolucion(){
   const sr = revolucion(); if (!sr) return faltaFecha;
   const casaTxt = l => CASA_SR[sr.casa(l)], ascI = Math.floor(sr.asc / 30), solC = sr.casa(sr.pos.Sol), lunC = sr.casa(sr.pos.Luna);
   const fin = new Date(sr.fecha); fin.setFullYear(fin.getFullYear() + 1);
   let h = `<p class="intro">La Revolución Solar es la carta del momento exacto en que el Sol vuelve al mismo lugar donde estaba cuando naciste. Pasa una vez por año, cerca de tu cumpleaños, y describe la energía de tu año personal: de cumpleaños a cumpleaños.</p>`;
-  if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:');
+  if (!sr.hora) h += datosNacimientoHTML('Para que tu revolución sea precisa necesitamos tu hora y lugar de nacimiento:', 'srn');
   h += `<div class="sr-cab"><small>Tu revolución ${sr.y}–${sr.y + 1}</small><h4>${fechaCorta(sr.fecha)} de ${sr.y}, ${String(sr.fecha.getHours()).padStart(2, '0')}:${String(sr.fecha.getMinutes()).padStart(2, '0')} hs</h4>
-    <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details></div>`;
+    <p class="sr-ciudad">Calculada para ${esc(sr.ciudad)}, donde pasaste tu cumpleaños.</p><details class="corr"><summary>¿Lo pasaste en otro lugar? Cambialo ›</summary><div>${selectorLugar('sr', sr.ciudad, '')}<button class="btn" type="button" data-guardarsr>Recalcular</button></div></details>${sr.hora ? `<details class="corr"><summary>¿Tu hora o tu lugar de nacimiento no son correctos? Corregilos ›</summary><div>${datosNacimientoHTML('Con tus datos de nacimiento se calcula el momento exacto de tu revolución: cargá la hora que figura en tu partida.', 'srn')}</div></details>` : ''}</div>`;
   h += lugarDelMes();
   h += `<p class="sub">🌅 El tono de tu año · Ascendente en ${ZOD[ascI]}</p><p>${ASC_SR[ascI]}</p>`;
   h += `<p class="sub">☀️ El tema central · Sol en casa ${solC + 1}</p><p>${SOL_CASA_SR[solC]}</p>`;
@@ -3097,7 +3098,7 @@ document.addEventListener('click', async e => {
   if (b.dataset.lugarpick) { const pre = b.dataset.lugarpick; $(pre + '-loc').value = b.dataset.n; $(pre + '-coord').value = b.dataset.c; $(pre + '-ok').textContent = '📍 ' + b.dataset.n + ', ' + b.dataset.p; $(pre + '-sug').innerHTML = ''; return; }
   if (b.dataset.guardarsr !== undefined) { const lg = lugarElegido('sr'); try { localStorage.setItem('luzguia_sr_lugar', JSON.stringify(lg)); } catch (x) {} repintarPrem(); return; }
   if (b.dataset.guardarnac !== undefined) {
-    const hora = $('nac-hora').value, lg = lugarElegido('nac'); if (!hora) { $('nac-hora').focus(); return; }
+    const pre = b.dataset.guardarnac || 'nac', hora = $(pre + '-hora').value, lg = lugarElegido(pre); if (!hora) { $(pre + '-hora').focus(); return; }
     b.disabled = true; b.textContent = 'Guardando…'; P.horaNac = hora; P.lugarNac = lg.nombre; P.coordNac = lg.coord;
     try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, horaNac: hora, lugarNac: lg.nombre, coordNac: lg.coord }) }); } catch (x) {}
     repintarPrem(); return;
