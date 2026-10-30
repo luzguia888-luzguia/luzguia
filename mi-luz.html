@@ -555,6 +555,31 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .juego-ok{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:start;margin:12px 0 0;font-size:.92rem;cursor:pointer;text-align:left}.juego-ok small{grid-column:2}.juego-ok input{margin-top:4px;accent-color:#D4AF6A}.juego-ok small{color:var(--bruma);display:block}
 .ora-cartas .tm-carta{cursor:default}.ora-ver{border:1px solid var(--oro-suave);border-radius:14px;padding:12px 14px;margin:6px 0 10px;background:rgba(212,175,106,.08);text-align:center}.ora-ver b{font-family:var(--serif);font-size:1.3rem;font-weight:500}.ora-ver p{margin:4px 0 0}
 #aviso-offline{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:56;background:rgba(28,11,46,.95);border:1px solid var(--linea);border-radius:999px;padding:6px 14px;font-size:.8rem;color:var(--bruma);white-space:nowrap}
+.fondos-frase{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:linear-gradient(120deg,rgba(201,167,255,.12),rgba(243,220,160,.12));border:1px solid rgba(243,220,160,.3);color:#F3DCA0;font-style:italic;font-size:.92rem;line-height:1.45;text-align:center}
+.sinf-rings{position:relative;width:190px;height:190px;margin:14px auto 6px;display:grid;place-items:center}
+.sinf-rings i{position:absolute;inset:calc((1 - var(--s)) * 50%);border-radius:50%;border:2px solid var(--c);opacity:.55;box-shadow:0 0 18px var(--c) inset,0 0 12px var(--c)}
+.sinf-rings.sonando i{animation:sinfLatido var(--d) ease-in-out infinite alternate}
+.sinf-rings span{font-size:2.2rem;filter:drop-shadow(0 0 10px #F3DCA0)}
+@keyframes sinfLatido{from{transform:scale(.92);opacity:.35}to{transform:scale(1.06);opacity:.9}}
+.caminos{display:grid;gap:10px;margin-top:10px}
+.camino{display:flex;gap:12px;align-items:center;text-align:left;padding:14px;border-radius:16px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;cursor:pointer}
+.camino:hover{border-color:#C9A7FF}
+.camino>span,.cam-cab>span{font-size:1.8rem}
+.camino b,.cam-cab b{display:block;color:#F3DCA0}
+.camino small,.cam-cab small{opacity:.8;font-size:.85rem}
+.cam-cab{display:flex;gap:12px;align-items:center;margin:10px 0}
+.cam-dias{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+.cam-d{width:36px;height:36px;min-width:0;padding:0;flex:0 0 36px;display:grid;place-items:center;line-height:1;border-radius:50%;border:1px solid var(--linea);background:transparent;color:inherit;font:inherit;font-size:.85rem;cursor:pointer}
+.cam-d.ok{background:#BF8A26;border-color:#F3DCA0;color:#1b0f2e;font-weight:700}
+.cam-d.sel{box-shadow:0 0 0 2px #C9A7FF}
+.cam-d.lock{opacity:.4;cursor:default;font-size:.7rem}
+.cam-hoy{padding:16px;border-radius:18px;background:rgba(155,111,224,.1);border:1px solid rgba(201,167,255,.3)}
+.cam-hoy small{color:#C9A7FF;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem}
+.cam-hoy h4{margin:4px 0 8px;color:#F3DCA0;font-size:1.15rem}
+.cam-preg{display:block;margin:12px 0;font-style:italic;color:#E9DDFF}
+.cam-preg textarea{display:block;width:100%;min-height:90px;margin-top:6px;padding:10px;border-radius:12px;border:1px solid var(--linea);background:rgba(0,0,0,.25);color:inherit;font:inherit;font-style:normal;resize:vertical;box-sizing:border-box}
+.cam-hoy .afir{text-align:center;color:#F3DCA0;font-weight:600;margin:12px 0}
+.cam-hoy .hecho{text-align:center;color:#8FD9CF;font-weight:700}
 </style>
 </head>
 <body>
@@ -4201,6 +4226,137 @@ document.addEventListener('click', e => {
     setTimeout(() => { const html = consultarOraculo(t); const cu = document.querySelector('details[data-premsec=oraculo] .prem-cuerpo'); if (cu) { cu.innerHTML = oraculoHTML(); $('ora-resp').innerHTML = `<div class="respuesta"><small>Tu consulta</small><p class="preg">${esc(t)}</p>${html}</div>`; $('ora-resp').scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 1400);
   }
 });
+
+
+/* ───── v18: sinfonía natal, caminos de 7 y 21 días, frase de los fondos ───── */
+
+/* Frase para manifestar en los fondos de pantalla */
+const _fondosBase = fondosHTML;
+fondosHTML = function(){ return _fondosBase().replace(/<p class="ag-ayuda" style="margin-top:0">[^<]*<\/p>/, '<p class="fondos-frase">✨ Para manifestar y atraer esta energía, usala de fondo de pantalla: cada vez que mires tu celular, te la recuerda.</p>'); };
+const _generarFondoBase = generarFondo;
+generarFondo = async function(k){ await _generarFondoBase(k); const t = $('dlg-texto'); if (t && $('fd-si')) t.textContent = 'Para manifestar y atraer esta energía, usala de fondo de pantalla. ' + t.textContent; };
+
+/* 🎼 Tu sinfonía natal: frecuencias planetarias (Cousto) de su Sol, su Luna y el regente de su Ascendente */
+const TONO_PLANETA = { Sol: 126.22, Luna: 210.42, Mercurio: 141.27, Venus: 221.23, Marte: 144.72, Júpiter: 183.58, Saturno: 147.85, Urano: 207.36, Neptuno: 211.44, Plutón: 140.25 };
+const REGENTE = ['Marte', 'Venus', 'Mercurio', 'Luna', 'Sol', 'Mercurio', 'Venus', 'Plutón', 'Júpiter', 'Saturno', 'Urano', 'Neptuno'];
+const TONO_TXT = { Sol: 'tu vitalidad y tu centro', Luna: 'tus emociones y tu mundo interno', Mercurio: 'tu mente y tu voz', Venus: 'el amor, el placer y la armonía', Marte: 'tu fuerza y tu deseo', Júpiter: 'la expansión y la abundancia', Saturno: 'la estructura y la calma profunda', Urano: 'tu originalidad y tu libertad', Neptuno: 'tu intuición y tus sueños', Plutón: 'tu poder de transformación' };
+let SINF = null;
+function vocesSinfonia(){
+  const n = natal(); if (!n) return null;
+  const sig = l => Math.floor(nrm2(l) / 30), voces = [['Sol', 'Tu Sol en ' + ZOD[sig(n.pos.Sol)]], ['Luna', 'Tu Luna en ' + ZOD[sig(n.pos.Luna)]]];
+  if (n.hora) { const r = REGENTE[sig(n.asc)]; voces.push([r === 'Sol' || r === 'Luna' ? 'Venus' : r, 'El regente de tu Ascendente en ' + ZOD[sig(n.asc)] + (r === 'Sol' || r === 'Luna' ? ' (su tono se suma con Venus)' : '')]); }
+  else voces.push(['Venus', 'Venus, tu forma de amar']);
+  return voces.map(([p, t]) => ({ p, t, f: TONO_PLANETA[p] }));
+}
+function tocarSinfonia(){
+  const v = vocesSinfonia(); if (!v) return;
+  detenerTodo(); const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
+  v.forEach((x, i) => {
+    [[x.f, .13], [x.f / 2, .07], [x.f * 2, .02]].forEach(([fr, g], k) => {
+      const o = a.createOscillator(), gg = a.createGain(), pan = a.createStereoPanner ? a.createStereoPanner() : null;
+      o.type = 'sine'; o.frequency.value = fr + (k === 0 ? 0 : .3 * (i + 1)); gg.gain.value = g;
+      o.connect(gg); if (pan) { pan.pan.value = [-.5, .5, 0][i] || 0; gg.connect(pan); pan.connect(salida); nodos.push(lfo(pan.pan, .03 + i * .01, .35, pan.pan.value)); } else gg.connect(salida);
+      nodos.push(lfo(gg.gain, .05 + i * .02 + k * .01, g * .6, g)); o.start(); nodos.push(o);
+    });
+  });
+  salida.gain.linearRampToValueAtTime(VOL * .8, a.currentTime + 6);
+  SINF = { salida, nodos, t: setInterval(() => { try { toque(audio().currentTime + .05, v[0].f * 2, 9, .12, [[1, 1, 1], [2.71, .35, .6]]); } catch (e) {} }, 21000) };
+  FREQ = SINF; FREQ_K = 'sinf'; pintarMini(); pantallaEncendida(true); sesionMedia('Tu sinfonía natal'); evento('Sección', 'Sinfonía natal');
+  const c = $('sinf-rings'); if (c) c.classList.add('sonando'); const b = $('sinf-bt'); if (b) { b.textContent = '⏹ Detener'; b.dataset.sinfstop = '1'; }
+}
+const _detFreqBase = detenerFrecuencia;
+detenerFrecuencia = function(){ if (SINF) { clearInterval(SINF.t); SINF = null; const c = $('sinf-rings'); if (c) c.classList.remove('sonando'); const b = $('sinf-bt'); if (b) { b.textContent = '▶ Escuchar mi sinfonía'; delete b.dataset.sinfstop; } } _detFreqBase(); };
+const _miniBase2 = pintarMini;
+pintarMini = function(){ _miniBase2(); const el = $('mini-snd'); if (el && FREQ_K === 'sinf') el.querySelector('button').innerHTML = '🎼 ' + esc([AMB_K ? (AMBIENTES.find(x => x[0] === AMB_K) || [])[2] : '', 'Tu sinfonía natal'].filter(Boolean).join(' + ')); };
+function premSinfonia(){
+  const v = vocesSinfonia(); if (!v) return faltaFecha;
+  const col = ['#F3DCA0', '#C9A7FF', '#8FD9CF'];
+  return `<p class="intro">Cada planeta tiene su propio tono, calculado a partir de su órbita (las frecuencias planetarias de Hans Cousto). Tu sinfonía natal une los tonos de tu Sol, tu Luna y el regente de tu Ascendente: es tu huella sonora y nadie más tiene exactamente la misma.</p>
+    <div class="sinf-rings${SINF ? ' sonando' : ''}" id="sinf-rings">${v.map((x, i) => `<i style="--c:${col[i]};--d:${(1000 / x.f * 12).toFixed(2)}s;--s:${1 - i * .22}"></i>`).join('')}<span>🎼</span></div>
+    <ul class="num-lista">${v.map((x, i) => `<li><b style="color:${col[i]}">${x.f.toFixed(1).replace('.', ',')}</b><div><span>${x.t} · ${x.p}</span>Este tono vibra con ${TONO_TXT[x.p]}.</div></li>`).join('')}</ul>
+    <p class="fila-comp"><button class="btn" type="button" id="sinf-bt" data-sinf${SINF ? ' data-sinfstop="1"' : ''}>${SINF ? '⏹ Detener' : '▶ Escuchar mi sinfonía'}</button></p>
+    <p class="ag-ayuda">Usala con auriculares para meditar, antes de dormir o mientras hacés tu ritual. Podés sumarle un ambiente desde Sonidos (mar, lluvia…) y se mezclan.</p>`;
+}
+
+/* 🛤️ Caminos de 7 y 21 días: una práctica por día (sin tiradas) */
+const CAMINOS = {
+  abundancia: ['💰', '7 días de abundancia', 'Abrir tu energía para recibir: gratitud, valor propio y acción.', [
+    ['Gratitud que abre', 'Escribí tres cosas que ya tenés y que alguna vez deseaste. Leelas en voz alta.', ['resp', 'calma', 'Respirar 3 min'], '¿Qué abundancia ya hay en mi vida y no estoy viendo?', 'Agradezco todo lo que ya llega a mí.'],
+    ['Ordenar para recibir', 'Elegí un cajón, tu billetera o tu escritorio y ordenalo. Soltá lo que no usás.', null, '¿Qué estoy guardando por miedo a que me falte?', 'Hago lugar para lo nuevo.'],
+    ['Tu valor', 'Anotá tres talentos tuyos por los que otras personas te buscan.', null, '¿Cuánto vale de verdad lo que hago?', 'Mi trabajo y mi energía son valiosos.'],
+    ['Recibir sin culpa', 'Hoy aceptá todo lo que te ofrezcan (un café, un elogio, una ayuda) diciendo solo "gracias".', ['sonidos', 528, 'Escuchar 528 Hz'], '¿Qué me pasa cuando alguien me da algo?', 'Merezco recibir.'],
+    ['Un paso concreto', 'Hacé hoy una acción concreta por tu dinero: un presupuesto, un mensaje, una idea que venías postergando.', null, '¿Qué paso vengo postergando con la plata?', 'Actúo y la abundancia responde.'],
+    ['Dar con alegría', 'Compartí algo con alguien sin esperar nada: tiempo, una recomendación, un regalo pequeño.', null, '¿Cómo se siente dar desde la abundancia y no desde la falta?', 'Lo que doy vuelve multiplicado.'],
+    ['Tu intención', 'Escribí en un papel cómo querés que sea tu vida económica dentro de un año. Guardalo en tu billetera.', ['timer', 10, 'Meditar 10 min'], '¿Qué sentiría si ya lo hubiera logrado?', 'Me abro a la abundancia en todas sus formas.']]],
+  amorpropio: ['💗', '7 días de amor propio', 'Volver a vos con ternura, límites y cuidado.', [
+    ['Mirarte con ternura', 'Mirate al espejo un minuto y decite algo amoroso, aunque cueste.', null, '¿Cómo me hablo cuando me equivoco?', 'Me trato con el amor que le doy a quien quiero.'],
+    ['Tu cuerpo, tu casa', 'Regalale a tu cuerpo algo lindo: un baño largo, una crema, una caminata sin apuro.', ['sonidos', 639, 'Escuchar 639 Hz'], '¿Qué me está pidiendo mi cuerpo?', 'Mi cuerpo es mi hogar y lo cuido.'],
+    ['Un no amoroso', 'Decí que no a algo que no querés hacer, sin dar mil explicaciones.', ['resp', 'calma', 'Respirar 3 min'], '¿A qué digo que sí cuando quiero decir que no?', 'Mis límites también son amor.'],
+    ['Tus logros', 'Hacé una lista de diez cosas que lograste en tu vida, grandes y chiquitas.', null, '¿Qué logro mío nunca celebré?', 'Reconozco todo lo que soy capaz de hacer.'],
+    ['Tiempo para vos', 'Reservá media hora solo para algo que te encanta y no tiene que ser útil.', null, '¿Qué me hace feliz por el solo hecho de hacerlo?', 'Mi alegría es importante.'],
+    ['Soltar la comparación', 'Pasá un día sin mirar redes o silenciá las cuentas que te hacen sentir menos.', null, '¿Con quién me comparo y qué me dice eso de lo que deseo?', 'Mi camino es único y tiene su propio ritmo.'],
+    ['Una carta para vos', 'Escribite una carta como si fueras tu mejor amiga. Guardala para releerla.', ['timer', 10, 'Meditar 10 min'], '¿Qué necesito escuchar hoy?', 'Me elijo, hoy y siempre.']]],
+  soltar: ['🍂', '21 días para soltar', 'Tres semanas para liberar cargas, hábitos y vínculos que ya cumplieron su ciclo.', [
+    ['Reconocer', 'Escribí todo lo que sentís que te pesa hoy, sin ordenarlo.', ['resp', 'calma', 'Respirar 3 min'], '¿Qué estoy cargando que no es mío?', 'Reconozco lo que siento sin juzgarlo.'],
+    ['El cuerpo habla', 'Notá en qué parte del cuerpo sentís tensión y respirá hacia ahí.', ['resp', 'sueno', 'Respiración 4-7-8'], '¿Dónde guardo lo que no digo?', 'Mi cuerpo puede relajarse.'],
+    ['Limpiar un espacio', 'Ventilá tu casa y limpiá un rincón que tenías olvidado.', null, '¿Qué espacio de mi vida está pidiendo aire?', 'Dejo que el aire nuevo entre.'],
+    ['Lo que ya no uso', 'Separá tres objetos que ya no usás para regalar o descartar.', null, '¿Por qué me cuesta desprenderme?', 'Suelto con gratitud.'],
+    ['Una conversación', 'Pensá en una conversación pendiente. No hace falta tenerla: escribila.', null, '¿Qué necesito decir y a quién?', 'Mi voz merece ser escuchada.'],
+    ['Perdonarte', 'Escribí algo por lo que todavía te culpás y escribí al lado: "Hice lo que pude con lo que sabía".', ['sonidos', 396, 'Escuchar 396 Hz'], '¿Qué me reprocho todavía?', 'Me perdono y me libero.'],
+    ['Descanso', 'Hoy no hagas de más. Dormí temprano o tomá una siesta.', ['timer', 10, 'Meditar 10 min'], '¿Qué pasaría si hoy no hago nada extra?', 'Descansar también es avanzar.'],
+    ['Hábitos', 'Elegí un hábito que querés dejar y anotá cuándo aparece durante el día.', null, '¿Qué necesidad cubre ese hábito?', 'Puedo elegir distinto.'],
+    ['Pantallas', 'Dejá el celular una hora antes de dormir.', null, '¿Qué evito sentir cuando me distraigo?', 'Me doy silencio.'],
+    ['Agua que limpia', 'Al bañarte, imaginá que el agua se lleva lo que ya no querés cargar.', null, '¿Qué me llevaría el agua hoy?', 'El agua me renueva.'],
+    ['Vínculos', 'Hacé una lista de los vínculos que te nutren y los que te desgastan.', null, '¿Con quién me siento liviana y con quién pesada?', 'Elijo vínculos que me hacen bien.'],
+    ['Un límite', 'Poné un límite pequeño hoy, con amabilidad.', ['resp', 'cuadrada', 'Respiración cuadrada'], '¿Qué límite me debo hace tiempo?', 'Cuidar mi energía es sagrado.'],
+    ['Mitad del camino', 'Releé lo que escribiste el día 1. Notá qué cambió.', ['timer', 15, 'Meditar 15 min'], '¿Qué ya solté sin darme cuenta?', 'Avanzo, aunque no siempre lo vea.'],
+    ['Las expectativas', 'Escribí una expectativa que tenés sobre otra persona y que te hace sufrir.', null, '¿Qué espero que el otro haga por mí?', 'Libero a los demás y me libero.'],
+    ['El control', 'Elegí algo que no depende de vos y repetí: "Esto no está en mis manos".', ['sonidos', 432, 'Escuchar 432 Hz'], '¿Qué intento controlar por miedo?', 'Confío en el fluir de la vida.'],
+    ['Lágrimas', 'Si aparece la emoción, dejala salir. Poné una canción que te mueva.', null, '¿Qué lágrima me estoy guardando?', 'Sentir me sana.'],
+    ['Escribir y quemar', 'Escribí en un papel lo que querés soltar y quemalo con cuidado (o rompelo y tiralo).', null, '¿Cómo me siento al verlo irse?', 'Lo que suelto ya no me define.'],
+    ['Gratitud por lo vivido', 'Agradecé algo que te enseñó una situación difícil.', null, '¿Qué aprendí de lo que más me dolió?', 'Honro mi historia.'],
+    ['Liviandad', 'Hacé algo que te haga reír o te divierta.', null, '¿Cuándo fue la última vez que me sentí liviana?', 'Me permito disfrutar.'],
+    ['Nuevo espacio', 'Pensá qué querés que ocupe el lugar de lo que soltaste.', ['timer', 10, 'Meditar 10 min'], '¿Qué quiero invitar a mi vida?', 'Hay lugar para lo nuevo.'],
+    ['Cierre', 'Releé todo tu camino. Escribite unas palabras de reconocimiento por estas tres semanas.', ['sonidos', 963, 'Escuchar 963 Hz'], '¿Quién soy ahora que solté?', 'Soy libre, liviana y estoy en paz.']]]
+};
+const CK = 'luzguia_camino_v1';
+function estadoCamino(){ return lsGet(CK, null); }
+function diaCamino(e){ if (!e) return 0; const ini = new Date(e.inicio + 'T00:00'), hoy = new Date(); hoy.setHours(0, 0, 0, 0); return Math.min(CAMINOS[e.k][3].length, Math.floor((hoy - ini) / 86400000) + 1); }
+function premCaminos(){
+  const e = estadoCamino();
+  let h = '<p class="intro">Un camino es una práctica corta por día durante 7 o 21 días: un gesto, una pregunta para escribir y una afirmación. Cada día se habilita uno nuevo. Lo que escribís queda guardado solo en tu celular.</p>';
+  if (!e) return h + '<div class="caminos">' + Object.entries(CAMINOS).map(([k, c]) => `<button type="button" class="camino" data-caminoini="${k}"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></button>`).join('') + '</div>';
+  const c = CAMINOS[e.k], tot = c[3].length, disp = diaCamino(e), hechos = e.hechos || [], hoyN = Math.min(disp, tot);
+  const sel = e.ver && e.ver <= disp ? e.ver : hoyN, d = c[3][sel - 1], completo = hechos.length >= tot;
+  h += `<div class="cam-cab"><span>${c[0]}</span><div><b>${c[1]}</b><small>${hechos.length} de ${tot} días hechos</small></div></div>
+    <div class="cam-dias">${c[3].map((_, i) => { const n = i + 1, ok = hechos.includes(n), lock = n > disp; return `<button type="button" class="cam-d${ok ? ' ok' : ''}${lock ? ' lock' : ''}${n === sel ? ' sel' : ''}" ${lock ? 'disabled' : `data-camver="${n}"`}>${ok ? '✓' : lock ? '🔒' : n}</button>`; }).join('')}</div>`;
+  if (completo) h += `<div class="lugar-mes"><b>🎉 ¡Completaste ${c[1]}!</b><p>Tomate un momento para reconocer todo lo que hiciste. Cuando quieras, empezá otro camino.</p></div>`;
+  const txt = (e.notas || {})[sel] || '';
+  h += `<div class="cam-hoy"><small>Día ${sel}${sel === hoyN && !completo ? ' · hoy' : ''}</small><h4>${d[0]}</h4><p>${d[1]}</p>
+    ${d[2] ? `<p><button class="btn-sec" type="button" data-momento="${d[2][0]}|${d[2][1]}">${d[2][2]}</button></p>` : ''}
+    <label class="cam-preg">${d[3]}<textarea data-camnota="${sel}" maxlength="1000" placeholder="Escribí lo que te surja…">${esc(txt)}</textarea></label>
+    <p class="afir">✨ ${d[4]}</p>
+    ${hechos.includes(sel) ? '<p class="hecho">✓ Día hecho</p>' : `<button class="btn" type="button" data-camhecho="${sel}">Marcar el día ${sel} como hecho</button>`}</div>
+    <p style="text-align:center;margin-top:14px"><button class="link" type="button" data-camreset>${completo ? 'Empezar otro camino' : 'Cambiar de camino'}</button></p>`;
+  return h;
+}
+LOGROS.push(['camino', '🛤️', 'Camino completo', 'Terminaste un camino de 7 o 21 días.', () => { const e = estadoCamino(); return !!(e && (e.hechos || []).length >= CAMINOS[e.k][3].length) || !!lsGet('luzguia_camino_hecho', 0); }]);
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'meditaciones');
+  PREMIUM_LISTA.splice(i, 0, ['sinfonia', '🎼', 'Tu sinfonía natal', 'Los tonos de tu Sol, tu Luna y tu Ascendente unidos en tu huella sonora.'], ['caminos', '🛤️', 'Caminos de 7 y 21 días', 'Abundancia, amor propio o soltar: una práctica corta por día, con su pregunta y su afirmación.']);
+  PREM_FN.sinfonia = () => premSinfonia(); PREM_FN.caminos = () => premCaminos();
+})();
+function repintarCamino(){ const cu = document.querySelector('details[data-premsec=caminos] .prem-cuerpo'); if (cu) cu.innerHTML = premCaminos(); }
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.sinf !== undefined) { if (b.dataset.sinfstop) detenerTodo(); else tocarSinfonia(); return; }
+  if (b.dataset.caminoini) { lsSet(CK, { k: b.dataset.caminoini, inicio: isoLocal(new Date()), hechos: [], notas: {} }); evento('Sección', 'Camino: ' + CAMINOS[b.dataset.caminoini][1]); repintarCamino(); return; }
+  if (b.dataset.camver) { const st = estadoCamino(); st.ver = +b.dataset.camver; lsSet(CK, st); repintarCamino(); return; }
+  if (b.dataset.camhecho) { const st = estadoCamino(), n = +b.dataset.camhecho; st.hechos = [...new Set((st.hechos || []).concat(n))]; lsSet(CK, st); sumarCalma('camino día ' + n); if (st.hechos.length >= CAMINOS[st.k][3].length) lsSet('luzguia_camino_hecho', 1); repintarCamino(); return; }
+  if (b.dataset.camreset !== undefined) { if (!confirm('¿Querés dejar este camino y elegir otro? Lo que escribiste se borra.')) return; try { localStorage.removeItem(CK); } catch (x) {} repintarCamino(); return; }
+});
+document.addEventListener('toggle', e => { const d = e.target; if (d.open && d.dataset && d.dataset.premsec === 'caminos') repintarCamino(); }, true);
+document.addEventListener('input', e => { const t = e.target; if (!t.dataset || !t.dataset.camnota) return; const st = estadoCamino(); if (!st) return; st.notas = st.notas || {}; st.notas[t.dataset.camnota] = t.value; lsSet(CK, st); });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
