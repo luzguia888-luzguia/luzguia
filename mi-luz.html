@@ -493,6 +493,29 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .chip-m{background:transparent;border:1px solid var(--lila-suave);border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--luna);font-size:.92rem}.chip-m:hover{border-color:var(--oro);color:var(--oro)}
 #dlg .campo-codigo{display:block;margin:0 auto}
 @media (max-width:420px){.racha{grid-template-columns:auto 1fr;}.racha .link{grid-column:1/-1;justify-self:center}.racha-sem i{width:22px;height:22px}}
+
+/* v15 */
+.fondos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.fondo{position:relative;border:1px solid var(--oro-suave);border-radius:16px;overflow:hidden;padding:0;background:#120621;cursor:pointer;text-align:left;color:var(--luna);aspect-ratio:9/15}
+.fondo-img{position:absolute;inset:0;background-size:cover;background-position:center;background-color:#2a1046;transition:transform .6s}
+.fondo:hover .fondo-img{transform:scale(1.05)}
+.fondo-txt{position:absolute;left:0;right:0;bottom:0;padding:30px 12px 12px;background:linear-gradient(180deg,transparent,rgba(12,4,24,.92))}
+.fondo-txt b{display:block;font-family:var(--serif);font-size:1.1rem;line-height:1.15}.fondo-txt small{color:var(--oro);font-size:.78rem}
+.fondo.lock .fondo-img{filter:saturate(.6) brightness(.6)}
+.animal-caja{border-radius:20px;border:1px solid var(--oro-suave);min-height:640px;background-size:cover;background-position:center top;display:flex;align-items:flex-end;overflow:hidden;background-color:#1C0B2E}
+.animal-txt{padding:18px 18px 16px}.animal-txt small{color:var(--oro);font-size:.8rem;letter-spacing:.06em}.animal-txt h4{font-family:var(--serif);font-size:1.9rem;font-weight:500;margin:2px 0 8px}.animal-txt p{margin:0 0 8px;font-size:.95rem}
+.tirada-mes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 10px;text-align:center}
+.tirada-mes small{display:block;color:var(--bruma);font-size:.78rem;margin-top:6px;line-height:1.25}
+.tm-carta{position:relative;width:100%;aspect-ratio:2/3.3;border:0;padding:0;background:none;cursor:pointer;perspective:800px;font:inherit;color:inherit}
+.tm-carta span{position:absolute;inset:0;border-radius:10px;border:1px solid var(--oro);backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .8s cubic-bezier(.3,.7,.3,1);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.tm-dorso{background:repeating-linear-gradient(45deg,rgba(243,220,160,.08) 0 5px,transparent 5px 10px),radial-gradient(circle,#4a1f7c,#1b0b33 75%);color:var(--oro);font-size:1.6rem}
+.tm-frente{transform:rotateY(180deg);background:#1b0b33}.tm-frente img{width:100%;height:100%;object-fit:cover}.tm-frente b{position:absolute;bottom:0;left:0;right:0;font-size:.72rem;padding:14px 4px 5px;background:linear-gradient(180deg,transparent,rgba(12,4,24,.92));font-weight:500}
+.tirada-mes:not(.por-revelar) .tm-dorso,.tm-carta.vuelta .tm-dorso{transform:rotateY(180deg)}
+.tirada-mes:not(.por-revelar) .tm-frente,.tm-carta.vuelta .tm-frente{transform:rotateY(360deg)}
+.tm-msg{font-family:var(--serif);font-size:1.15rem;line-height:1.5}
+.resp-video{margin:8px 0 12px}.resp-video small{display:block;color:var(--oro);margin-bottom:6px}
+.amor-est{text-align:center;margin:0 0 14px}.amor-est p{margin:0 0 8px;color:var(--bruma)}.amor-est>div{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.chip-m.on{background:var(--oro);color:var(--noche);border-color:var(--oro)}
 </style>
 </head>
 <body>
@@ -2180,7 +2203,7 @@ function natal(){
   NAT_K = k; NAT = { jd, pos, asc, mc, hora, cus, ciudad: cd[0], casa: l => casaEn(cus, l) };
   return NAT;
 }
-const gradoTxt = l => Math.floor(nrm2(l) % 30) + '° ' + ZOD[Math.floor(nrm2(l) / 30)];
+let gradoTxt = l => Math.floor(nrm2(l) % 30) + '° ' + ZOD[Math.floor(nrm2(l) / 30)];
 function aspectosNatales(n){
   const pts = PL_NAT.map(p => [p, n.pos[p]]).concat(n.hora ? [['ASC', n.asc], ['MC', n.mc]] : []), out = [];
   for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
@@ -3493,6 +3516,241 @@ document.addEventListener('click', async e => {
   }
   if (b.dataset.segenviar) { enviarSeguimiento(b.dataset.segenviar); return; }
   if (b.dataset.segmotivo) { enviarSeguimiento('No', b.dataset.segmotivo); return; }
+});
+
+
+/* ───── v15: fondos de pantalla, animal de poder con imagen (natal gratis + ciclo lunar Premium),
+         grados en la carta natal, tirada del mes con cartas, video de la respuesta y amor en pareja ───── */
+const ANIMAL_SLUG = { 'Halcón': 'halcon', 'Castor': 'castor', 'Ciervo': 'ciervo', 'Pájaro carpintero': 'carpintero', 'Salmón': 'salmon', 'Oso': 'oso', 'Cuervo': 'cuervo', 'Serpiente': 'serpiente', 'Búho': 'buho', 'Ganso': 'ganso', 'Nutria': 'nutria', 'Lobo': 'lobo' };
+const imgArcano = n => 'arcano-' + String(n).padStart(2, '0') + '.jpg';
+const imgAnimal = an => 'animal-' + (ANIMAL_SLUG[an.a] || 'halcon') + '.jpg';
+const imgLuna = m => 'luna-' + String(m + 1).padStart(2, '0') + '.jpg';
+function cargarImg(src){ return new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = src; }); }
+function partirTexto(c, t, ancho){ const pal = String(t || '').split(' '), out = []; let l = ''; pal.forEach(p => { const x = l ? l + ' ' + p : p; if (c.measureText(x).width > ancho && l) { out.push(l); l = p; } else l = x; }); if (l) out.push(l); return out; }
+
+// Fondo de pantalla 1170×2532: imagen hiperrealista + logo de Luz Guía + texto o calendario lunar
+async function wallpaper(o){
+  try { await document.fonts.ready; await Promise.all(['600 120px "Cormorant Garamond"', 'italic 56px "Cormorant Garamond"', '500 34px Jost', '96px "Great Vibes"'].map(f => document.fonts.load(f))); } catch (e) {}
+  const W = 1170, H = 2532, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const [img, logo] = await Promise.all([cargarImg(o.fondo), cargarImg('icono-512.png')]);
+  if (img) { const s = Math.max(W / img.width, H / img.height), w = img.width * s, h = img.height * s; c.drawImage(img, (W - w) / 2, (H - h) / 2, w, h); }
+  else { const g = c.createRadialGradient(W / 2, H * .35, 60, W / 2, H / 2, H * .8); g.addColorStop(0, '#4a1f7c'); g.addColorStop(.5, '#22103d'); g.addColorStop(1, '#0b0414'); c.fillStyle = g; c.fillRect(0, 0, W, H); }
+  let g = c.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(8,3,16,.55)'); g.addColorStop(1, 'rgba(8,3,16,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H * .3);
+  const ini = o.calendario ? .4 : .56; g = c.createLinearGradient(0, H * ini, 0, H); g.addColorStop(0, 'rgba(8,3,16,0)'); g.addColorStop(.35, 'rgba(8,3,16,.72)'); g.addColorStop(1, 'rgba(8,3,16,.94)'); c.fillStyle = g; c.fillRect(0, H * ini, W, H * (1 - ini));
+  c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  let y = o.calendario ? H * .5 : H * .7;
+  c.fillStyle = '#D4AF6A'; c.font = '500 30px Jost'; c.letterSpacing = '8px'; c.fillText(String(o.kicker || '').toUpperCase(), W / 2, y); c.letterSpacing = '0px';
+  y += 108; c.fillStyle = '#F8F1FF'; c.font = '600 112px "Cormorant Garamond"'; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 24; c.fillText(o.titulo, W / 2, y); c.shadowBlur = 0;
+  if (o.calendario) {
+    const { y: an, m } = o.calendario, dias = new Date(an, m + 1, 0).getDate(), ini0 = (new Date(an, m, 1).getDay() + 6) % 7;
+    const lun = lunas(new Date(an, m, 1), new Date(an, m + 1, 1)), poder = o.poder || [];
+    const x0 = 135, dx = (W - 270) / 7, dy = 112; y += 70;
+    c.font = '500 30px Jost'; c.fillStyle = 'rgba(237,230,245,.6)'; ['L', 'M', 'M', 'J', 'V', 'S', 'D'].forEach((d, i) => c.fillText(d, x0 + dx * i + dx / 2, y));
+    y += 34;
+    for (let d = 1; d <= dias; d++) {
+      const k = ini0 + d - 1, cx = x0 + dx * (k % 7) + dx / 2, cy = y + Math.floor(k / 7) * dy + dy / 2;
+      const l = lun.find(x => x.fecha.getDate() === d), esPoder = poder.includes(d);
+      if (l) { c.beginPath(); c.arc(cx, cy, 40, 0, 7); c.fillStyle = l.llena ? 'rgba(243,220,160,.92)' : 'rgba(20,8,36,.9)'; c.fill(); c.strokeStyle = '#F3DCA0'; c.lineWidth = 3; c.stroke(); }
+      else if (esPoder) { c.beginPath(); c.arc(cx, cy, 40, 0, 7); c.strokeStyle = 'rgba(185,138,230,.95)'; c.lineWidth = 3; c.setLineDash([6, 6]); c.stroke(); c.setLineDash([]); }
+      c.font = (l ? '600 ' : '500 ') + '40px Jost'; c.fillStyle = l && l.llena ? '#1C0B2E' : '#F8F1FF'; c.fillText(String(d), cx, cy + 14);
+    }
+    y += Math.ceil((ini0 + dias) / 7) * dy + 50;
+    c.font = '500 28px Jost'; c.fillStyle = 'rgba(237,230,245,.85)';
+    const ley = ['● Luna llena', '○ Luna nueva'].concat(poder.length ? ['◌ Tus días de poder'] : []);
+    c.fillText(ley.join('     '), W / 2, y);
+  } else if (o.lineas) {
+    y += 70; c.font = 'italic 54px "Cormorant Garamond"'; c.fillStyle = '#F3DCA0';
+    o.lineas.forEach(t => partirTexto(c, t, W - 220).forEach(l => { c.fillText(l, W / 2, y); y += 66; }));
+  }
+  // Firma con el logo real
+  const fy = H - 150;
+  if (logo) { c.save(); c.beginPath(); c.arc(W / 2 - 120, fy - 14, 38, 0, 7); c.clip(); c.drawImage(logo, W / 2 - 158, fy - 52, 76, 76); c.restore(); }
+  c.textAlign = 'left'; c.fillStyle = '#F8F1FF'; c.font = '600 56px "Cormorant Garamond"'; c.fillText('Luz Guía', W / 2 - 66, fy + 4); c.textAlign = 'center';
+  if (o.nombre) { c.font = '500 26px Jost'; c.fillStyle = 'rgba(237,230,245,.6)'; c.letterSpacing = '4px'; c.fillText(('Para ' + o.nombre).toUpperCase(), W / 2, fy + 62); c.letterSpacing = '0px'; }
+  return new Promise(ok => cv.toBlob(ok, 'image/jpeg', .92));
+}
+function diasDePoder(y, m){
+  if (!P.diaMes || !P.anioNac) return [];
+  const sig = Math.floor(longSolar(jdNac(P.diaMes, P.anioNac, P.horaNac)) / 30), out = [], n = new Date(y, m + 1, 0).getDate();
+  for (let d = 1; d <= n; d++) if (Math.floor(longLuna(jdDe(new Date(y, m, d, 12))) / 30) === sig) out.push(d);
+  return out;
+}
+function opcionesFondo(){
+  const hoy = new Date(), an = animalDe(), L = [];
+  if (P.anual && P.anual.n) L.push({ k: 'anual', t: 'Tu arcano del año', sub: P.anual.nombre, img: imgArcano(P.anual.n) });
+  if (P.arcano && P.arcano.n) L.push({ k: 'nac', t: 'Tu arcano de nacimiento', sub: P.arcano.nombre, img: imgArcano(P.arcano.n) });
+  if (an) L.push({ k: 'animal', t: 'Tu animal de poder', sub: an.a, img: imgAnimal(an) });
+  L.push({ k: 'luna', t: 'Calendario lunar', sub: MESES[hoy.getMonth()].charAt(0).toUpperCase() + MESES[hoy.getMonth()].slice(1), img: imgLuna(hoy.getMonth()), prem: 1 });
+  return L;
+}
+function fondosHTML(){
+  const L = opcionesFondo(); if (!L.length) return '';
+  return `<h3>Fondos para tu celular</h3><p class="ag-ayuda" style="margin-top:0">Imágenes hechas para vos, con tu energía y la firma de Luz Guía. Guardala y ponela de fondo de pantalla.</p>
+    <div class="fondos">${L.map(x => { const lock = x.prem && !P.premium; return `<button type="button" class="fondo${lock ? ' lock' : ''}" data-fondo="${x.k}"><span class="fondo-img" style="background-image:url('${x.img}')"></span><span class="fondo-txt"><b>${esc(x.t)}</b><small>${esc(x.sub || '')}${lock ? ' · Premium 🔒' : ''}</small></span></button>`; }).join('')}</div>`;
+}
+async function generarFondo(k){
+  const x = opcionesFondo().find(o => o.k === k); if (!x) return;
+  if (x.prem && !P.premium) { PREM_ABIERTA = ''; irTab('premium'); return; }
+  $('dlg-titulo').textContent = 'Creando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; $('dlg').showModal();
+  const hoy = new Date(), an = animalDe();
+  const o = k === 'anual' ? { fondo: x.img, kicker: 'Tu energía de ' + (P.anio || hoy.getFullYear()), titulo: P.anual.nombre, lineas: [ARC[P.anual.n].af] }
+    : k === 'nac' ? { fondo: x.img, kicker: 'Tu arcano de nacimiento', titulo: P.arcano.nombre, lineas: [ARC[P.arcano.n].af] }
+    : k === 'animal' ? { fondo: x.img, kicker: 'Tu animal de poder', titulo: an.a, lineas: [an.af] }
+    : { fondo: x.img, kicker: 'Calendario lunar', titulo: x.sub + ' ' + hoy.getFullYear(), calendario: { y: hoy.getFullYear(), m: hoy.getMonth() }, poder: diasDePoder(hoy.getFullYear(), hoy.getMonth()) };
+  o.nombre = P.nombre;
+  const blob = await wallpaper(o), url = URL.createObjectURL(blob), nombre = 'fondo-luz-guia-' + k + '.jpg';
+  evento('Sección', 'Fondo de pantalla: ' + x.t);
+  $('dlg-titulo').textContent = 'Tu fondo está listo ✨';
+  $('dlg-texto').textContent = ES_IOS ? 'Tocá Guardar, elegí "Guardar imagen" y después ponela de fondo desde Ajustes → Fondo de pantalla.' : 'Tocá Guardar y después elegila como fondo desde la galería de tu celular.';
+  $('dlg-cuerpo').innerHTML = `<img src="${url}" alt="Vista previa de tu fondo" style="display:block;max-height:52vh;max-width:100%;margin:0 auto;border-radius:16px;border:1px solid var(--linea)"><div class="fila-bt"><button class="btn-sec" type="button" id="fd-no">Cerrar</button><button class="btn" type="button" id="fd-si">Guardar</button></div>`;
+  $('fd-no').onclick = () => $('dlg').close();
+  $('fd-si').onclick = async () => { try { await compartirArchivo(blob, nombre, 'Mi fondo de Luz Guía ✨'); } catch (e) {} };
+}
+
+/* Animal de poder: el natal, gratis en Arcanos */
+function animalLibreHTML(){
+  const an = animalDe(); if (!an) return '';
+  return `<h3>Tu animal de poder</h3><article class="animal-caja" style="background-image:linear-gradient(180deg,rgba(18,6,33,0) 42%,rgba(18,6,33,.95) 80%),url('${imgAnimal(an)}')">
+    <div class="animal-txt"><small>Te acompaña desde que naciste</small><h4>${an.ic} ${an.a}</h4><p><b>Su medicina:</b> ${an.med}</p><p><b>Su mensaje:</b> ${an.msg}</p><p class="afir">✨ ${an.af}</p>
+    <div class="fila-bt" style="justify-content:flex-start"><button class="btn-sec comp" type="button" data-share="animal">✨ Compartir</button><button class="btn-sec" type="button" data-fondo="animal">📱 Fondo de pantalla</button></div>
+    <p class="ag-ayuda" style="margin:10px 0 0">En Premium, cada Luna nueva llega un animal que te acompaña ese ciclo, con su meditación.</p></div></article>`;
+}
+/* Premium: el animal que te acompaña este ciclo lunar */
+function cicloLunarActual(){
+  const hoy = new Date(), ls = lunas(new Date(hoy.getTime() - 34 * 86400000), new Date(hoy.getTime() + 34 * 86400000)).filter(x => !x.llena);
+  const ini = ls.filter(x => x.fecha <= hoy).pop(), fin = ls.find(x => x.fecha > hoy);
+  return { ini, fin, k: ini ? Math.round(ini.fecha.getTime() / (29.530588 * 86400000)) : 0 };
+}
+function animalDelCiclo(){
+  const c = cicloLunarActual(), base = animalDe(); let i = (c.k + hashTxt(CODIGO || P.nombre || '')) % 12;
+  if (base && ANIMAL_PODER[i] === base) i = (i + 5) % 12;
+  return { an: ANIMAL_PODER[i], c };
+}
+const CICLO_CONSEJO = { 'Halcón': 'Este ciclo te pide mirar desde lo alto antes de decidir: no te apures, esperá la señal clara.', 'Castor': 'Este ciclo es para construir: elegí un proyecto y dale un pasito cada día.', 'Ciervo': 'Este ciclo te invita a la suavidad: tratate con ternura y poné límites con amor.', 'Pájaro carpintero': 'Este ciclo pide constancia: insistí en lo que querés, aunque parezca lento.', 'Salmón': 'Este ciclo te lleva a nadar contra la corriente: confiá en tu instinto aunque otros no lo entiendan.', 'Oso': 'Este ciclo es para mirar hacia adentro: descansá, soñá y escuchá lo que sentís.', 'Cuervo': 'Este ciclo trae magia y señales: prestá atención a las sincronicidades.', 'Serpiente': 'Este ciclo es de transformación: soltá una piel vieja (un hábito, una idea, un vínculo).', 'Búho': 'Este ciclo te da visión en la oscuridad: lo que estaba oculto se aclara.', 'Ganso': 'Este ciclo te invita a moverte en grupo: pedí ayuda y compartí el camino.', 'Nutria': 'Este ciclo pide juego y alegría: hacé algo solo porque te divierte.', 'Lobo': 'Este ciclo te enseña a guiar: compartí lo que sabés y cuidá a tu manada.' };
+function premAnimalCiclo(){
+  const { an, c } = animalDelCiclo(), nat = animalDe(); if (!an) return faltaFecha;
+  return `<p class="intro">Tu animal de poder natal te acompaña siempre (lo ves gratis en Arcanos). Además, en cada Luna nueva llega un animal guía para ese ciclo, con una medicina distinta para lo que estás viviendo.</p>
+    <article class="animal-caja" style="background-image:linear-gradient(180deg,rgba(18,6,33,0) 38%,rgba(18,6,33,.95) 75%),url('${imgAnimal(an)}')"><div class="animal-txt">
+    <small>Te acompaña ${c.ini ? 'desde la Luna nueva del ' + fechaCorta(c.ini.fecha) : 'este ciclo'}${c.fin ? ' hasta la del ' + fechaCorta(c.fin.fecha) : ''}</small><h4>${an.ic} ${an.a}</h4>
+    <p><b>Su medicina:</b> ${an.med}</p><p><b>Para este ciclo:</b> ${CICLO_CONSEJO[an.a] || an.msg}</p><p><b>Cuidado con:</b> ${an.som}</p><p><b>Cómo conectar:</b> ${an.con}</p><p class="afir">✨ ${an.af}</p></div></article>
+    ${nat ? `<p class="ag-ayuda">Tu animal natal es el ${nat.a} ${nat.ic}. El de este ciclo se suma para acompañarte hasta la próxima Luna nueva.</p>` : ''}
+    <div class="medita" id="medita"><h4>🧘 Meditación para encontrarte con tu animal</h4><p>Unos 4 minutos. Buscá un lugar tranquilo. Podés leerla a tu ritmo o escucharla con la voz del celular.</p>
+    <div class="fila-bt"><button class="btn" type="button" data-medita="voz">🔊 Escuchar</button><button class="btn-sec" type="button" data-medita="leer">📖 Leer a mi ritmo</button></div></div>`;
+}
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'animal');
+  if (i > -1) PREMIUM_LISTA[i] = ['animal', '🐺', 'El animal de tu ciclo lunar', 'Cada Luna nueva, un animal guía distinto con su medicina, su mensaje y una meditación.'];
+  PREM_FN.animal = () => premAnimalCiclo();
+  const t = PREMIUM_LISTA.findIndex(x => x[0] === 'tirada');
+  if (t > -1) PREMIUM_LISTA[t] = ['tirada', '🔮', 'La tirada del mes', 'Belu tira las cartas para la energía colectiva de cada mes: qué trae, qué soltar y su consejo.'];
+})();
+const _arcBase = arcanosHTML;
+arcanosHTML = function(){ return _arcBase() + animalLibreHTML() + fondosHTML(); };
+
+/* Tirada del mes: las cartas que carga Belu, con video opcional */
+premTirada = function(){
+  const hoy = new Date(), kHoy = hoy.getFullYear() * 12 + hoy.getMonth();
+  const L = (P.contenido || []).filter(x => /tirada/i.test(x.tipo || '')).map(x => Object.assign({ k: mesDe(x) }, x)).filter(x => x.k == null || x.k <= kHoy).sort((a, b) => (b.k || 0) - (a.k || 0));
+  const actual = L.find(x => x.k === kHoy), pasadas = L.filter(x => x !== actual);
+  const POS = ['Lo que trae el mes', 'Lo que conviene soltar', 'Mi consejo para vos'];
+  const cartasHTML = (x, vivo) => { const cs = (x.cartas || []).map(Number).filter(n => n >= 1 && n <= 22); if (!cs.length) return ''; return `<div class="tirada-mes${vivo ? ' por-revelar' : ''}">${cs.map((n, i) => `<button type="button" class="tm-carta" data-tmcarta style="animation-delay:${i * .25}s"><span class="tm-dorso">✦</span><span class="tm-frente"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><b>${esc(NOM[n])}</b></span></button><small>${POS[i] || ''}</small>`).map((h, i) => `<div>${h}</div>`).join('')}</div>${vivo ? '<p class="ag-ayuda" style="text-align:center;margin-top:4px">Tocá cada carta para darla vuelta</p>' : ''}`; };
+  const item = (x, abierto, vivo) => `<details class="cont-item"${abierto ? ' open' : ''}><summary><b>${esc(x.titulo)}</b>${x.k != null ? `<small>${nombreMes(x.k)}</small>` : ''}</summary><div>${cartasHTML(x, vivo)}${x.desc ? `<p class="tm-msg">${esc(x.desc).replace(/\n/g, '<br>')}</p><p class="firma-r">Con luz, Belu 💜</p>` : ''}${x.enlace ? embedHTML(x.enlace, x.titulo) : ''}</div></details>`;
+  let h = '<p>Al empezar cada mes, Belu tira tres cartas para la energía colectiva: lo que trae el mes, lo que conviene soltar y su consejo. Las de meses anteriores quedan guardadas.</p>';
+  h += actual ? `<p class="sub">${nombreMes(kHoy)}</p>` + item(actual, true, true)
+    : `<div class="lugar-mes"><b>🔮 La tirada de ${MESES[hoy.getMonth()]} está por llegar</b><p>Belu la publica en los primeros días del mes. Te avisamos apenas esté.</p></div>`;
+  if (pasadas.length) h += '<p class="sub">Meses anteriores</p>' + pasadas.map(x => item(x, false, false)).join('');
+  return h;
+};
+
+/* Grados con minutos en toda la carta */
+gradoTxt = l => { const x = nrm2(l) % 30, g = Math.floor(x), m = Math.floor((x - g) * 60); return g + '°' + String(m).padStart(2, '0') + '′ ' + ZOD[Math.floor(nrm2(l) / 30)]; };
+const _ruedaBase = ruedaSVG;
+ruedaSVG = function(n, conAsp){
+  let s = _ruedaBase(n, conAsp);
+  const S = 340, c = S / 2, R2 = 132, ang = l => (180 + nrm2(l) - n.asc) * RP, xy = (l, r) => [c + r * Math.cos(ang(l)), c - r * Math.sin(ang(l))];
+  const lista = PL_NAT.concat(['Nodo']).map(p => ({ p, l: n.pos[p] })).sort((a, b) => a.l - b.l); let ult = -99, nivel = 0, extra = '';
+  lista.forEach(o => { nivel = (o.l - ult < 7) ? nivel + 1 : 0; ult = o.l; const r = R2 - 16 - nivel * 15, [x, y] = xy(o.l, r), dx = x < c ? -11 : 11;
+    extra += `<text x="${x + dx}" y="${y - 4}" text-anchor="middle" font-size="6.5" fill="#B6A7C9" font-family="Jost">${Math.floor(nrm2(o.l) % 30)}°</text>`; });
+  return s.replace('</svg>', extra + '</svg>');
+};
+const _natalBase = premNatal;
+premNatal = function(){
+  let h = _natalBase(); const n = natal(); if (!n) return h;
+  h = h.replace(/<small>☉ Sol en [^<]*<\/small>/, `<small>☉ Sol en ${gradoTxt(n.pos.Sol)}</small>`).replace(/<small>☽ Luna en [^<]*<\/small>/, `<small>☽ Luna en ${gradoTxt(n.pos.Luna)}</small>`);
+  if (n.hora) h = h.replace(/<small>AC Ascendente en [^<]*<\/small>/, `<small>AC Ascendente en ${gradoTxt(n.asc)}</small>`);
+  return h;
+};
+
+/* Video de la respuesta a la pregunta del mes */
+const _pregBase = premPregunta;
+premPregunta = function(){
+  let h = _pregBase();
+  (P.preguntas || []).filter(x => x.respuesta && x.video).forEach(x => {
+    const marca = `<p class="preg">${esc(x.pregunta)}</p>`;
+    if (h.includes(marca)) h = h.replace(marca, marca + `<div class="resp-video"><small>🎥 Mirá tu tirada</small>${embedHTML(x.video, 'Tu tirada')}</div>`);
+  });
+  return h;
+};
+
+/* Amor: en pareja, sin pareja o es complicado */
+const AMOR_EST_K = 'luzguia_amor_estado';
+const PAREJA_CASA = [
+  'cuidando tu espacio personal dentro de la pareja: elegirte también es amor',
+  'compartiendo placeres simples y hablando claro de la plata en común',
+  'conversando: una charla pendiente puede acercarlos muchísimo',
+  'en casa: cocinar juntos, ordenar o planear el hogar los une',
+  'saliendo de la rutina: una cita, un juego, algo que los haga reír',
+  'en los pequeños gestos de cuidado del día a día',
+  'mirándose como equipo: acuerdos, compromisos y proyectos de a dos',
+  'en la intimidad y la confianza profunda: es tiempo de mostrarse vulnerables',
+  'con una escapada, un viaje o algo nuevo para aprender juntos',
+  'apoyándose en los objetivos de cada uno',
+  'compartiendo con amigos y dándose aire y libertad',
+  'en silencio y conexión espiritual: meditar juntos, descansar, perdonar'];
+function diasLuna(objSigno, rel, max){
+  const hoy = new Date(), out = [];
+  for (let i = 0; i < 31 && out.length < max; i++) { const f = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + i, 12), s = Math.floor(longLuna(jdDe(f)) / 30), d = (s - objSigno + 12) % 12;
+    if (rel(d) && (!out.length || (f - out[out.length - 1]) > 86400000 * 1.5)) out.push(f); }
+  return out.map(f => f.getDate() + ' de ' + MESES[f.getMonth()]);
+}
+function amorParejaHTML(){
+  const n = natal(); if (!n) return '';
+  const hoy = new Date(), jd = jdDe(new Date(hoy.getFullYear(), hoy.getMonth(), 15, 12)), cV = n.casa(longPlaneta('Venus', jd)), cM = n.casa(longPlaneta('Marte', jd)), r = retrogrado('Venus', jd);
+  const sV = Math.floor(n.pos.Venus / 30), sM = Math.floor(n.pos.Marte / 30);
+  const lindos = diasLuna(sV, d => d === 0 || d === 4 || d === 8, 4), roces = diasLuna(sM, d => d === 3 || d === 9 || d === 6, 3);
+  return `<div class="lugar-mes"><small>💞 Tu pareja en ${MESES[hoy.getMonth()]}</small><p>El vínculo se nutre <b>${PAREJA_CASA[cV]}</b>.</p><span>Venus pasa por tu casa ${cV + 1}${r ? ' y está retrógrada: buen momento para revisar acuerdos y sanar heridas viejas, no para decisiones drásticas' : ''}.</span></div>
+    <p class="sub">🔥 Pasión y roces</p><p>Marte activa tu casa ${cM + 1}: la energía (y las discusiones) giran en torno a ${CASA_SR[cM].area}. Para cuidar el vínculo, evitá ${CASA_SR[cM].evitar}.</p>
+    ${lindos.length ? `<p class="sub">💗 Días lindos para la pareja</p><p>${lindos.join(', ')}. Ideales para una cita, una charla del corazón o un gesto lindo.</p>` : ''}
+    ${roces.length ? `<p class="sub">⚡ Días para respirar antes de responder</p><p>${roces.join(', ')}. Las emociones están a flor de piel: mejor no definir nada importante en caliente.</p>` : ''}
+    <p class="fila-comp"><button class="btn-sec" type="button" data-irsin>♾️ Ver nuestra sinastría</button></p>`;
+}
+function amorComplicadoHTML(){
+  const n = natal(); if (!n) return '';
+  const hoy = new Date(), jd = jdDe(new Date(hoy.getFullYear(), hoy.getMonth(), 15, 12)), cV = n.casa(longPlaneta('Venus', jd)), cS = n.casa(longPlaneta('Saturno', jd));
+  const hablar = diasLuna(Math.floor(n.pos.Mercurio / 30), d => d === 0 || d === 4 || d === 8, 3);
+  return `<div class="lugar-mes"><small>🌗 Para tu corazón en ${MESES[hoy.getMonth()]}</small><p>Este mes la claridad llega a través de <b>${CASA_SR[cV].area}</b>.</p><span>No hace falta decidir todo ya: mirá qué te hace bien y qué te quita paz.</span></div>
+    <p class="sub">🧭 Lo que te toca soltar</p><p>Saturno marca un límite en ${CASA_SR[cS].area}. Preguntate qué estás sosteniendo por miedo y no por amor.</p>
+    ${hablar.length ? `<p class="sub">🗣️ Días buenos para hablar claro</p><p>${hablar.join(', ')}.</p>` : ''}
+    <p class="ag-ayuda">Si necesitás una mirada más profunda, usá tu pregunta del mes: Belu te responde con una tirada para vos.</p>`;
+}
+const _amorBase = premAmor;
+premAmor = function(){
+  const est = (() => { try { return localStorage.getItem(AMOR_EST_K) || ''; } catch (e) { return ''; } })();
+  const sel = `<div class="amor-est"><p>¿Cómo está tu corazón hoy?</p><div>${[['pareja', '💞 En pareja'], ['sola', '🌙 Sin pareja'], ['complicado', '🌗 Es complicado']].map(([k, t]) => `<button type="button" class="chip-m${est === k ? ' on' : ''}" data-amorest="${k}">${t}</button>`).join('')}</div></div>`;
+  let h = _amorBase();
+  if (est === 'pareja' || est === 'complicado') {
+    h = h.replace(/<div class="lugar-mes">[\s\S]*?<\/div>/, '').replace(/<p class="sub">Dónde conocerla<\/p><p>[^<]*<\/p>/, '');
+    return sel + (est === 'pareja' ? amorParejaHTML() : amorComplicadoHTML()) + '<p class="sub">Cómo amás</p>' + h;
+  }
+  return sel + h;
+};
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.fondo) { generarFondo(b.dataset.fondo); return; }
+  if (b.dataset.tmcarta !== undefined) { b.classList.add('vuelta'); return; }
+  if (b.dataset.amorest) { try { localStorage.setItem(AMOR_EST_K, b.dataset.amorest); } catch (x) {} const cu = document.querySelector('details[data-premsec=amor] .prem-cuerpo'); if (cu) cu.innerHTML = premAmor(); return; }
+  if (b.dataset.irsin !== undefined) { PREM_ABIERTA = 'sinastria'; repintarPrem(); setTimeout(() => { const d = document.querySelector('details[data-premsec=sinastria]'); if (d) d.scrollIntoView({ behavior: 'smooth' }); }, 100); return; }
 });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);

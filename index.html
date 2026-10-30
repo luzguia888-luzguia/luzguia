@@ -2134,13 +2134,14 @@ document.addEventListener('click', async e => {
     const sel = i => `<select class="campo" id="rp-c${i}"><option value="">—</option>${NA.map((n, k) => `<option value="${k + 1}">${n}</option>`).join('')}</select>`;
     modal('Responder la pregunta del mes', `<p class="ayuda" style="margin-top:0"><b>${esc(r['Nombre'])}</b> preguntó: <i>"${esc(r['Pregunta'])}"</i></p>
       <div class="form"><label>Carta 1${sel(1)}</label><label>Carta 2${sel(2)}</label><label>Carta 3${sel(3)}</label>
-      <label class="full">Tu respuesta<textarea class="campo" id="rp-txt" rows="8" placeholder="Lo que te dicen las cartas para ella…"></textarea></label></div>
+      <label class="full">Tu respuesta<textarea class="campo" id="rp-txt" rows="8" placeholder="Lo que te dicen las cartas para ella…"></textarea></label>
+      <label class="full">Video de tu tirada (opcional)<input class="campo" id="rp-vid" placeholder="Link de YouTube (oculto) o de Drive"></label></div>
       <p class="ayuda">Aparece en su Mi Luz con las cartas, y si tiene mail le avisamos que llegó.</p>`,
       `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="rp-ok">Enviar respuesta</button>`);
     $('rp-ok').onclick = async ev => {
       const txt = $('rp-txt').value.trim(); if (!txt) { $('rp-txt').focus(); return; }
       ev.target.disabled = true;
-      try { await guardarCambios('Preguntas', r, { 'Respuesta': txt, 'Cartas': [1, 2, 3].map(i => $('rp-c' + i).value).filter(Boolean).join(','), 'Fecha respuesta': iso(HOY), 'Estado': 'Respondida' }, '💌 Respuesta enviada'); }
+      try { await guardarCambios('Preguntas', r, { 'Respuesta': txt, 'Cartas': [1, 2, 3].map(i => $('rp-c' + i).value).filter(Boolean).join(','), 'Fecha respuesta': iso(HOY), 'Estado': 'Respondida', 'Video': $('rp-vid').value.trim() }, '💌 Respuesta enviada'); }
       catch (err) { toast(err.message, true); ev.target.disabled = false; }
     };
     return;
@@ -2241,8 +2242,9 @@ Object.assign(ESQ, {
   'Contenido Premium': { nombre: 'contenido Premium', clave: 'Título', campos: [
     {k:'Título', t:'text', req:1, full:1, ph:'Ej: La energía de noviembre'}, {k:'Tipo', t:'sel', o:() => ['Tirada del mes','Meditación','Otro video o audio'], def:'Tirada del mes', req:1},
     {k:'Mes', t:'text', ph:'11/2026', def:String(HOY.getMonth() + 1).padStart(2, '0') + '/' + HOY.getFullYear(), lab:'Mes (MM/AAAA)'},
-    {k:'Enlace', t:'text', req:1, full:1, ph:'Link de YouTube, Drive (compartido "cualquiera con el enlace"), Spotify o mp3', lab:'Enlace del video o audio'},
-    {k:'Descripción', t:'area', full:1, filas:3}, {k:'Fecha', t:'date', def:'hoy', lab:'Fecha de carga'}, {k:'Activo', t:'check', def:true, lab:'Se ve en Mi Luz'}]},
+    {k:'Carta 1', t:'sel', o:() => ARCANOS.slice(1).map((n, i) => [i + 1, n]), lab:'Carta 1 · lo que trae el mes (tirada)'}, {k:'Carta 2', t:'sel', o:() => ARCANOS.slice(1).map((n, i) => [i + 1, n]), lab:'Carta 2 · lo que conviene soltar'}, {k:'Carta 3', t:'sel', o:() => ARCANOS.slice(1).map((n, i) => [i + 1, n]), lab:'Carta 3 · tu consejo'},
+    {k:'Enlace', t:'text', full:1, ph:'Opcional en la tirada: link de YouTube (oculto), Drive, Spotify o mp3', lab:'Enlace del video o audio'},
+    {k:'Descripción', t:'area', full:1, filas:5, lab:'Tu mensaje (en la tirada: lo que dicen las cartas para el mes)'}, {k:'Fecha', t:'date', def:'hoy', lab:'Fecha de carga'}, {k:'Activo', t:'check', def:true, lab:'Se ve en Mi Luz'}]},
   Suscripciones: { nombre: 'suscripción', clave: 'ID Persona', etiqueta: 'Nombre', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'ID Persona', t:'sel', o:optPersonas, req:1, lab:'Persona', full:1}, {k:'Tipo', t:'sel', o:() => ['Alta','Renovación','Prueba gratis','Regalo por invitar','Regalo'], req:1},
     {k:'Desde', t:'date'}, {k:'Hasta', t:'date'}, {k:'Monto', t:'money', chico:1}, {k:'Notas', t:'area', full:1}]},
@@ -2494,7 +2496,7 @@ V.hoy = () => {
   });
   H('Pedidos').filter(x => x['¿Reservó?'] === 'Sí' && fecha(x['Día reservado'])).forEach(x => { const d = diasEntre(HOY, fecha(x['Día reservado'])); if (d >= 0 && d <= 3) T.push({ ico:'📅', txt: `${esc(x['Nombre'])} reservó ${esc(x['Qué'])} para ${d === 0 ? 'hoy' : d === 1 ? 'mañana' : lindaFecha(fecha(x['Día reservado']))}`, sub: 'Lo confirmó desde Mi Luz', bt: btnWA(x['ID Persona'], 'invitacion', '', '', 'Escribirle') }); });
   const kHoy = claveMes(HOY), hayTirada = H('Contenido Premium').some(x => /tirada/i.test(x['Tipo']) && (() => { const m = String(x['Mes'] || '').match(/(\d{1,2})\/(\d{4})/); return m && +m[2] === HOY.getFullYear() && +m[1] === HOY.getMonth() + 1; })());
-  if (D.h['Contenido Premium'] && !hayTirada && HOY.getDate() <= 10) T.push({ ico:'🎥', txt: `Falta cargar la tirada de ${MESES[HOY.getMonth()]} para Premium`, sub: 'Mey graba el video, lo suben a YouTube (oculto) o a Drive y pegan el enlace', bt: btnNuevo('Contenido Premium', 'Cargar tirada') });
+  if (D.h['Contenido Premium'] && !hayTirada && HOY.getDate() <= 10) T.push({ ico:'🎥', txt: `Falta cargar la tirada de ${MESES[HOY.getMonth()]} para Premium`, sub: 'Elegí las 3 cartas y escribí tu mensaje (el video es opcional)', bt: btnNuevo('Contenido Premium', 'Cargar tirada') });
   if (!T.length) return h;
   const lis = T.map(x => `<li class="tarea"><span class="ico">${x.ico}</span><div class="txt">${x.txt}<small>${x.sub}</small></div><div class="bt">${x.bt}</div></li>`).join('');
   const vacio = '<p class="ayuda">No hay pendientes para hoy. Buen momento para planear el próximo encuentro.</p>';
