@@ -540,6 +540,21 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 #mini-snd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:57;display:flex;gap:4px;background:rgba(28,11,46,.95);border:1px solid var(--oro);border-radius:999px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 #mini-snd button{background:none;border:0;color:var(--luna);font:inherit;font-size:.85rem;padding:6px 12px;cursor:pointer;white-space:nowrap}#mini-snd button+button{border-left:1px solid var(--linea)}
 .tt{margin-top:18px}.tt-lect{text-align:left;margin-top:16px}.tt-lect .sub{margin-bottom:2px}
+
+/* v17 */
+.clima{margin:16px 0 0;border:1px solid var(--oro);border-radius:20px;padding:16px 16px 14px;background:radial-gradient(ellipse at 100% 0,rgba(185,138,230,.25),transparent 55%),radial-gradient(ellipse at 0 100%,rgba(212,175,106,.14),rgba(39,16,64,.9) 60%)}
+.clima-cab{display:flex;justify-content:space-between;align-items:flex-start}.clima small{color:var(--oro);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}.clima h4{font-family:var(--serif);font-size:1.6rem;font-weight:500;margin:2px 0 0}
+.clima-fecha{color:var(--bruma);font-size:.85rem;text-transform:capitalize}.clima-frase{font-family:var(--serif);font-size:1.18rem;line-height:1.45;margin:10px 0 12px}.clima-frase b{color:var(--oro-claro,#F3DCA0);font-weight:600}
+.clima-tres{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.clima-tres>div{border:1px solid var(--linea);border-radius:12px;padding:8px 6px;text-align:center;background:rgba(18,6,33,.45)}
+.clima-tres span{font-size:1.2rem;display:block}.clima-tres small{display:block;font-size:.66rem;letter-spacing:.08em;color:var(--bruma)}.clima-tres b{font-size:.84rem;font-weight:500;line-height:1.2;display:block;margin-top:2px}
+.clima-mom{margin-top:12px;border-top:1px solid var(--linea);padding-top:12px}.clima-mom>b{font-family:var(--serif);font-size:1.15rem;font-weight:500}.clima-mom p{margin:4px 0 10px;font-size:.93rem;color:var(--luna)}.clima-mom .btn,.clima-mom .btn-sec{font-size:.88rem;padding:9px 13px}
+.juego{margin:16px 0 0;border:1px solid rgba(232,160,180,.5);border-radius:20px;padding:16px;background:radial-gradient(ellipse at 0 0,rgba(232,160,180,.18),rgba(39,16,64,.9) 60%)}
+.juego small{color:#E8A0B4;font-size:.78rem;letter-spacing:.08em}.juego h4{font-family:var(--serif);font-size:1.5rem;font-weight:500;margin:2px 0 4px}.juego>p{margin:0 0 8px;color:var(--bruma)}
+.juego-lista{list-style:none;padding:0;margin:0;display:grid;gap:8px}.juego-lista li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--linea);border-radius:14px;padding:10px 12px;background:rgba(18,6,33,.45)}
+.juego-lista .jp{font-family:var(--serif);font-size:1.5rem;color:var(--oro);min-width:56px;font-variant-numeric:lining-nums}.juego-lista span{display:block;font-weight:500}.juego-lista i{display:block;color:var(--bruma);margin-top:4px;font-size:.9rem}
+.juego-ok{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:start;margin:12px 0 0;font-size:.92rem;cursor:pointer;text-align:left}.juego-ok small{grid-column:2}.juego-ok input{margin-top:4px;accent-color:#D4AF6A}.juego-ok small{color:var(--bruma);display:block}
+.ora-cartas .tm-carta{cursor:default}.ora-ver{border:1px solid var(--oro-suave);border-radius:14px;padding:12px 14px;margin:6px 0 10px;background:rgba(212,175,106,.08);text-align:center}.ora-ver b{font-family:var(--serif);font-size:1.3rem;font-weight:500}.ora-ver p{margin:4px 0 0}
+#aviso-offline{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:56;background:rgba(28,11,46,.95);border:1px solid var(--linea);border-radius:999px;padding:6px 14px;font-size:.8rem;color:var(--bruma);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -4000,6 +4015,192 @@ document.addEventListener('click', e => {
   if (b.dataset.ttcarta !== undefined) { b.classList.add('vuelta'); const todas = [...document.querySelectorAll('[data-ttcarta]')]; if (todas.every(x => x.classList.contains('vuelta'))) setTimeout(() => { const l = $('tt-lect'); if (l) { l.classList.remove('oculto'); l.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 700); return; }
 });
 document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.vol !== undefined) { VOL = +e.target.value; const a = audio(); if (AMB) AMB.salida.gain.setTargetAtTime(VOL, a.currentTime, .1); if (FREQ) FREQ.salida.gain.setTargetAtTime(VOL * .7, a.currentTime, .1); } });
+
+
+/* ───── v17: clima energético, oráculo, juego del encuentro, modo sin conexión y audio con pantalla apagada ───── */
+
+/* Audio: todo pasa por un reproductor "de música" (sigue con la pantalla apagada donde el sistema lo permite) y controles en la pantalla de bloqueo */
+let MASTER = null, AUD_EL = null;
+function salidaAudio(){
+  const a = audio(); if (MASTER) return MASTER;
+  MASTER = a.createGain(); MASTER.gain.value = 1;
+  try {
+    if (a.createMediaStreamDestination) {
+      const dest = a.createMediaStreamDestination(); MASTER.connect(dest);
+      AUD_EL = document.createElement('audio'); AUD_EL.setAttribute('playsinline', ''); AUD_EL.srcObject = dest.stream; AUD_EL.play().catch(() => { MASTER.disconnect(); MASTER.connect(a.destination); });
+    } else MASTER.connect(a.destination);
+  } catch (e) { try { MASTER.disconnect(); } catch (x) {} MASTER.connect(a.destination); }
+  return MASTER;
+}
+const _ctxDest = () => salidaAudio();
+// Reemplaza la salida directa por la salida común
+(function(){
+  const proto = (window.AudioNode || function(){}).prototype, orig = proto.connect;
+  if (!orig || proto._lgParche) return; proto._lgParche = 1;
+  proto.connect = function(dest){ if (AC && dest === AC.destination && this !== MASTER) return orig.call(this, salidaAudio()); return orig.apply(this, arguments); };
+})();
+function sesionMedia(titulo){
+  if (!('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({ title: titulo, artist: 'Mi Luz · Luz Guía', artwork: [{ src: 'icono-512.png', sizes: '512x512', type: 'image/png' }] });
+    navigator.mediaSession.setActionHandler('pause', () => { if (AC) AC.suspend(); if (AUD_EL) AUD_EL.pause(); navigator.mediaSession.playbackState = 'paused'; });
+    navigator.mediaSession.setActionHandler('play', () => { if (AC) AC.resume(); if (AUD_EL) AUD_EL.play().catch(() => {}); navigator.mediaSession.playbackState = 'playing'; });
+    navigator.mediaSession.setActionHandler('stop', () => detenerTodo());
+    navigator.mediaSession.playbackState = 'playing';
+  } catch (e) {}
+}
+const _pintarMiniBase = pintarMini;
+pintarMini = function(){ _pintarMiniBase(); if (AMB_K || FREQ_K) sesionMedia([AMB_K ? (AMBIENTES.find(x => x[0] === AMB_K) || [])[2] : '', FREQ_K ? FREQ_K + ' Hz' : ''].filter(Boolean).join(' + ')); };
+
+/* Modo sin conexión: se guarda lo último que cargó y se usa si no hay internet */
+const CACHE_P = 'luzguia_cache_p';
+const _cargarBase = cargar;
+cargar = async function(){
+  if (!CODIGO) return pedirCodigo();
+  if (!navigator.onLine) { if (usarCache()) return; }
+  await _cargarBase();
+  if (P && P.ok) { try { localStorage.setItem(CACHE_P, JSON.stringify(Object.assign({}, P, { _guardado: Date.now(), _codigo: CODIGO }))); } catch (e) {} quitarAvisoOffline(); }
+  else if (!$('portal') || $('portal').classList.contains('oculto')) usarCache();
+};
+function usarCache(){
+  let c = null; try { c = JSON.parse(localStorage.getItem(CACHE_P) || 'null'); } catch (e) {}
+  if (!c || c._codigo !== CODIGO) return false;
+  P = c; P.arcano = completar(P.arcano); P.anual = completar(P.anual);
+  try { pintar(); pintarAgenda(); setTimeout(auto, 50); $('estado').classList.add('oculto'); $('portal').classList.remove('oculto'); postCarga(); } catch (e) { console.error(e); return false; }
+  const d = new Date(c._guardado); let el = $('aviso-offline'); if (!el) { el = document.createElement('div'); el.id = 'aviso-offline'; document.body.appendChild(el); }
+  el.innerHTML = `📴 Sin conexión · tu espacio guardado el ${d.getDate()}/${d.getMonth() + 1} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  return true;
+}
+function quitarAvisoOffline(){ const el = $('aviso-offline'); if (el) el.remove(); }
+window.addEventListener('online', () => { if ($('aviso-offline')) cargar(); });
+
+/* A. Tu clima energético: tarot + astrología + numerología en un solo vistazo */
+function climaHoy(){
+  const { d, ap } = datosHoy(), num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre);
+  const nat = P.diaMes && P.anioNac ? Math.floor(longSolar(jdNac(P.diaMes, P.anioNac, P.horaNac)) / 30) : null, dif = nat === null ? -1 : (ZOD.indexOf(d.signo) - nat + 12) % 12;
+  let tension = 0; if ([3, 6, 9].includes(dif)) tension += 2; if (d.retro.Mercurio) tension++; if (d.voc && d.voc.length) tension++; if (d.fase === 'llena') tension++; if (dif === 0 || [4, 8].includes(dif)) tension--;
+  const clima = tension >= 3 ? ['⛈️', 'Intenso'] : tension >= 1 ? ['⛅', 'Movido'] : ['☀️', 'Sereno'];
+  return { d, ap, num, clima, dif };
+}
+const _momentoBase = momentoHTML;
+momentoHTML = function(){
+  let c; try { c = climaHoy(); } catch (e) { return _momentoBase(); }
+  const { d, ap, num, clima } = c, tono = LUNA_TONO[d.signo] || ['', ''];
+  const partes = [];
+  if (ap) partes.push(`<b>${esc(NOM[ap])}</b>`);
+  partes.push(`la <b>Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}</b>`);
+  if (num.dia) partes.push(`tu <b>día personal ${num.dia}</b>`);
+  const frase = 'Hoy ' + (partes.length > 2 ? partes.slice(0, -1).join(', ') + ' y ' + partes[partes.length - 1] : partes.join(' y ')) + ' se cruzan' + (num.dia ? `: buen día para ${DIA_PERS[num.dia]}, con ${tono[1]}.` : `: un día con ${tono[1]}.`);
+  let m = null; try { m = momentoHoy(); } catch (e) {}
+  return `<section class="clima"><div class="clima-cab"><div><small>Tu clima energético de hoy</small><h4>${clima[0]} ${clima[1]}</h4></div><span class="clima-fecha">${DIAS[new Date().getDay()]} ${new Date().getDate()}</span></div>
+    <p class="clima-frase">${frase}</p>
+    <div class="clima-tres">${ap ? `<div><span>🃏</span><small>Tarot</small><b>${esc(NOM[ap])}</b></div>` : ''}<div><span>🌙</span><small>Astrología</small><b>Luna en ${d.signo}</b></div>${num.dia ? `<div><span>🔢</span><small>Numerología</small><b>Día ${num.dia}</b></div>` : ''}</div>
+    ${m ? `<div class="clima-mom"><b>${m[0]} ${m[1]}</b><p>${m[2]}</p><div class="fila-bt" style="justify-content:flex-start">${m[3].map(([t, v, txt], i) => `<button class="${i ? 'btn-sec' : 'btn'}" type="button" data-momento="${t}|${v}">${txt}</button>`).join('')}</div></div>` : ''}</section>`;
+};
+
+/* D. Pregúntale al Oráculo: tres cartas cruzadas con su carta natal, sus tránsitos y su numerología */
+const ORA_TEMAS = {
+  trabajo: ['💼', 'Trabajo', [9, 5], ['MC', 'Sol', 'Saturno'], 'Saturno'],
+  dinero: ['💰', 'Dinero', [1, 7], ['Júpiter', 'Venus'], 'Júpiter'],
+  amor: ['💞', 'Amor', [4, 6], ['Venus', 'Luna', 'Marte'], 'Venus'],
+  decision: ['⚖️', 'Una decisión', [0, 2], ['Sol', 'Mercurio', 'ASC'], 'Mercurio'],
+  crecer: ['🌱', 'Mi camino', [8, 11], ['Sol', 'Júpiter', 'Luna'], 'Júpiter']
+};
+const CARTA_TONO = { 1: 1, 3: 1, 6: 1, 7: 1, 8: 1, 10: 1, 14: 1, 17: 1, 19: 1, 21: 1, 22: 1, 12: -1, 13: -1, 15: -1, 16: -1, 18: -1 };
+let ORA = { tema: 'trabajo' };
+function oraculoHTML(){
+  const hist = lsGet('luzguia_oraculo', []) || [], hoyK = isoLocal(new Date()), usadas = hist.filter(x => x.dia === hoyK).length, limite = P.organizadora ? 99 : 3;
+  let h = `<p class="intro">Hacé una pregunta puntual y el Oráculo la responde cruzando tres cartas del tarot con tu carta natal, los planetas que hoy pasan por esa área de tu vida y tus números del mes.</p>
+    <div class="form-nac"><p class="calma-lab" style="margin-top:0">¿Sobre qué querés preguntar?</p>${chipsOpc('oratema', Object.entries(ORA_TEMAS).map(([k, t]) => [k, t[0] + ' ' + t[1]]), ORA.tema)}
+    <label>Tu pregunta<textarea id="ora-txt" maxlength="200" placeholder="Por ejemplo: ¿Es buen momento para cambiar de trabajo?"></textarea></label>
+    ${usadas < limite ? `<button class="btn" type="button" data-oraculo>Consultar al Oráculo 🔮</button><p class="ag-ayuda">Te quedan ${limite - usadas} ${limite - usadas === 1 ? 'consulta' : 'consultas'} hoy. Concentrate en tu pregunta antes de tocar.</p>` : '<p class="ag-ayuda">Ya hiciste tus 3 consultas de hoy. El Oráculo descansa: mañana podés volver a preguntar.</p>'}</div><div id="ora-resp"></div>`;
+  if (hist.length) h += '<p class="sub">Tus consultas anteriores</p>' + hist.slice().reverse().slice(0, 8).map(x => `<details class="cont-item"><summary><b>${esc(x.preg)}</b><small>${esc(x.fecha)}</small></summary><div>${x.html}</div></details>`).join('');
+  return h;
+}
+function consultarOraculo(preg){
+  const n = natal(), T = ORA_TEMAS[ORA.tema], hoy = new Date(); if (!n) return '<p>Necesitamos tu fecha de nacimiento.</p>';
+  const cs = []; let i = 0; while (cs.length < 3 && i < 50) { const c = (hashTxt(CODIGO + preg + isoLocal(hoy) + i) % 22) + 1; if (!cs.includes(c)) cs.push(c); i++; }
+  const jd = jdDe(new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 12));
+  const enCasa = ['Sol', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno'].filter(p => T[2].includes(n.casa(p === 'Sol' ? longSolar(jd) : longPlaneta(p, jd))));
+  let ev = []; try { ev = eventosPeriodo(new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()), 30).filter(e => e.tipo === 'asp' && T[3].includes(e.o)); } catch (x) {}
+  const buenos = ev.filter(e => e.cls === 'arm' || (e.cls === 'conj' && ['Júpiter', 'Venus', 'Sol'].includes(e.t))), tensos = ev.filter(e => e.cls === 'tenso' || (e.cls === 'conj' && ['Saturno', 'Marte'].includes(e.t)));
+  const retro = retrogrado(T[4], jd), num = numerologia(P.diaMes, P.anioNac, '');
+  let pts = cs.reduce((a, c, k) => a + (CARTA_TONO[c] || 0) * (k === 1 ? .5 : 1), 0) + buenos.length * .8 - tensos.length * .7 + (enCasa.includes('Júpiter') || enCasa.includes('Venus') ? 1 : 0) - (retro ? 1 : 0) + ([1, 3, 5, 8].includes(num.mes) ? .5 : 0);
+  const veredicto = pts >= 1.5 ? ['✨ Las energías acompañan', 'Es un buen momento para avanzar: el cielo y las cartas van en la misma dirección.'] : pts >= -.5 ? ['🌗 Momento de ir con cuidado', 'Hay luz, pero también algo para ajustar antes de dar el paso.'] : ['🌑 Mejor esperar un poco', 'Las energías piden pausa: preparate ahora y decidí más adelante.'];
+  const dia = f => f.getDate() + ' de ' + MESES[f.getMonth()];
+  const porCasa = {}; enCasa.forEach(pl => { const cc = n.casa(pl === 'Sol' ? longSolar(jd) : longPlaneta(pl, jd)); (porCasa[cc] = porCasa[cc] || []).push(pl); });
+  const yJ = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1] : a[0];
+  let cielo = enCasa.length ? 'Ahora mismo ' + Object.entries(porCasa).map(([cc, pls]) => `${yJ(pls)} ${pls.length === 1 ? 'pasa' : 'pasan'} por tu casa ${+cc + 1} (${CASA_SR[cc].area})`).join(', y ') + ': el tema está activo en tu carta.' : `Por ahora ningún planeta rápido pasa por tus casas de ${T[1].toLowerCase()}: lo que construyas depende más de tu impulso que del momento.`;
+  if (buenos.length) cielo += ` Tu mejor día cerca es el <b>${dia(buenos[0].f)}</b> (${buenos[0].t} ${buenos[0].nom === 'conjunción' ? 'se une a' : 'armoniza con'} tu ${buenos[0].o === 'MC' ? 'Medio Cielo' : buenos[0].o === 'ASC' ? 'Ascendente' : buenos[0].o}).`;
+  if (tensos.length) cielo += ` Cuidado alrededor del <b>${dia(tensos[0].f)}</b>: ${tensos[0].t} tensiona tu ${tensos[0].o === 'MC' ? 'Medio Cielo' : tensos[0].o}.`;
+  if (retro) cielo += ` ${T[4]} está retrógrado: revisá antes de firmar o decidir algo definitivo.`;
+  const html = `<div class="ora-cartas tirada-mes">${cs.map((c, k) => `<div><span class="tm-carta vuelta"><span class="tm-dorso">✦</span><span class="tm-frente"><img src="${cartaSrc(c)}" alt="" onerror="this.remove()"><b>${esc(NOM[c])}</b></span></span><small>${['La energía de tu pregunta', 'Lo que te frena', 'El consejo'][k]}</small></div>`).join('')}</div>
+    <div class="ora-ver"><b>${veredicto[0]}</b><p>${veredicto[1]}</p></div>
+    <p class="sub">🃏 Lo que dicen las cartas</p><p><b>${esc(NOM[cs[0]])}:</b> ${ARC[cs[0]].e.split('. ')[0]}. <b>${esc(NOM[cs[1]])}</b> muestra lo que te frena: ${minus(ARC[cs[1]].sombra)}. <b>${esc(NOM[cs[2]])}</b> te aconseja: ${minus(ARC[cs[2]].a[0])}</p>
+    <p class="sub">🪐 Lo que dice tu cielo</p><p>${cielo}</p>
+    ${num.mes ? `<p class="sub">🔢 Tus números</p><p>Estás en tu mes personal ${num.mes}: ${NUM_TXT[num.mes] ? NUM_TXT[num.mes][0].toLowerCase() : ''}${num.dia ? '; hoy, día ' + num.dia + ', buen día para ' + DIA_PERS[num.dia] : ''}.</p>` : ''}
+    <p class="preg">${ARC[cs[2]].q}</p><p class="afir">✨ ${ARC[cs[2]].af}</p>
+    <p class="ag-ayuda">El Oráculo te da una orientación. Para una lectura hecha por Belu, usá tu pregunta del mes.</p>`;
+  const hist = lsGet('luzguia_oraculo', []) || []; hist.push({ dia: isoLocal(hoy), fecha: hoy.getDate() + '/' + (hoy.getMonth() + 1), preg, html }); lsSet('luzguia_oraculo', hist.slice(-20));
+  evento('Sección', 'Oráculo: ' + T[1]);
+  return html;
+}
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'pregunta');
+  PREMIUM_LISTA.splice(i, 0, ['oraculo', '🔮', 'Pregúntale al Oráculo', 'Preguntas puntuales respondidas con tres cartas cruzadas con tu carta natal, tus tránsitos y tus números.']);
+  PREM_FN.oraculo = () => oraculoHTML();
+})();
+
+/* C. Juego del encuentro: con quién de la mesa tenés más afinidad (solo entre quienes aceptan) */
+function afinidad(dmA, yA, hA, dmB, yB){
+  const yo = signosPersona(dmA, yA, hA), el = signosPersona(dmB, yB, ''); let pts = 0; const favor = [];
+  SIN_PARES.forEach(([a, b, t]) => { const ca = catAspecto(yo[a], el[b]); pts += { conj: 2, arm: 2, tenso: -1, opos: 1, neutro: 0 }[ca]; if (ca === 'arm' || ca === 'conj') favor.push(t.toLowerCase()); });
+  const e1 = ELEM_SIGNO[yo.Sol % 4], e2 = ELEM_SIGNO[el.Sol % 4], comp = e1 === e2 || [e1, e2].sort().join() === 'Aire,Fuego' || [e1, e2].sort().join() === 'Agua,Tierra'; if (comp) pts += 2;
+  const c1 = chinoDe(dmA, yA), c2 = chinoDe(dmB, yB), rc = relChina(CHINO.indexOf(c1.an), CHINO.indexOf(c2.an)); pts += { mismo: 1, aliado: 3, amigo: 3, choque: -1, dano: 0, neutro: 1 }[rc];
+  return { pct: Math.max(52, Math.min(97, Math.round(62 + pts * 2.6))), favor, e1, e2, solA: ZOD[yo.Sol], solB: ZOD[el.Sol], chinoB: c2.an.ic + ' ' + c2.an.a };
+}
+const ROMPEHIELO = {
+  Fuego: ['¿Cuál fue la última locura que hiciste por impulso?', '¿Qué te enciende el alma?'], Tierra: ['¿Qué placer simple no negociás?', '¿Qué estás construyendo este año?'],
+  Aire: ['¿Qué tema podrías charlar horas?', '¿Qué libro o serie te voló la cabeza?'], Agua: ['¿Qué te emociona hasta las lágrimas?', '¿Qué lugar te hace sentir en casa?']
+};
+function juegoHTML(){
+  const hoy = new Date(), e = (P.encuentros || []).find(x => x.inscripta && x.juego && x.juego.length && (() => { const m = String(x.fecha).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m && +m[1] === hoy.getDate() && +m[2] === hoy.getMonth() + 1; })());
+  if (!e || !P.diaMes || !P.anioNac) return '';
+  const L = e.juego.map(x => Object.assign({ n: x.nombre }, afinidad(P.diaMes, P.anioNac, P.horaNac, x.diaMes, x.anio))).sort((a, b) => b.pct - a.pct);
+  return `<section class="juego"><small>🍷 Juego de la noche · ${esc(e.nombre)}</small><h4>Tu mesa de hoy</h4><p>Así se combina tu energía con la de quienes se sumaron al juego:</p>
+    <ul class="juego-lista">${L.map((x, i) => `<li><b class="jp">${x.pct}%</b><div><span>${i === 0 ? '💫 ' : ''}${esc(x.n)} · ${x.solB}, ${x.chinoB}</span>${x.favor.length ? (/^sus /.test(x.favor[0]) ? 'Las unen ' : 'Las une ') + x.favor[0] + '.' : 'Se complementan: cada una trae lo que a la otra le falta.'} <i>Preguntale: "${ROMPEHIELO[x.e2][(hashTxt(x.n) + i) % 2]}"</i></div></li>`).join('')}</ul>
+    <p class="ag-ayuda">Solo aparecen quienes aceptaron participar. Lo demás… se descubre en la mesa ✦</p></section>`;
+}
+const _hoyBase3 = hoyHTML;
+hoyHTML = function(){ let h = _hoyBase3(); const j = juegoHTML(); if (!j) return h; const i = h.indexOf('<section class="clima">'); if (i < 0) return j + h; const k = h.indexOf('</section>', i) + 10; return h.slice(0, k) + j + h.slice(k); };
+// En la lista de encuentros: aceptar participar del juego
+const _agBase = agendaHTML; // (la lista de encuentros está en Novedades)
+const _novBase = novedadesHTML;
+novedadesHTML = function(){
+  let h = _novBase();
+  (P.encuentros || []).filter(e => e.inscripta).forEach(e => {
+    const marca = `data-encuentro="${esc(e.id)}"`, ya = !!e.juegoYo;
+    const caja = `<label class="juego-ok"><input type="checkbox" data-juego="${esc(e.id)}"${ya ? ' checked' : ''}> ✨ Quiero participar del juego de la noche <small>(se comparte tu nombre y tu fecha de nacimiento solo con quienes también participen de este encuentro)</small></label>`;
+    const i = h.indexOf('<h4>' + esc(e.nombre) + '</h4>'); if (i < 0) return; const fin = h.indexOf('</article>', i); if (fin < 0) return;
+    h = h.slice(0, fin) + caja + h.slice(fin);
+  });
+  return h;
+};
+document.addEventListener('change', async e => {
+  const t = e.target; if (!t.dataset || !t.dataset.juego) return;
+  const en = (P.encuentros || []).find(x => x.id === t.dataset.juego); if (en) en.juegoYo = t.checked;
+  try { await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'juego', codigo: CODIGO, encuentro: t.dataset.juego, participa: t.checked }) }); } catch (x) {}
+});
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.opc && b.dataset.opc.startsWith('oratema|')) { ORA.tema = b.dataset.opc.split('|')[1]; return; }
+  if (b.dataset.oraculo !== undefined) {
+    const t = ($('ora-txt').value || '').trim(); if (t.length < 6) { $('ora-txt').focus(); return; }
+    b.disabled = true; b.textContent = 'Barajando las cartas…';
+    setTimeout(() => { const html = consultarOraculo(t); const cu = document.querySelector('details[data-premsec=oraculo] .prem-cuerpo'); if (cu) { cu.innerHTML = oraculoHTML(); $('ora-resp').innerHTML = `<div class="respuesta"><small>Tu consulta</small><p class="preg">${esc(t)}</p>${html}</div>`; $('ora-resp').scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 1400);
+  }
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
