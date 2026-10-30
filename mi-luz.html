@@ -3861,9 +3861,12 @@ const ARCH_SONIDO = { 'f-fogon': 'dragon-studio-campfire-by-the-sea-467490 (1).m
 function crearAmbiente(k){
   const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
   if (/^f-/.test(k)) {
-    const el = new Audio(encodeURI(ARCH_SONIDO[k] || ('sonido-' + k.slice(2) + '.mp3'))); el.loop = true; el.crossOrigin = 'anonymous';
-    const src = a.createMediaElementSource(el); src.connect(salida); el.play().catch(() => {}); nodos.push({ stop: () => { el.pause(); el.src = ''; } });
-    el.addEventListener('error', () => { avisoSonido('Ese sonido todavía no está subido. Mientras tanto probá Olas del mar o Lluvia suave.'); detenerAmbiente(); });
+    const el = new Audio(); el.loop = true; el.preload = 'auto'; el.setAttribute('playsinline', ''); el.volume = 0; el.src = encodeURI(ARCH_SONIDO[k] || ('sonido-' + k.slice(2) + '.mp3'));
+    let vt = setInterval(() => { el.volume = Math.min(VOL, el.volume + VOL / 20); if (el.volume >= VOL) { clearInterval(vt); vt = null; } }, 120);
+    el.play().catch(() => { const reintento = () => { el.play().catch(() => {}); document.removeEventListener('click', reintento, true); }; document.addEventListener('click', reintento, true); });
+    nodos.push({ stop: () => { if (vt) clearInterval(vt); const f = setInterval(() => { el.volume = Math.max(0, el.volume - .05); if (el.volume <= 0) { clearInterval(f); el.pause(); el.removeAttribute('src'); el.load(); } }, 70); } });
+    salida.el = el;
+    el.addEventListener('error', () => { if (!el.getAttribute('src')) return; avisoSonido('No pude cargar ese sonido. Revisá tu conexión y probá de nuevo; mientras tanto probá Olas del mar o Lluvia suave.'); detenerAmbiente(); });
   } else {
     const base = ruido(k === 'mar' || k === 'marron' ? 'marron' : k === 'blanco' ? 'blanco' : 'rosa'), filtro = a.createBiquadFilter(), g = a.createGain();
     base.connect(filtro); filtro.connect(g); g.connect(salida); base.start(); nodos.push(base);
@@ -4040,7 +4043,7 @@ document.addEventListener('click', e => {
   if (b.dataset.tt) { abrirTirada(b.dataset.tt); return; }
   if (b.dataset.ttcarta !== undefined) { b.classList.add('vuelta'); const todas = [...document.querySelectorAll('[data-ttcarta]')]; if (todas.every(x => x.classList.contains('vuelta'))) setTimeout(() => { const l = $('tt-lect'); if (l) { l.classList.remove('oculto'); l.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 700); return; }
 });
-document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.vol !== undefined) { VOL = +e.target.value; const a = audio(); if (AMB) AMB.salida.gain.setTargetAtTime(VOL, a.currentTime, .1); if (FREQ) FREQ.salida.gain.setTargetAtTime(VOL * .7, a.currentTime, .1); } });
+document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.vol !== undefined) { VOL = +e.target.value; const a = audio(); if (AMB) AMB.salida.gain.setTargetAtTime(VOL, a.currentTime, .1); if (AMB && AMB.salida.el) AMB.salida.el.volume = VOL; if (FREQ) FREQ.salida.gain.setTargetAtTime(VOL * .7, a.currentTime, .1); } });
 
 
 /* ───── v17: clima energético, oráculo, juego del encuentro, modo sin conexión y audio con pantalla apagada ───── */
