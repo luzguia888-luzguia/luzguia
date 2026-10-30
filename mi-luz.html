@@ -516,6 +516,30 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .resp-video{margin:8px 0 12px}.resp-video small{display:block;color:var(--oro);margin-bottom:6px}
 .amor-est{text-align:center;margin:0 0 14px}.amor-est p{margin:0 0 8px;color:var(--bruma)}.amor-est>div{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .chip-m.on{background:var(--oro);color:var(--noche);border-color:var(--oro)}
+
+/* v16 bienestar */
+.momento{display:flex;gap:14px;margin:16px 0 0;border:1px solid var(--oro);border-radius:18px;padding:16px;background:radial-gradient(ellipse at 0 0,rgba(212,175,106,.16),rgba(39,16,64,.85) 60%)}
+.mom-ic{font-size:2rem;line-height:1}.momento small{color:var(--oro);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase}.momento h4{font-family:var(--serif);font-size:1.45rem;font-weight:500;margin:2px 0 4px}.momento p{margin:0 0 10px;color:var(--luna);font-size:.95rem}
+.momento .fila-bt{margin:0;flex-wrap:wrap}.momento .btn,.momento .btn-sec{font-size:.9rem;padding:9px 14px}
+.calma-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.calma-tiles button,.tt-chips button{border:1px solid var(--linea);border-radius:16px;background:rgba(39,16,64,.8);color:var(--luna);padding:16px 8px;cursor:pointer;font:inherit;font-size:.92rem;display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .3s,transform .3s}
+.calma-tiles button span,.tt-chips button span{font-size:1.7rem}.calma-tiles button:hover,.tt-chips button:hover{border-color:var(--oro);transform:translateY(-2px)}
+.tt-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.tt-chips button{flex-direction:row;justify-content:flex-start;padding:12px 14px;text-align:left}
+#calma{position:fixed;inset:0;z-index:58;background:radial-gradient(ellipse at 50% 20%,#3b1760,#140726 70%);overflow-y:auto;padding:calc(20px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom))}
+.calma-in{max-width:480px;margin:0 auto;position:relative;text-align:center}.calma-in h3{font-family:var(--serif);font-size:1.9rem;font-weight:500;margin:4px 0 8px}.calma-in>p{color:var(--bruma)}
+.calma-k{color:var(--oro);letter-spacing:.14em;text-transform:uppercase;font-size:.78rem}.calma-x{position:absolute;right:0;top:0;background:none;border:1px solid var(--linea);color:var(--luna);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:1rem}
+.calma-lab{margin:16px 0 6px;color:var(--bruma);font-size:.85rem;text-align:left}.calma-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}.calma-in .btn{margin-top:18px;padding:13px 28px}
+.resp-vista,.tim-vista{min-height:78vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.resp-circ{width:190px;height:190px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 40% 35%,rgba(243,220,160,.55),rgba(185,138,230,.35) 55%,rgba(91,42,134,.25));box-shadow:0 0 60px rgba(212,175,106,.35),inset 0 0 40px rgba(255,255,255,.12);transform:scale(.75);transition:transform 4s ease-in-out}
+.resp-circ span{font-family:var(--serif);font-size:1.7rem}.resp-circ.reten{box-shadow:0 0 90px rgba(212,175,106,.55),inset 0 0 40px rgba(255,255,255,.18)}.resp-rest{color:var(--bruma);font-variant-numeric:tabular-nums}
+.tim-vista{position:relative}.tim-ring{width:min(280px,72vw)}.tim-num{position:absolute;top:calc(50% - 70px);font-family:var(--serif);font-size:3.4rem;font-variant-numeric:lining-nums tabular-nums}.tim-sub{color:var(--bruma);margin:0}
+.snd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.snd-grid.frec{grid-template-columns:repeat(2,1fr)}
+.snd{border:1px solid var(--linea);border-radius:14px;background:rgba(28,11,46,.6);color:var(--luna);padding:12px 6px;cursor:pointer;font:inherit;font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:4px}
+.snd span{font-size:1.5rem}.snd b{color:var(--oro);font-weight:600}.snd.on{border-color:var(--oro);background:rgba(212,175,106,.16);box-shadow:0 0 18px rgba(212,175,106,.25)}
+.snd-vol{width:100%;accent-color:#D4AF6A}
+#mini-snd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:57;display:flex;gap:4px;background:rgba(28,11,46,.95);border:1px solid var(--oro);border-radius:999px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+#mini-snd button{background:none;border:0;color:var(--luna);font:inherit;font-size:.85rem;padding:6px 12px;cursor:pointer;white-space:nowrap}#mini-snd button+button{border-left:1px solid var(--linea)}
+.tt{margin-top:18px}.tt-lect{text-align:left;margin-top:16px}.tt-lect .sub{margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -3752,6 +3776,230 @@ document.addEventListener('click', e => {
   if (b.dataset.amorest) { try { localStorage.setItem(AMOR_EST_K, b.dataset.amorest); } catch (x) {} const cu = document.querySelector('details[data-premsec=amor] .prem-cuerpo'); if (cu) cu.innerHTML = premAmor(); return; }
   if (b.dataset.irsin !== undefined) { PREM_ABIERTA = 'sinastria'; repintarPrem(); setTimeout(() => { const d = document.querySelector('details[data-premsec=sinastria]'); if (d) d.scrollIntoView({ behavior: 'smooth' }); }, 100); return; }
 });
+
+
+/* ───── v16: bienestar — Tu momento de hoy, respiración guiada, temporizador místico,
+         paisajes sonoros y tiradas temáticas (todo conectado con el cielo del día) ───── */
+let AC = null;
+function audio(){ if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); return AC; }
+let LOCK = null;
+async function pantallaEncendida(si){ try { if (si && 'wakeLock' in navigator && !LOCK) { LOCK = await navigator.wakeLock.request('screen'); LOCK.addEventListener('release', () => LOCK = null); } if (!si && LOCK) { await LOCK.release(); LOCK = null; } } catch (e) {} }
+function toque(t0, f, dur, vol, parciales){
+  const a = audio(), out = a.createGain(); out.gain.value = vol; out.connect(a.destination);
+  parciales.forEach(([m, g, dec], i) => [0, 1].forEach(k => {
+    const o = a.createOscillator(), gg = a.createGain(); o.type = 'sine'; o.frequency.value = f * m + k * (0.6 + i * .4);
+    gg.gain.setValueAtTime(0.0001, t0); gg.gain.exponentialRampToValueAtTime(g * .5, t0 + .015); gg.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * dec);
+    o.connect(gg); gg.connect(out); o.start(t0); o.stop(t0 + dur * dec + .1);
+  }));
+}
+const SONIDO = {
+  cuenco: t => toque(t, 216, 11, .32, [[1, 1, 1], [2.71, .45, .7], [5.15, .22, .45], [8.6, .1, .3]]),
+  gong: t => { toque(t, 74, 16, .4, [[1, 1, 1], [1.47, .7, .85], [2.09, .5, .7], [2.76, .35, .55], [3.6, .2, .4], [4.9, .12, .3]]); },
+  campana: t => toque(t, 880, 4, .18, [[1, 1, 1], [2.4, .4, .6], [5.9, .15, .35]])
+};
+function sonar(nombre){ try { SONIDO[nombre](audio().currentTime + .05); } catch (e) {} }
+
+/* Paisajes sonoros: se generan en el momento (sin archivos) + grabaciones opcionales subidas a GitHub */
+const AMBIENTES = [
+  ['mar', '🌊', 'Olas del mar'], ['lluvia', '🌧️', 'Lluvia suave'], ['viento', '🍃', 'Viento'], ['rosa', '☁️', 'Ruido rosa'],
+  ['blanco', '🤍', 'Ruido blanco'], ['marron', '🤎', 'Ruido marrón'],
+  ['f-fogon', '🔥', 'Fogón'], ['f-bosque', '🌲', 'Bosque'], ['f-pajaros', '🐦', 'Pájaros al amanecer']
+];
+const FRECUENCIAS = [[174, 'Alivio'], [285, 'Regeneración'], [396, 'Soltar el miedo'], [417, 'Cambio'], [432, 'Armonía'], [528, 'Amor y sanación'], [639, 'Vínculos'], [741, 'Claridad'], [852, 'Intuición'], [963, 'Conexión espiritual']];
+let AMB = null, FREQ = null, VOL = .6, APAGAR_T = null, AMB_K = '', FREQ_K = 0;
+function ruido(tipo){
+  const a = audio(), n = a.sampleRate * 4, buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, ult = 0;
+  for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1;
+    if (tipo === 'blanco') d[i] = w * .5;
+    else if (tipo === 'marron') { ult = (ult + .02 * w) / 1.02; d[i] = ult * 3.2; }
+    else { b0 = .99886 * b0 + w * .0555179; b1 = .99332 * b1 + w * .0750759; b2 = .969 * b2 + w * .153852; b3 = .8665 * b3 + w * .3104856; b4 = .55 * b4 + w * .5329522; b5 = -.7616 * b5 - w * .016898; d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + w * .5362) * .11; } }
+  const s = a.createBufferSource(); s.buffer = buf; s.loop = true; return s;
+}
+function lfo(param, f, prof, centro){ const a = audio(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; g.gain.value = prof; o.connect(g); g.connect(param); param.value = centro; o.start(); return o; }
+function crearAmbiente(k){
+  const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
+  if (/^f-/.test(k)) {
+    const el = new Audio('sonido-' + k.slice(2) + '.mp3'); el.loop = true; el.crossOrigin = 'anonymous';
+    const src = a.createMediaElementSource(el); src.connect(salida); el.play().catch(() => {}); nodos.push({ stop: () => { el.pause(); el.src = ''; } });
+    el.addEventListener('error', () => { avisoSonido('Ese sonido todavía no está subido. Mientras tanto probá Olas del mar o Lluvia suave.'); detenerAmbiente(); });
+  } else {
+    const base = ruido(k === 'mar' || k === 'marron' ? 'marron' : k === 'blanco' ? 'blanco' : 'rosa'), filtro = a.createBiquadFilter(), g = a.createGain();
+    base.connect(filtro); filtro.connect(g); g.connect(salida); base.start(); nodos.push(base);
+    if (k === 'mar') { filtro.type = 'lowpass'; filtro.frequency.value = 900; nodos.push(lfo(g.gain, .085, .45, .55), lfo(filtro.frequency, .085, 500, 900)); }
+    else if (k === 'lluvia') { filtro.type = 'highpass'; filtro.frequency.value = 500; const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 7000; g.disconnect(); g.connect(lp); lp.connect(salida); g.gain.value = .8; }
+    else if (k === 'viento') { filtro.type = 'bandpass'; filtro.Q.value = 1.2; nodos.push(lfo(filtro.frequency, .06, 350, 600), lfo(g.gain, .11, .35, .6)); }
+    else { filtro.type = 'lowpass'; filtro.frequency.value = 12000; g.gain.value = k === 'blanco' ? .35 : .8; }
+  }
+  salida.gain.linearRampToValueAtTime(VOL, a.currentTime + 2.5);
+  return { salida, nodos };
+}
+function crearFrecuencia(f){
+  const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
+  [[f, .16], [f / 2, .08], [f * 1.5, .025]].forEach(([fr, g]) => { const o = a.createOscillator(), gg = a.createGain(); o.type = 'sine'; o.frequency.value = fr; gg.gain.value = g; o.connect(gg); gg.connect(salida); o.start(); nodos.push(o); });
+  nodos.push(lfo(salida.gain, .12, .05, 0));
+  salida.gain.linearRampToValueAtTime(VOL * .7, a.currentTime + 3);
+  return { salida, nodos };
+}
+function apagarSuave(x){ if (!x) return; const a = audio(); try { x.salida.gain.cancelScheduledValues(a.currentTime); x.salida.gain.setValueAtTime(x.salida.gain.value, a.currentTime); x.salida.gain.linearRampToValueAtTime(0, a.currentTime + 1.5); } catch (e) {} setTimeout(() => x.nodos.forEach(n => { try { n.stop(); } catch (e) {} }), 1700); }
+function detenerAmbiente(){ apagarSuave(AMB); AMB = null; AMB_K = ''; pintarMini(); pintarSonidos(); }
+function detenerFrecuencia(){ apagarSuave(FREQ); FREQ = null; FREQ_K = 0; pintarMini(); pintarSonidos(); }
+function detenerTodo(){ detenerAmbiente(); detenerFrecuencia(); clearTimeout(APAGAR_T); APAGAR_T = null; pantallaEncendida(false); }
+function avisoSonido(t){ const el = $('snd-aviso'); if (el) { el.textContent = t; el.classList.remove('oculto'); } }
+function pintarMini(){
+  let el = $('mini-snd'); const algo = AMB_K || FREQ_K;
+  if (!algo) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'mini-snd'; document.body.appendChild(el); }
+  const nom = [AMB_K ? (AMBIENTES.find(x => x[0] === AMB_K) || [])[2] : '', FREQ_K ? FREQ_K + ' Hz' : ''].filter(Boolean).join(' + ');
+  el.innerHTML = `<button type="button" data-calma="sonidos">🎧 ${esc(nom)}</button><button type="button" data-sndstop aria-label="Apagar">✕</button>`;
+}
+
+/* Overlay de calma */
+function abrirCalma(html){
+  let el = $('calma'); if (!el) { el = document.createElement('div'); el.id = 'calma'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); document.body.appendChild(el); }
+  el.innerHTML = `<div class="calma-in"><button class="calma-x" type="button" data-calmax aria-label="Cerrar">✕</button>${html}</div>`; el.className = 'ver'; document.body.style.overflow = 'hidden';
+}
+function cerrarCalma(){ if (TIM.activo && TIM.amb) detenerTodo(); const el = $('calma'); if (el) el.remove(); document.body.style.overflow = ''; RESP.activo = false; clearInterval(TIM.int); TIM.activo = false; if (!AMB_K && !FREQ_K) pantallaEncendida(false); }
+const chipsOpc = (grupo, ops, sel) => `<div class="calma-chips">${ops.map(([v, t]) => `<button type="button" class="chip-m${String(v) === String(sel) ? ' on' : ''}" data-opc="${grupo}|${v}">${t}</button>`).join('')}</div>`;
+function sumarCalma(tipo){ const s = RACHA || estadoRacha(); s.med = (s.med || 0) + 1; RACHA = s; lsSet(RK, s); evento('Sección', 'Bienestar: ' + tipo); setTimeout(() => revisarLogros(), 600); }
+LOGROS.push(['calma1', '🧘', 'Primer momento de calma', 'Hiciste tu primera respiración o meditación.', s => (s.med || 0) >= 1], ['calma7', '🔔', 'Siete meditaciones', 'Te regalaste siete momentos de calma.', s => (s.med || 0) >= 7]);
+
+/* Respiración guiada */
+const PATRONES = { calma: ['Calma', [['Inhalá', 4], ['Retené', 4], ['Exhalá', 6]]], cuadrada: ['Cuadrada', [['Inhalá', 4], ['Retené', 4], ['Exhalá', 4], ['Pausa', 4]]], sueno: ['4-7-8 para dormir', [['Inhalá', 4], ['Retené', 7], ['Exhalá', 8]]] };
+const RESP = { patron: 'calma', min: 3, activo: false };
+function respiracionHTML(){
+  return `<small class="calma-k">Respiración guiada</small><h3>Volvé a tu centro</h3><p>Seguí el círculo: crece cuando inhalás y se achica cuando exhalás. Un par de minutos alcanzan para bajar el ritmo.</p>
+    ${chipsOpc('patron', Object.entries(PATRONES).map(([k, v]) => [k, v[0]]), RESP.patron)}${chipsOpc('rmin', [[1, '1 min'], [3, '3 min'], [5, '5 min']], RESP.min)}
+    <button class="btn" type="button" data-resp>Empezar</button>`;
+}
+function correrRespiracion(){
+  abrirCalma(`<div class="resp-vista"><div class="resp-circ" id="resp-c"><span id="resp-t">Preparate…</span></div><p class="resp-rest" id="resp-r"></p><button class="btn-sec" type="button" data-calmax>Terminar</button></div>`);
+  RESP.activo = true; pantallaEncendida(true);
+  const fases = PATRONES[RESP.patron][1], fin = Date.now() + RESP.min * 60000 + 3000; let i = -1;
+  const c = $('resp-c'), t = $('resp-t'), r = $('resp-r');
+  const paso = () => {
+    if (!RESP.activo) return;
+    if (Date.now() >= fin) { RESP.activo = false; sonar('campana'); sumarCalma('respiración'); t.textContent = '✨'; c.style.transitionDuration = '2s'; c.style.transform = 'scale(.8)'; r.textContent = 'Listo. Quedate un momento sintiendo tu respiración.'; pantallaEncendida(false); return; }
+    i = (i + 1) % fases.length; const [nom, seg] = fases[i];
+    t.textContent = nom; c.style.transitionDuration = seg + 's';
+    if (nom === 'Inhalá') c.style.transform = 'scale(1.35)'; else if (nom === 'Exhalá') c.style.transform = 'scale(.75)';
+    c.classList.toggle('reten', nom === 'Retené' || nom === 'Pausa');
+    const rest = Math.max(0, Math.ceil((fin - Date.now()) / 1000)); r.textContent = Math.floor(rest / 60) + ':' + String(rest % 60).padStart(2, '0');
+    if (navigator.vibrate && nom !== 'Retené' && nom !== 'Pausa') navigator.vibrate(20);
+    setTimeout(paso, seg * 1000);
+  };
+  setTimeout(paso, 2500);
+}
+
+/* Temporizador místico */
+const TIM = { min: 10, inicio: 'cuenco', fin: 'gong', inter: 0, amb: '', activo: false, int: null, rest: 0, pausa: false };
+function temporizadorHTML(){
+  return `<small class="calma-k">Temporizador místico</small><h3>Meditá en silencio</h3><p>Elegí cuánto tiempo y cómo querés que suene. Te avisamos al empezar y al terminar.</p>
+    <p class="calma-lab">Duración</p>${chipsOpc('tmin', [[3, '3'], [5, '5'], [10, '10'], [15, '15'], [20, '20'], [30, '30']].map(([v, t]) => [v, t + ' min']), TIM.min)}
+    <p class="calma-lab">Al empezar</p>${chipsOpc('tini', [['cuenco', '🥣 Cuenco'], ['gong', '🔔 Gong'], ['campana', '🎐 Campana']], TIM.inicio)}
+    <p class="calma-lab">Al terminar</p>${chipsOpc('tfin', [['cuenco', '🥣 Cuenco'], ['gong', '🔔 Gong'], ['campana', '🎐 Campana']], TIM.fin)}
+    <p class="calma-lab">Campanita intermedia</p>${chipsOpc('tint', [[0, 'Sin'], [1, 'Cada 1 min'], [5, 'Cada 5 min']], TIM.inter)}
+    <p class="calma-lab">Sonido de fondo</p>${chipsOpc('tamb', [['', 'Silencio'], ['mar', '🌊 Mar'], ['lluvia', '🌧️ Lluvia'], ['viento', '🍃 Viento'], ['f432', '432 Hz'], ['f528', '528 Hz']], TIM.amb)}
+    <button class="btn" type="button" data-timer>Empezar</button>`;
+}
+function correrTemporizador(){
+  const tot = TIM.min * 60; TIM.rest = tot; TIM.activo = true; TIM.pausa = false;
+  const C = 2 * Math.PI * 120;
+  abrirCalma(`<div class="tim-vista"><svg viewBox="0 0 280 280" class="tim-ring"><circle cx="140" cy="140" r="120" fill="none" stroke="rgba(185,138,230,.2)" stroke-width="6"/><circle id="tim-arc" cx="140" cy="140" r="120" fill="none" stroke="#D4AF6A" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0" transform="rotate(-90 140 140)"/></svg>
+    <div class="tim-num" id="tim-n">${TIM.min}:00</div><p class="tim-sub" id="tim-s">Cerrá los ojos y respirá</p><div class="fila-bt" style="justify-content:center"><button class="btn-sec" type="button" data-timpausa>Pausa</button><button class="btn-sec" type="button" data-calmax>Terminar</button></div></div>`);
+  pantallaEncendida(true); sonar(TIM.inicio);
+  if (TIM.amb) { if (/^f/.test(TIM.amb)) { detenerFrecuencia(); FREQ_K = +TIM.amb.slice(1); FREQ = crearFrecuencia(FREQ_K); } else { detenerAmbiente(); AMB_K = TIM.amb; AMB = crearAmbiente(AMB_K); } pintarMini(); }
+  clearInterval(TIM.int);
+  TIM.int = setInterval(() => {
+    if (!TIM.activo || TIM.pausa) return;
+    TIM.rest--; const pasado = tot - TIM.rest;
+    const n = $('tim-n'), arc = $('tim-arc'); if (n) n.textContent = Math.floor(TIM.rest / 60) + ':' + String(TIM.rest % 60).padStart(2, '0'); if (arc) arc.setAttribute('stroke-dashoffset', C * pasado / tot);
+    if (TIM.inter && TIM.rest > 0 && pasado % (TIM.inter * 60) === 0) sonar('campana');
+    if (TIM.rest <= 0) { clearInterval(TIM.int); TIM.activo = false; sonar(TIM.fin); sumarCalma('meditación'); if ($('tim-s')) $('tim-s').textContent = '✨ Gracias por regalarte este momento'; if (TIM.amb) setTimeout(detenerTodo, 9000); else pantallaEncendida(false); }
+  }, 1000);
+}
+
+/* Paisajes sonoros */
+function sonidosHTML(){
+  return `<small class="calma-k">Paisajes sonoros</small><h3>Sonidos para tu calma</h3><p>Elegí un ambiente y, si querés, sumale una frecuencia. Se pueden combinar.</p>
+    <p class="calma-lab">Ambientes</p><div class="snd-grid">${AMBIENTES.map(([k, ic, t]) => `<button type="button" class="snd${AMB_K === k ? ' on' : ''}" data-amb="${k}"><span>${ic}</span>${t}</button>`).join('')}</div>
+    <p class="calma-lab">Frecuencias solfeggio</p><div class="snd-grid frec">${FRECUENCIAS.map(([f, t]) => `<button type="button" class="snd${FREQ_K === f ? ' on' : ''}" data-frec="${f}"><b>${f} Hz</b>${t}</button>`).join('')}</div>
+    <p class="calma-lab">Volumen</p><input type="range" min="0" max="1" step=".05" value="${VOL}" data-vol class="snd-vol">
+    <p class="calma-lab">Apagar en</p>${chipsOpc('apagar', [[0, 'Nunca'], [15, '15 min'], [30, '30 min'], [60, '1 hora']], APAGAR_T ? APAGAR_T.min : 0)}
+    <p class="ag-ayuda oculto" id="snd-aviso"></p><p class="ag-ayuda">Con auriculares se disfruta más. En iPhone, el sonido sigue mejor si Mi Luz está instalada y la pantalla encendida.</p>`;
+}
+function pintarSonidos(){ const el = $('calma'); if (el && el.querySelector('.snd-grid')) el.querySelector('.calma-in').innerHTML = '<button class="calma-x" type="button" data-calmax aria-label="Cerrar">✕</button>' + sonidosHTML(); }
+
+/* Tiradas temáticas (una por tema por día, siempre la misma ese día) */
+const TIRADAS = {
+  soltar: ['🌘', 'Tirada para soltar', 'Ideal en Luna menguante: mirá qué cargás y qué te libera.', [['Lo que cargo', a => 'Hay algo de ' + minus(a.sombra) + ' que te pesa.'], ['Lo que suelto', a => a.a[a.a.length - 1]], ['Lo que me libera', a => 'Te libera ' + minus(a.luz) + '.']]],
+  sembrar: ['🌒', 'Tirada para sembrar', 'Ideal en Luna nueva o creciente: elegí qué querés hacer crecer.', [['Lo que quiero sembrar', a => 'Sembrá ' + minus(a.luz) + '.'], ['Lo que necesito', a => a.a[0]], ['Lo que va a florecer', a => a.e.split('. ')[0] + '.']]],
+  decision: ['⚖️', 'Tirada para decidir', 'Pensá en tu decisión antes de dar vuelta las cartas.', [['Si avanzo', a => 'Avanzar trae ' + minus(a.luz) + '. Cuidado con ' + minus(a.sombra) + '.'], ['Si espero', a => 'Esperar trae ' + minus(a.luz) + '.'], ['Lo que necesito saber', a => a.q]]],
+  amor: ['💞', 'Tirada del amor', 'Para mirar tu corazón, tengas pareja o no.', [['Yo en el amor', a => 'Hoy amás desde ' + minus(a.luz) + '.'], ['Lo que se mueve', a => a.e.split('. ')[0] + '.'], ['Lo que nos hace bien', a => a.a[0]]]]
+};
+function cartasDeTirada(tema){ const out = []; let i = 0; while (out.length < 3 && i < 40) { const n = (hashTxt(CODIGO + claveDia() + ':' + tema + ':' + i) % 22) + 1; if (!out.includes(n)) out.push(n); i++; } return out; }
+function abrirTirada(tema){
+  const T = TIRADAS[tema], cs = cartasDeTirada(tema);
+  abrirCalma(`<small class="calma-k">${T[0]} Tirada temática</small><h3>${T[1]}</h3><p>${T[2]} Respirá, enfocá tu intención y tocá cada carta.</p>
+    <div class="tirada-mes por-revelar tt">${cs.map((n, i) => `<div><button type="button" class="tm-carta" data-ttcarta="${i}"><span class="tm-dorso">✦</span><span class="tm-frente"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><b>${esc(NOM[n])}</b></span></button><small>${T[3][i][0]}</small></div>`).join('')}</div>
+    <div id="tt-lect" class="tt-lect oculto">${cs.map((n, i) => `<div><p class="sub">${T[3][i][0]} · ${esc(NOM[n])}</p><p>${T[3][i][1](ARC[n])}</p></div>`).join('')}<p class="afir">✨ ${ARC[cs[2]].af}</p><p class="ag-ayuda">Esta tirada es para hoy: mañana te esperan cartas nuevas.</p></div>`);
+  evento('Sección', 'Tirada: ' + T[1]);
+}
+
+/* Tu momento de hoy: mira el cielo y te propone qué hacer */
+function momentoHoy(){
+  const { d } = datosHoy(), nat = P.diaMes && P.anioNac ? Math.floor(longSolar(jdNac(P.diaMes, P.anioNac, P.horaNac)) / 30) : null;
+  const sLuna = ZOD.indexOf(d.signo), dif = nat === null ? -1 : (sLuna - nat + 12) % 12;
+  if (d.fase === 'llena') return ['🌕', 'Hoy es Luna llena', 'Es el punto más alto del ciclo: momento de soltar, agradecer y cerrar lo que ya cumplió su tiempo.', [['tirada', 'soltar', 'Tirada para soltar'], ['timer', 10, 'Meditar 10 min con cuenco']]];
+  if (d.fase === 'nueva') return ['🌑', 'Hoy es Luna nueva', 'Una página en blanco: es tiempo de sembrar intenciones y empezar con calma.', [['tirada', 'sembrar', 'Tirada para sembrar'], ['sonidos', 528, 'Escuchar 528 Hz']]];
+  if (dif === 0) return ['✨', 'Hoy es tu día de poder', 'La Luna pasa por tu signo: tu energía se renueva. Ideal para decidir y hacer un ritual.', [['tirada', 'decision', 'Tirada para decidir'], ['timer', 5, 'Meditar 5 min']]];
+  const tenso = dif === 3 || dif === 6 || dif === 9 || d.retro.Mercurio;
+  if (tenso) return ['🌬️', 'Hoy el cielo está movido', (d.retro.Mercurio ? 'Mercurio retrógrado pide paciencia con los mensajes. ' : 'La Luna tensiona tu signo y las emociones pueden estar a flor de piel. ') + 'Antes de arrancar, regalate tres minutos para respirar.', [['resp', 'calma', 'Respirar 3 min'], ['sonidos', 396, 'Escuchar 396 Hz']]];
+  if (!d.crec) return ['🌘', 'Luna menguante: tiempo de soltar', 'La energía baja y acompaña a limpiar, ordenar y dejar ir.', [['tirada', 'soltar', 'Tirada para soltar'], ['timer', 10, 'Meditar 10 min']]];
+  return ['🌒', 'Luna creciente: tiempo de sembrar', 'La energía sube y acompaña a empezar, sumar y hacer crecer lo que querés.', [['tirada', 'sembrar', 'Tirada para sembrar'], ['sonidos', 528, 'Escuchar 528 Hz']]];
+}
+function momentoHTML(){
+  let m; try { m = momentoHoy(); } catch (e) { return ''; }
+  return `<section class="momento"><span class="mom-ic" aria-hidden="true">${m[0]}</span><div><small>Tu momento de hoy</small><h4>${m[1]}</h4><p>${m[2]}</p>
+    <div class="fila-bt" style="justify-content:flex-start">${m[3].map(([t, v, txt], i) => `<button class="${i ? 'btn-sec' : 'btn'}" type="button" data-momento="${t}|${v}">${txt}</button>`).join('')}</div></div></section>`;
+}
+function calmaHTML(){
+  return `<h3>Tu espacio de calma</h3><div class="calma-tiles"><button type="button" data-calma="resp"><span>🌬️</span>Respirar</button><button type="button" data-calma="timer"><span>🔔</span>Meditar</button><button type="button" data-calma="sonidos"><span>🎧</span>Sonidos</button></div>
+    <h3>Tiradas para hoy</h3><div class="tt-chips">${Object.entries(TIRADAS).map(([k, T]) => `<button type="button" data-tt="${k}"><span>${T[0]}</span>${({ soltar: 'Soltar', sembrar: 'Sembrar', decision: 'Decidir', amor: 'Amor' })[k]}</button>`).join('')}</div>`;
+}
+const _hoyBase2 = hoyHTML;
+hoyHTML = function(){
+  let h = _hoyBase2();
+  const rr = '</section>'; const i = h.indexOf('<section class="racha">');
+  if (i > -1) { const j = h.indexOf(rr, i) + rr.length; h = h.slice(0, j) + momentoHTML() + h.slice(j); } else h = momentoHTML() + h;
+  return h.includes('<h3>Ritual de hoy</h3>') ? h.replace('<h3>Ritual de hoy</h3>', calmaHTML() + '<h3>Ritual de hoy</h3>') : h + calmaHTML();
+};
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.calmax !== undefined) { cerrarCalma(); return; }
+  if (b.dataset.calma) { const k = b.dataset.calma; abrirCalma(k === 'resp' ? respiracionHTML() : k === 'timer' ? temporizadorHTML() : sonidosHTML()); return; }
+  if (b.dataset.momento) { const [t, v] = b.dataset.momento.split('|');
+    if (t === 'tirada') abrirTirada(v);
+    else if (t === 'timer') { TIM.min = +v; abrirCalma(temporizadorHTML()); }
+    else if (t === 'resp') { RESP.patron = v; abrirCalma(respiracionHTML()); }
+    else if (t === 'sonidos') { abrirCalma(sonidosHTML()); const f = +v; if (f && FREQ_K !== f) { detenerFrecuencia(); FREQ_K = f; FREQ = crearFrecuencia(f); pintarMini(); pintarSonidos(); pantallaEncendida(true); } }
+    evento('Sección', 'Tu momento de hoy'); return; }
+  if (b.dataset.opc) { const [g, v] = b.dataset.opc.split('|');
+    if (g === 'patron') RESP.patron = v; if (g === 'rmin') RESP.min = +v; if (g === 'tmin') TIM.min = +v; if (g === 'tini') TIM.inicio = v; if (g === 'tfin') TIM.fin = v; if (g === 'tint') TIM.inter = +v; if (g === 'tamb') TIM.amb = v;
+    if (g === 'tini' || g === 'tfin') sonar(v);
+    if (g === 'apagar') { clearTimeout(APAGAR_T && APAGAR_T.t); APAGAR_T = +v ? { min: +v, t: setTimeout(detenerTodo, +v * 60000) } : null; }
+    b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); return; }
+  if (b.dataset.resp !== undefined) { audio(); correrRespiracion(); return; }
+  if (b.dataset.timer !== undefined) { audio(); correrTemporizador(); return; }
+  if (b.dataset.timpausa !== undefined) { TIM.pausa = !TIM.pausa; b.textContent = TIM.pausa ? 'Seguir' : 'Pausa'; return; }
+  if (b.dataset.amb) { const k = b.dataset.amb; if (AMB_K === k) detenerAmbiente(); else { detenerAmbiente(); AMB_K = k; AMB = crearAmbiente(k); pantallaEncendida(true); evento('Sección', 'Sonido: ' + k); } pintarMini(); pintarSonidos(); return; }
+  if (b.dataset.frec) { const f = +b.dataset.frec; if (FREQ_K === f) detenerFrecuencia(); else { detenerFrecuencia(); FREQ_K = f; FREQ = crearFrecuencia(f); pantallaEncendida(true); evento('Sección', 'Frecuencia: ' + f); } pintarMini(); pintarSonidos(); return; }
+  if (b.dataset.sndstop !== undefined) { detenerTodo(); return; }
+  if (b.dataset.tt) { abrirTirada(b.dataset.tt); return; }
+  if (b.dataset.ttcarta !== undefined) { b.classList.add('vuelta'); const todas = [...document.querySelectorAll('[data-ttcarta]')]; if (todas.every(x => x.classList.contains('vuelta'))) setTimeout(() => { const l = $('tt-lect'); if (l) { l.classList.remove('oculto'); l.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 700); return; }
+});
+document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.vol !== undefined) { VOL = +e.target.value; const a = audio(); if (AMB) AMB.salida.gain.setTargetAtTime(VOL, a.currentTime, .1); if (FREQ) FREQ.salida.gain.setTargetAtTime(VOL * .7, a.currentTime, .1); } });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
