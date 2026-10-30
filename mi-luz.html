@@ -3857,10 +3857,11 @@ function ruido(tipo){
   const s = a.createBufferSource(); s.buffer = buf; s.loop = true; return s;
 }
 function lfo(param, f, prof, centro){ const a = audio(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; g.gain.value = prof; o.connect(g); g.connect(param); param.value = centro; o.start(); return o; }
+const ARCH_SONIDO = { 'f-fogon': 'dragon-studio-campfire-by-the-sea-467490 (1).mp3', 'f-bosque': 'soundreality-nature-forest-sound-537925.mp3', 'f-pajaros': 'freesound_community-birds-in-the-morning-24614.mp3' };
 function crearAmbiente(k){
   const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
   if (/^f-/.test(k)) {
-    const el = new Audio('sonido-' + k.slice(2) + '.mp3'); el.loop = true; el.crossOrigin = 'anonymous';
+    const el = new Audio(encodeURI(ARCH_SONIDO[k] || ('sonido-' + k.slice(2) + '.mp3'))); el.loop = true; el.crossOrigin = 'anonymous';
     const src = a.createMediaElementSource(el); src.connect(salida); el.play().catch(() => {}); nodos.push({ stop: () => { el.pause(); el.src = ''; } });
     el.addEventListener('error', () => { avisoSonido('Ese sonido todavía no está subido. Mientras tanto probá Olas del mar o Lluvia suave.'); detenerAmbiente(); });
   } else {
