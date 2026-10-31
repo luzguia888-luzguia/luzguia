@@ -2246,8 +2246,10 @@ Object.assign(ESQ, {
     {k:'Enlace', t:'text', full:1, ph:'Opcional en la tirada: link de YouTube (oculto), Drive, Spotify o mp3', lab:'Enlace del video o audio'},
     {k:'Descripción', t:'area', full:1, filas:5, lab:'Tu mensaje (en la tirada: lo que dicen las cartas para el mes)'}, {k:'Fecha', t:'date', def:'hoy', lab:'Fecha de carga'}, {k:'Activo', t:'check', def:true, lab:'Se ve en Mi Luz'}]},
   Suscripciones: { nombre: 'suscripción', clave: 'ID Persona', etiqueta: 'Nombre', campos: [
-    {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'ID Persona', t:'sel', o:optPersonas, req:1, lab:'Persona', full:1}, {k:'Tipo', t:'sel', o:() => ['Alta','Renovación','Prueba gratis','Regalo por invitar','Regalo'], req:1},
+    {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'ID Persona', t:'sel', o:optPersonas, req:1, lab:'Persona', full:1}, {k:'Tipo', t:'sel', o:() => ['Alta','Renovación','Prueba gratis','Regalo por invitar','Regalo','Baja'], req:1},
     {k:'Desde', t:'date'}, {k:'Hasta', t:'date'}, {k:'Monto', t:'money', chico:1}, {k:'Notas', t:'area', full:1}]},
+  'Mercado Pago': { nombre: 'suscripción de Mercado Pago', clave: 'ID suscripción', etiqueta: 'Nombre', campos: [
+    {k:'ID suscripción', t:'text', req:1, full:1}, {k:'ID Persona', t:'sel', o:optPersonas, lab:'Persona', full:1}, {k:'Mail de pago', t:'text', full:1}, {k:'Notas', t:'area', full:1, filas:2}]},
   'Proyección insumos': { nombre: 'insumo', clave: 'Insumo', campos: [
     {k:'Producto', t:'sel', o:() => H('Proyección productos').map(x => x['Producto']), req:1, full:1}, {k:'Insumo', t:'text', req:1, full:1},
     {k:'Proveedor', t:'text', sug:proveedoresConocidos}, {k:'Dónde comprar', t:'text'}, {k:'Presentación', t:'text', ph:'Pack x100'},
@@ -2623,6 +2625,41 @@ document.addEventListener('click', async e => {
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 CLAVE = leerLS(LS_CLAVE); QUIEN = leerLS(LS_QUIEN);
 if (CLAVE && QUIEN) cargar(); else mostrar('ingreso');
+
+/* ───── v19: Mercado Pago (suscripciones automáticas) ───── */
+const _hoyMP = V.hoy;
+V.hoy = () => {
+  let h = _hoyMP();
+  const sin = H('Mercado Pago').filter(x => x['Estado'] === 'Activa' && !String(x['ID Persona'] || '').trim());
+  if (!sin.length) return h;
+  const opts = optPersonas().map(([id, n]) => `<option value="${esc(id)}">${esc(n)}</option>`).join('');
+  const lis = sin.map(x => `<li class="tarea"><span class="ico">💳</span><div class="txt">Llegó una suscripción de Mercado Pago sin persona<small>Pagó con ${esc(x['Mail de pago'] || 'un mail que no tenemos')}. Elegí quién es y Premium se activa solo.</small></div><div class="bt"><select class="campo" data-mpsel="${esc(x['ID suscripción'])}" style="max-width:190px"><option value="">Elegir persona…</option>${opts}</select><button class="btn" type="button" data-mpasig="${esc(x['ID suscripción'])}">Asignar</button></div></li>`).join('');
+  const vacio = '<p class="ayuda">No hay pendientes para hoy. Buen momento para planear el próximo encuentro.</p>';
+  return h.includes('<ul class="tareas">') ? h.replace('<ul class="tareas">', '<ul class="tareas">' + lis) : h.replace(vacio, '<ul class="tareas">' + lis + '</ul>');
+};
+const _miluzMP = V.miluz;
+V.miluz = () => {
+  let h = _miluzMP();
+  h += `<h3 style="margin-top:34px">Suscripciones con Mercado Pago</h3>`;
+  if (!D.params.mercadoPago) return h + `<div class="tabla-caja" style="padding:16px 18px"><p style="margin:0"><b>Falta conectar Mercado Pago.</b> Pegá el Access Token en la hoja Config (celda B23) y en el menú <b>Luz Guía → 💳 Activar cobro automático con Mercado Pago</b>.</p></div>`;
+  const L = H('Mercado Pago').slice().reverse(), act = L.filter(x => x['Estado'] === 'Activa');
+  const mes = H('Suscripciones').filter(s => /Mercado Pago/.test(s['Notas'] || '') && /Alta|Renovaci/.test(s['Tipo']) && fecha(s['Fecha']) && claveMes(fecha(s['Fecha'])) === claveMes(HOY)).reduce((a, s) => a + num(s['Monto']), 0);
+  h += `<p class="ayuda" style="margin-top:0">Se revisan solas cada 10 minutos: cuando alguien paga, Premium se activa; con cada cobro mensual se renueva; si cancela, sigue hasta el fin del mes pagado. Link para compartir: <a href="${esc(D.params.mpLink || '')}" target="_blank" rel="noopener">${esc(D.params.mpLink || '')}</a></p>
+    <div class="cifras"><div class="cifra"><span>Suscripciones activas</span><b>${act.length}</b></div><div class="cifra"><span>Cobrado este mes por Mercado Pago</span><b>${pesos(mes)}</b><small class="mini">a cada una: ${pesos(mes / 2)}</small></div></div>`;
+  h += tabla([{ t:'Persona', f: x => x['Nombre'] ? `<b>${esc(x['Nombre'])}</b>` : '<span class="estado e-neutro">Sin asignar</span>' }, { t:'Mail de pago', k:'Mail de pago' },
+    { t:'Estado', f: x => `<span class="estado ${x['Estado'] === 'Activa' ? 'e-ok' : 'e-neutro'}">${esc(x['Estado'] || '')}</span>` }, { t:'Alta', k:'Alta' }, { t:'Próximo cobro', k:'Próximo cobro' },
+    { t:'Monto', f: x => x['Monto'] ? pesos(num(x['Monto'])) : '' }, { t:'', acc:1, f: x => acciones('Mercado Pago', x) }], L, 'Todavía no hay suscripciones. Cuando alguien se suscriba desde Mi Luz, aparece acá.');
+  return h;
+};
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-mpasig]'); if (!t) return;
+  const id = t.dataset.mpasig, sel = document.querySelector(`[data-mpsel="${CSS.escape(id)}"]`), pid = sel && sel.value;
+  if (!pid) { toast('Elegí a qué persona corresponde', true); return; }
+  const rec = H('Mercado Pago').find(x => x['ID suscripción'] === id), p = persona(pid); if (!rec || !p) return;
+  t.disabled = true;
+  try { await guardarCambios('Mercado Pago', rec, { 'ID Persona': pid, 'Nombre': p['Nombre completo'] }, '💳 Asignada: Premium activo para ' + String(p['Nombre completo']).split(' ')[0]); }
+  catch (err) { toast(err.message, true); t.disabled = false; }
+});
 </script>
 </body>
 </html>

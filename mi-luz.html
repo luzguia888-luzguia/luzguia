@@ -580,6 +580,12 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .cam-preg textarea{display:block;width:100%;min-height:90px;margin-top:6px;padding:10px;border-radius:12px;border:1px solid var(--linea);background:rgba(0,0,0,.25);color:inherit;font:inherit;font-style:normal;resize:vertical;box-sizing:border-box}
 .cam-hoy .afir{text-align:center;color:#F3DCA0;font-weight:600;margin:12px 0}
 .cam-hoy .hecho{text-align:center;color:#8FD9CF;font-weight:700}
+.mp-caja{display:flex;flex-direction:column;align-items:center;gap:6px}
+.mp-bt{background:linear-gradient(135deg,#F3DCA0,#BF8A26);color:#1b0f2e;font-weight:700}
+.mp-letra{margin:0;font-size:.82rem;opacity:.8;max-width:320px;text-align:center}
+.mp-ok{margin:10px 0 0;font-size:.88rem;color:#8FD9CF}.mp-ok a{color:#F3DCA0}
+.mp-seguir{margin:14px 0;padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.35);background:linear-gradient(135deg,rgba(191,138,38,.14),rgba(155,111,224,.12));text-align:center}
+.mp-seguir b{color:#F3DCA0;font-size:1.05rem}.mp-seguir p{margin:6px 0 12px;font-size:.92rem}
 </style>
 </head>
 <body>
@@ -4370,6 +4376,91 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('toggle', e => { const d = e.target; if (d.open && d.dataset && d.dataset.premsec === 'caminos') repintarCamino(); }, true);
 document.addEventListener('input', e => { const t = e.target; if (!t.dataset || !t.dataset.camnota) return; const st = estadoCamino(); if (!st) return; st.notas = st.notas || {}; st.notas[t.dataset.camnota] = t.value; lsSet(CK, st); });
+
+
+/* ───── v19: suscripción automática con Mercado Pago ───── */
+const MP_PEND = 'luzguia_mp_pend', MP_URL = new URLSearchParams(location.search);
+const MP_ADMIN = 'https://www.mercadopago.com.ar/subscriptions';
+function mpBotonHTML(txt){
+  return `<div class="mp-caja"><button class="btn mp-bt" type="button" data-mpsus>💳 ${txt}</button>
+    <p class="mp-letra">${P.precioPremium ? esc(P.precioPremium) + ' por mes · ' : ''}se renueva sola y la cancelás cuando quieras desde Mercado Pago</p></div>`;
+}
+const _premMP = premiumHTML;
+premiumHTML = function(){
+  let h = _premMP();
+  if (!P.mpLink || P.organizadora) return h;
+  const activa = P.mpEstado === 'Activa';
+  if (P.premium && !VISTA_GRATIS) {
+    if (activa) h = h.replace('</section>', `<p class="mp-ok">💳 Tu suscripción se renueva sola cada mes. <a href="${MP_ADMIN}" target="_blank" rel="noopener">Administrarla en Mercado Pago</a></p></section>`);
+    else h = h.replace('</section>', `</section><div class="mp-seguir"><b>¿Te está gustando?</b><p>Suscribite y tu Premium sigue sin cortes cuando termine ${P.pruebaUsada ? 'tu prueba' : 'tu período actual'}.</p>${mpBotonHTML('Suscribirme con Mercado Pago')}</div>`);
+    return h;
+  }
+  return h.replace(/<button class="btn" type="button" data-quiero-premium>[^<]*<\/button>/, mpBotonHTML(P.premiumVencido ? 'Renovar con Mercado Pago' : 'Suscribirme con Mercado Pago') + '<p><button class="link" type="button" data-quiero-premium>Prefiero pagar por transferencia</button></p>');
+};
+function suscribirMP(){
+  $('dlg-titulo').textContent = 'Suscribirte a Premium ✷';
+  $('dlg-texto').textContent = 'Vas a pagar en Mercado Pago, de forma segura. ¿Con qué mail entrás a tu cuenta de Mercado Pago? Así reconocemos tu pago y activamos tu Premium sola.';
+  $('dlg-cuerpo').innerHTML = `<input class="campo-codigo" id="mp-mail" type="email" inputmode="email" autocomplete="email" placeholder="tu@mail.com" value="${esc(P.mpMail || '')}">
+    <p class="ag-ayuda" style="margin:8px 0 0">Cuando termines de pagar, volvé a Mi Luz: en unos minutos se abre todo Premium.</p>
+    <div class="fila-bt"><button class="btn-sec" type="button" id="mp-no">Ahora no</button><button class="btn" type="button" id="mp-ir">Ir a pagar</button></div>`;
+  $('dlg').showModal();
+  $('mp-no').onclick = () => $('dlg').close();
+  $('mp-ir').onclick = async () => {
+    const b = $('mp-ir'); b.disabled = true; b.textContent = 'Abriendo…';
+    let link = P.mpLink;
+    try { const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+      const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'mpintencion', codigo: CODIGO, mail: $('mp-mail').value.trim() }), signal: ctl.signal });
+      clearTimeout(t); const d = await r.json(); if (d.link) link = d.link; } catch (e) {}
+    lsSet(MP_PEND, Date.now()); evento('Sección', 'Mercado Pago: fue a pagar');
+    $('dlg').close(); location.href = link;
+  };
+}
+async function confirmarMP(id, conDialogo){
+  if (conDialogo) { $('dlg-titulo').textContent = 'Confirmando tu pago… ✨'; $('dlg-texto').textContent = 'Esto tarda unos segundos.'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal(); }
+  let d = {};
+  try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'mpvincular', codigo: CODIGO, preapproval: id || '' }) }); d = await r.json(); } catch (e) {}
+  if (d.ok && d.premium && (d.estado === 'Activa' || id)) {
+    try { localStorage.removeItem(MP_PEND); } catch (e) {}
+    PREM_ABIERTA = 'natal'; TAB = 'premium'; await cargar();
+    $('dlg-titulo').textContent = '¡Bienvenida a Mi Luz Premium! ✷';
+    $('dlg-texto').textContent = 'Tu pago se confirmó. Ya tenés abiertas tu carta natal, tu semana, el oráculo, la sinfonía natal y todo lo demás. Gracias por elegirnos 💜';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Ver mi Premium</button></div>';
+    if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close();
+    return true;
+  }
+  if (conDialogo) {
+    $('dlg-titulo').textContent = 'Tu pago se está procesando 🌙';
+    $('dlg-texto').textContent = 'Mercado Pago puede tardar unos minutos en confirmarlo. No hace falta que hagas nada: tu Premium se activa solo y te avisamos.';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>'; $('dlg-ok').onclick = () => $('dlg').close();
+  }
+  return false;
+}
+/* Al volver de Mercado Pago (con o sin el número de suscripción) */
+const _postCargaMP = postCarga;
+postCarga = function(){
+  _postCargaMP();
+  if (MP_URL.get('pago') === 'ok') {
+    const id = MP_URL.get('preapproval_id') || MP_URL.get('preapproval') || '';
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+    MP_URL.delete('pago');
+    setTimeout(() => confirmarMP(id, true), 400);
+  } else revisarMPPendiente();
+};
+let MP_REV = 0;
+function revisarMPPendiente(){
+  const t = +lsGet(MP_PEND, 0) || 0; if (!t || !P || P.premium && P.mpEstado === 'Activa') { if (t && P && P.mpEstado === 'Activa') try { localStorage.removeItem(MP_PEND); } catch (e) {} return; }
+  if (Date.now() - t > 48 * 3600000) { try { localStorage.removeItem(MP_PEND); } catch (e) {} return; }
+  if (Date.now() - MP_REV < 60000) return; MP_REV = Date.now();
+  confirmarMP('', false);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && P && P.ok) revisarMPPendiente(); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-mpsus]'); if (b) { e.preventDefault(); suscribirMP(); } });
+/* Si vuelve de pagar en un navegador donde todavía no entró a Mi Luz */
+const _pedirCodigoMP = pedirCodigo;
+pedirCodigo = function(msg){
+  if (MP_URL.get('pago') === 'ok' && !msg) return _pedirCodigoMP('<b style="color:var(--oro);font-size:1.15rem">¡Gracias por suscribirte a Premium! ✷</b><br><br>Volvé a abrir Mi Luz desde el ícono de tu pantalla de inicio: en unos minutos vas a ver todo Premium abierto. Si preferís entrar desde acá, pegá tu enlace de Mi Luz:');
+  return _pedirCodigoMP(msg);
+};
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
