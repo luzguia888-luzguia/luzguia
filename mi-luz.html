@@ -645,6 +645,13 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .afin-inv{display:flex;gap:12px;margin:16px 0;padding:14px 16px;border-radius:18px;border:1px solid var(--linea);background:rgba(255,255,255,.04)}.afin-inv>span{font-size:1.8rem}.afin-inv b{display:block;color:#F3DCA0}.afin-inv p{margin:4px 0 10px;font-size:.88rem}
 .afin-pub{max-width:420px;font-style:normal}.afin-pub small{color:#C9A7FF;letter-spacing:.08em}.afin-pub h2{font-family:var(--serif);color:#F3DCA0;font-size:1.5rem;margin:6px 0}.afin-pub input{margin-top:10px}
 .afin-res{margin-top:16px;padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.4);background:rgba(155,111,224,.15)}.afin-res .jp{font-size:2.4rem;color:#F3DCA0;font-family:var(--serif)}.afin-res p{margin:8px 0}
+.edad-hoy{display:flex;gap:12px;padding:14px;border-radius:18px;border:1px solid rgba(243,220,160,.45);background:linear-gradient(150deg,rgba(191,138,38,.18),rgba(28,11,46,.6));margin:8px 0 12px}.edad-hoy small{color:#F3DCA0;font-size:.75rem}.edad-hoy h4{margin:3px 0 6px;font-family:var(--serif);color:#F3DCA0}.edad-hoy p{margin:0 0 6px;font-size:.9rem}
+.edades{display:grid;gap:6px}.edad-dec{border:1px solid var(--linea);border-radius:14px;background:rgba(255,255,255,.03)}.edad-dec summary{padding:10px 14px;cursor:pointer;display:flex;flex-direction:column}.edad-dec summary b{color:#F3DCA0}.edad-dec summary span{font-size:.82rem;opacity:.8}
+.edad-dec ul{list-style:none;margin:0;padding:0 10px 10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.edad-dec li{padding:6px;border-radius:10px;background:rgba(155,111,224,.12);text-align:center;font-size:.72rem}.edad-dec li small{display:block;opacity:.7}.edad-dec li b{display:block;font-size:1rem;color:#F3DCA0}.edad-dec li span{display:block;line-height:1.2}
+.edad-dec li.ahora{background:rgba(191,138,38,.35);outline:1px solid #F3DCA0}.edad-dec li.pasado{opacity:.55}
+.voc-meses{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:none}.voc-m{flex:0 0 52px;padding:8px 0;border-radius:12px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;cursor:pointer}.voc-m small{display:block;font-size:.7rem;text-transform:uppercase;opacity:.8}.voc-m b{font-size:1.1rem;color:#F3DCA0}.voc-m.on{background:rgba(191,138,38,.3);border-color:#F3DCA0}
+.voc-det{padding:14px 16px;border-radius:18px;border:1px solid rgba(201,167,255,.35);background:rgba(155,111,224,.1)}.voc-det small{color:#C9A7FF;font-size:.78rem}.voc-det h4{margin:3px 0 6px;font-family:var(--serif);color:#F3DCA0;font-size:1.2rem}.voc-det p{margin:0 0 8px;line-height:1.5}
+.voc-paso{color:#F3DCA0;font-weight:600}.voc-dias{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.voc-dias b{width:100%}.voc-dias span{padding:3px 10px;border-radius:999px;background:rgba(143,217,207,.15);font-size:.85rem}
 </style>
 </head>
 <body>
@@ -5056,6 +5063,106 @@ document.addEventListener('click', e => {
   evento('Invitó', 'Afinidad');
   if (navigator.share) navigator.share({ text: txt }).catch(() => {}); else window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
 });
+
+
+/* ───── v24: programa de edades de la Matriz, vocación y dinero mes a mes, revolución solar sobre la natal ───── */
+
+/* 🔯 Programa por edades: el recorrido del octograma, de 0 a 80 años */
+function programaEdades(mz){
+  const r = redM, esq = [['A', 0], ['F', 10], ['B', 20], ['G', 30], ['C', 40], ['H', 50], ['D', 60], ['I', 70], ['A', 80]], out = [];
+  for (let i = 0; i < 8; i++) {
+    const X = mz[esq[i][0]], Y = mz[esq[i + 1][0]], a = esq[i][1];
+    const m = r(X + Y), q1 = r(X + m), q3 = r(m + Y);
+    [[a, X], [a + 1.25, r(X + q1)], [a + 2.5, q1], [a + 3.75, r(q1 + m)], [a + 5, m], [a + 6.25, r(m + q3)], [a + 7.5, q3], [a + 8.75, r(q3 + Y)]].forEach(x => out.push({ desde: x[0], hasta: x[0] + 1.25, n: x[1] }));
+  }
+  return out;
+}
+const edadTxt = x => { const a = Math.floor(x), m = Math.round((x - a) * 12); return a + (m ? ' años y ' + m + ' meses' : ' años'); };
+const ETAPA_EDAD = ['La infancia: tu forma de llegar al mundo', 'La niñez: lo que aprendiste a mostrar', 'La adolescencia: tus primeros talentos', 'Los 30: construir tu camino', 'Los 40: cosechar y materializar', 'Los 50: tu aporte y tu madurez', 'Los 60: la sabiduría de lo vivido', 'Los 70: soltar y trascender'];
+function edadesHTML(){
+  const mz = matrizCompleta(P.diaMes, P.anioNac); if (!mz) return '';
+  const m = String(P.diaMes).match(/(\d{2})\/(\d{2})/), nac = new Date(+P.anioNac, +m[2] - 1, +m[1]), edad = (Date.now() - nac) / (365.2425 * 864e5);
+  const L = programaEdades(mz), act = L.find(x => edad >= x.desde && edad < x.hasta), sig = L[L.indexOf(act) + 1];
+  let h = `<p class="sub">Tu programa por edades</p><p class="ag-ayuda" style="margin-top:0">El borde de tu matriz es una línea de tiempo: arranca a los 0 años en tu punto de personalidad y da la vuelta completa a los 80. Cada tramo de 1 año y 3 meses tiene su arcano, que marca la energía de esa etapa.</p>`;
+  if (act) h += `<div class="edad-hoy"><div class="mini-c"><img src="${cartaSrc(act.n)}" alt="" onerror="this.remove()"><span>${romano(act.n)}</span></div><div><small>Ahora · de los ${edadTxt(act.desde)} a los ${edadTxt(act.hasta)}</small><h4>${act.n} · ${esc(NOM[act.n])}</h4><p>${ARC[act.n].e.split('. ')[0]}. ${ARC[act.n].a ? ARC[act.n].a[0] : ''}</p>${sig ? `<p class="ag-ayuda">Lo que viene, desde los ${edadTxt(sig.desde)}: <b>${esc(NOM[sig.n])}</b>.</p>` : ''}</div></div>`;
+  h += '<div class="edades">';
+  for (let d = 0; d < 8; d++) {
+    const tramo = L.slice(d * 8, d * 8 + 8), activo = act && tramo.includes(act);
+    h += `<details class="edad-dec"${activo ? ' open' : ''}><summary><b>${d * 10} a ${d * 10 + 10} años</b><span>${ETAPA_EDAD[d]}</span></summary><ul>${tramo.map(x => `<li class="${x === act ? 'ahora' : edad > x.hasta ? 'pasado' : ''}"><small>${String(x.desde).replace('.', ',')}</small><b>${x.n}</b><span>${esc(NOM[x.n])}</span></li>`).join('')}</ul></details>`;
+  }
+  return h + '</div><p class="ag-ayuda">Si un tramo pasado coincide con algo fuerte que viviste, leé su arcano: suele explicar mucho. Los arcanos que se repiten en tu programa son energías que vuelven a lo largo de tu vida.</p>';
+}
+const _premMatrizEdades = premMatriz;
+premMatriz = function(){ const h = _premMatrizEdades(); let e = ''; try { e = edadesHTML(); } catch (x) { console.error(x); } const k = h.lastIndexOf('<p class="ag-ayuda">Método'); return k > -1 ? h.slice(0, k) + e + h.slice(k) : h + e; };
+
+/* 💼 Vocación y dinero mes a mes */
+const MES_DINERO = {
+  1: ['Arrancar', 'Mes para lanzar algo nuevo: un servicio, un precio, una propuesta. Lo que inicies ahora tiene fuerza.', 'Presentá esa idea que venís guardando.'],
+  2: ['Asociarte', 'Mes de alianzas y paciencia: los acuerdos, las sociedades y el trabajo en equipo te rinden más que ir sola.', 'Proponé una colaboración o un canje.'],
+  3: ['Mostrarte', 'Mes de visibilidad y creatividad: comunicá lo que hacés, publicá, vendé con tu voz.', 'Subí contenido o contale a más gente lo que ofrecés.'],
+  4: ['Ordenar', 'Mes de bases: números, presupuestos, sistemas. Lo que ordenes ahora sostiene lo que viene.', 'Hacé tu presupuesto y revisá tus precios.'],
+  5: ['Mover', 'Mes de cambios y oportunidades inesperadas: viajes, clientes nuevos, giros. Flexibilidad, pero sin gastos impulsivos.', 'Decile que sí a una oportunidad distinta.'],
+  6: ['Cuidar', 'Mes de responsabilidad y servicio: tus clientes, tu equipo y tu familia. Cobrá lo justo por cuidar.', 'Fidelizá a quienes ya confían en vos.'],
+  7: ['Revisar', 'Mes de introspección: estudiar, especializarte, revisar qué querés de verdad. No es para forzar ventas.', 'Hacé un curso o repensá tu propuesta.'],
+  8: ['Cosechar', 'Mes de poder y abundancia: es el mejor para cobrar, negociar, pedir aumentos y cerrar tratos grandes.', 'Subí tus precios o pedí lo que vale tu trabajo.'],
+  9: ['Cerrar', 'Mes de cierre de ciclo: terminar proyectos, cobrar lo pendiente y soltar lo que ya no rinde.', 'Cerrá lo que quedó abierto y hacé lugar.']
+};
+const CASA_DINERO = { 1: 'tu marca personal', 2: 'tus ingresos y tu autoestima', 5: 'tu creatividad y tus emprendimientos', 6: 'tu trabajo diario y tu rutina', 7: 'socios y clientes', 8: 'inversiones, deudas y dinero compartido', 10: 'tu carrera y tu reconocimiento', 11: 'tus redes, tus contactos y tus metas' };
+function mesesDinero(){
+  const m = String(P.diaMes).match(/(\d{2})\/(\d{2})/); if (!m) return [];
+  const n = natal(), hoy = new Date(), out = [];
+  for (let i = 0; i < 12; i++) {
+    const f = new Date(hoy.getFullYear(), hoy.getMonth() + i, 15), y = f.getFullYear();
+    const anioP = reducirNum((m[1] + m[2] + y).split('').reduce((a, c) => a + +c, 0), false), mesP = reducirNum(anioP + f.getMonth() + 1, false);
+    const casa = n ? n.casa(longSolar(jdDe(f))) + 1 : null;
+    out.push({ f, mesP, casa });
+  }
+  return out;
+}
+function mejoresDias(y, mo){
+  try { prepararMes(y, mo); } catch (e) {}
+  const dias = new Date(y, mo + 1, 0).getDate(), hoy = new Date(); hoy.setHours(0, 0, 0, 0); const L = [];
+  for (let d = 1; d <= dias; d++) { const f = new Date(y, mo, d); if (f < hoy) continue; const x = diaAstral(f); if (x.trabajo === 'si' || x.firma === 'si') L.push({ f, t: x.trabajo === 'si', s: x.firma === 'si' }); }
+  return L.slice(0, 6);
+}
+let VOCM_I = 0;
+function vocacionMesHTML(){
+  const L = mesesDinero(); if (!L.length) return '';
+  const x = L[VOCM_I] || L[0], md = MES_DINERO[x.mesP], area = x.casa ? (CASA_DINERO[x.casa] || CASA_SR[x.casa - 1].area) : '';
+  let h = `<p class="sub">Tu dinero y tu trabajo, mes a mes</p><div class="voc-meses">${L.map((m, i) => `<button type="button" class="voc-m${i === VOCM_I ? ' on' : ''}" data-vocmes="${i}"><small>${MESES[m.f.getMonth()].slice(0, 3)}</small><b>${m.mesP}</b></button>`).join('')}</div>`;
+  h += `<div class="voc-det"><small>${MESES[x.f.getMonth()].charAt(0).toUpperCase() + MESES[x.f.getMonth()].slice(1)} ${x.f.getFullYear()} · mes personal ${x.mesP}</small><h4>${md[0]}</h4><p>${md[1]}</p>
+    ${area ? `<p>☀️ Este mes el Sol ilumina tu casa ${x.casa}: el foco está en <b>${area}</b>.${[2, 6, 10].includes(x.casa) ? ' Es uno de tus meses más fuertes para lo laboral y lo económico.' : ''}</p>` : ''}
+    <p class="voc-paso">✨ Paso concreto: ${md[2]}</p>`;
+  if (VOCM_I <= 1) { const D = mejoresDias(x.f.getFullYear(), x.f.getMonth()); if (D.length) h += `<p class="voc-dias"><b>Mejores días</b>${D.map(d => `<span>${d.f.getDate()}/${d.f.getMonth() + 1}${d.t ? ' 💼' : ''}${d.s ? ' 📝' : ''}</span>`).join('')}</p><p class="ag-ayuda">💼 entrevistas, presentaciones y pedir aumentos · 📝 firmar y cerrar acuerdos.</p>`; }
+  return h + '</div>';
+}
+function repintarVoc(){ const c = document.querySelector('details[data-premsec=vocacion] .prem-cuerpo'); if (c) c.innerHTML = premVocacion(); }
+const _premVocMes = premVocacion;
+premVocacion = function(){ const h = _premVocMes(); let m = ''; try { m = vocacionMesHTML(); } catch (e) { console.error(e); } const k = h.lastIndexOf('<p class="ag-ayuda">Según'); return k > -1 ? h.slice(0, k) + m + h.slice(k) : h + m; };
+
+/* ☀️ Revolución solar superpuesta a la carta natal */
+function biRuedaSVG(n, sr){
+  const S = 340, c = S / 2, Rx = 178, ang = l => (180 + nrm2(l) - sr.asc) * RP, xy = (l, r) => [c + r * Math.cos(ang(l)), c - r * Math.sin(ang(l))];
+  let extra = `<circle cx="${c}" cy="${c}" r="${Rx + 12}" fill="none" stroke="rgba(143,217,207,.55)" stroke-width="1"/>`;
+  const lista = PL_NAT.map(p => ({ p, l: n.pos[p] })).sort((a, b) => a.l - b.l); let ult = -99, niv = 0;
+  lista.forEach(o => { niv = (o.l - ult < 6) ? (niv + 1) % 2 : 0; ult = o.l; const [x, y] = xy(o.l, Rx + niv * 0), [x2, y2] = xy(o.l, 161), [x3, y3] = xy(o.l, Rx - 8);
+    extra += `<line x1="${x2}" y1="${y2}" x2="${x3}" y2="${y3}" stroke="rgba(143,217,207,.7)"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="${niv ? 10 : 12}" fill="#8FD9CF">${TXT(GLIFO[o.p])}</text>`; });
+  return ruedaSVG(sr, false).replace('viewBox="-16 -16 ' + (S + 32) + ' ' + (S + 32) + '"', 'viewBox="-26 -26 ' + (S + 52) + ' ' + (S + 52) + '"').replace('aria-label="Tu carta natal"', 'aria-label="Tu revolución solar sobre tu carta natal"').replace('</svg>', extra + '</svg>');
+}
+function revolucionSobreNatalHTML(){
+  const n = natal(), s0 = revolucion(); if (!n || !s0) return '';
+  const pos = posTodas(s0.jd), sr = { pos, asc: s0.asc, mc: s0.mc, cus: s0.cus, hora: s0.hora, casa: s0.casa };
+  const ascN = n.casa(sr.asc) + 1;
+  let h = `<p class="sub">Tu revolución sobre tu carta natal</p><p class="ag-ayuda" style="margin-top:0">Adentro, tu carta del año (planetas dorados y sus casas). En el anillo de afuera, en verde agua, tus planetas natales: así ves en qué área de este año cae cada parte tuya.</p>`;
+  h += biRuedaSVG(n, sr);
+  h += `<div class="lugar-mes"><b>Tu ascendente del año cae en tu casa ${ascN} natal</b><p>Este año la vida te empuja a poner el foco en ${CASA_SR[ascN - 1].area}. Es el tema que da el tono a todo tu ciclo de cumpleaños a cumpleaños.</p></div>`;
+  h += '<ul class="num-lista">' + ['Sol', 'Luna', 'Venus', 'Marte', 'Júpiter', 'Saturno'].map(p => { const c = sr.casa(n.pos[p]); return `<li><b style="color:#8FD9CF">${TXT(GLIFO[p])}</b><div><span>Tu ${p} natal en tu casa ${c + 1} del año</span>${TONO_TXT[p].charAt(0).toUpperCase() + TONO_TXT[p].slice(1)} se juegan este año en ${CASA_SR[c].area}.</div></li>`; }).join('') + '</ul>';
+  return h + '<p class="ag-ayuda">Leer las dos cartas juntas es una de las técnicas más usadas en astrología: muestra cómo la energía del año se encuentra con quien sos.</p>';
+}
+const _premRevBi = premRevolucion;
+premRevolucion = function(){ const h = _premRevBi(); let b = ''; try { b = revolucionSobreNatalHTML(); } catch (e) { console.error(e); } const k = h.lastIndexOf('<p class="fila-comp">'); return k > -1 ? h.slice(0, k) + b + h.slice(k) : h + b; };
+
+document.addEventListener('click', e => { const b = e.target.closest('[data-vocmes]'); if (!b) return; VOCM_I = +b.dataset.vocmes; repintarVoc(); const d = document.querySelector('.voc-det'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();

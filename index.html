@@ -2392,7 +2392,7 @@ const INVC = { fuente: 'ganancia', monto: 50000, desde: HOY.getFullYear() + '-01
 const COL_INV = { spy: '#BF8A26', fci: '#9B6FE0', usd: '#2FA898', ap: '#8E7FA3' };
 async function cargarInversion(forzar){
   if (INV_CARGANDO) return; INV_CARGANDO = true; INV_ERR = '';
-  try { const r = await fetch(API + '?accion=inversion&clave=' + encodeURIComponent(CLAVE) + (forzar ? '&forzar=1' : '')); const d = await r.json(); if (!d.ok) throw new Error(d.error || 'sin datos'); INV = d; }
+  try { const r = await fetch(API + '?accion=inversion&clave=' + encodeURIComponent(CLAVE) + (forzar ? '&forzar=1' : '')); const d = await r.json(); if (!d.ok) throw new Error(d.error || 'sin datos'); d.spy = d.spy || {}; d.mep = d.mep || {}; d.fci = d.fci || {}; d.infl = d.infl || {}; INV = d; }
   catch (e) { INV_ERR = e.message || String(e); }
   INV_CARGANDO = false; if (VISTA === 'inversion') pintar();
 }
@@ -2415,7 +2415,7 @@ function aportesInv(){
   } else if (INVC.cuando <= kHoy) out.push([INVC.cuando, INVC.unico]);
   return out;
 }
-function valorEn(serie, k){ if (serie[k]) return serie[k]; const ks = Object.keys(serie).filter(x => x <= k).sort(); return ks.length ? serie[ks[ks.length - 1]] : 0; }
+function valorEn(serie, k){ serie = serie || {}; if (serie[k]) return serie[k]; const ks = Object.keys(serie).filter(x => x <= k).sort(); return ks.length ? serie[ks[ks.length - 1]] : 0; }
 function simularInv(){
   const d = INV, ap = aportesInv(), kHoy = claveMes(HOY), spyHoy = d.spyHoy || valorEn(d.spy, kHoy), mepHoy = d.mepHoy || valorEn(d.mep, kHoy);
   const finMes = k => { const [y, m] = k.split('-').map(Number); const f = new Date(y, m, 0); return f > HOY ? HOY : f; };
