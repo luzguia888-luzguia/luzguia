@@ -538,7 +538,7 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .snd span{font-size:1.5rem}.snd b{color:var(--oro);font-weight:600}.snd.on{border-color:var(--oro);background:rgba(212,175,106,.16);box-shadow:0 0 18px rgba(212,175,106,.25)}
 .snd-vol{width:100%;accent-color:#D4AF6A}
 #mini-snd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:57;display:flex;gap:4px;background:rgba(28,11,46,.95);border:1px solid var(--oro);border-radius:999px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
-#mini-snd button{background:none;border:0;color:var(--luna);font:inherit;font-size:.85rem;padding:6px 12px;cursor:pointer;white-space:nowrap}#mini-snd button+button{border-left:1px solid var(--linea)}
+#mini-snd button{background:none;border:0;color:var(--luna);font:inherit;font-size:.85rem;padding:6px 12px;cursor:pointer;white-space:nowrap}#mini-snd button+button{border-left:1px solid var(--linea)}#mini-snd [data-sndpausa]{font-size:1rem;min-width:40px}
 .tt{margin-top:18px}.tt-lect{text-align:left;margin-top:16px}.tt-lect .sub{margin-bottom:2px}
 
 /* v17 */
@@ -3858,13 +3858,14 @@ function ruido(tipo){
 }
 function lfo(param, f, prof, centro){ const a = audio(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; g.gain.value = prof; o.connect(g); g.connect(param); param.value = centro; o.start(); return o; }
 const ARCH_SONIDO = { 'f-fogon': 'dragon-studio-campfire-by-the-sea-467490 (1).mp3', 'f-bosque': 'soundreality-nature-forest-sound-537925.mp3', 'f-pajaros': 'freesound_community-birds-in-the-morning-24614.mp3' };
-function crearAmbiente(k){
+function crearAmbiente(k){ if (PAUSA) pausarSonido(false);
   const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
   if (/^f-/.test(k)) {
     const el = new Audio(); el.loop = true; el.preload = 'auto'; el.setAttribute('playsinline', ''); el.volume = 0; el.src = encodeURI(ARCH_SONIDO[k] || ('sonido-' + k.slice(2) + '.mp3'));
     let vt = setInterval(() => { el.volume = Math.min(VOL, el.volume + VOL / 20); if (el.volume >= VOL) { clearInterval(vt); vt = null; } }, 120);
     el.play().catch(() => { const reintento = () => { el.play().catch(() => {}); document.removeEventListener('click', reintento, true); }; document.addEventListener('click', reintento, true); });
-    nodos.push({ stop: () => { if (vt) clearInterval(vt); const f = setInterval(() => { el.volume = Math.max(0, el.volume - .05); if (el.volume <= 0) { clearInterval(f); el.pause(); el.removeAttribute('src'); el.load(); } }, 70); } });
+    let parado = false;
+    nodos.push({ stop: () => { if (parado) return; parado = true; if (vt) clearInterval(vt); const f = setInterval(() => { try { el.volume = Math.max(0, el.volume - .08); } catch (e) {} }, 50); setTimeout(() => { clearInterval(f); el.pause(); el.removeAttribute('src'); el.load(); }, 450); } });
     salida.el = el;
     el.addEventListener('error', () => { if (!el.getAttribute('src')) return; avisoSonido('No pude cargar ese sonido. Revisá tu conexión y probá de nuevo; mientras tanto probá Olas del mar o Lluvia suave.'); detenerAmbiente(); });
   } else {
@@ -3878,24 +3879,31 @@ function crearAmbiente(k){
   salida.gain.linearRampToValueAtTime(VOL, a.currentTime + 2.5);
   return { salida, nodos };
 }
-function crearFrecuencia(f){
+function crearFrecuencia(f){ if (PAUSA) pausarSonido(false);
   const a = audio(), salida = a.createGain(); salida.gain.value = 0; salida.connect(a.destination); const nodos = [];
   [[f, .16], [f / 2, .08], [f * 1.5, .025]].forEach(([fr, g]) => { const o = a.createOscillator(), gg = a.createGain(); o.type = 'sine'; o.frequency.value = fr; gg.gain.value = g; o.connect(gg); gg.connect(salida); o.start(); nodos.push(o); });
   nodos.push(lfo(salida.gain, .12, .05, 0));
   salida.gain.linearRampToValueAtTime(VOL * .7, a.currentTime + 3);
   return { salida, nodos };
 }
-function apagarSuave(x){ if (!x) return; const a = audio(); try { x.salida.gain.cancelScheduledValues(a.currentTime); x.salida.gain.setValueAtTime(x.salida.gain.value, a.currentTime); x.salida.gain.linearRampToValueAtTime(0, a.currentTime + 1.5); } catch (e) {} setTimeout(() => x.nodos.forEach(n => { try { n.stop(); } catch (e) {} }), 1700); }
+function apagarSuave(x){ if (!x) return; if (x.salida && x.salida.el) x.nodos.forEach(n => { try { n.stop(); } catch (e) {} }); const a = audio(); try { x.salida.gain.cancelScheduledValues(a.currentTime); x.salida.gain.setValueAtTime(x.salida.gain.value, a.currentTime); x.salida.gain.linearRampToValueAtTime(0, a.currentTime + 1.5); } catch (e) {} setTimeout(() => x.nodos.forEach(n => { try { n.stop(); } catch (e) {} }), 1700); }
 function detenerAmbiente(){ apagarSuave(AMB); AMB = null; AMB_K = ''; pintarMini(); pintarSonidos(); }
 function detenerFrecuencia(){ apagarSuave(FREQ); FREQ = null; FREQ_K = 0; pintarMini(); pintarSonidos(); }
-function detenerTodo(){ detenerAmbiente(); detenerFrecuencia(); clearTimeout(APAGAR_T); APAGAR_T = null; pantallaEncendida(false); }
+let PAUSA = false;
+function pausarSonido(pausar){
+  PAUSA = pausar; const el = AMB && AMB.salida && AMB.salida.el;
+  try { if (pausar) { if (AC) AC.suspend(); if (AUD_EL) AUD_EL.pause(); if (el) el.pause(); } else { if (AC) AC.resume(); if (AUD_EL) AUD_EL.play().catch(() => {}); if (el) el.play().catch(() => {}); } } catch (e) {}
+  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = pausar ? 'paused' : 'playing';
+  pintarMini();
+}
+function detenerTodo(){ PAUSA = false; detenerAmbiente(); detenerFrecuencia(); clearTimeout(APAGAR_T); APAGAR_T = null; pantallaEncendida(false); }
 function avisoSonido(t){ const el = $('snd-aviso'); if (el) { el.textContent = t; el.classList.remove('oculto'); } }
 function pintarMini(){
   let el = $('mini-snd'); const algo = AMB_K || FREQ_K;
   if (!algo) { if (el) el.remove(); return; }
   if (!el) { el = document.createElement('div'); el.id = 'mini-snd'; document.body.appendChild(el); }
   const nom = [AMB_K ? (AMBIENTES.find(x => x[0] === AMB_K) || [])[2] : '', FREQ_K ? FREQ_K + ' Hz' : ''].filter(Boolean).join(' + ');
-  el.innerHTML = `<button type="button" data-calma="sonidos">🎧 ${esc(nom)}</button><button type="button" data-sndstop aria-label="Apagar">✕</button>`;
+  el.innerHTML = `<button type="button" data-calma="sonidos">🎧 ${esc(nom)}</button><button type="button" data-sndpausa aria-label="${PAUSA ? 'Seguir' : 'Pausar'}">${PAUSA ? '▶' : '⏸'}</button><button type="button" data-sndstop aria-label="Apagar">✕</button>`;
 }
 
 /* Overlay de calma */
@@ -4040,6 +4048,7 @@ document.addEventListener('click', e => {
   if (b.dataset.amb) { const k = b.dataset.amb; if (AMB_K === k) detenerAmbiente(); else { detenerAmbiente(); AMB_K = k; AMB = crearAmbiente(k); pantallaEncendida(true); evento('Sección', 'Sonido: ' + k); } pintarMini(); pintarSonidos(); return; }
   if (b.dataset.frec) { const f = +b.dataset.frec; if (FREQ_K === f) detenerFrecuencia(); else { detenerFrecuencia(); FREQ_K = f; FREQ = crearFrecuencia(f); pantallaEncendida(true); evento('Sección', 'Frecuencia: ' + f); } pintarMini(); pintarSonidos(); return; }
   if (b.dataset.sndstop !== undefined) { detenerTodo(); return; }
+  if (b.dataset.sndpausa !== undefined) { pausarSonido(!PAUSA); return; }
   if (b.dataset.tt) { abrirTirada(b.dataset.tt); return; }
   if (b.dataset.ttcarta !== undefined) { b.classList.add('vuelta'); const todas = [...document.querySelectorAll('[data-ttcarta]')]; if (todas.every(x => x.classList.contains('vuelta'))) setTimeout(() => { const l = $('tt-lect'); if (l) { l.classList.remove('oculto'); l.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 700); return; }
 });
@@ -4072,8 +4081,8 @@ function sesionMedia(titulo){
   if (!('mediaSession' in navigator)) return;
   try {
     navigator.mediaSession.metadata = new MediaMetadata({ title: titulo, artist: 'Mi Luz · Luz Guía', artwork: [{ src: 'icono-512.png', sizes: '512x512', type: 'image/png' }] });
-    navigator.mediaSession.setActionHandler('pause', () => { if (AC) AC.suspend(); if (AUD_EL) AUD_EL.pause(); navigator.mediaSession.playbackState = 'paused'; });
-    navigator.mediaSession.setActionHandler('play', () => { if (AC) AC.resume(); if (AUD_EL) AUD_EL.play().catch(() => {}); navigator.mediaSession.playbackState = 'playing'; });
+    navigator.mediaSession.setActionHandler('pause', () => pausarSonido(true));
+    navigator.mediaSession.setActionHandler('play', () => pausarSonido(false));
     navigator.mediaSession.setActionHandler('stop', () => detenerTodo());
     navigator.mediaSession.playbackState = 'playing';
   } catch (e) {}
