@@ -586,6 +586,26 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .mp-ok{margin:10px 0 0;font-size:.88rem;color:#8FD9CF}.mp-ok a{color:#F3DCA0}
 .mp-seguir{margin:14px 0;padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.35);background:linear-gradient(135deg,rgba(191,138,38,.14),rgba(155,111,224,.12));text-align:center}
 .mp-seguir b{color:#F3DCA0;font-size:1.05rem}.mp-seguir p{margin:6px 0 12px;font-size:.92rem}
+.drac-dif{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.drac-dif>div,.drac-llave{padding:14px;border-radius:16px;border:1px solid var(--linea);background:rgba(255,255,255,.04)}
+.drac-dif small,.drac-llave small{color:#C9A7FF;font-size:.78rem}.drac-dif b,.drac-llave b{display:block;color:#F3DCA0;font-family:var(--serif);font-size:1.1rem;margin:3px 0 6px}.drac-dif p,.drac-llave p{margin:0;font-size:.9rem;line-height:1.45}
+.drac-llaves{display:grid;gap:10px}
+.drac-cambio{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px!important}.drac-cambio span{padding:3px 10px;border-radius:999px;background:rgba(155,111,224,.18);font-size:.82rem}.drac-cambio span+i+span{background:rgba(191,138,38,.25);color:#F3DCA0}.drac-cambio i{font-style:normal;color:#F3DCA0}
+.drac-tabla{border:1px solid var(--linea);border-radius:14px;overflow:hidden;margin:8px 0}
+.drac-fila{display:grid;grid-template-columns:1.2fr 1fr 1.1fr;gap:6px;padding:8px 12px;font-size:.88rem;border-top:1px solid var(--linea)}.drac-fila:first-child{border-top:0}
+.drac-fila.cab{background:rgba(155,111,224,.15);color:#C9A7FF;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.drac-fila span:last-child{color:#F3DCA0}.drac-fila.igual{background:rgba(143,217,207,.08)}
+.teaser{margin:14px 0;padding:16px;border-radius:20px;border:1px solid rgba(243,220,160,.35);background:linear-gradient(160deg,rgba(155,111,224,.16),rgba(28,11,46,.7));text-align:center}
+.teaser>small{color:#F3DCA0;letter-spacing:.06em}.teaser h4{margin:4px 0 10px;font-family:var(--serif);font-size:1.25rem;color:#F3DCA0}
+.teaser-rueda{max-width:240px;margin:0 auto;opacity:.92}.teaser-rueda svg{width:100%;height:auto}
+.teaser p{margin:10px 0;font-size:.95rem}.teaser-velo{position:relative;margin:8px 0;padding:10px;border-radius:14px;background:rgba(0,0,0,.2);overflow:hidden}
+.teaser-velo p{margin:0;filter:blur(5px);user-select:none;-webkit-user-select:none;font-size:.9rem;line-height:1.5}
+.teaser-velo span{position:absolute;inset:0;display:grid;place-items:center;color:#F3DCA0;font-weight:700;text-shadow:0 2px 10px #000}
+.teaser b.borroso{filter:blur(5px)}
+.poder{margin:0 0 16px;padding:18px;border-radius:20px;border:1px solid rgba(243,220,160,.5);background:radial-gradient(circle at 85% 10%,rgba(243,220,160,.22),transparent 55%),linear-gradient(150deg,#3B1760,#1b0f2e);box-shadow:0 0 30px rgba(212,175,106,.18)}
+.poder small{color:#F3DCA0;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem}.poder h3,.poder h4{margin:4px 0 8px;font-family:var(--serif);color:#F3DCA0}.poder h3{font-size:1.45rem}
+.poder p{margin:0 0 10px;line-height:1.5}.poder ol{margin:0 0 12px;padding-left:20px;line-height:1.6}
+.poder.pronto{padding:14px 16px;box-shadow:none}.poder.pronto p{font-size:.9rem;margin:0}
+.clima-comp{margin:10px 0 0;text-align:center}
 </style>
 </head>
 <body>
@@ -4461,6 +4481,145 @@ pedirCodigo = function(msg){
   if (MP_URL.get('pago') === 'ok' && !msg) return _pedirCodigoMP('<b style="color:var(--oro);font-size:1.15rem">¡Gracias por suscribirte a Premium! ✷</b><br><br>Volvé a abrir Mi Luz desde el ícono de tu pantalla de inicio: en unos minutos vas a ver todo Premium abierto. Si preferís entrar desde acá, pegá tu enlace de Mi Luz:');
   return _pedirCodigoMP(msg);
 };
+
+
+/* ───── v20: carta dracónica, adelantos de Premium, sinfonía de muestra, fechas de poder, compartir el clima ───── */
+
+/* 🐉 Carta dracónica: el Nodo Norte pasa a ser 0° Aries y toda la carta se mueve igual */
+const ALMA_SIGNO = [
+  'un alma pionera: vino a animarse primero, a abrir caminos y a encender a otros con su coraje.',
+  'un alma que busca raíz: vino a crear belleza, seguridad y abundancia, y a disfrutar del cuerpo y de la tierra.',
+  'un alma mensajera: vino a aprender, conectar personas e ideas y poner en palabras lo que otros sienten.',
+  'un alma que cuida: vino a nutrir, a crear hogar y a sanar a través del amor y la memoria familiar.',
+  'un alma que brilla: vino a crear, a expresarse con el corazón abierto y a recordarles a otros su propia luz.',
+  'un alma sanadora: vino a servir, ordenar y mejorar lo que toca, con manos sabias y mirada atenta.',
+  'un alma que armoniza: vino a crear vínculos justos, belleza y equilibrio entre las personas.',
+  'un alma alquimista: vino a transformar el dolor en poder, a ir a lo profundo y a renacer cuantas veces haga falta.',
+  'un alma buscadora: vino a explorar, a encontrar sentido y a compartir la sabiduría que recoge en el camino.',
+  'un alma constructora: vino a dejar algo que perdure, con paciencia, compromiso y una gran responsabilidad.',
+  'un alma visionaria: vino a liberar, innovar y unir a su tribu alrededor de un futuro más humano.',
+  'un alma mística: vino a amar sin condiciones, a confiar en lo invisible y a disolver fronteras con compasión.'
+];
+function dracon(n){
+  const nodo = n.pos.Nodo, sh = l => nrm2(l - nodo), pos = {};
+  Object.keys(n.pos).forEach(k => pos[k] = sh(n.pos[k]));
+  const cus = n.cus.map(sh);
+  return { jd: n.jd, pos, asc: sh(n.asc), mc: n.mc == null ? null : sh(n.mc), hora: n.hora, cus, ciudad: n.ciudad, casa: l => casaEn(cus, l) };
+}
+function premDraconica(){
+  const n = natal(); if (!n) return faltaFecha;
+  const d = dracon(n), si = l => Math.floor(nrm2(l) / 30);
+  const llave = (ic, nom, rol, l0, l1) => { const a = si(l0), b = si(l1);
+    return `<div class="drac-llave"><small>${ic} ${nom}</small><b>${rol}</b><p class="drac-cambio"><span>Natal: ${ZOD[a]}</span><i>→</i><span>Alma: ${ZOD[b]}</span></p><p>${a === b ? `Tu personalidad y tu alma hablan el mismo idioma: ${ALMA_SIGNO[b]}` : `Por fuera te mostrás ${SIGNO_ADJ[a]}, pero en el fondo sos ${ALMA_SIGNO[b]}`}</p></div>`; };
+  let h = `<p class="intro">La carta dracónica es la carta de tu alma. Se calcula con tus mismos datos de nacimiento, pero tomando tu Nodo Norte, el punto que marca la dirección de tu alma, como si fuera el inicio del zodíaco (0° de Aries). Toda tu carta se mueve en la misma medida.</p>
+    <div class="drac-dif"><div><small>🌌 Carta natal</small><b>Tu personalidad</b><p>Cómo sos en esta vida: tu carácter, tus talentos, tus desafíos y la forma en que te mostrás al mundo.</p></div><div><small>🐉 Carta dracónica</small><b>Tu alma</b><p>Lo que traés de antes de esta vida: tu esencia, tus motivaciones más profundas y para qué viniste.</p></div></div>
+    <p class="ag-ayuda">Las distancias entre tus planetas no cambian, así que tus aspectos son los mismos que en tu natal. Lo que cambia son los signos: muestran con qué energía vibra tu alma.</p>`;
+  h += ruedaSVG(d, false).replace('aria-label="Tu carta natal"', 'aria-label="Tu carta dracónica"') + '<p class="ag-ayuda" style="text-align:center">Tu rueda dracónica: tu Nodo Norte ☊ queda siempre en 0° de Aries.</p>';
+  h += '<p class="sub">Las tres llaves de tu alma</p><div class="drac-llaves">' + llave('☉', 'Sol dracónico', 'Para qué vino tu alma', n.pos.Sol, d.pos.Sol) + llave('☽', 'Luna dracónica', 'Lo que tu alma necesita para sentirse en casa', n.pos.Luna, d.pos.Luna) + (n.hora ? llave('AC', 'Ascendente dracónico', 'Cómo se presenta tu alma', n.asc, d.asc) : '') + '</div>';
+  if (!n.hora) h += '<p class="ag-ayuda">Con tu hora de nacimiento sumamos tu Ascendente dracónico, la tercera llave.</p>';
+  h += '<p class="sub">Tu natal y tu alma, planeta por planeta</p><div class="drac-tabla"><div class="drac-fila cab"><span></span><span>Natal</span><span>Alma</span></div>' +
+    PL_NAT.map(p => { const a = si(n.pos[p]), b = si(d.pos[p]); return `<div class="drac-fila${a === b ? ' igual' : ''}"><span>${TXT(GLIFO[p])} ${p}</span><span>${ZOD[a]}</span><span>${gradoTxt(d.pos[p])}</span></div>`; }).join('') + '</div>';
+  const iguales = PL_NAT.filter(p => si(n.pos[p]) === si(d.pos[p]));
+  if (iguales.length) h += `<p class="ag-ayuda">Los planetas que quedan en el mismo signo (${iguales.join(', ')}) son energías en las que tu personalidad y tu alma ya están alineadas: ahí te sentís más vos.</p>`;
+  h += `<div class="lugar-mes"><b>¿Cómo usarla?</b><p>Leela junto a tu natal: cuando sientas que algo de tu vida "no te cierra" aunque todo esté bien por fuera, mirá tu Sol y tu Luna dracónicos. Suelen mostrar lo que tu alma te está pidiendo y que todavía no te permitiste vivir.</p></div>`;
+  return h;
+}
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'natal');
+  PREMIUM_LISTA.splice(i + 1, 0, ['draconica', '🐉', 'Tu carta dracónica', 'La carta de tu alma: lo que traés de antes de esta vida y para qué viniste, y en qué se diferencia de tu natal.']);
+  PREM_FN.draconica = () => premDraconica();
+})();
+
+/* ✨ Adelantos de Premium (para quien todavía no lo tiene) */
+let DEMO_SINF = null;
+function adelantoPremiumHTML(){
+  const n = natal(); if (!n) return '';
+  const si = l => Math.floor(nrm2(l) / 30), d = dracon(n);
+  return `<section class="teaser"><small>✨ Un adelanto de lo tuyo</small><h4>Tu carta natal ya está calculada</h4>
+    <div class="teaser-rueda">${ruedaSVG(n, true)}</div>
+    <p>Tu Sol está en <b>${ZOD[si(n.pos.Sol)]}</b>, tu Luna en <b>${ZOD[si(n.pos.Luna)]}</b>${n.hora ? ` y tu Ascendente en <b>${ZOD[si(n.asc)]}</b>` : ''}.</p>
+    <div class="teaser-velo"><p class="borroso" aria-hidden="true">${SOL_SIGNO[si(n.pos.Sol)]} ${LUNA_SIGNO[si(n.pos.Luna)]}</p><span>🔒 Tu lectura completa</span></div>
+    <p>Y tu alma, en tu carta dracónica, vibra en <b class="borroso" aria-hidden="true">${ZOD[si(d.pos.Sol)]}</b>…</p>
+    <div class="fila-bt" style="justify-content:center"><button class="btn-sec" type="button" data-demosinf>🎼 Escuchá 10 segundos de tu sinfonía natal</button><button class="btn" type="button" data-adelcta>Descubrilo en Premium</button></div></section>`;
+}
+const _premAdel = premiumHTML;
+premiumHTML = function(){
+  let h = _premAdel();
+  if (P.premium && !VISTA_GRATIS) return h;
+  let a = ''; try { a = adelantoPremiumHTML(); } catch (e) {}
+  return a ? h.replace('</section>', '</section>' + a) : h;
+};
+function irCTAPremium(){ const el = document.querySelector('.prueba-caja') || document.querySelector('.mp-caja') || document.querySelector('.prem-cta'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+function demoSinfonia(){
+  clearTimeout(DEMO_SINF); tocarSinfonia(); evento('Sección', 'Sinfonía natal: muestra');
+  DEMO_SINF = setTimeout(() => {
+    detenerTodo(); DEMO_SINF = null;
+    $('dlg-titulo').textContent = '🎼 Esta es solo la base de tu vibración';
+    $('dlg-texto').textContent = 'Tu sinfonía completa une los tonos de tu Sol, tu Luna y tu Ascendente para que la escuches cuando quieras: para meditar, dormir o acompañar tus rituales. Está en Premium.';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn-sec" type="button" id="dlg-no">Ahora no</button><button class="btn" type="button" id="dlg-ok">Quiero mi sinfonía completa</button></div>';
+    $('dlg').showModal(); $('dlg-no').onclick = () => $('dlg').close(); $('dlg-ok').onclick = () => { $('dlg').close(); irCTAPremium(); };
+  }, 10000);
+}
+
+/* 🌟 Fechas de poder: portales, solsticios y equinoccios (hemisferio sur) */
+const FECHAS_PODER = {
+  '01-01': ['🎆', 'Año nuevo, energía nueva', 'El primer día del año es una semilla: lo que hagas con intención hoy marca el tono de los próximos meses.', ['Escribí tres intenciones para el año en presente, como si ya fueran reales.', 'Elegí una palabra guía y ponela donde la veas todos los días.', 'Encendé una vela blanca y leé tus intenciones en voz alta.'], [['timer', 11, 'Meditar 11 min'], ['sonidos', 528, 'Escuchar 528 Hz']]],
+  '03-20': ['🍂', 'Equinoccio de otoño (Mabon)', 'El día y la noche duran lo mismo: es el momento de cosechar, agradecer y empezar a soltar lo que ya dio su fruto.', ['Hacé una lista de lo que cosechaste desde la primavera.', 'Agradecé en voz alta a quienes te acompañaron.', 'Elegí una cosa para soltar antes del invierno.'], [['resp', 'calma', 'Respirar 3 min'], ['sonidos', 396, 'Escuchar 396 Hz']]],
+  '05-01': ['🎃', 'Samhain en el sur', 'El velo entre los mundos se afina: tiempo de honrar a tus ancestros, mirar hacia adentro y cerrar ciclos.', ['Poné una foto o un objeto de un ser querido que ya partió junto a una vela.', 'Escribile unas palabras de agradecimiento.', 'Preguntate qué parte de vos está lista para morir y renacer.'], [['timer', 15, 'Meditar 15 min'], ['sonidos', 963, 'Escuchar 963 Hz']]],
+  '06-21': ['❄️', 'Solsticio de invierno (Yule)', 'La noche más larga del año: desde hoy la luz empieza a volver. Es el renacer del Sol y de tus proyectos.', ['Apagá todas las luces unos minutos y quedate en silencio.', 'Encendé una vela dorada y pedí que vuelva la luz a lo que querés hacer crecer.', 'Escribí un proyecto que querés que nazca con el Sol nuevo.'], [['timer', 10, 'Meditar 10 min'], ['sonidos', 528, 'Escuchar 528 Hz']]],
+  '08-08': ['🦁', 'Portal del León 8/8', 'El Sol en Leo y el número 8 abren uno de los portales de abundancia más fuertes del año.', ['Escribí ocho cosas que querés atraer, en presente.', 'Hacé hoy un gesto concreto por tu prosperidad.', 'Repetí: "Me abro a recibir toda la abundancia que es para mí".'], [['timer', 8, 'Meditar 8 min'], ['sonidos', 528, 'Escuchar 528 Hz']]],
+  '09-22': ['🌸', 'Equinoccio de primavera (Ostara)', 'La luz y la oscuridad se equilibran y la vida vuelve a brotar: tiempo de sembrar lo nuevo.', ['Plantá una semilla real con una intención.', 'Ordená un rincón de tu casa para que entre lo nuevo.', 'Escribí qué querés ver florecer de acá al verano.'], [['resp', 'calma', 'Respirar 3 min'], ['sonidos', 639, 'Escuchar 639 Hz']]],
+  '10-31': ['🔥', 'Beltane en el sur', 'La fiesta del fuego, la pasión y la fertilidad: celebrá la vida, el placer y lo que querés encender.', ['Encendé una vela roja o naranja y nombrá lo que te apasiona.', 'Bailá una canción que te encante, aunque sea sola.', 'Escribí qué querés que crezca con fuerza este verano.'], [['timer', 10, 'Meditar 10 min'], ['sonidos', 417, 'Escuchar 417 Hz']]],
+  '11-11': ['✨', 'Portal 11/11', 'El portal de las sincronías y los nuevos comienzos: el 11 es el número maestro de la intuición y el despertar. Lo que intencionás hoy se amplifica.', ['A las 11:11 cerrá los ojos y respirá once veces.', 'Escribí once deseos en presente, como si ya hubieran pasado.', 'Guardá el papel en un lugar especial hasta el próximo 11/11.'], [['timer', 11, 'Meditar 11 min'], ['sonidos', 963, 'Escuchar 963 Hz']]],
+  '12-12': ['🌀', 'Portal 12/12', 'Un portal de cierre: el 12 completa ciclos. Ideal para terminar lo que quedó abierto antes de fin de año.', ['Hacé una lista de lo que querés cerrar antes del año nuevo.', 'Elegí una cosa y cerrala hoy.', 'Agradecé todo lo que este año te enseñó.'], [['timer', 12, 'Meditar 12 min'], ['sonidos', 432, 'Escuchar 432 Hz']]],
+  '12-21': ['☀️', 'Solsticio de verano (Litha)', 'El día más largo del año: el Sol en su máximo esplendor. Celebrá tu propia luz y todo lo que lograste.', ['Salí al sol unos minutos y agradecé su calor.', 'Escribí tres logros del año de los que estés orgullosa.', 'Prendé una vela amarilla por la luz que querés seguir irradiando.'], [['resp', 'cuadrada', 'Respiración cuadrada'], ['sonidos', 528, 'Escuchar 528 Hz']]]
+};
+function claveFP(f){ return String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0'); }
+function fechaPoderHTML(){
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const fp = FECHAS_PODER[claveFP(hoy)];
+  const resp = k => PATRONES[k] ? k : 'calma';
+  if (fp) return `<section class="poder"><small>Hoy es un día de poder</small><h3>${fp[0]} ${fp[1]}</h3><p>${fp[2]}</p>
+    <ol>${fp[3].map(x => `<li>${x}</li>`).join('')}</ol>
+    <div class="fila-bt" style="justify-content:flex-start">${fp[4].map(([t, v, txt], i) => `<button class="${i ? 'btn-sec' : 'btn'}" type="button" data-momento="${t}|${t === 'resp' ? resp(v) : v}">${txt}</button>`).join('')}<button class="btn-sec" type="button" data-comppoder="${claveFP(hoy)}">Compartir</button></div></section>`;
+  for (let i = 1; i <= 3; i++) { const f = new Date(hoy); f.setDate(f.getDate() + i); const x = FECHAS_PODER[claveFP(f)];
+    if (x) return `<section class="poder pronto"><small>${i === 1 ? 'Mañana' : 'En ' + i + ' días'}</small><h4>${x[0]} ${x[1]}</h4><p>${x[2]} Prepará papel, lapicera y una vela para ese día.</p></section>`; }
+  return '';
+}
+const _hoyPoder = hoyHTML;
+hoyHTML = function(){
+  let h = _hoyPoder(); let fp = ''; try { fp = fechaPoderHTML(); } catch (e) {}
+  if (!fp) return h;
+  const i = h.indexOf('<section class="clima">');
+  return i > -1 ? h.slice(0, i) + fp + h.slice(i) : fp + h;
+};
+
+/* 💬 Compartir la energía de hoy o la fecha de poder */
+function compartirTexto(txt){
+  if (navigator.share) navigator.share({ text: txt }).catch(() => {});
+  else window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+}
+const _momentoComp = momentoHTML;
+momentoHTML = function(){
+  const h = _momentoComp();
+  if (!h.includes('<section class="clima">')) return h;
+  const k = h.lastIndexOf('</section>');
+  return h.slice(0, k) + '<p class="clima-comp"><button class="link" type="button" data-compclima data-compdia>💬 Compartir la energía de hoy con una amiga</button></p>' + h.slice(k);
+};
+function textoClima(){
+  const { d, ap, clima } = climaHoy(), tono = LUNA_TONO[d.signo] || ['', ''], hoy = new Date();
+  return `✨ La energía de hoy, ${DIAS[hoy.getDay()]} ${hoy.getDate()} de ${MESES[hoy.getMonth()]}: ${clima[0]} ${clima[1].toLowerCase()}.\n🌙 Luna ${d.crec ? 'creciente' : 'menguante'} en ${d.signo}: un día con ${tono[1]}.${ap ? '\n🃏 Carta del día: ' + NOM[ap] + '.' : ''}\n\nMe lo dice Mi Luz, la app de Luz Guía 💜\n\n` + textoInvitacion();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.adelcta !== undefined) { irCTAPremium(); evento('Sección', 'Adelanto Premium: botón'); return; }
+  if (b.dataset.demosinf !== undefined) { demoSinfonia(); return; }
+  if (b.dataset.compclima !== undefined) { try { compartirTexto(textoClima()); evento('Compartió', 'Clima de hoy'); } catch (x) {} return; }
+  if (b.dataset.comppoder) { const x = FECHAS_PODER[b.dataset.comppoder]; if (x) { compartirTexto(`${x[0]} Hoy es ${x[1]}.\n${x[2]}\n\n${x[3].map(s => '• ' + s).join('\n')}\n\nMe lo recordó Mi Luz, la app de Luz Guía 💜\n\n` + textoInvitacion()); evento('Compartió', 'Fecha de poder'); } return; }
+});
+/* Si para la muestra antes de los 10 segundos, no aparece el cartel */
+const _detTodoDemo = detenerTodo;
+detenerTodo = function(){ if (DEMO_SINF) { clearTimeout(DEMO_SINF); DEMO_SINF = null; } _detTodoDemo(); };
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
