@@ -629,6 +629,22 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .conf-datos small{color:#C9A7FF;letter-spacing:.06em}.conf-datos h4{margin:4px 0 6px;font-family:var(--serif);color:#F3DCA0;font-size:1.15rem}.conf-datos p{margin:0 0 10px;font-size:.92rem}
 .conf-datos ul{list-style:none;padding:0;margin:0 0 12px}.conf-datos li{padding:4px 0}.conf-datos li span{margin-right:8px}
 .conf-datos.ok b{color:#8FD9CF}.conf-form{margin-top:12px}
+.historias{margin-top:26px}.hist-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.hist{display:flex;align-items:center;gap:8px;padding:12px;border-radius:14px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;text-align:left;cursor:pointer}.hist span{font-size:1.3rem}.hist:hover{border-color:#D4AF6A}
+.am-banner,.regalo-bt{display:flex;gap:12px;align-items:center;width:100%;margin:0 0 16px;padding:14px 16px;border-radius:18px;border:1px solid rgba(243,220,160,.5);background:linear-gradient(135deg,rgba(191,138,38,.25),rgba(155,111,224,.2));color:inherit;font:inherit;text-align:left;cursor:pointer}
+.am-banner>span,.regalo-bt>span{font-size:1.8rem}.am-banner small{color:#F3DCA0;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem}.am-banner b,.regalo-bt b{display:block;font-family:var(--serif);color:#F3DCA0;font-size:1.1rem}.am-banner p,.regalo-bt p{margin:2px 0 0;font-size:.86rem;opacity:.9}
+.regalo-bt{margin-top:18px}
+#anio-magico{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));background:radial-gradient(circle at 50% 20%,rgba(243,220,160,.18),transparent 55%),linear-gradient(170deg,#3B1760,#120720)}
+.am-barras{display:flex;gap:4px;margin-right:40px}.am-barras i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.2)}.am-barras i.ok,.am-barras i.on{background:#F3DCA0}
+.am-x{position:absolute;top:calc(6px + env(safe-area-inset-top));right:10px;background:none;border:0;color:#fff;font-size:1.3rem;padding:8px;cursor:pointer}
+.am-slide{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;cursor:pointer;animation:amIn .5s ease}
+.am-ic{font-size:4.5rem;filter:drop-shadow(0 0 20px rgba(243,220,160,.5))}.am-carta{width:150px;aspect-ratio:2/3.3;border-radius:14px;overflow:hidden;border:1px solid #D4AF6A;box-shadow:0 0 40px rgba(212,175,106,.35);display:grid;place-items:center;font-family:var(--serif);color:#F3DCA0;font-size:2rem}.am-carta img{width:100%;height:100%;object-fit:cover}
+.am-slide small{color:#C9A7FF;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;margin-top:14px}.am-slide h2{font-family:var(--serif);color:#F3DCA0;font-size:1.9rem;margin:4px 0;line-height:1.15}.am-slide p{max-width:340px;line-height:1.55;margin:6px 0 0}
+.am-pie{display:flex;gap:10px;justify-content:center}
+@keyframes amIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.afin-inv{display:flex;gap:12px;margin:16px 0;padding:14px 16px;border-radius:18px;border:1px solid var(--linea);background:rgba(255,255,255,.04)}.afin-inv>span{font-size:1.8rem}.afin-inv b{display:block;color:#F3DCA0}.afin-inv p{margin:4px 0 10px;font-size:.88rem}
+.afin-pub{max-width:420px;font-style:normal}.afin-pub small{color:#C9A7FF;letter-spacing:.08em}.afin-pub h2{font-family:var(--serif);color:#F3DCA0;font-size:1.5rem;margin:6px 0}.afin-pub input{margin-top:10px}
+.afin-res{margin-top:16px;padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.4);background:rgba(155,111,224,.15)}.afin-res .jp{font-size:2.4rem;color:#F3DCA0;font-family:var(--serif)}.afin-res p{margin:8px 0}
 </style>
 </head>
 <body>
@@ -4860,6 +4876,186 @@ document.addEventListener('click', e => {
   if (b.dataset.datoscorr !== undefined) { const f = $('conf-form'); if (f) { f.classList.remove('oculto'); const h = $('cfn-hora'); if (h) h.focus(); } return; }
   if (b.dataset.guardarnac === 'cfn') { setTimeout(() => { lsSet('luzguia_datos_ok', isoLocal(new Date())); NAT_K = ''; const c = $('conf-datos'); if (c) c.outerHTML = '<section class="conf-datos ok"><b>✓ ¡Gracias! Tus datos quedaron guardados.</b><p>Tu carta y todo Mi Luz ya se calculan con ellos.</p></section>'; }, 400); }
 }, true);
+
+
+/* ───── v23: historias para Instagram, Tu año mágico, Regalá Premium, afinidad con una amiga ───── */
+
+/* 📲 Historias: tres tipos nuevos y una galería en Arcanos */
+function sinfoniaSVG(){
+  const v = vocesSinfonia(); if (!v) return '';
+  const col = ['#F3DCA0', '#C9A7FF', '#8FD9CF'];
+  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${v.map((x, i) => `<circle cx="100" cy="100" r="${88 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="3" opacity=".85"/><circle cx="100" cy="100" r="${82 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="1" opacity=".35"/>`).join('')}<text x="100" y="114" text-anchor="middle" font-size="40" fill="#F3DCA0">♫</text></svg>`;
+}
+function historiaDe(tipo){
+  const hoy = new Date(), fecha = DIAS[hoy.getDay()] + ' ' + hoy.getDate() + ' de ' + MESES[hoy.getMonth()];
+  if (tipo === 'clima') { const { d, ap, num, clima } = climaHoy(), tono = LUNA_TONO[d.signo] || ['', ''];
+    return [{ kicker: 'MI ENERGÍA DE HOY', fecha, ilus: { tipo: 'emoji', ic: clima[0] }, titulo: clima[1], subtitulo: 'Luna ' + (d.crec ? 'creciente' : 'menguante') + ' en ' + d.signo + ': un día con ' + tono[1] + '.',
+      secciones: [ap ? { t: 'Carta del día', x: NOM[ap] } : null, num.dia ? { t: 'Mi día personal ' + num.dia, x: 'Buen día para ' + DIA_PERS[num.dia] + '.' } : null].filter(Boolean), afirmacion: ap ? ARC[ap].af : '' }, 'mi-energia-de-hoy.png', 'Mi energía de hoy ✨'];
+  }
+  if (tipo === 'sinfonia') { const v = vocesSinfonia(); if (!v) return null;
+    return [{ kicker: 'MI SINFONÍA NATAL', fecha: 'Mi huella sonora', ilus: { tipo: 'svg', svg: sinfoniaSVG() }, titulo: v.map(x => x.f.toFixed(1).replace('.', ',')).join(' · ') + ' Hz',
+      secciones: v.map(x => ({ t: x.t, x: 'Vibra con ' + TONO_TXT[x.p] + '.' })) }, 'mi-sinfonia-natal.png', 'Mi sinfonía natal 🎼'];
+  }
+  if (tipo === 'draconica') { const n = natal(); if (!n) return null; const d = dracon(n), si = l => Math.floor(nrm2(l) / 30);
+    return [{ kicker: 'MI CARTA DRACÓNICA', fecha: 'La carta de mi alma', ilus: { tipo: 'svg', svg: ruedaSVG(d, false) }, titulo: 'Mi alma vibra en ' + ZOD[si(d.pos.Sol)],
+      subtitulo: 'Soy ' + ALMA_SIGNO[si(d.pos.Sol)], secciones: [{ t: 'Lo que mi alma necesita', x: 'Luna dracónica en ' + ZOD[si(d.pos.Luna)] + '.' }] }, 'mi-carta-draconica.png', 'La carta de mi alma 🐉'];
+  }
+  return null;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-share]'); if (!b) return;
+  const h = historiaDe(b.dataset.share); if (!h) return;
+  evento('Compartió', 'Historia: ' + b.dataset.share);
+  compartirImagen(b, h[0], h[1], h[2] + ' · Mi Luz, Luz Guía');
+});
+function historiasHTML(){
+  const L = [['clima', '☀️', 'Mi energía de hoy'], ['carta', '🃏', 'Mi carta del día'], ['anio', '✷', 'Mi arcano del año'], ['nacimiento', '🌟', 'Mi arcano de nacimiento'], ['animal', '🐺', 'Mi animal de poder'], ['luna', '🌙', 'La luna de estos días'], ['numeros', '🔢', 'Mi numerología'], ['ser', '🧚', 'Mi ser sobrenatural']];
+  if (P.premium) L.splice(1, 0, ['natal', '🌌', 'Mi carta natal'], ['draconica', '🐉', 'La carta de mi alma'], ['sinfonia', '🎼', 'Mi sinfonía natal']);
+  return `<section class="historias"><h3>Para tus historias 📲</h3><p class="ag-ayuda" style="margin-top:0">Tocá una y compartila en Instagram o WhatsApp. Van con la firma de Luz Guía.</p>
+    <div class="hist-grid">${L.map(([k, ic, t]) => `<button type="button" class="hist" data-share="${k}"><span>${ic}</span>${t}</button>`).join('')}</div></section>`;
+}
+const _arcHist = arcanosHTML;
+arcanosHTML = function(){ return _arcHist() + historiasHTML(); };
+
+/* ✨ Tu año mágico: el resumen del año (del 1/12 al 31/1; las organizadoras lo ven siempre) */
+function anioMagicoDisponible(){ const h = new Date(); return P.organizadora || h.getMonth() === 11 || h.getMonth() === 0; }
+function anioMagicoDatos(){
+  const h = new Date(), Y = h.getMonth() === 0 ? h.getFullYear() - 1 : h.getFullYear();
+  const s = RACHA || estadoRacha(), dias = (s.dias || []).filter(d => String(d).startsWith(String(Y))).sort();
+  let mejor = 0, act = 0, prev = null; dias.forEach(d => { const t = new Date(d + 'T12:00'); act = prev && (t - prev) / 864e5 <= 1.01 ? act + 1 : 1; mejor = Math.max(mejor, act); prev = t; });
+  const cartas = (P.diario || []).filter(x => x.tipo === 'Carta' && String(x.f).startsWith(String(Y))), cnt = {}; cartas.forEach(x => cnt[x.valor] = (cnt[x.valor] || 0) + 1);
+  const top = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+  const int = (P.diario || []).filter(x => x.tipo === 'Intención' && String(x.f).startsWith(String(Y))).length;
+  const cumplidas = (P.diario || []).filter(x => x.tipo === 'Revisión' && /cumpliendo/.test(x.valor || '') && String(x.f).startsWith(String(Y))).length;
+  const notas = (P.diario || []).filter(x => x.tipo === 'Nota' && String(x.luna).startsWith(String(Y))).length;
+  const sig = P.diaMes ? arcanoDeAnio(P.diaMes, Y + 1) : null, numSig = P.diaMes ? reducirNum(String(P.diaMes).replace(/\D/g, '').split('').reduce((a, c) => a + +c, 0) + String(Y + 1).split('').reduce((a, c) => a + +c, 0)) : null;
+  return { Y, dias: dias.length, mejor, top: top ? { n: +top[0], v: top[1] } : null, int, cumplidas, notas, med: s.med || 0, logros: Object.keys(s.logros || {}).length, fuiste: P.fuiste || [], camino: !!lsGet('luzguia_camino_hecho', 0), sig, numSig };
+}
+function anioMagicoSlides(){
+  const d = anioMagicoDatos(), nom = String(P.nombre || '').split(' ')[0], S = [];
+  S.push({ ic: '✨', k: 'Tu año mágico ' + d.Y, t: nom ? nom + ', mirá todo lo que viviste' : 'Mirá todo lo que viviste', p: 'Un año de lunas, cartas, intenciones y momentos tuyos. Tocá para avanzar.' });
+  if (d.dias) S.push({ ic: '🔥', k: 'Tu constancia', t: d.dias + (d.dias === 1 ? ' día' : ' días') + ' con Mi Luz', p: d.mejor > 1 ? 'Tu racha más larga fue de ' + d.mejor + ' días seguidos. Eso es compromiso con vos.' : 'Cada vez que abriste Mi Luz te regalaste un momento para vos.', o: { kicker: 'MI AÑO MÁGICO ' + d.Y, fecha: 'Mi constancia', ilus: { tipo: 'numero', n: d.dias }, titulo: d.dias + ' días con Mi Luz', subtitulo: d.mejor > 1 ? 'Racha más larga: ' + d.mejor + ' días' : '' } });
+  if (P.anual) S.push({ ic: '✷', k: 'Tu energía del año', t: P.anual.nombre, p: 'Fue el arcano que te acompañó todo ' + d.Y + ': ' + minus(P.anual.texto), carta: P.anual.n, o: { kicker: 'MI AÑO MÁGICO ' + d.Y, fecha: 'Mi arcano del año', carta: P.anual.n, titulo: P.anual.nombre, lineas: [P.anual.texto] } });
+  if (d.top) S.push({ ic: '🃏', k: 'Tu carta del año', t: NOM[d.top.n], p: 'Te salió ' + d.top.v + (d.top.v === 1 ? ' vez' : ' veces') + '. ' + ARC[d.top.n].e.split('. ')[0] + '.', carta: d.top.n, o: { kicker: 'MI AÑO MÁGICO ' + d.Y, fecha: 'La carta que más me habló', carta: d.top.n, titulo: NOM[d.top.n], lineas: [ARC[d.top.n].e.split('. ')[0] + '.'], afirmacion: ARC[d.top.n].af } });
+  if (d.int || d.notas) S.push({ ic: '🌑', k: 'Lo que sembraste', t: d.int ? d.int + (d.int === 1 ? ' intención sembrada' : ' intenciones sembradas') : d.notas + ' páginas en tu diario', p: d.cumplidas ? d.cumplidas + (d.cumplidas === 1 ? ' ya se está cumpliendo' : ' ya se están cumpliendo') + '. La Luna escucha 🌕' : 'Escribir es la primera forma de manifestar.' });
+  if (d.med || d.camino) S.push({ ic: '🧘', k: 'Tus momentos de calma', t: d.med + (d.med === 1 ? ' momento' : ' momentos') + ' para vos', p: d.camino ? 'Y completaste un camino entero. Eso es amor propio en acción.' : 'Respiraciones, meditaciones y sonidos: cada uno contó.' });
+  if (d.fuiste.length) S.push({ ic: '🍷', k: 'Tus encuentros', t: d.fuiste.length === 1 ? 'Compartiste 1 encuentro' : 'Compartiste ' + d.fuiste.length + ' encuentros', p: d.fuiste.map(x => x.nombre).slice(0, 4).join(' · ') + '. Gracias por elegirnos 💜' });
+  if (d.logros) S.push({ ic: '🏅', k: 'Tus logros', t: d.logros + (d.logros === 1 ? ' logro desbloqueado' : ' logros desbloqueados'), p: 'Cada uno es una huella de tu camino este año.' });
+  if (d.sig) S.push({ ic: '🔮', k: 'Lo que viene', t: (d.Y + 1) + ': ' + NOM[d.sig], p: 'Tu próximo año te va a acompañar ' + NOM[d.sig] + (d.numSig ? ' y vivís un año personal ' + d.numSig : '') + '. ' + ARC[d.sig].af, carta: d.sig, o: { kicker: 'MI ' + (d.Y + 1), fecha: 'La energía que viene', carta: d.sig, titulo: NOM[d.sig], afirmacion: ARC[d.sig].af } });
+  S.push({ ic: '💜', k: 'Gracias', t: 'Gracias por este año juntas', p: 'Que lo que viene te encuentre con el corazón abierto. — Belu y Mey, Luz Guía', fin: 1 });
+  return S;
+}
+let AM = null;
+function abrirAnioMagico(){
+  AM = { i: 0, S: anioMagicoSlides() }; evento('Sección', 'Tu año mágico');
+  let el = $('anio-magico'); if (!el) { el = document.createElement('div'); el.id = 'anio-magico'; document.body.appendChild(el); }
+  pintarAM();
+}
+function pintarAM(){
+  const el = $('anio-magico'), s = AM.S[AM.i];
+  el.innerHTML = `<div class="am-barras">${AM.S.map((_, i) => `<i class="${i < AM.i ? 'ok' : i === AM.i ? 'on' : ''}"></i>`).join('')}</div><button class="am-x" type="button" data-amx aria-label="Cerrar">✕</button>
+    <div class="am-slide" data-amnext>${s.carta ? `<div class="am-carta"><img src="${cartaSrc(+s.carta)}" alt="" onerror="this.parentNode.innerHTML='<span>${romano(+s.carta)}</span>'"></div>` : `<div class="am-ic">${s.ic}</div>`}
+      <small>${esc(s.k)}</small><h2>${esc(s.t)}</h2><p>${esc(s.p)}</p></div>
+    <div class="am-pie">${s.o ? '<button class="btn-sec" type="button" data-amshare>📲 Compartir</button>' : ''}${s.fin ? '<button class="btn" type="button" data-amx>Cerrar</button>' : '<button class="btn" type="button" data-amnext>Siguiente ›</button>'}</div>`;
+}
+function anioMagicoBanner(){
+  if (!anioMagicoDisponible() || !P.diaMes) return '';
+  const Y = new Date().getMonth() === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear();
+  return `<button type="button" class="am-banner" data-amopen><span>✨</span><div><small>Ya está listo</small><b>Tu año mágico ${Y}</b><p>Todo lo que viviste este año en Mi Luz, para guardar y compartir ›</p></div></button>`;
+}
+const _hoyAM = hoyHTML;
+hoyHTML = function(){ let h = _hoyAM(); let b = ''; try { b = anioMagicoBanner(); } catch (e) {} if (!b) return h; const j = h.indexOf('<section class="clima">'); return j > -1 ? h.slice(0, j) + b + h.slice(j) : b + h; };
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-amopen],[data-amx],[data-amnext],[data-amshare]'); if (!b) return;
+  if (b.dataset.amopen !== undefined) { abrirAnioMagico(); return; }
+  if (b.dataset.amx !== undefined) { const el = $('anio-magico'); if (el) el.remove(); AM = null; return; }
+  if (b.dataset.amshare !== undefined) { const s = AM.S[AM.i]; if (s.o) compartirImagen(b, s.o, 'mi-anio-magico.png', 'Mi año mágico ✨ · Mi Luz, Luz Guía'); return; }
+  if (b.dataset.amnext !== undefined && AM) { if (AM.i < AM.S.length - 1) { AM.i++; pintarAM(); } return; }
+});
+
+/* 🎁 Regalá Premium */
+function regaloHTML(){ return P.idPersona && !P.organizadora ? `<button type="button" class="regalo-bt" data-regalar><span>🎁</span><div><b>Regalá Premium a una amiga</b><p>Un mes de Mi Luz Premium${P.precioPremium ? ' · ' + esc(P.precioPremium) : ''}. Pagás una sola vez, sin suscripción.</p></div></button>` : ''; }
+const _premRegalo = premiumHTML;
+premiumHTML = function(){ const h = _premRegalo(), r = regaloHTML(); return r ? h + r : h; };
+function abrirRegalo(){
+  $('dlg-titulo').textContent = 'Regalá Mi Luz Premium 🎁';
+  $('dlg-texto').textContent = 'Le regalás un mes completo de Premium: su carta natal, su carta dracónica, el oráculo, su sinfonía y todo lo demás.';
+  $('dlg-cuerpo').innerHTML = `<label class="diario-lab">¿Para quién es?<input class="campo-codigo" id="rg-para" maxlength="80" placeholder="Nombre de tu amiga"></label>
+    <label class="diario-lab">Su WhatsApp (para avisarle)<input class="campo-codigo" id="rg-tel" inputmode="tel" maxlength="25" placeholder="Ej: 2954 123456"></label>
+    <label class="diario-lab">Un mensaje para ella (opcional)<textarea class="diario-txt chico" id="rg-msg" maxlength="300" placeholder="Te regalo un mes de magia ✨"></textarea></label>
+    <div class="fila-bt"><button class="btn-sec" type="button" id="rg-no">Ahora no</button><button class="btn" type="button" id="rg-si">${P.mpLink ? 'Ir a pagar' : 'Enviar pedido'}</button></div>`;
+  $('dlg').showModal(); $('rg-no').onclick = () => $('dlg').close();
+  $('rg-si').onclick = async () => {
+    const para = $('rg-para').value.trim(); if (!para) { $('rg-para').focus(); return; }
+    const b = $('rg-si'); b.disabled = true; b.textContent = 'Preparando…';
+    let d = {}; try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'regalo', codigo: CODIGO, para, tel: $('rg-tel').value.trim(), mensaje: $('rg-msg').value.trim() }) }); d = await r.json(); } catch (e) {}
+    evento('Sección', 'Regalá Premium');
+    if (d.ok && d.link) { location.href = d.link; return; }
+    $('dlg-titulo').textContent = d.ok ? '¡Gracias por regalar luz! 💜' : 'No se pudo enviar';
+    $('dlg-texto').textContent = d.ok ? 'Le avisamos a Belu y Mey: te escriben para coordinar el pago y le activan el mes a ' + para + '.' : (d.error || 'Probá de nuevo en un rato.');
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Listo</button></div>'; $('dlg-ok').onclick = () => $('dlg').close();
+  };
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-regalar]')) abrirRegalo(); });
+const _postCargaRegalo = postCarga;
+postCarga = function(){
+  _postCargaRegalo();
+  const r = new URLSearchParams(location.search).get('regalo'); if (!r) return;
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+  setTimeout(() => { $('dlg-titulo').textContent = r === 'ok' ? '🎁 ¡Regalo pagado!' : r === 'pendiente' ? '🎁 Tu pago se está procesando' : 'El pago no se completó';
+    $('dlg-texto').textContent = r === 'ok' ? 'En unos minutos se confirma y le avisamos a tu amiga. Gracias por compartir la luz 💜' : r === 'pendiente' ? 'Cuando Mercado Pago lo confirme, te avisamos.' : 'Podés intentarlo de nuevo desde Premium cuando quieras.';
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Listo</button></div>'; if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close(); }, 500);
+};
+
+/* 💞 ¿Qué tan afín sos con tu amiga? (por link, la amiga no necesita cuenta) */
+const b64e = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64d = s => decodeURIComponent(escape(atob(String(s).replace(/-/g, '+').replace(/_/g, '/'))));
+function linkAfinidad(){
+  const base = location.origin + location.pathname;
+  return base + '?afin=' + b64e(JSON.stringify({ n: String(P.nombre || '').split(' ')[0], d: P.diaMes, y: P.anioNac, h: P.horaNac || '', t: P.telLuz || '', r: codigoInv() }));
+}
+function afinidadHTML(){
+  if (!P.diaMes || !P.anioNac || !P.idPersona) return '';
+  return `<section class="afin-inv"><span>💞</span><div><b>¿Qué tan afín sos con tu amiga?</b><p>Mandale tu link: pone su fecha de nacimiento y descubren su afinidad. No necesita cuenta.</p><button class="btn-sec" type="button" data-afinlink>Enviar mi link</button></div></section>`;
+}
+const _hoyAfin = hoyHTML;
+hoyHTML = function(){ const h = _hoyAfin(); let a = ''; try { a = afinidadHTML(); } catch (e) {} if (!a) return h; return h.includes('<section class="invitar">') ? h.replace('<section class="invitar">', a + '<section class="invitar">') : h + a; };
+function textoAfinidad(r, nA, nB){
+  const el = r.e1 === r.e2 ? 'comparten el elemento ' + r.e1 : r.e1 + ' y ' + r.e2;
+  return `${r.pct >= 85 ? '✨ Almas gemelas de energía' : r.pct >= 72 ? '💫 Muy buena sintonía' : '🌙 Se complementan'}: ${nA} es ${r.solA} y ${nB} es ${r.solB} (${el}).${r.favor.length ? (/^sus /.test(r.favor[0]) ? ' Las unen ' : ' Las une ') + r.favor[0] + '.' : ''}`;
+}
+function paginaAfinidad(x){
+  $('estado').className = '';
+  $('estado').innerHTML = `<img data-logo alt="" src="${document.querySelector('link[rel=icon]').href}"><div class="afin-pub"><small>Luz Guía · Mi Luz</small><h2>${esc(x.n)} quiere saber qué tan afines son 💞</h2>
+    <p>Poné tu nombre y tu fecha de nacimiento. Lo calculamos con astrología, numerología y horóscopo chino.</p>
+    <input class="campo-codigo" id="af-nom" maxlength="40" placeholder="Tu nombre"><input class="campo-codigo" id="af-fecha" type="date" max="${isoDia(new Date())}">
+    <button class="btn" type="button" id="af-ok" style="margin-top:12px">Descubrir nuestra afinidad</button><div id="af-res"></div></div>`;
+  $('af-ok').onclick = () => {
+    const n = $('af-nom').value.trim() || 'Vos', f = $('af-fecha').value.match(/(\d{4})-(\d{2})-(\d{2})/); if (!f) { $('af-fecha').focus(); return; }
+    let r; try { r = afinidad(x.d, x.y, x.h || '', f[3] + '/' + f[2], +f[1]); } catch (e) { return; }
+    const wa = x.t ? 'https://wa.me/' + String(x.t).replace(/\D/g, '') + '?text=' + encodeURIComponent('Hola! Vengo de parte de ' + x.n + (x.r ? ' (' + x.r + ')' : '') + ': descubrimos nuestra afinidad (' + r.pct + '%) y quiero conocer Luz Guía y Mi Luz ✨') : '';
+    $('af-res').innerHTML = `<div class="afin-res"><b class="jp">${r.pct}%</b><p>${esc(textoAfinidad(r, x.n, n))}</p><p class="ag-ayuda">${esc(n)}: tu animal chino es ${esc(r.chinoB)}.</p>
+      <p>¿Querés tu carta natal, tu carta del alma y tu energía de cada día?</p>${wa ? `<a class="btn" href="${wa}" target="_blank" rel="noopener">Quiero conocer Mi Luz ✨</a>` : ''}</div>`;
+  };
+}
+function afinidadParam(){ const v = new URLSearchParams(location.search).get('afin'); if (!v) return null; try { const x = JSON.parse(b64d(v)); return x && x.d && x.y ? x : null; } catch (e) { return null; } }
+const _pedirCodigoAfin = pedirCodigo;
+pedirCodigo = function(msg){ const x = afinidadParam(); if (x && !msg) return paginaAfinidad(x); return _pedirCodigoAfin(msg); };
+const _postCargaAfin = postCarga;
+postCarga = function(){
+  _postCargaAfin();
+  const x = afinidadParam(); if (!x || !P.diaMes) return;
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+  let r; try { r = afinidad(x.d, x.y, x.h || '', P.diaMes, P.anioNac); } catch (e) { return; }
+  setTimeout(() => { $('dlg-titulo').textContent = `Tu afinidad con ${x.n}: ${r.pct}% 💞`; $('dlg-texto').textContent = textoAfinidad(r, x.n, String(P.nombre || 'vos').split(' ')[0]);
+    $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">¡Qué lindo!</button></div>'; if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close(); }, 600);
+};
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-afinlink]')) return;
+  const txt = '💞 ¿Qué tan afines somos? Poné tu fecha de nacimiento acá y lo descubrimos con astrología y numerología ✨\n' + linkAfinidad();
+  evento('Invitó', 'Afinidad');
+  if (navigator.share) navigator.share({ text: txt }).catch(() => {}); else window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
