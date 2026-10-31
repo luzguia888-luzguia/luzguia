@@ -701,6 +701,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .vacio-lindo{text-align:center;padding:20px;border:1px dashed var(--linea);border-radius:18px}.vacio-lindo span{font-size:2rem}.vacio-lindo p{margin:6px 0 12px}
 #portal .marca{position:relative}.perfil-bt{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:rgba(255,255,255,.05);font-size:1.1rem;cursor:pointer}
 .perfil{display:grid;gap:12px;margin:6px 0 4px}.perfil section{padding:12px 14px;border-radius:14px;border:1px solid var(--linea);background:rgba(255,255,255,.03)}.perfil h4{margin:0 0 4px;color:#F3DCA0;font-size:.98rem}.perfil p{margin:0 0 6px;font-size:.9rem}.perfil details summary{cursor:pointer;color:#C9A7FF;font-size:.88rem;margin:4px 0}
+.pronto-tag{font-family:Jost,sans-serif;font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(201,167,255,.2);color:#C9A7FF;vertical-align:middle;margin-left:6px}
 </style>
 </head>
 <body>
@@ -5649,6 +5650,27 @@ document.addEventListener('click', e => {
   if (b.dataset.perfil !== undefined) { abrirPerfil(); return; }
   if (b.dataset.perfiltour !== undefined) { $('dlg').close(); mostrarTour(); return; }
 });
+
+
+/* ───── v29: ajustes de la revisión final ───── */
+/* Meditaciones: mientras no haya audios, decirlo claro y ofrecer lo que ya está */
+const hayMeditaciones = () => (P.contenido || []).some(x => !/tirada/i.test(x.tipo || ''));
+const _premMedR = premMeditaciones;
+premMeditaciones = function(){
+  const h = _premMedR(); if (hayMeditaciones()) return h;
+  return h + `<p class="sub">Mientras tanto, ya podés usar</p><div class="fila-bt" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn-sec" type="button" data-calma="resp">🌬️ Respiración guiada</button><button class="btn-sec" type="button" data-calma="timer">🔔 Meditación con campana</button><button class="btn-sec" type="button" data-calma="sonidos">🎧 Sonidos y frecuencias</button><button class="btn-sec" type="button" data-premir="sinfonia">🎼 Tu sinfonía natal</button></div>`;
+};
+const _premPronto = premiumHTML;
+premiumHTML = function(){
+  let h = _premPronto(); if (hayMeditaciones()) return h;
+  return h.replace(/(<h4>Meditaciones de Luz Guía)(<\/h4>)/g, '$1 <small class="pronto-tag">Pronto</small>$2').replace(/(<li>Meditaciones de Luz Guía)(<\/li>)/g, '$1 (pronto)$2');
+};
+/* Luz Guía: primero lo que ofrecen (novedades, encuentros, tienda); el newsletter, al final */
+const _novNL = novedadesHTML;
+novedadesHTML = function(){
+  const h = _novNL(), m = h.match(/<a class="nl-caja"[\s\S]*?<\/a>/); if (!m) return h;
+  return h.replace(m[0], '') + '<h3>Para leer</h3>' + m[0];
+};
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
