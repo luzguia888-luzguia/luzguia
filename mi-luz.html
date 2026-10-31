@@ -699,6 +699,8 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .carro-env{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0}.carro-env label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .carro-bt{display:grid;gap:8px;margin-top:12px}.carro-bt svg{width:20px;height:20px;flex:0 0 20px}.carro-bt .btn,.carro-bt .btn-sec{width:100%;justify-content:center;display:flex;align-items:center;gap:8px}
 .vacio-lindo{text-align:center;padding:20px;border:1px dashed var(--linea);border-radius:18px}.vacio-lindo span{font-size:2rem}.vacio-lindo p{margin:6px 0 12px}
+#portal .marca{position:relative}.perfil-bt{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:rgba(255,255,255,.05);font-size:1.1rem;cursor:pointer}
+.perfil{display:grid;gap:12px;margin:6px 0 4px}.perfil section{padding:12px 14px;border-radius:14px;border:1px solid var(--linea);background:rgba(255,255,255,.03)}.perfil h4{margin:0 0 4px;color:#F3DCA0;font-size:.98rem}.perfil p{margin:0 0 6px;font-size:.9rem}.perfil details summary{cursor:pointer;color:#C9A7FF;font-size:.88rem;margin:4px 0}
 </style>
 </head>
 <body>
@@ -2926,6 +2928,10 @@ async function dibujarTarjeta(o, modo){
   modo = modo || {};
   try { await document.fonts.ready; await Promise.all(['120px "Great Vibes"', '600 80px "Cormorant Garamond"', 'italic 40px "Cormorant Garamond"', '500 30px Jost'].map(f => document.fonts.load(f))); } catch (e) {}
   const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d'), anim = { llamas: [] };
+  let FOTO = null; try { if (o.foto === undefined) o.foto = fotoPara(o); if (o.foto) FOTO = await new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = o.foto; }); } catch (e) {}
+  anim.foto = FOTO;
+  if (FOTO) { if (!modo.capa) { fotoFondo(c, FOTO, W, H, 1.04, 0, 0); veloFoto(c, W, H); } }
+  else {
   const g = c.createRadialGradient(W / 2, -200, 100, W / 2, H / 2, 1400); g.addColorStop(0, '#4a1f7c'); g.addColorStop(.45, '#22103d'); g.addColorStop(1, '#0b0414');
   c.fillStyle = g; c.fillRect(0, 0, W, H);
   const neb = (x, y, r, col) => { const n = c.createRadialGradient(x, y, 10, x, y, r); n.addColorStop(0, col); n.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = n; c.fillRect(0, 0, W, H); };
@@ -2935,6 +2941,7 @@ async function dibujarTarjeta(o, modo){
   // constelaciones suaves
   c.strokeStyle = 'rgba(243,220,160,.18)'; c.lineWidth = 1.5; c.fillStyle = 'rgba(243,220,160,.7)';
   [[[90, 420], [160, 470], [150, 560], [230, 610]], [[880, 1500], [960, 1440], [1010, 1520], [940, 1600]]].forEach(cn => { c.beginPath(); cn.forEach(p => c.lineTo(...p)); c.stroke(); cn.forEach(p => { c.beginPath(); c.arc(...p, 3.5, 0, 7); c.fill(); }); });
+  }
   // marco con esquinas ornamentadas
   c.strokeStyle = 'rgba(212,175,106,.4)'; c.lineWidth = 2; c.strokeRect(44, 44, W - 88, H - 88); c.strokeStyle = 'rgba(212,175,106,.18)'; c.strokeRect(58, 58, W - 116, H - 116);
   [[44, 44, 1, 1], [W - 44, 44, -1, 1], [44, H - 44, 1, -1], [W - 44, H - 44, -1, -1]].forEach(([x, y, sx, sy]) => {
@@ -4940,7 +4947,7 @@ document.addEventListener('click', e => {
 function sinfoniaSVG(){
   const v = vocesSinfonia(); if (!v) return '';
   const col = ['#F3DCA0', '#C9A7FF', '#8FD9CF'];
-  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${v.map((x, i) => `<circle cx="100" cy="100" r="${88 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="3" opacity=".85"/><circle cx="100" cy="100" r="${82 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="1" opacity=".35"/>`).join('')}<text x="100" y="114" text-anchor="middle" font-size="40" fill="#F3DCA0">♫</text></svg>`;
+  return `<svg viewBox="0 0 200 200">${v.map((x, i) => `<circle cx="100" cy="100" r="${88 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="3" opacity=".85"/><circle cx="100" cy="100" r="${82 - i * 22}" fill="none" stroke="${col[i]}" stroke-width="1" opacity=".35"/>`).join('')}<text x="100" y="114" text-anchor="middle" font-size="40" fill="#F3DCA0">♫</text></svg>`;
 }
 function historiaDe(tipo){
   const hoy = new Date(), fecha = DIAS[hoy.getDay()] + ' ' + hoy.getDate() + ' de ' + MESES[hoy.getMonth()];
@@ -5511,6 +5518,111 @@ postCarga = function(){
     $('dlg-texto').textContent = r === 'ok' ? 'En unos minutos se confirma y te escribimos para coordinar la entrega 💜' : r === 'pendiente' ? 'Cuando Mercado Pago lo confirme, te avisamos.' : 'Tu carrito sigue guardado: podés intentarlo de nuevo cuando quieras.';
     $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Listo</button></div>'; if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close(); }, 500);
 };
+
+
+/* ───── v27: historias con fotos hiperrealistas y movimiento de cine ───── */
+const FONDOS = { altar: 'fondo-altar.jpg', cuenco: 'fondo-cuenco.jpg', luna: 'fondo-luna.jpg', bosque: 'fondo-bosque.jpg', fuego: 'fondo-fuego.jpg', carta: 'fondo-carta.jpg', rueda: 'fondo-rueda.jpg', humo: 'fondo-humo.jpg', cristales: 'fondo-cristales.jpg', cielo: 'fondo-cielo.jpg' };
+function fotoPara(o){
+  const k = String(o.kicker || '').toUpperCase(), t = String(o.titulo || '');
+  if (/ANIMAL/.test(k)) { try { const an = animalDe(); if (an) return imgAnimal(an); } catch (e) {} return FONDOS.bosque; }
+  if (/DÍA DE PODER/.test(k)) return /Beltane|León/.test(t) ? FONDOS.fuego : /Samhain/.test(t) ? FONDOS.bosque : /Solsticio|Equinoccio|Año nuevo/i.test(t) ? FONDOS.rueda : FONDOS.cielo;
+  if (/LUNA/.test(k)) return FONDOS.luna;
+  if (/RITUAL/.test(k)) return FONDOS.humo;
+  if (/SINFONÍA/.test(k)) return FONDOS.cuenco;
+  if (/ENERGÍA DE HOY|CLIMA/.test(k)) return FONDOS.cristales;
+  if (/CARTA DEL DÍA|MENSAJE DEL DÍA/.test(k)) return FONDOS.carta;
+  if (/NATAL|DRACÓNICA|AÑO MÁGICO|MI 20/.test(k)) return FONDOS.cielo;
+  if (/ARCANO|ENERGÍA DE MI|MATRIZ|NUMEROLOG|NOMBRE|CUALIDADES/.test(k)) return FONDOS.altar;
+  if (/SOBRENATURAL|CHINO/.test(k)) return FONDOS.bosque;
+  return FONDOS.altar;
+}
+function fotoFondo(c, im, W, H, esc, dx, dy){
+  const r = Math.max(W / im.width, H / im.height) * (esc || 1), w = im.width * r, h = im.height * r;
+  c.drawImage(im, (W - w) / 2 + (dx || 0), (H - h) / 2 + (dy || 0), w, h);
+}
+function veloFoto(c, W, H){
+  const g = c.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, 'rgba(14,5,26,.82)'); g.addColorStop(.22, 'rgba(20,8,36,.45)'); g.addColorStop(.5, 'rgba(20,8,36,.42)'); g.addColorStop(.75, 'rgba(14,5,26,.62)'); g.addColorStop(1, 'rgba(8,3,15,.9)');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const v = c.createRadialGradient(W / 2, H / 2, H * .25, W / 2, H / 2, H * .75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+  c.fillStyle = 'rgba(59,23,96,.18)'; c.fillRect(0, 0, W, H);
+}
+function capaNiebla(W, H){
+  const cv = document.createElement('canvas'); cv.width = W * 2; cv.height = H; const c = cv.getContext('2d');
+  for (let i = 0; i < 46; i++) { const x = Math.random() * W * 2, y = H * (.15 + Math.random() * .85), r = 120 + Math.random() * 320, g = c.createRadialGradient(x, y, 0, x, y, r), a = .05 + Math.random() * .09, col = Math.random() < .5 ? '200,180,240' : '255,240,220';
+    g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`); c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2); }
+  return cv;
+}
+function capaGrano(){ const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d'), d = c.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } c.putImageData(d, 0, 0); return cv; }
+const _videoBase = videoHistoria;
+videoHistoria = async function(o){
+  if (o.foto === undefined) o.foto = fotoPara(o);
+  const foto = o.foto ? await new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = o.foto; }) : null;
+  if (!foto) { o.foto = ''; return _videoBase(o); }
+  const { cv: base, anim } = await dibujarTarjeta(o, { video: true, capa: true });
+  const W = 720, H = 1280, k = W / 1080, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: VIDEO_MIME, videoBitsPerSecond: 6000000 }), partes = [];
+  rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); };
+  const niebla = capaNiebla(W, H), grano = capaGrano();
+  const nuevoHumo = ini => ({ x: W * (.3 + Math.random() * .4), y: ini ? H * (.4 + Math.random() * .6) : H + 40, r: 40 + Math.random() * 50, vy: .5 + Math.random() * .8, vx: (Math.random() - .5) * .4, f: Math.random() * 6.3, a: .05 + Math.random() * .06 });
+  const humo = Array.from({ length: 16 }, () => nuevoHumo(true));
+  const polvo = Array.from({ length: 46 }, () => ({ x: Math.random() * W, y: Math.random() * H, vy: .15 + Math.random() * .5, r: .8 + Math.random() * 2.2, f: Math.random() * 6.3 }));
+  const DUR = 7000, luzX = W * (.35 + Math.random() * .3), luzY = H * .7; rec.start(200); const t0 = performance.now();
+  await new Promise(fin => {
+    const frame = now => {
+      const t = (now - t0) / 1000, p = Math.min(1, (now - t0) / DUR);
+      c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+      fotoFondo(c, foto, W, H, 1.06 + .1 * p, Math.sin(p * 1.6) * 14, -22 * p);
+      veloFoto(c, W, H);
+      // luz de vela que titila
+      const fl = .55 + .25 * Math.sin(t * 9.1) + .15 * Math.sin(t * 23.7 + 1) + .1 * Math.sin(t * 3.3), gl = c.createRadialGradient(luzX, luzY, 0, luzX, luzY, H * .55);
+      gl.addColorStop(0, `rgba(255,190,110,${.1 * fl})`); gl.addColorStop(1, 'rgba(255,190,110,0)'); c.globalCompositeOperation = 'lighter'; c.fillStyle = gl; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'source-over';
+      // niebla que se desplaza
+      const nx = (t * 14) % W; c.globalAlpha = .38; c.drawImage(niebla, -nx, 0); c.drawImage(niebla, W * 2 - nx, 0); c.globalAlpha = .2; c.drawImage(niebla, -(W - (t * 7) % W), H * .12); c.globalAlpha = 1;
+      // humo que sube
+      humo.forEach((h, i) => { h.y -= h.vy; h.x += h.vx + Math.sin(t * .8 + h.f) * .5; h.r += .25; const vida = Math.max(0, Math.min(1, (h.y - H * .05) / (H * .6)));
+        const g = c.createRadialGradient(h.x, h.y, 0, h.x, h.y, h.r); g.addColorStop(0, `rgba(235,225,250,${h.a * vida})`); g.addColorStop(1, 'rgba(235,225,250,0)'); c.fillStyle = g; c.fillRect(h.x - h.r, h.y - h.r, h.r * 2, h.r * 2);
+        if (h.y < H * .05 || vida <= 0) humo[i] = nuevoHumo(false); });
+      // polvo dorado
+      polvo.forEach(d => { d.y -= d.vy; d.x += Math.sin(t + d.f) * .25; if (d.y < -10) { d.y = H + 10; d.x = Math.random() * W; } const al = .3 + .7 * Math.max(0, Math.sin(t * 2.4 + d.f)); c.globalAlpha = al; c.fillStyle = '#F3DCA0'; c.beginPath(); c.arc(d.x, d.y, d.r, 0, 7); c.fill(); });
+      c.globalAlpha = 1;
+      // contenido de la tarjeta, que aparece de a poco
+      c.globalAlpha = Math.min(1, t / 1.1); c.drawImage(base, 0, 0, W, H); c.globalAlpha = 1;
+      if (anim.carta) { const a = anim.carta, q = ((t % 3.2) / 3.2) * (a.w + a.h) * 1.6 - a.h; c.save(); c.beginPath(); c.rect(a.x * k, a.y * k, a.w * k, a.h * k); c.clip();
+        const gs = c.createLinearGradient((a.x + q) * k, a.y * k, (a.x + q + 160) * k, (a.y + 160) * k); gs.addColorStop(0, 'rgba(255,255,255,0)'); gs.addColorStop(.5, 'rgba(255,250,230,.3)'); gs.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gs; c.fillRect(a.x * k, a.y * k, a.w * k, a.h * k); c.restore(); }
+      // grano de película
+      c.globalAlpha = .07; c.globalCompositeOperation = 'overlay'; const gx = Math.random() * 256, gy = Math.random() * 256; for (let x = -gx; x < W; x += 256) for (let y = -gy; y < H; y += 256) c.drawImage(grano, x, y); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+      if (now - t0 < DUR) requestAnimationFrame(frame); else fin();
+    };
+    requestAnimationFrame(frame);
+  });
+  await new Promise(ok => { rec.onstop = ok; rec.stop(); });
+  return new Blob(partes, { type: VIDEO_MIME.split(';')[0] });
+};
+
+
+/* ───── v28: ⚙️ Mi perfil (todo lo personal en un solo lugar) ───── */
+function abrirPerfil(){
+  const lugar = P.lugarNac || (natal() && natal().ciudad) || '';
+  $('dlg-titulo').textContent = 'Mi perfil ⚙️';
+  $('dlg-texto').textContent = 'Tus datos y tus preferencias de Mi Luz.';
+  $('dlg-cuerpo').innerHTML = `<div class="perfil">
+    <section><h4>📅 Mis datos de nacimiento</h4><p>${P.diaMes ? esc(P.diaMes) + '/' + esc(P.anioNac) : 'Sin fecha'} · ${P.horaNac ? esc(P.horaNac) + ' h' : 'sin hora'} · ${lugar ? esc(lugar) : 'sin lugar'}</p>
+      <details><summary>Corregir hora o lugar</summary>${datosNacimientoHTML('Cargalos tal como figuran en tu partida de nacimiento.', 'pfn')}</details></section>
+    <section><h4>📸 Mi Instagram</h4><div class="ig-caja">${igHTML()}</div></section>
+    <section><h4>🔔 Avisos al celular</h4><p>${typeof avisosActivos === 'function' && avisosActivos() ? '✓ Activados' : 'Todavía no los activaste.'}</p>${typeof avisosActivos === 'function' && !avisosActivos() && P.onesignal ? '<button class="btn-sec" type="button" data-avisos>Activar avisos</button>' : ''}</section>
+    ${ES_APP() ? '' : '<section><h4>📲 Instalar Mi Luz</h4><p>Abrila con un toque desde tu pantalla de inicio.</p><button class="btn-sec" type="button" id="btn-instalar">Instalar</button></section>'}
+    <section><h4>✨ Ayuda</h4><button class="link" type="button" data-perfiltour>Ver la bienvenida de nuevo</button>${P.idPersona ? `<p class="ag-ayuda">Tu código para invitar: <b>${esc(codigoInv())}</b></p>` : ''}</section></div>
+    <div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Listo</button></div>`;
+  if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close();
+}
+const _pintarPerfil = pintar;
+pintar = function(){ _pintarPerfil(); const m = document.querySelector('#portal .marca'); if (m && !m.querySelector('.perfil-bt')) m.insertAdjacentHTML('beforeend', '<button type="button" class="perfil-bt" data-perfil aria-label="Mi perfil">⚙️</button>'); };
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.perfil !== undefined) { abrirPerfil(); return; }
+  if (b.dataset.perfiltour !== undefined) { $('dlg').close(); mostrarTour(); return; }
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
