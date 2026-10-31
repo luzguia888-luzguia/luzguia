@@ -4660,8 +4660,10 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.adelcta !== undefined) { irCTAPremium(); evento('Sección', 'Adelanto Premium: botón'); return; }
   if (b.dataset.demosinf !== undefined) { demoSinfonia(); return; }
-  if (b.dataset.compclima !== undefined) { try { compartirTexto(textoClima()); evento('Compartió', 'Clima de hoy'); } catch (x) {} return; }
-  if (b.dataset.comppoder) { const x = FECHAS_PODER[b.dataset.comppoder]; if (x) { compartirTexto(`${x[0]} Hoy es ${x[1]}.\n${x[2]}\n\n${x[3].map(s => '• ' + s).join('\n')}\n\nMe lo recordó Mi Luz, la app de Luz Guía 💜\n\n` + textoInvitacion()); evento('Compartió', 'Fecha de poder'); } return; }
+  if (b.dataset.compclima !== undefined) { try { const h = historiaDe('clima'); evento('Compartió', 'Clima de hoy'); compartirImagen(b, h[0], h[1], textoClima()); } catch (x) {} return; }
+  if (b.dataset.comppoder) { const x = FECHAS_PODER[b.dataset.comppoder]; if (x) { const hoy = new Date();
+    compartirImagen(b, { kicker: 'HOY ES UN DÍA DE PODER', fecha: DIAS[hoy.getDay()] + ' ' + hoy.getDate() + ' de ' + MESES[hoy.getMonth()], ilus: { tipo: 'emoji', ic: x[0] }, titulo: x[1], subtitulo: x[2], secciones: [{ t: 'Mi ritual de hoy', x: x[3].join(' ') }] },
+      'dia-de-poder-luz-guia.png', `${x[0]} Hoy es ${x[1]}. ${x[2]}\n\nMe lo recordó Mi Luz, la app de Luz Guía 💜`); evento('Compartió', 'Fecha de poder'); } return; }
 });
 /* Si para la muestra antes de los 10 segundos, no aparece el cartel */
 const _detTodoDemo = detenerTodo;
