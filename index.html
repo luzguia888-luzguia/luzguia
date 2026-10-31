@@ -2252,6 +2252,9 @@ Object.assign(ESQ, {
   Suscripciones: { nombre: 'suscripción', clave: 'ID Persona', etiqueta: 'Nombre', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'ID Persona', t:'sel', o:optPersonas, req:1, lab:'Persona', full:1}, {k:'Tipo', t:'sel', o:() => ['Alta','Renovación','Prueba gratis','Regalo por invitar','Regalo','Baja'], req:1},
     {k:'Desde', t:'date'}, {k:'Hasta', t:'date'}, {k:'Monto', t:'money', chico:1}, {k:'Notas', t:'area', full:1}]},
+  'Pedidos tienda': { nombre: 'pedido de la tienda', clave: 'Ref', etiqueta: 'Nombre', campos: [
+    {k:'Ref', t:'text', req:1, full:1}, {k:'Nombre', t:'text'}, {k:'Detalle', t:'area', full:1}, {k:'Total', t:'money'}, {k:'Entrega', t:'text'}, {k:'Dirección', t:'text', full:1}, {k:'Nota', t:'area', full:1},
+    {k:'Estado', t:'sel', o:() => ['Nuevo','Esperando pago','Pagado','Entregado','Cancelado']}]},
   'Regalos': { nombre: 'regalo de Premium', clave: 'Ref', etiqueta: 'Para', campos: [
     {k:'Ref', t:'text', req:1, full:1}, {k:'De', t:'text'}, {k:'Para', t:'text', req:1}, {k:'Teléfono', t:'text'}, {k:'Mensaje', t:'area', full:1}, {k:'Monto', t:'money'},
     {k:'Estado', t:'sel', o:() => ['Esperando pago','Pedido sin pagar','Pagado','Activado','Cancelado']}]},
@@ -2746,6 +2749,23 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-regest]'); if (!b) return;
   const [ref, est] = b.dataset.regest.split('|'), rec = H('Regalos').find(x => x['Ref'] === ref); if (!rec) return;
   b.disabled = true; try { await guardarCambios('Regalos', rec, { 'Estado': est }, est === 'Activado' ? '🎁 Regalo activado' : '🎁 Marcado como pagado'); } catch (err) { toast(err.message, true); b.disabled = false; }
+});
+
+/* ───── v26: pedidos de la tienda ───── */
+const _hoyTienda = V.hoy;
+V.hoy = () => {
+  let h = _hoyTienda();
+  const L = H('Pedidos tienda').filter(x => x['Estado'] === 'Pagado' || x['Estado'] === 'Nuevo'); if (!L.length) return h;
+  const lis = L.map(x => { const p = persona(x['ID Persona']), pag = x['Estado'] === 'Pagado', tel = p && (p['Teléfono'] || p['WhatsApp']);
+    const wa = tel ? `https://wa.me/${waNum(tel)}?text=${encodeURIComponent('¡Hola ' + String(x['Nombre']).split(' ')[0] + '! ' + (pag ? 'Recibimos el pago de tu pedido de Mi Luz 🛍️ ' : 'Recibimos tu pedido de Mi Luz 🛍️ ') + '(' + x['Detalle'] + '). ' + (/Env/.test(x['Entrega']) ? 'Coordinemos el envío:' : 'Coordinemos el retiro:'))}` : '';
+    return `<li class="tarea"><span class="ico">🛍️</span><div class="txt">${pag ? 'Preparar' : 'Confirmar'} el pedido de ${esc(x['Nombre'])} · ${esc(x['Total'])}<small>${esc(x['Detalle'])} · ${esc(x['Entrega'])}${x['Dirección'] ? ' · ' + esc(x['Dirección']) : ''}${x['Nota'] ? ' · “' + esc(x['Nota']) + '”' : ''}${pag ? ' · ✓ Pagado por Mercado Pago' : ' · Pidió por WhatsApp: falta cobrar'}</small></div><div class="bt">${wa ? `<a class="btn-sec" href="${wa}" target="_blank" rel="noopener">Escribirle</a>` : ''}${pag ? '' : `<button class="btn-sec" type="button" data-tiendaest="${esc(x['Ref'])}|Pagado">Ya pagó</button>`}<button class="btn" type="button" data-tiendaest="${esc(x['Ref'])}|Entregado">Entregado</button></div></li>`; }).join('');
+  const vacio = '<p class="ayuda">No hay pendientes para hoy. Buen momento para planear el próximo encuentro.</p>';
+  return h.includes('<ul class="tareas">') ? h.replace('<ul class="tareas">', '<ul class="tareas">' + lis) : h.replace(vacio, '<ul class="tareas">' + lis + '</ul>');
+};
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-tiendaest]'); if (!b) return;
+  const [ref, est] = b.dataset.tiendaest.split('|'), rec = H('Pedidos tienda').find(x => x['Ref'] === ref); if (!rec) return;
+  b.disabled = true; try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, est === 'Entregado' ? '🛍️ Pedido entregado. Acordate de registrar la venta en Reventa y stock.' : '🛍️ Marcado como pagado'); } catch (err) { toast(err.message, true); b.disabled = false; }
 });
 </script>
 </body>
