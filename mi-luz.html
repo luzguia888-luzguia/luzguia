@@ -630,7 +630,7 @@ iframe.spotify{width:100%;height:152px;border:0;border-radius:12px}.cont-item au
 .conf-datos ul{list-style:none;padding:0;margin:0 0 12px}.conf-datos li{padding:4px 0}.conf-datos li span{margin-right:8px}
 .conf-datos.ok b{color:#8FD9CF}.conf-form{margin-top:12px}
 .historias{margin-top:26px}.hist-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.hist{display:flex;align-items:center;gap:8px;padding:12px;border-radius:14px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;text-align:left;cursor:pointer}.hist span{font-size:1.3rem}.hist:hover{border-color:#D4AF6A}
+.hist{display:flex;align-items:center;gap:8px;padding:12px;border-radius:14px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;text-align:left;cursor:pointer}.hist span{font-size:1.3rem}.hist.bloq{opacity:.6;position:relative}.hist.bloq i{margin-left:auto;font-style:normal}.hist:hover{border-color:#D4AF6A}
 .am-banner,.regalo-bt{display:flex;gap:12px;align-items:center;width:100%;margin:0 0 16px;padding:14px 16px;border-radius:18px;border:1px solid rgba(243,220,160,.5);background:linear-gradient(135deg,rgba(191,138,38,.25),rgba(155,111,224,.2));color:inherit;font:inherit;text-align:left;cursor:pointer}
 .am-banner>span,.regalo-bt>span{font-size:1.8rem}.am-banner small{color:#F3DCA0;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem}.am-banner b,.regalo-bt b{display:block;font-family:var(--serif);color:#F3DCA0;font-size:1.1rem}.am-banner p,.regalo-bt p{margin:2px 0 0;font-size:.86rem;opacity:.9}
 .regalo-bt{margin-top:18px}
@@ -4973,9 +4973,10 @@ document.addEventListener('click', e => {
 });
 function historiasHTML(){
   const L = [['clima', '☀️', 'Mi energía de hoy'], ['carta', '🃏', 'Mi carta del día'], ['anio', '✷', 'Mi arcano del año'], ['nacimiento', '🌟', 'Mi arcano de nacimiento'], ['animal', '🐺', 'Mi animal de poder'], ['luna', '🌙', 'La luna de estos días'], ['numeros', '🔢', 'Mi numerología'], ['ser', '🧚', 'Mi ser sobrenatural']];
-  if (P.premium) L.splice(1, 0, ['natal', '🌌', 'Mi carta natal'], ['draconica', '🐉', 'La carta de mi alma'], ['sinfonia', '🎼', 'Mi sinfonía natal']);
+  const PREM = [['natal', '🌌', 'Mi carta natal'], ['draconica', '🐉', 'La carta de mi alma'], ['sinfonia', '🎼', 'Mi sinfonía natal (con sonido)']];
+  if (P.premium) L.splice(1, 0, ...PREM);
   return `<section class="historias"><h3>Para tus historias 📲</h3><p class="ag-ayuda" style="margin-top:0">Tocá una y compartila en Instagram o WhatsApp. Van con la firma de Luz Guía.</p>
-    <div class="hist-grid">${L.map(([k, ic, t]) => `<button type="button" class="hist" data-share="${k}"><span>${ic}</span>${t}</button>`).join('')}</div></section>`;
+    <div class="hist-grid">${L.map(([k, ic, t]) => `<button type="button" class="hist" data-share="${k}"><span>${ic}</span>${t}</button>`).join('')}${P.premium ? '' : PREM.map(([k, ic, t]) => `<button type="button" class="hist bloq" data-irtab="premium"><span>${ic}</span>${t}<i aria-hidden="true">🔒</i></button>`).join('')}</div>${P.premium ? '' : '<p class="ag-ayuda">Las que tienen 🔒 son de Premium.</p>'}</section>`;
 }
 const _arcHist = arcanosHTML;
 arcanosHTML = function(){ return _arcHist() + historiasHTML(); };
@@ -5561,13 +5562,16 @@ videoHistoria = async function(o){
   if (!foto) { o.foto = ''; return _videoBase(o); }
   const { cv: base, anim } = await dibujarTarjeta(o, { video: true, capa: true });
   const W = 720, H = 1280, k = W / 1080, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
-  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: VIDEO_MIME, videoBitsPerSecond: 6000000 }), partes = [];
+  const son = sonidoHistoria(o), stream = cv.captureStream(30);
+  if (son) son.stream.getAudioTracks().forEach(tr => stream.addTrack(tr));
+  const mime = son && AUDIO_MIME ? AUDIO_MIME : VIDEO_MIME;
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 }), partes = [];
   rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); };
   const niebla = capaNiebla(W, H), grano = capaGrano();
   const nuevoHumo = ini => ({ x: W * (.3 + Math.random() * .4), y: ini ? H * (.4 + Math.random() * .6) : H + 40, r: 40 + Math.random() * 50, vy: .5 + Math.random() * .8, vx: (Math.random() - .5) * .4, f: Math.random() * 6.3, a: .05 + Math.random() * .06 });
   const humo = Array.from({ length: 16 }, () => nuevoHumo(true));
   const polvo = Array.from({ length: 46 }, () => ({ x: Math.random() * W, y: Math.random() * H, vy: .15 + Math.random() * .5, r: .8 + Math.random() * 2.2, f: Math.random() * 6.3 }));
-  const DUR = 7000, luzX = W * (.35 + Math.random() * .3), luzY = H * .7; rec.start(200); const t0 = performance.now();
+  const DUR = son ? 12000 : 7000; if (son) son.empezar(DUR / 1000); const luzX = W * (.35 + Math.random() * .3), luzY = H * .7; rec.start(200); const t0 = performance.now();
   await new Promise(fin => {
     const frame = now => {
       const t = (now - t0) / 1000, p = Math.min(1, (now - t0) / DUR);
@@ -5597,8 +5601,30 @@ videoHistoria = async function(o){
     requestAnimationFrame(frame);
   });
   await new Promise(ok => { rec.onstop = ok; rec.stop(); });
-  return new Blob(partes, { type: VIDEO_MIME.split(';')[0] });
+  if (son) son.cerrar();
+  return new Blob(partes, { type: mime.split(';')[0] });
 };
+/* Sonido para el video: la sinfonía natal suena de verdad */
+const AUDIO_MIME = (() => { try { return window.MediaRecorder ? ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4;codecs="avc1.42E01E,mp4a.40.2"', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/mp4'].find(m => MediaRecorder.isTypeSupported(m)) || '' : ''; } catch (e) { return ''; } })();
+function sonidoHistoria(o){
+  if (!/SINFONÍA/.test(String(o.kicker || '')) || !AUDIO_MIME) return null;
+  let v; try { v = vocesSinfonia(); } catch (e) {} if (!v) return null;
+  let ac; try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  const dest = ac.createMediaStreamDestination(), master = ac.createGain(); master.gain.value = 0; master.connect(dest);
+  return { stream: dest.stream,
+    empezar(seg){
+      try { ac.resume(); } catch (e) {}
+      const t = ac.currentTime;
+      master.gain.setValueAtTime(0, t); master.gain.linearRampToValueAtTime(.9, t + 2.5); master.gain.setValueAtTime(.9, t + seg - 2); master.gain.linearRampToValueAtTime(0, t + seg);
+      v.forEach((x, i) => [[x.f, .13], [x.f / 2, .07], [x.f * 2, .02]].forEach(([fr, g], k) => {
+        const os = ac.createOscillator(), gg = ac.createGain(), lf = ac.createOscillator(), lg = ac.createGain();
+        os.type = 'sine'; os.frequency.value = fr + (k ? .3 * (i + 1) : 0); gg.gain.value = g; lf.frequency.value = .05 + i * .02 + k * .01; lg.gain.value = g * .6; lf.connect(lg); lg.connect(gg.gain);
+        let sal = gg; if (ac.createStereoPanner) { const pn = ac.createStereoPanner(); pn.pan.value = [-.5, .5, 0][i] || 0; gg.connect(pn); sal = pn; }
+        os.connect(gg); sal.connect(master); os.start(t); lf.start(t); os.stop(t + seg + .1); lf.stop(t + seg + .1); }));
+      [.3, 6].forEach(d => { [[1, .22], [2.71, .07], [5.4, .03]].forEach(([m, a]) => { const os = ac.createOscillator(), g = ac.createGain(); os.frequency.value = v[0].f * 2 * m; g.gain.setValueAtTime(0, t + d); g.gain.linearRampToValueAtTime(a, t + d + .02); g.gain.exponentialRampToValueAtTime(.0001, t + d + 5.5); os.connect(g); g.connect(master); os.start(t + d); os.stop(t + d + 5.6); }); });
+    },
+    cerrar(){ try { ac.close(); } catch (e) {} } };
+}
 
 
 /* ───── v28: ⚙️ Mi perfil (todo lo personal en un solo lugar) ───── */
