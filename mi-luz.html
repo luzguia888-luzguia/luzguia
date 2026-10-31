@@ -2547,9 +2547,9 @@ function premDiario(){
 /* Pregunta del mes */
 function premPregunta(){
   const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), ps = P.preguntas || [], delMes = ps.filter(x => x.mes === mk), esta = delMes.find(x => !x.respuesta), puede = delMes.length < 1 + (+P.preguntasExtra || 0);
-  let h = `<p class="intro">Una vez por mes podés hacernos una pregunta, y Belu o Mey te la responden con una tirada de tarot hecha para vos. ¿Necesitás más? Podés pedir preguntas extra.</p>`;
+  let h = `<p class="intro">Una vez por mes podés hacernos una pregunta, y Belu o Mey te la responden con una tirada de tarot hecha para vos, <b>dentro de las 48 a 72 horas</b>. ¿Necesitás más? Podés pedir preguntas extra.</p>`;
   if (puede && !esta) h += `<div class="form-nac">${delMes.length ? '<p>✨ Tenés una pregunta extra habilitada.</p>' : ''}<label>Tu pregunta de ${MESES[hoy.getMonth()]}<textarea id="preg-txt" maxlength="400" placeholder="Por ejemplo: ¿Qué necesito saber sobre mi trabajo este mes?"></textarea></label><p class="ag-ayuda">Tip: las preguntas abiertas ("¿qué necesito saber…?", "¿cómo puedo…?") dan lecturas más ricas que las de sí o no.</p><button class="btn" type="button" data-pregunta>Enviar mi pregunta</button></div>`;
-  if (esta) h += `<div class="int-caja"><small>Tu pregunta de ${MESES[hoy.getMonth()]}</small><p>${esc(esta.pregunta)}</p><p class="ag-ayuda">✨ Belu y Mey están preparando tu tirada. Te avisamos cuando esté lista.</p></div>`;
+  if (esta) h += `<div class="int-caja"><small>Tu pregunta de ${MESES[hoy.getMonth()]}</small><p>${esc(esta.pregunta)}</p><p class="ag-ayuda">✨ Belu y Mey están preparando tu tirada. Te llega dentro de las 48 a 72 horas, con un aviso al celular.</p></div>`;
   if (!puede) h += P.pedidos.includes('Pregunta extra ' + mk) ? '<p class="hecho">✓ Pediste una pregunta extra. Te escribimos para coordinarla ✨</p>' : `<div class="prem-cta"><p class="ag-ayuda">Ya usaste tu pregunta de ${MESES[hoy.getMonth()]}. La próxima se habilita el 1 de ${MESES[(hoy.getMonth() + 1) % 12]}.</p><button class="btn-sec" type="button" data-preguntaextra>Quiero una pregunta extra</button></div>`;
   ps.filter(x => x.respuesta).slice().reverse().forEach(x => {
     const cs = String(x.cartas || '').split(',').map(s => +s).filter(Boolean);
