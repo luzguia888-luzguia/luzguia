@@ -4779,7 +4779,7 @@ function proximasFechas(desde){
 }
 function diarioDiaHTML(d){
   const k = isoDia(d.f), hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-  if (!P.premium) return `<div class="ag-diario bloq"><b>📖 Tu diario</b><p>Con Premium podés escribir en cualquier día de tu agenda y pedir que te lo recuerde en la próxima Luna nueva, Luna llena o portal.</p><button class="btn-sec" type="button" data-irtab="premium">Conocer Premium</button></div>`;
+  if (!P.premium) return `<div class="ag-diario bloq"><b>📖 Tu diario · Premium</b><p>La agenda es gratis para vos. Con Premium, además, podés escribir en cualquier día de tu agenda y pedir que te lo recuerde en la próxima Luna nueva, Luna llena o portal.</p><button class="btn-sec" type="button" data-irtab="premium">Conocer Premium</button></div>`;
   const ent = diarioEn(d.f).filter(x => x.tipo !== 'Nota'), nota = notaDe(k), rec = recordarDe(nota);
   const opc = proximasFechas(d.f < hoy ? hoy : d.f);
   let h = `<div class="ag-diario" id="ag-diario"><b>📖 Tu diario de este día</b>`;
@@ -5364,7 +5364,7 @@ function reordenarVos(h){
     ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
-  const idx = `<p class="gratis-nota">✓ Todo lo de esta pestaña es gratis para vos, para siempre.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
+  const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
   return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología y tu nombre.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
@@ -5870,14 +5870,14 @@ abrirBiblio = async function(n){
 /* ───── v33: Premium que se explica solo y lo gratis bien claro ───── */
 const PREM_VALOR = [
   ['🪐', 'Hecho con tus datos', 'Todo se calcula con tu fecha, hora y lugar de nacimiento. No son textos genéricos: es tu carta.'],
-  ['🔁', 'Se renueva cada mes', 'Tus tránsitos, tu alma este mes, la tirada de Belu, el animal de cada Luna nueva y tus mejores fechas.'],
+  ['🔁', 'Se renueva cada mes', 'Tus tránsitos, tu alma este mes, la tirada de Belu, el animal de cada Luna nueva, el fondo del mes y tu diario en la agenda.'],
   ['💌', 'Belu y Mey te responden', 'Una pregunta por mes, respondida por ellas con una tirada de tarot para vos.'],
   ['📲', 'Para compartir', 'Historias con tus lecturas Premium, como tu sinfonía natal con sonido y tu carta dracónica, listas para Instagram.']];
 function valorPremiumHTML(){
   return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
 }
 function gratisSiempreHTML(){
-  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales, tu diario y tus recordatorios'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
   return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
 }
 const _premValor = premiumHTML;
