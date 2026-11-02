@@ -734,6 +734,8 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .gratis-siempre li b{display:block;font-size:.92rem}
 .gratis-siempre li small{font-size:.8rem;opacity:.82}
 .gratis-nota{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:.84rem;text-align:center;color:#BFF0CF;background:rgba(40,90,70,.18);border:1px solid rgba(140,220,170,.3)}
+.enc-img{display:block;width:calc(100% + 36px);margin:-18px -18px 14px;aspect-ratio:16/9;object-fit:cover;border-radius:14px 14px 0 0}
+
 </style>
 </head>
 <body>
@@ -5893,6 +5895,49 @@ premiumHTML = function(){
       gr.insertAdjacentHTML('beforebegin', valorPremiumHTML());
       gr.insertAdjacentHTML('afterend', gratisSiempreHTML());
     }
+    return box.innerHTML;
+  } catch (e) { console.error(e); return h; }
+};
+
+
+/* ───── v34: la imagen del encuentro, sus datos y la reserva en un mismo lugar ───── */
+function promoParaEncuentro(e){
+  if (!e) return null;
+  const L = (P.promos || []).filter(x => x.tipo === 'Nuevas fechas' && x.imagen);
+  if (!L.length) return null;
+  const m = String(e.fecha || '').match(/^(\d{1,2})\/(\d{1,2})/), norm = s => String(s || '').toLowerCase();
+  const pruebas = m ? [+m[1] + '/' + +m[2], ('0' + m[1]).slice(-2) + '/' + ('0' + m[2]).slice(-2), +m[1] + ' de ' + MESES[+m[2] - 1]] : [];
+  const nom = norm(e.nombre).trim();
+  const hit = L.find(x => { const t = norm(x.titulo + ' ' + x.frase); return (nom && t.includes(nom)) || pruebas.some(p => t.includes(p)); });
+  if (hit) return hit;
+  return L.length === 1 && P.encuentros.length === 1 ? L[0] : null;
+}
+const _armarSlidesEnc = armarSlides;
+armarSlides = function(){
+  const L = _armarSlidesEnc();
+  try {
+    const usadas = new Set();
+    L.forEach(s => {
+      if (s.accion !== 'reservar') return;
+      const e = P.encuentros.find(x => x.id === s.ref), pr = promoParaEncuentro(e); if (!pr || usadas.has(pr)) return;
+      usadas.add(pr); s.imagen = pr.imagen; s.primero = 1;
+      s.frase = (pr.frase ? pr.frase + ' · ' : '') + s.frase + (e.precio ? ' · ' + e.precio : '');
+      if (pr.boton) s.boton = pr.boton;
+    });
+    const tit = new Set([...usadas].map(x => x.titulo)), out = L.filter(s => !(s.accion !== 'reservar' && s.tipo === 'Nuevas fechas' && tit.has(s.titulo)));
+    return out.filter(s => s.primero).concat(out.filter(s => !s.primero));
+  } catch (e) { console.error(e); return L; }
+};
+const _novEnc = novedadesHTML;
+novedadesHTML = function(){
+  const h = _novEnc();
+  try {
+    if (!(P.promos || []).some(x => x.tipo === 'Nuevas fechas' && x.imagen)) return h;
+    const box = document.createElement('div'); box.innerHTML = h;
+    box.querySelectorAll('article.encuentro').forEach(a => {
+      const n = (a.querySelector('h4') || {}).textContent, e = P.encuentros.find(x => x.nombre === n), pr = promoParaEncuentro(e);
+      if (pr) a.insertAdjacentHTML('afterbegin', `<img class="enc-img" src="${esc(pr.imagen)}" alt="" loading="lazy" onerror="this.remove()">`);
+    });
     return box.innerHTML;
   } catch (e) { console.error(e); return h; }
 };
