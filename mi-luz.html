@@ -713,6 +713,27 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .biblio-c.lock::before{content:'🔒';position:absolute;top:6px;right:6px;z-index:2;font-size:.8rem}
 .bib-est{display:flex;gap:6px;padding:0 12px 10px}.bib-est button{flex:1;padding:8px 4px;border-radius:999px;border:1px solid var(--linea);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.82rem;cursor:pointer}.bib-est button.on{background:rgba(191,138,38,.3);border-color:#F3DCA0;color:#F3DCA0}
 .biblio-grid.art .biblio-c::after{background:none}
+.prem-grupo.bloq ul{list-style:none;padding:0 16px 14px 16px;opacity:1;display:grid;gap:8px}
+.prem-grupo.bloq li{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.04);border-left:2px solid rgba(212,175,106,.45)}
+.prem-grupo.bloq li b{display:block;color:#F3DCA0;font-weight:600;font-size:.92rem}
+.prem-grupo.bloq li small{display:block;font-size:.82rem;opacity:.82;line-height:1.45;margin-top:2px}
+.pg-pronto{font-style:normal;font-size:.7rem;padding:1px 7px;border-radius:9px;background:rgba(185,138,230,.25);color:#E6D3FF;margin-left:4px;vertical-align:middle}
+.prem-valor{margin:16px 0 4px}
+.prem-valor h3,.gratis-siempre h3{font-family:var(--serif);color:#F3DCA0;font-size:1.2rem;margin:0 0 10px;text-align:center}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pv-grid>div{padding:12px;border-radius:14px;border:1px solid rgba(212,175,106,.28);background:rgba(59,23,96,.3);display:flex;flex-direction:column;gap:3px}
+.pv-grid span{font-size:1.4rem}
+.pv-grid b{color:#F3DCA0;font-size:.9rem}
+.pv-grid small{font-size:.78rem;opacity:.85;line-height:1.4}
+.gratis-siempre{margin:16px 0;padding:14px 16px;border-radius:18px;border:1px solid rgba(140,220,170,.35);background:rgba(40,90,70,.18)}
+.gratis-siempre h3{color:#BFF0CF}
+.gratis-siempre>p{margin:0 0 10px;font-size:.86rem;opacity:.88;text-align:center}
+.gratis-siempre ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.gratis-siempre li{display:flex;gap:10px;align-items:center}
+.gratis-siempre li span{font-size:1.3rem}
+.gratis-siempre li b{display:block;font-size:.92rem}
+.gratis-siempre li small{font-size:.8rem;opacity:.82}
+.gratis-nota{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:.84rem;text-align:center;color:#BFF0CF;background:rgba(40,90,70,.18);border:1px solid rgba(140,220,170,.3)}
 </style>
 </head>
 <body>
@@ -5343,7 +5364,7 @@ function reordenarVos(h){
     ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
-  const idx = `<nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
+  const idx = `<p class="gratis-nota">✓ Todo lo de esta pestaña es gratis para vos, para siempre.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
   return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología y tu nombre.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
@@ -5376,7 +5397,7 @@ function reordenarPremium(h){
   const abierto = g => ver && g.L.some(e => e.dataset.k === PREM_ABIERTA);
   const html = grupos.filter(g => g.L.length).map(g => ver
     ? `<details class="prem-grupo"${abierto(g) ? ' open' : ''}><summary><span>${g.ic}</span><div><h4>${g.t}</h4><p>${g.d}</p></div></summary><div class="prem-grupo-in">${g.L.map(e => e.outerHTML).join('')}</div></details>`
-    : `<div class="prem-grupo bloq"><div class="pg-cab"><span>${g.ic}</span><div><h4>${g.t}</h4><p>${g.d}</p></div><i aria-hidden="true">🔒</i></div><ul>${g.L.map(e => `<li>${esc(e.querySelector('h4') ? e.querySelector('h4').textContent : '')}</li>`).join('')}</ul></div>`).join('');
+    : `<div class="prem-grupo bloq"><div class="pg-cab"><span>${g.ic}</span><div><h4>${g.t}</h4><p>${g.d}</p></div><i aria-hidden="true">🔒</i></div><ul>${g.L.map(e => { const t = e.querySelector('h4') ? e.querySelector('h4').textContent.replace(/\s*\(?pronto\)?\s*$/i, '') : '', dd = e.querySelector('p') ? e.querySelector('p').textContent : '', pr = e.dataset.k === 'meditaciones'; return `<li><b>${esc(t)}${pr ? ' <em class="pg-pronto">Pronto</em>' : ''}</b>${dd ? `<small>${esc(dd)}</small>` : ''}</li>`; }).join('')}</ul></div>`).join('');
   const marca = document.createElement('div'); marca.id = 'prem-marca'; primero.before(marca); items.forEach(e => e.remove());
   let out = box.innerHTML;
   // la prueba gratis y el botón de suscripción, enseguida del adelanto
@@ -5725,7 +5746,7 @@ const ARC_MANIF = {
 };
 const ORDEN_ARC = [22].concat(Array.from({ length: 21 }, (_, i) => i + 1));
 function bibliotecaHTML(){
-  const lock = !P.premium;
+  const lock = false;
   return `<details class="biblio"><summary><span>📚</span><div><b>Biblioteca de arcanos para manifestar</b><small>Los 22 arcanos mayores como fondo de pantalla, con sus palabras de poder${lock ? ' · Premium' : ''}</small></div></summary>
     <p class="ag-ayuda" style="margin:0 12px 10px">Elegí la energía que querés atraer, guardala y usala de fondo: cada vez que mires tu celular, te la recuerda ✨</p>
     <div class="biblio-grid">${ORDEN_ARC.map(n => `<button type="button" class="biblio-c${lock ? ' lock' : ''}" data-biblio="${n}"><span class="bc-img" style="background-image:url('${imgArcano(n)}')"></span><b>${romano(n)}</b><small>${esc(NOM[n])}</small><i>${esc(ARC_MANIF[n][0])}</i></button>`).join('')}</div></details>`;
@@ -5767,7 +5788,6 @@ async function fondoManifestar(n){
   return new Promise(ok => cv.toBlob(ok, 'image/jpeg', .9));
 }
 async function abrirBiblio(n){
-  if (!P.premium) { PREM_ABIERTA = ''; irTab('premium'); return; }
   $('dlg-titulo').textContent = 'Creando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal();
   const blob = await fondoManifestar(n), url = URL.createObjectURL(blob), nombre = 'arcano-' + romano(n) + '-luz-guia.jpg';
   evento('Sección', 'Biblioteca de arcanos: ' + NOM[n]);
@@ -5786,7 +5806,7 @@ let BIB_EST = 'luz';
 try { BIB_EST = localStorage.getItem('luzguia_bib_est') || 'luz'; } catch (e) {}
 const imgArtesanal = n => 'artesanal-' + String(n).padStart(2, '0') + '.jpg';
 bibliotecaHTML = function(){
-  const lock = !P.premium, img = n => BIB_EST === 'art' ? imgArtesanal(n) : imgArcano(n);
+  const lock = false, img = n => BIB_EST === 'art' ? imgArtesanal(n) : imgArcano(n);
   return `<details class="biblio" id="biblio"${BIB_ABIERTA ? ' open' : ''}><summary><span>📚</span><div><b>Biblioteca de arcanos para manifestar</b><small>Los 22 arcanos mayores como fondo de pantalla, en tres estilos${lock ? ' · Premium' : ''}</small></div></summary>
     <div class="bib-est" role="tablist">${BIB_ESTILOS.map(([k, ic, t]) => `<button type="button" role="tab" aria-selected="${BIB_EST === k}" class="${BIB_EST === k ? 'on' : ''}" data-bibest="${k}">${ic} ${t}</button>`).join('')}</div>
     <p class="ag-ayuda" style="margin:0 12px 10px">${BIB_EST === 'luz' ? 'Dorada y rosada, con brillos y sus palabras de poder.' : BIB_EST === 'art' ? 'Diseños hechos a mano, con glitter, florituras y su frase para manifestar.' : 'Oscura y cinematográfica, con su afirmación.'} Elegí la energía que querés atraer y usala de fondo ✨</p>
@@ -5797,7 +5817,6 @@ document.addEventListener('toggle', e => { if (e.target.id === 'biblio') BIB_ABI
 function repintarBiblio(){ const d = $('biblio'); if (!d) return; const t = document.createElement('div'); t.innerHTML = bibliotecaHTML(); d.replaceWith(t.firstElementChild); }
 async function blobDe(src){ try { const r = await fetch(src); if (!r.ok) return null; const b = await r.blob(); return /image/.test(b.type) ? b : null; } catch (e) { return null; } }
 abrirBiblio = async function(n){
-  if (!P.premium) { PREM_ABIERTA = ''; irTab('premium'); return; }
   $('dlg-titulo').textContent = 'Preparando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal();
   let blob = null;
   if (BIB_EST === 'art') {
@@ -5834,7 +5853,7 @@ async function fondoArtesanal(n){
 }
 const _abrirBiblioArt = abrirBiblio;
 abrirBiblio = async function(n){
-  if (BIB_EST !== 'art' || !P.premium) return _abrirBiblioArt(n);
+  if (BIB_EST !== 'art') return _abrirBiblioArt(n);
   $('dlg-titulo').textContent = 'Preparando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal();
   const blob = await fondoArtesanal(n);
   if (!blob) { $('dlg-titulo').textContent = NOM[n]; $('dlg-texto').textContent = 'La versión artesanal de este arcano llega muy pronto. Mientras tanto, probá la luminosa o la mística ✨'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>'; $('dlg-ok').onclick = () => $('dlg').close(); return; }
@@ -5845,6 +5864,36 @@ abrirBiblio = async function(n){
   $('dlg-cuerpo').innerHTML = `<img src="${url}" alt="Vista previa" style="display:block;max-height:52vh;max-width:100%;margin:0 auto;border-radius:16px;border:1px solid var(--linea)"><p class="ag-ayuda" style="text-align:center">✨ ${esc(ARC[n].af)}</p><div class="fila-bt"><button class="btn-sec" type="button" id="bb-no">Cerrar</button><button class="btn" type="button" id="bb-si">Guardar</button></div>`;
   $('bb-no').onclick = () => $('dlg').close();
   $('bb-si').onclick = async () => { try { await compartirArchivo(blob, nombre, NOM[n] + ' ✨ · Mi Luz, Luz Guía'); } catch (e) {} };
+};
+
+
+/* ───── v33: Premium que se explica solo y lo gratis bien claro ───── */
+const PREM_VALOR = [
+  ['🪐', 'Hecho con tus datos', 'Todo se calcula con tu fecha, hora y lugar de nacimiento. No son textos genéricos: es tu carta.'],
+  ['🔁', 'Se renueva cada mes', 'Tus tránsitos, tu alma este mes, la tirada de Belu, el animal de cada Luna nueva y tus mejores fechas.'],
+  ['💌', 'Belu y Mey te responden', 'Una pregunta por mes, respondida por ellas con una tirada de tarot para vos.'],
+  ['📲', 'Para compartir', 'Historias con tus lecturas Premium, como tu sinfonía natal con sonido y tu carta dracónica, listas para Instagram.']];
+function valorPremiumHTML(){
+  return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
+}
+function gratisSiempreHTML(){
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales, tu diario y tus recordatorios'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
+}
+const _premValor = premiumHTML;
+premiumHTML = function(){
+  const h = _premValor();
+  if (P.premium && !VISTA_GRATIS) return h;
+  try {
+    const box = document.createElement('div'); box.innerHTML = h;
+    const cab = box.querySelector('.prem-cab p'); if (cab) cab.textContent = 'Lecturas personales, hechas con tu carta natal, que se renuevan cada mes. Lo gratis sigue siendo tuyo siempre.';
+    const gr = box.querySelector('.prem-grupos');
+    if (gr) {
+      gr.insertAdjacentHTML('beforebegin', valorPremiumHTML());
+      gr.insertAdjacentHTML('afterend', gratisSiempreHTML());
+    }
+    return box.innerHTML;
+  } catch (e) { console.error(e); return h; }
 };
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
