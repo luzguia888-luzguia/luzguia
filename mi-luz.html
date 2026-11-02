@@ -5790,7 +5790,7 @@ bibliotecaHTML = function(){
   return `<details class="biblio" id="biblio"${BIB_ABIERTA ? ' open' : ''}><summary><span>📚</span><div><b>Biblioteca de arcanos para manifestar</b><small>Los 22 arcanos mayores como fondo de pantalla, en tres estilos${lock ? ' · Premium' : ''}</small></div></summary>
     <div class="bib-est" role="tablist">${BIB_ESTILOS.map(([k, ic, t]) => `<button type="button" role="tab" aria-selected="${BIB_EST === k}" class="${BIB_EST === k ? 'on' : ''}" data-bibest="${k}">${ic} ${t}</button>`).join('')}</div>
     <p class="ag-ayuda" style="margin:0 12px 10px">${BIB_EST === 'luz' ? 'Dorada y rosada, con brillos y sus palabras de poder.' : BIB_EST === 'art' ? 'Diseños hechos a mano, con glitter, florituras y su frase para manifestar.' : 'Oscura y cinematográfica, con su afirmación.'} Elegí la energía que querés atraer y usala de fondo ✨</p>
-    <div class="biblio-grid${BIB_EST === 'art' ? ' art' : ''}">${ORDEN_ARC.map(n => `<button type="button" class="biblio-c${lock ? ' lock' : ''}" data-biblio="${n}"><span class="bc-img" style="background-image:url('${img(n)}'),url('${imgArcano(n)}')"></span>${BIB_EST === 'art' ? '' : `<b>${romano(n)}</b><small>${esc(NOM[n])}</small><i>${esc(ARC_MANIF[n][0])}</i>`}</button>`).join('')}</div></details>`;
+    <div class="biblio-grid${BIB_EST === 'art' ? ' art' : ''}">${ORDEN_ARC.map(n => `<button type="button" class="biblio-c${lock ? ' lock' : ''}" data-biblio="${n}"><span class="bc-img" style="background-image:${BIB_EST === 'art' ? `url('${imgArtMini(n)}'),url('${imgArtesanal(n)}'),` : `url('${img(n)}'),`}url('${imgArcano(n)}')"></span>${BIB_EST === 'art' ? '' : `<b>${romano(n)}</b><small>${esc(NOM[n])}</small><i>${esc(ARC_MANIF[n][0])}</i>`}</button>`).join('')}</div></details>`;
 };
 let BIB_ABIERTA = false;
 document.addEventListener('toggle', e => { if (e.target.id === 'biblio') BIB_ABIERTA = e.target.open; }, true);
@@ -5801,7 +5801,7 @@ abrirBiblio = async function(n){
   $('dlg-titulo').textContent = 'Preparando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal();
   let blob = null;
   if (BIB_EST === 'art') {
-    blob = await blobDe(imgArtesanal(n));
+    blob = await blobDe(imgArtesanal(n)) || await blobDe(imgArtesanal(n).replace(/\.jpg$/, '.png'));
     if (!blob) { $('dlg-titulo').textContent = NOM[n]; $('dlg-texto').textContent = 'La versión artesanal de este arcano llega muy pronto. Mientras tanto, probá la luminosa o la mística ✨'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>'; $('dlg-ok').onclick = () => $('dlg').close(); return; }
   } else if (BIB_EST === 'mis') blob = await wallpaper({ fondo: imgArcano(n), kicker: 'Arcano ' + romano(n), titulo: NOM[n], lineas: [ARC[n].af], nombre: P.nombre });
   else blob = await fondoManifestar(n);
@@ -5814,6 +5814,38 @@ abrirBiblio = async function(n){
   $('bb-si').onclick = async () => { try { await compartirArchivo(blob, nombre, NOM[n] + ' ✨ · Mi Luz, Luz Guía'); } catch (e) {} };
 };
 document.addEventListener('click', e => { const b = e.target.closest('[data-bibest]'); if (!b) return; BIB_EST = b.dataset.bibest; try { localStorage.setItem('luzguia_bib_est', BIB_EST); } catch (x) {} BIB_ABIERTA = true; repintarBiblio(); });
+
+
+/* ───── v32: artesanales livianas y siempre en formato de fondo de celular ───── */
+const imgArtMini = n => 'artesanal-mini-' + String(n).padStart(2, '0') + '.jpg';
+async function fondoArtesanal(n){
+  const carga = src => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = src; });
+  const base = imgArtesanal(n), im = await carga(base) || await carga(base.replace(/\.jpg$/, '.png')); if (!im) return null;
+  const W = 1170, H = 2532, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  // fondo: la misma imagen ampliada y desenfocada, para que no queden bordes
+  c.filter = 'blur(70px) saturate(1.2) brightness(1.08)'; fotoFondo(c, im, W, H, 1.15, 0, 0); c.filter = 'none';
+  c.fillStyle = 'rgba(255,236,220,.10)'; c.fillRect(0, 0, W, H);
+  // la imagen completa, sin recortes, dejando lugar arriba para el reloj
+  const w = W, h = Math.min(H * .74, im.height * W / im.width), ww = h < im.height * W / im.width ? im.width * h / im.height : w, x = (W - ww) / 2, y = Math.max(H * .2, H - h - H * .06);
+  c.shadowColor = 'rgba(80,40,90,.45)'; c.shadowBlur = 50; c.drawImage(im, x, y, ww, h); c.shadowBlur = 0;
+  for (let i = 0; i < 90; i++) { c.globalAlpha = .35 + Math.random() * .6; c.fillStyle = Math.random() < .5 ? '#FFF4D6' : '#FFFFFF'; const px = Math.random() * W, py = Math.random() * y; const r = Math.random() * 2.6; if (r > 2.1) estrellaPuntas(c, px, py, r * 4); else { c.beginPath(); c.arc(px, py, r, 0, 7); c.fill(); } }
+  c.globalAlpha = 1;
+  return new Promise(ok => cv.toBlob(ok, 'image/jpeg', .9));
+}
+const _abrirBiblioArt = abrirBiblio;
+abrirBiblio = async function(n){
+  if (BIB_EST !== 'art' || !P.premium) return _abrirBiblioArt(n);
+  $('dlg-titulo').textContent = 'Preparando tu fondo ✨'; $('dlg-texto').textContent = 'Un momento…'; $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:2.5s"></i></div>'; if (!$('dlg').open) $('dlg').showModal();
+  const blob = await fondoArtesanal(n);
+  if (!blob) { $('dlg-titulo').textContent = NOM[n]; $('dlg-texto').textContent = 'La versión artesanal de este arcano llega muy pronto. Mientras tanto, probá la luminosa o la mística ✨'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Entendido</button></div>'; $('dlg-ok').onclick = () => $('dlg').close(); return; }
+  const url = URL.createObjectURL(blob), nombre = 'arcano-' + romano(n) + '-artesanal-luz-guia.jpg';
+  evento('Sección', 'Biblioteca de arcanos: ' + NOM[n] + ' (art)');
+  $('dlg-titulo').textContent = NOM[n] + ' ✨';
+  $('dlg-texto').textContent = 'Para manifestar y atraer esta energía, usala de fondo de pantalla. ' + (ES_IOS ? 'Tocá Guardar, elegí "Guardar imagen" y ponela desde Ajustes → Fondo de pantalla.' : 'Tocá Guardar y elegila como fondo desde tu galería.');
+  $('dlg-cuerpo').innerHTML = `<img src="${url}" alt="Vista previa" style="display:block;max-height:52vh;max-width:100%;margin:0 auto;border-radius:16px;border:1px solid var(--linea)"><p class="ag-ayuda" style="text-align:center">✨ ${esc(ARC[n].af)}</p><div class="fila-bt"><button class="btn-sec" type="button" id="bb-no">Cerrar</button><button class="btn" type="button" id="bb-si">Guardar</button></div>`;
+  $('bb-no').onclick = () => $('dlg').close();
+  $('bb-si').onclick = async () => { try { await compartirArchivo(blob, nombre, NOM[n] + ' ✨ · Mi Luz, Luz Guía'); } catch (e) {} };
+};
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
