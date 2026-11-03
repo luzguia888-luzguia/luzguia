@@ -361,6 +361,18 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
 .esc-msg{text-align:center;font-weight:600;margin:12px 0;padding:10px;border-radius:12px;background:rgba(255,255,255,.04)}.esc-msg.bien{background:rgba(143,211,168,.18);color:#8FD3A8;font-size:1.1rem}.esc-msg.mal{background:rgba(242,140,160,.15);color:#f29aa8}.esc-msg.ya{color:#F3DCA0}
 .esc-manual{display:flex;gap:8px}.esc-manual input{flex:1}
 .puerta{list-style:none;padding:0;margin:0;max-height:260px;overflow:auto}.puerta li{display:flex;align-items:center;gap:10px;padding:8px 4px;border-top:1px solid var(--linea)}.puerta li span{width:18px;color:var(--bruma)}.puerta li.ok span{color:#8FD3A8}.puerta li .btn-sec{margin-left:auto;padding:4px 10px;font-size:.8rem}
+.para-que{margin:4px 0 14px;max-width:760px}
+.para-que summary{cursor:pointer;color:var(--oro, #D4AF6A);font-size:.9rem;list-style:none;display:inline-block;padding:4px 0}
+.para-que summary::-webkit-details-marker{display:none}
+.para-que p{margin:6px 0 0;padding:10px 14px;border-left:2px solid rgba(212,175,106,.5);background:rgba(255,255,255,.04);border-radius:0 10px 10px 0;font-size:.92rem;line-height:1.5}
+.idx-vista{position:sticky;top:var(--alto-barra, 0px);z-index:4;display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:8px 0;margin:0 0 16px;background:rgba(28,11,46,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(212,175,106,.18)}
+.idx-vista::-webkit-scrollbar{display:none}
+.idx-vista span{font-size:.8rem;opacity:.7;flex:none}
+.idx-vista button{flex:none;font:inherit;font-size:.82rem;padding:5px 12px;border-radius:999px;border:1px solid rgba(212,175,106,.4);background:rgba(91,42,134,.25);color:inherit;cursor:pointer;white-space:nowrap}
+.idx-vista button:hover{background:rgba(212,175,106,.18)}
+#contenido h3[id^="sec-"]{scroll-margin-top:calc(var(--alto-barra, 0px) + 60px)}
+#btn-arriba{position:fixed;right:18px;bottom:18px;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid rgba(212,175,106,.6);background:rgba(28,11,46,.92);color:#F3DCA0;font-size:1.3rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+#btn-arriba.ver{opacity:1;pointer-events:auto}
 </style>
 </head>
 <body>
@@ -2767,6 +2779,51 @@ document.addEventListener('click', async e => {
   const [ref, est] = b.dataset.tiendaest.split('|'), rec = H('Pedidos tienda').find(x => x['Ref'] === ref); if (!rec) return;
   b.disabled = true; try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, est === 'Entregado' ? '🛍️ Pedido entregado. Acordate de registrar la venta en Reventa y stock.' : '🛍️ Marcado como pagado'); } catch (err) { toast(err.message, true); b.disabled = false; }
 });
+
+/* ───── v22: orden y ayuda en cada pestaña (índice con botones, volver arriba, "¿Para qué sirve?") ───── */
+const AYUDA_VISTA = {
+  hoy: 'Lo que hay que hacer hoy: tareas pendientes, pedidos que llegaron desde Mi Luz, cobros y quién abrió la app. Cuando algo se resuelve, desaparece de la lista.',
+  calendario: 'El mes en un calendario: encuentros, campañas, fechas especiales y cumpleaños. Tocá un día para ver el detalle o agregá un evento con el botón de arriba.',
+  encuentros: 'Cada encuentro que organizan: fecha, hora, cupo, precio y quiénes van. Al crear uno nuevo (Planificado o Confirmado) aparece solo en Mi Luz para que reserven.',
+  personas: 'Todas las participantes: sus datos, sus arcanos, su enlace personal de Mi Luz y a qué encuentros vinieron. Usá el buscador para encontrar a alguien.',
+  cobros: 'Quién debe plata de algún encuentro. Tocá 💰 para registrar un pago (efectivo, transferencia o Mercado Pago) y el saldo baja solo.',
+  gastos: 'Lo que gastan para los encuentros y el emprendimiento (vino, velas, insumos). Podés sacarle foto al ticket. Sirve para saber la ganancia real.',
+  reventa: 'Los productos que venden (tarots, oráculos, piedras): stock, precio de venta y cada venta. Cuando venden algo, registrá la venta acá para que baje el stock. Lo que tenga precio y stock aparece en la tienda de Mi Luz.',
+  miluz: 'Todo lo de la app de las participantes: quién es Premium, las suscripciones de Mercado Pago, las promociones de Novedades, la tirada del mes, los avisos al celular y las opiniones.',
+  contenido: 'Ideas y textos listos para Instagram, día por día: lunas, arcano de la semana y los anuncios de cada encuentro. Copiás, retocás si querés y publicás.',
+  mensajes: 'Los textos base de WhatsApp que usan todos los botones del CRM (recordatorios, cumpleaños, enlaces). Si cambiás uno acá, cambia en todos lados.',
+  estadisticas: 'Cómo va Luz Guía: encuentros, asistentes, ingresos, gastos y ganancia, y qué secciones miran más las participantes en Mi Luz.',
+  proyeccion: 'Para pensar productos nuevos (velas, kits): cuánto cuesta hacerlos, cuánto invertir en la primera tanda, a qué precio venderlos y cuándo se recupera.',
+  inversion: 'Para tomar conciencia: cuánto valdría hoy la plata de Luz Guía si se hubiera invertido (S&P 500, fondo común o dólares) en vez de quedar en pesos.',
+  historial: 'Cada cambio hecho en el CRM, quién lo hizo y cuándo. Sirve si algo se borró o se cambió sin querer.'
+};
+function organizarVista(){
+  const c = $('contenido'); if (!c) return;
+  const cab = c.querySelector('.cabeza'), txt = AYUDA_VISTA[VISTA];
+  const ayu = `<details class="para-que"><summary>ⓘ ¿Para qué sirve esta pestaña?</summary><p>${txt}</p></details>`, act = c.querySelector('.actualizado');
+  if (txt) { if (cab) cab.insertAdjacentHTML('afterend', ayu); else if (act) act.insertAdjacentHTML('afterend', ayu); else c.insertAdjacentHTML('afterbegin', ayu); }
+  const hs = [...c.querySelectorAll('h3')].filter(h => h.textContent.trim() && !h.closest('dialog, .modal, details:not(.para-que)'));
+  if (hs.length >= 3) {
+    hs.forEach((h, i) => { if (!h.id) h.id = 'sec-' + VISTA + '-' + i; });
+    const nav = `<nav class="idx-vista" aria-label="Ir a"><span>Ir a:</span>${hs.map(h => `<button type="button" data-irsec="${h.id}">${esc(h.textContent.trim().replace(/\s+/g, ' ').slice(0, 34))}</button>`).join('')}</nav>`;
+    const ancla = c.querySelector('.para-que') || cab;
+    if (ancla) ancla.insertAdjacentHTML('afterend', nav); else c.insertAdjacentHTML('afterbegin', nav);
+  }
+  const hb = document.querySelector('header.barra'), alto = hb ? hb.offsetHeight : 0;
+  document.documentElement.style.setProperty('--alto-barra', alto + 'px');
+}
+const _pintarOrg = pintar;
+pintar = function(){ _pintarOrg(); try { organizarVista(); } catch (e) { console.error(e); } };
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-irsec], #btn-arriba'); if (!b) return;
+  if (b.id === 'btn-arriba') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  const el = document.getElementById(b.dataset.irsec); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+(function(){
+  const bt = document.createElement('button'); bt.id = 'btn-arriba'; bt.type = 'button'; bt.setAttribute('aria-label', 'Volver arriba'); bt.textContent = '↑'; document.body.appendChild(bt);
+  const ver = () => bt.classList.toggle('ver', window.scrollY > 500);
+  window.addEventListener('scroll', ver, { passive: true }); ver();
+})();
 </script>
 </body>
 </html>
