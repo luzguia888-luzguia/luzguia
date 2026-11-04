@@ -6061,6 +6061,10 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-pron
 const _postCargaGen = postCarga;
 postCarga = function(){ activarGenero(); return _postCargaGen(); };
 
+
+/* ───── v35b: si algo vuelve a pintar la app, la agenda se vuelve a dibujar ───── */
+const _pintarAgFix = pintar;
+pintar = function(){ const r = _pintarAgFix.apply(this, arguments); try { const a = $('agenda'); if (a && !a.innerHTML.trim() && AG) pintarAgenda(); } catch (e) { console.error(e); } return r; };
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
 </script>
