@@ -736,6 +736,14 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .gratis-nota{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:.84rem;text-align:center;color:#BFF0CF;background:rgba(40,90,70,.18);border:1px solid rgba(140,220,170,.3)}
 .enc-img{display:block;width:calc(100% + 36px);margin:-18px -18px 14px;aspect-ratio:16/9;object-fit:cover;border-radius:14px 14px 0 0}
 
+.pron-caja{display:flex;gap:12px;align-items:flex-start;margin:0 0 16px;padding:14px 16px;border-radius:18px;border:1px solid rgba(212,175,106,.4);background:linear-gradient(150deg,rgba(91,42,134,.3),rgba(28,11,46,.6))}
+.pron-caja>span{font-size:1.6rem}
+.pron-caja b{display:block;color:#F3DCA0;font-family:var(--serif);font-size:1.1rem}
+.pron-caja p{margin:4px 0 10px;font-size:.88rem;opacity:.88}
+.pron-opc{display:flex;flex-wrap:wrap;gap:8px}
+.pron-opc button{font:inherit;font-size:.88rem;padding:8px 14px;border-radius:999px;border:1px solid rgba(212,175,106,.45);background:rgba(255,255,255,.05);color:inherit;cursor:pointer}
+.pron-opc button.on{background:linear-gradient(135deg,#E9C77B,#C9A24E);color:#2A1240;border-color:transparent;font-weight:600}
+.pron-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;padding:10px 18px;border-radius:999px;background:rgba(28,11,46,.95);border:1px solid rgba(212,175,106,.5);color:#F3DCA0;font-size:.9rem;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 </style>
 </head>
 <body>
@@ -1196,7 +1204,7 @@ const LUNA_CONSEJO = {
   Escorpio: 'Bueno para conversaciones profundas, terapia y soltar. Evitá los celos y querer controlar.',
   Sagitario: 'Planificá un viaje, estudiá o hacé algo que te expanda. Cuidado con prometer de más.',
   Capricornio: 'Avanzá con lo importante: trabajo, metas y trámites. La disciplina hoy da frutos.',
-  Acuario: 'Probá algo distinto, conectá con amigas y proyectos grupales. Escuchá también lo que sentís.',
+  Acuario: 'Probá algo distinto, conectá con amistades y proyectos grupales. Escuchá también lo que sentís.',
   Piscis: 'Meditá, descansá y conectá con el arte y la intuición. Leé la letra chica antes de firmar.'
 };
 const SEMANA_CONSEJO = [
@@ -1541,7 +1549,7 @@ const NOMBRE_TEMA = {
   fuerza: { t: 'Energía de valentía', x: 'Tu nombre vibra con coraje y fortaleza. Es la energía de quien se levanta, defiende lo que ama y se anima a lo que otros postergan.', don: 'el coraje y la determinación', des: 'permitirte ser vulnerable sin sentir que perdés fuerza', af: 'Mi fuerza nace de mi corazón.' },
   divino: { t: 'Energía de protección', x: 'Tu nombre tiene raíz sagrada: habla de un lazo con lo divino y de una protección que te acompaña. Es la energía de la fe y de la confianza en algo más grande.', don: 'la fe, la intuición espiritual y la protección', des: 'confiar también en tu propia voz', af: 'Estoy guiada y protegida en cada paso.' },
   agua: { t: 'Energía del agua', x: 'Tu nombre está ligado al mar y al agua: emociones profundas, intuición y capacidad de adaptarte. Como el agua, sabés encontrar tu camino y limpiar lo que ya no sirve.', don: 'la sensibilidad, la intuición y la adaptación', des: 'no absorber las emociones de los demás', af: 'Fluyo con la vida y confío en mi intuición.' },
-  naturaleza: { t: 'Energía de florecimiento', x: 'Tu nombre nace de la naturaleza: flores, bosques, primavera. Habla de crecimiento, belleza y ciclos. Sos de las que florecen incluso después del invierno.', don: 'hacer crecer y embellecer lo que te rodea', des: 'respetar tus propios tiempos y estaciones', af: 'Florezco a mi ritmo y en mi tiempo.' },
+  naturaleza: { t: 'Energía de florecimiento', x: 'Tu nombre nace de la naturaleza: flores, bosques, primavera. Habla de crecimiento, belleza y ciclos. Sos de quienes florecen incluso después del invierno.', don: 'hacer crecer y embellecer lo que te rodea', des: 'respetar tus propios tiempos y estaciones', af: 'Florezco a mi ritmo y en mi tiempo.' },
   victoria: { t: 'Energía de victoria', x: 'Tu nombre lleva la vibración del triunfo. Es la energía de quien persevera hasta lograrlo y de quien inspira a otras personas a no rendirse.', don: 'la perseverancia y la capacidad de lograr', des: 'celebrar el camino y no solo la meta', af: 'Merezco mis logros y los celebro.' },
   nobleza: { t: 'Energía de nobleza', x: 'Tu nombre habla de dignidad, valor y respeto. Es la energía de quien se para con presencia, honra su palabra y sabe hacerse valer.', don: 'la integridad, la presencia y el liderazgo sereno', des: 'no exigirte la perfección', af: 'Soy valiosa tal como soy.' },
   gracia: { t: 'Energía de gracia', x: 'Tu nombre vibra con compasión y gracia: la capacidad de dar sin esperar, de perdonar y de suavizar los momentos duros. Tu sola presencia calma.', don: 'la compasión, la ternura y la empatía', des: 'poner límites con amor', af: 'Doy y recibo con gracia.' },
@@ -1696,7 +1704,7 @@ const CHINO = [
   { a: 'Cabra', ic: '🐐', r: 'Creativa, dulce y artística. Tenés un gran mundo interior.', amor: 'Sensible y cariñosa, necesita contención.', y26: 'Año favorable: el Caballo te impulsa. Buen momento para crear.' },
   { a: 'Mono', ic: '🐒', r: 'Ingeniosa, divertida y versátil. Resolvés todo con creatividad.', amor: 'Divertida y curiosa.', y26: 'Año dinámico: tu ingenio te ayuda a aprovechar los cambios.' },
   { a: 'Gallo', ic: '🐓', r: 'Detallista, valiente y sincera. Tu trabajo siempre se nota.', amor: 'Leal y protectora, a veces exigente.', y26: 'Bajá la exigencia y disfrutá: el año premia la espontaneidad.' },
-  { a: 'Perro', ic: '🐕', r: 'Leal, justa y protectora. La amiga que todos quieren tener.', amor: 'Fiel y comprometida.', y26: 'Año muy favorable: el Caballo es tu aliado. Crecen vínculos y proyectos.' },
+  { a: 'Perro', ic: '🐕', r: 'Leal, justa y protectora. La amistad que todo el mundo quiere tener.', amor: 'Fiel y comprometida.', y26: 'Año muy favorable: el Caballo es tu aliado. Crecen vínculos y proyectos.' },
   { a: 'Cerdo', ic: '🐖', r: 'Generosa, honesta y disfrutona. Sabés vivir la vida.', amor: 'Entregada y cariñosa.', y26: 'Año de oportunidades, pero ordená tus gastos y tus tiempos.' }
 ];
 const CHINO_EL = [['Metal', 'determinación y fuerza'], ['Agua', 'intuición y adaptación'], ['Madera', 'crecimiento y generosidad'], ['Fuego', 'pasión y liderazgo'], ['Tierra', 'estabilidad y sentido práctico']];
@@ -1919,7 +1927,7 @@ const MZ_GRUPOS = [
 /* ── Horóscopo chino completo ── */
 const CHINO_MAS = [
   { trab: 'Brillás en negocios, finanzas y todo lo que pida estrategia.', plata: 'Ahorrás con inteligencia y detectás oportunidades antes que nadie.', salud: 'Cuidá el estrés y el descanso: tu mente nunca para.' },
-  { trab: 'Tu constancia te lleva lejos: administración, campo, construcción, docencia.', plata: 'Construís patrimonio de a poco; sos de las que ahorran.', salud: 'Movete: el sedentarismo y la rigidez son tu punto débil.' },
+  { trab: 'Tu constancia te lleva lejos: administración, campo, construcción, docencia.', plata: 'Construís patrimonio de a poco; sos de quienes ahorran.', salud: 'Movete: el sedentarismo y la rigidez son tu punto débil.' },
   { trab: 'Naciste para liderar y emprender; te aburren los trabajos rutinarios.', plata: 'Ganás y gastás con intensidad: armá un colchón para los impulsos.', salud: 'Cuidá los excesos y date tiempo de recuperación.' },
   { trab: 'Diplomacia, arte, diseño, salud y trabajos en ambientes armónicos.', plata: 'Prudente con la plata; te gusta invertir en belleza y confort.', salud: 'Tu sistema nervioso es sensible: buscá calma y rutinas suaves.' },
   { trab: 'Liderazgo, proyectos grandes y todo lo que te ponga en el centro.', plata: 'Atraés oportunidades grandes; cuidá no apostar todo de una vez.', salud: 'Bajá el ritmo antes de que el cuerpo te lo pida.' },
@@ -1970,7 +1978,7 @@ function relElem(mio, anio){
   return 'riqueza';                          // vos controlás al año
 }
 const ELEM_REL = {
-  mismo: 'El elemento del año es el mismo que el tuyo: te sentís en tu salsa, con amigas y pares cerca. Ojo con la competencia y con gastar de más en lo social.',
+  mismo: 'El elemento del año es el mismo que el tuyo: te sentís en tu salsa, con amistades y pares cerca. Ojo con la competencia y con gastar de más en lo social.',
   nutre: 'El elemento del año alimenta al tuyo: es un año de apoyo, aprendizaje y recursos. Aprovechá para estudiar y recibir ayuda.',
   das: 'Tu elemento alimenta al del año: das mucha energía. Es muy creativo y expresivo, pero cuidá el cansancio y no te vacíes.',
   controla: 'El elemento del año controla al tuyo: trae presión, exigencias y desafíos que te hacen crecer. En la tradición, también es reconocimiento y autoridad.',
@@ -2659,7 +2667,7 @@ function premSinastria(){
   if (!P.diaMes || !P.anioNac) return faltaFecha;
   let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
   const hoy = new Date(), mk = hoy.getFullYear() + '-' + (hoy.getMonth() + 1), proxMes = MESES[(hoy.getMonth() + 1) % 12], bloqueada = o && o.mes === mk && !P.organizadora;
-  let h = `<p class="intro">La sinastría compara dos cartas para ver cómo se combinan dos personas: dónde fluyen, dónde se desafían y qué vienen a aprender juntas. Cada mes podés elegir una persona y te mostramos cómo se mueve el vínculo en ese mes.</p>`;
+  let h = `<p class="intro">La sinastría compara dos cartas para ver cómo se combinan dos personas: dónde fluyen, dónde se desafían y qué vienen a aprender en ese vínculo. Cada mes podés elegir una persona y te mostramos cómo se mueve el vínculo en ese mes.</p>`;
   if (bloqueada) h += `<div class="int-caja"><small>Tu sinastría de ${MESES[hoy.getMonth()]}</small><p>Este mes elegiste a <b>${esc(o.nombre || 'tu persona')}</b>. A partir del 1 de ${proxMes} podés elegir otra persona (o la misma, con las predicciones del mes nuevo).</p></div>`;
   else h += `<div class="form-nac">${o && o.mes && o.mes !== mk ? `<p>✨ ¡Empezó un mes nuevo! Podés elegir otra persona o mantener a ${esc(o.nombre || 'la misma')}.</p>` : ''}${P.organizadora ? '<p class="ag-ayuda">Vista de organizadora: podés cambiarla todas las veces que quieras para probar.</p>' : ''}
     <label>Nombre de la otra persona<input id="sin-nombre" value="${esc(o ? o.nombre : '')}" maxlength="40"></label><label>Fecha de nacimiento<input type="date" id="sin-fecha" value="${esc(o ? o.fecha : '')}"></label><label>Hora (opcional)<input type="time" id="sin-hora" value="${esc(o ? o.hora : '')}"></label>
@@ -2832,7 +2840,7 @@ function arcanosHTML(){
   const signif = significadoNombre(P.nombreCompleto || P.nombre, P.significadoNombre);
   const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre);
   h += `<h3>Tu nombre</h3><div class="nombre-caja"><span class="nombre-script">${esc(P.nombre)}</span>
-    <p>${signif ? esc(signif) : 'Todavía no tenemos el significado de tu nombre en nuestro registro. Lo sumamos pronto ✨'}</p>
+    <p data-nogen>${signif ? esc(signif) : 'Todavía no tenemos el significado de tu nombre en nuestro registro. Lo sumamos pronto ✨'}</p>
     ${(() => { const inf = nombreInfo(P.nombreCompleto || P.nombre); return inf ? `<div class="nombre-tema"><b>${inf.t}</b><p>${inf.x}</p><p><span>Tu don:</span> ${inf.don}. <span>Tu desafío:</span> ${inf.des}.</p><p class="afir">✨ ${inf.af}</p></div>` : ''; })()}
     ${signif ? '<p class="fila-comp"><button class="btn-sec comp" type="button" data-share="nombre">✨ Compartir mi nombre</button></p>' : ''}
     ${num.expresion ? `<ul class="num-lista">
@@ -3449,7 +3457,7 @@ const LOGROS = [
   ['r7', '✨', 'Una semana de luz', 'Siete días seguidos con vos misma.', (s, r) => r.n >= 7],
   ['a7', '🃏', 'Siete arcanos', 'Descubriste 7 arcanos distintos en tu carta del día.', s => s.arc.length >= 7],
   ['comp', '📣', 'Compartiste tu luz', 'Compartiste una imagen de Mi Luz.', s => s.comp >= 1],
-  ['inv', '💜', 'Invitaste a una amiga', 'Le mandaste tu invitación a alguien.', s => s.inv >= 1],
+  ['inv', '💜', 'Invitaste a alguien', 'Le mandaste tu invitación a alguien.', s => s.inv >= 1],
   ['preg', '💌', 'Tu primera pregunta', 'Hiciste tu pregunta del mes.', () => (P.preguntas || []).length >= 1],
   ['diario', '📖', 'Intención sembrada', 'Escribiste en tu diario lunar.', () => (P.diario || []).some(x => x.tipo === 'Intención' || x.tipo === 'Revisión')],
   ['r21', '🌿', 'Veintiún días', 'Tres semanas seguidas: ya es un hábito.', (s, r) => r.n >= 21],
@@ -3497,7 +3505,7 @@ function textoInvitacion(){
 function invitarHTML(){
   if (!P.idPersona || !(P.telLuz || P.instagram)) return '';
   const ya = P.referidas || 0;
-  return `<section class="invitar"><span class="inv-ic" aria-hidden="true">💜</span><h4>Invitá a una amiga</h4>
+  return `<section class="invitar"><span class="inv-ic" aria-hidden="true">💜</span><h4>Invitá a alguien</h4>
     <p>Si se suma a Luz Guía, a un encuentro o a Mi Luz Premium, <b>te regalamos una semana de Premium</b>.</p>
     ${ya ? `<p class="inv-ya">Ya ${ya === 1 ? 'se sumó 1 persona' : 'se sumaron ' + ya + ' personas'} por vos${P.regalos ? ' · ganaste ' + P.regalos + (P.regalos === 1 ? ' semana' : ' semanas') : ''} ✨</p>` : ''}
     <div class="fila-bt" style="justify-content:center"><button class="btn" type="button" data-invitar>${WA_SVG} Invitar por WhatsApp</button>${navigator.share ? '<button class="btn-sec" type="button" data-invitar="otro">Otra app</button>' : ''}</div>
@@ -4367,7 +4375,7 @@ function juegoHTML(){
   if (!e || !P.diaMes || !P.anioNac) return '';
   const L = e.juego.map(x => Object.assign({ n: x.nombre }, afinidad(P.diaMes, P.anioNac, P.horaNac, x.diaMes, x.anio))).sort((a, b) => b.pct - a.pct);
   return `<section class="juego"><small>🍷 Juego de la noche · ${esc(e.nombre)}</small><h4>Tu mesa de hoy</h4><p>Así se combina tu energía con la de quienes se sumaron al juego:</p>
-    <ul class="juego-lista">${L.map((x, i) => `<li><b class="jp">${x.pct}%</b><div><span>${i === 0 ? '💫 ' : ''}${esc(x.n)} · ${x.solB}, ${x.chinoB}</span>${x.favor.length ? (/^sus /.test(x.favor[0]) ? 'Las unen ' : 'Las une ') + x.favor[0] + '.' : 'Se complementan: cada una trae lo que a la otra le falta.'} <i>Preguntale: "${ROMPEHIELO[x.e2][(hashTxt(x.n) + i) % 2]}"</i></div></li>`).join('')}</ul>
+    <ul class="juego-lista">${L.map((x, i) => `<li><b class="jp">${x.pct}%</b><div><span>${i === 0 ? '💫 ' : ''}${esc(x.n)} · ${x.solB}, ${x.chinoB}</span>${x.favor.length ? (/^sus /.test(x.favor[0]) ? 'Las unen ' : 'Las une ') + x.favor[0] + '.' : 'Se complementan: cada persona trae lo que a la otra le falta.'} <i>Preguntale: "${ROMPEHIELO[x.e2][(hashTxt(x.n) + i) % 2]}"</i></div></li>`).join('')}</ul>
     <p class="ag-ayuda">Solo aparecen quienes aceptaron participar. Lo demás… se descubre en la mesa ✦</p></section>`;
 }
 const _hoyBase3 = hoyHTML;
@@ -4469,7 +4477,7 @@ const CAMINOS = {
     ['Tus logros', 'Hacé una lista de diez cosas que lograste en tu vida, grandes y chiquitas.', null, '¿Qué logro mío nunca celebré?', 'Reconozco todo lo que soy capaz de hacer.'],
     ['Tiempo para vos', 'Reservá media hora solo para algo que te encanta y no tiene que ser útil.', null, '¿Qué me hace feliz por el solo hecho de hacerlo?', 'Mi alegría es importante.'],
     ['Soltar la comparación', 'Pasá un día sin mirar redes o silenciá las cuentas que te hacen sentir menos.', null, '¿Con quién me comparo y qué me dice eso de lo que deseo?', 'Mi camino es único y tiene su propio ritmo.'],
-    ['Una carta para vos', 'Escribite una carta como si fueras tu mejor amiga. Guardala para releerla.', ['timer', 10, 'Meditar 10 min'], '¿Qué necesito escuchar hoy?', 'Me elijo, hoy y siempre.']]],
+    ['Una carta para vos', 'Escribite una carta con todo el amor que le darías a quien más querés. Guardala para releerla.', ['timer', 10, 'Meditar 10 min'], '¿Qué necesito escuchar hoy?', 'Me elijo, hoy y siempre.']]],
   soltar: ['🍂', '21 días para soltar', 'Tres semanas para liberar cargas, hábitos y vínculos que ya cumplieron su ciclo.', [
     ['Reconocer', 'Escribí todo lo que sentís que te pesa hoy, sin ordenarlo.', ['resp', 'calma', 'Respirar 3 min'], '¿Qué estoy cargando que no es mío?', 'Reconozco lo que siento sin juzgarlo.'],
     ['El cuerpo habla', 'Notá en qué parte del cuerpo sentís tensión y respirá hacia ahí.', ['resp', 'sueno', 'Respiración 4-7-8'], '¿Dónde guardo lo que no digo?', 'Mi cuerpo puede relajarse.'],
@@ -4739,7 +4747,7 @@ momentoHTML = function(){
   const h = _momentoComp();
   if (!h.includes('<section class="clima">')) return h;
   const k = h.lastIndexOf('</section>');
-  return h.slice(0, k) + '<p class="clima-comp"><button class="link" type="button" data-compclima data-compdia>💬 Compartir la energía de hoy con una amiga</button></p>' + h.slice(k);
+  return h.slice(0, k) + '<p class="clima-comp"><button class="link" type="button" data-compclima data-compdia>💬 Compartir la energía de hoy con alguien</button></p>' + h.slice(k);
 };
 function textoClima(){
   const { d, ap, clima } = climaHoy(), tono = LUNA_TONO[d.signo] || ['', ''], hoy = new Date();
@@ -5041,7 +5049,7 @@ function anioMagicoSlides(){
   if (d.fuiste.length) S.push({ ic: '🍷', k: 'Tus encuentros', t: d.fuiste.length === 1 ? 'Compartiste 1 encuentro' : 'Compartiste ' + d.fuiste.length + ' encuentros', p: d.fuiste.map(x => x.nombre).slice(0, 4).join(' · ') + '. Gracias por elegirnos 💜' });
   if (d.logros) S.push({ ic: '🏅', k: 'Tus logros', t: d.logros + (d.logros === 1 ? ' logro desbloqueado' : ' logros desbloqueados'), p: 'Cada uno es una huella de tu camino este año.' });
   if (d.sig) S.push({ ic: '🔮', k: 'Lo que viene', t: (d.Y + 1) + ': ' + NOM[d.sig], p: 'Tu próximo año te va a acompañar ' + NOM[d.sig] + (d.numSig ? ' y vivís un año personal ' + d.numSig : '') + '. ' + ARC[d.sig].af, carta: d.sig, o: { kicker: 'MI ' + (d.Y + 1), fecha: 'La energía que viene', carta: d.sig, titulo: NOM[d.sig], afirmacion: ARC[d.sig].af } });
-  S.push({ ic: '💜', k: 'Gracias', t: 'Gracias por este año juntas', p: 'Que lo que viene te encuentre con el corazón abierto. — Belu y Mey, Luz Guía', fin: 1 });
+  S.push({ ic: '💜', k: 'Gracias', t: 'Gracias por este año compartido', p: 'Que lo que viene te encuentre con el corazón abierto. — Belu y Mey, Luz Guía', fin: 1 });
   return S;
 }
 let AM = null;
@@ -5073,13 +5081,13 @@ document.addEventListener('click', e => {
 });
 
 /* 🎁 Regalá Premium */
-function regaloHTML(){ return P.idPersona && !P.organizadora ? `<button type="button" class="regalo-bt" data-regalar><span>🎁</span><div><b>Regalá Premium a una amiga</b><p>Un mes de Mi Luz Premium${P.precioPremium ? ' · ' + esc(P.precioPremium) : ''}. Pagás una sola vez, sin suscripción.</p></div></button>` : ''; }
+function regaloHTML(){ return P.idPersona && !P.organizadora ? `<button type="button" class="regalo-bt" data-regalar><span>🎁</span><div><b>Regalá Premium a alguien especial</b><p>Un mes de Mi Luz Premium${P.precioPremium ? ' · ' + esc(P.precioPremium) : ''}. Pagás una sola vez, sin suscripción.</p></div></button>` : ''; }
 const _premRegalo = premiumHTML;
 premiumHTML = function(){ const h = _premRegalo(), r = regaloHTML(); return r ? h + r : h; };
 function abrirRegalo(){
   $('dlg-titulo').textContent = 'Regalá Mi Luz Premium 🎁';
   $('dlg-texto').textContent = 'Le regalás un mes completo de Premium: su carta natal, su carta dracónica, el oráculo, su sinfonía y todo lo demás.';
-  $('dlg-cuerpo').innerHTML = `<label class="diario-lab">¿Para quién es?<input class="campo-codigo" id="rg-para" maxlength="80" placeholder="Nombre de tu amiga"></label>
+  $('dlg-cuerpo').innerHTML = `<label class="diario-lab">¿Para quién es?<input class="campo-codigo" id="rg-para" maxlength="80" placeholder="Nombre de quien lo recibe"></label>
     <label class="diario-lab">Su WhatsApp (para avisarle)<input class="campo-codigo" id="rg-tel" inputmode="tel" maxlength="25" placeholder="Ej: 2954 123456"></label>
     <label class="diario-lab">Un mensaje para ella (opcional)<textarea class="diario-txt chico" id="rg-msg" maxlength="300" placeholder="Te regalo un mes de magia ✨"></textarea></label>
     <div class="fila-bt"><button class="btn-sec" type="button" id="rg-no">Ahora no</button><button class="btn" type="button" id="rg-si">${P.mpLink ? 'Ir a pagar' : 'Enviar pedido'}</button></div>`;
@@ -5102,7 +5110,7 @@ postCarga = function(){
   const r = new URLSearchParams(location.search).get('regalo'); if (!r) return;
   try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
   setTimeout(() => { $('dlg-titulo').textContent = r === 'ok' ? '🎁 ¡Regalo pagado!' : r === 'pendiente' ? '🎁 Tu pago se está procesando' : 'El pago no se completó';
-    $('dlg-texto').textContent = r === 'ok' ? 'En unos minutos se confirma y le avisamos a tu amiga. Gracias por compartir la luz 💜' : r === 'pendiente' ? 'Cuando Mercado Pago lo confirme, te avisamos.' : 'Podés intentarlo de nuevo desde Premium cuando quieras.';
+    $('dlg-texto').textContent = r === 'ok' ? 'En unos minutos se confirma y le avisamos a quien lo recibe. Gracias por compartir la luz 💜' : r === 'pendiente' ? 'Cuando Mercado Pago lo confirme, te avisamos.' : 'Podés intentarlo de nuevo desde Premium cuando quieras.';
     $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn" type="button" id="dlg-ok">Listo</button></div>'; if (!$('dlg').open) $('dlg').showModal(); $('dlg-ok').onclick = () => $('dlg').close(); }, 500);
 };
 
@@ -5115,7 +5123,7 @@ function linkAfinidad(){
 }
 function afinidadHTML(){
   if (!P.diaMes || !P.anioNac || !P.idPersona) return '';
-  return `<section class="afin-inv"><span>💞</span><div><b>¿Qué tan afín sos con tu amiga?</b><p>Mandale tu link: pone su fecha de nacimiento y descubren su afinidad. No necesita cuenta.</p><button class="btn-sec" type="button" data-afinlink>Enviar mi link</button></div></section>`;
+  return `<section class="afin-inv"><span>💞</span><div><b>¿Qué tan afín sos con alguien especial?</b><p>Mandale tu link: pone su fecha de nacimiento y descubren su afinidad. No necesita cuenta.</p><button class="btn-sec" type="button" data-afinlink>Enviar mi link</button></div></section>`;
 }
 const _hoyAfin = hoyHTML;
 hoyHTML = function(){ const h = _hoyAfin(); let a = ''; try { a = afinidadHTML(); } catch (e) {} if (!a) return h; return h.includes('<section class="invitar">') ? h.replace('<section class="invitar">', a + '<section class="invitar">') : h + a; };
@@ -5378,7 +5386,7 @@ arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } ca
   const ren = { sinastria: ['Compatibilidad', 'Sinastría: cómo se combinan tu carta y la de otra persona.'], revolucion: ['Tu año de cumpleaños', 'Revolución Solar: la energía de tu año, de cumpleaños a cumpleaños.'], diario: ['Intenciones lunares', 'Sembrá en Luna nueva y revisá en Luna llena cómo van.'], matriz: ['Tu Matriz del Destino', 'Tu mapa de vida con los 22 arcanos del tarot, y tu programa por edades.'], mes: ['Tu semana y tu mes', 'Qué se mueve en tu vida estos días y cuáles son tus mejores fechas.'] };
   PREMIUM_LISTA.forEach(x => { const r = ren[x[0]]; if (r) { x[2] = r[0]; x[3] = r[1]; } });
 })();
-const PREM_VENTA = {"natal": "Tu mapa completo: por qué sos como sos, tus dones, tus desafíos y lo que viniste a desarrollar, planeta por planeta.", "draconica": "La carta de tu alma: lo que traés de otras vidas, para qué viniste y cómo se mueve tu alma cada mes.", "revolucion": "Cómo viene tu año, de cumpleaños a cumpleaños: el tono general, cada área de tu vida, mes a mes y tus fechas clave.", "sinfonia": "Tu carta convertida en música: escuchá tu huella sonora completa y compartila en tus historias con sonido.", "mes": "Sabé qué se mueve en tu vida esta semana y este mes, y cuáles son tus mejores días para animarte.", "tirada": "Cada mes, Belu tira las cartas para todas: qué energía trae, qué soltar y el consejo para atravesarlo.", "vocacion": "Para qué sos buena, ideas concretas para emprender, cómo te llega la plata y en qué meses te conviene moverte.", "amor": "Cómo amás, qué necesitás en una pareja, quién te complementa y dónde es más probable que conozcas a esa persona.", "sinastria": "Compará tu carta con la de tu pareja, un ex, una amiga o quien quieras: en qué fluyen y dónde chocan.", "oraculo": "¿Tenés una duda puntual? Preguntá y recibí tres cartas leídas junto con tu carta natal, tus tránsitos y tus números.", "pregunta": "Una vez por mes, Belu y Mey responden tu pregunta con una tirada de tarot hecha para vos. Te llega en 48 a 72 horas.", "diario": "En Luna nueva sembrás tus intenciones y en Luna llena revisás cómo van. Y tu diario en la agenda, con recordatorios.", "caminos": "Elegí abundancia, amor propio o soltar, y recorré 7 o 21 días con una práctica cortita por día, una pregunta y una afirmación.", "meditaciones": "Meditaciones guiadas grabadas por Belu y Mey para cada momento de tu vida.", "matriz": "Tu mapa de vida con los 22 arcanos: tu esencia, el dinero, el amor, tu linaje, tu propósito y qué te toca en cada etapa.", "chino": "Tu animal y tu elemento, cómo te va este año en cada área y lo que viene mes a mes.", "animal": "Cada Luna nueva te llega un animal guía distinto, con su medicina, su mensaje y una meditación para conectar con él."};
+const PREM_VENTA = {"natal": "Tu mapa completo: por qué sos como sos, tus dones, tus desafíos y lo que viniste a desarrollar, planeta por planeta.", "draconica": "La carta de tu alma: lo que traés de otras vidas, para qué viniste y cómo se mueve tu alma cada mes.", "revolucion": "Cómo viene tu año, de cumpleaños a cumpleaños: el tono general, cada área de tu vida, mes a mes y tus fechas clave.", "sinfonia": "Tu carta convertida en música: escuchá tu huella sonora completa y compartila en tus historias con sonido.", "mes": "Sabé qué se mueve en tu vida esta semana y este mes, y cuáles son tus mejores días para animarte.", "tirada": "Cada mes, Belu tira las cartas para toda la comunidad: qué energía trae, qué soltar y el consejo para atravesarlo.", "vocacion": "Para qué sos buena, ideas concretas para emprender, cómo te llega la plata y en qué meses te conviene moverte.", "amor": "Cómo amás, qué necesitás en una pareja, quién te complementa y dónde es más probable que conozcas a esa persona.", "sinastria": "Compará tu carta con la de tu pareja, una amistad o quien quieras: en qué fluyen y dónde chocan.", "oraculo": "¿Tenés una duda puntual? Preguntá y recibí tres cartas leídas junto con tu carta natal, tus tránsitos y tus números.", "pregunta": "Una vez por mes, Belu y Mey responden tu pregunta con una tirada de tarot hecha para vos. Te llega en 48 a 72 horas.", "diario": "En Luna nueva sembrás tus intenciones y en Luna llena revisás cómo van. Y tu diario en la agenda, con recordatorios.", "caminos": "Elegí abundancia, amor propio o soltar, y recorré 7 o 21 días con una práctica cortita por día, una pregunta y una afirmación.", "meditaciones": "Meditaciones guiadas grabadas por Belu y Mey para cada momento de tu vida.", "matriz": "Tu mapa de vida con los 22 arcanos: tu esencia, el dinero, el amor, tu linaje, tu propósito y qué te toca en cada etapa.", "chino": "Tu animal y tu elemento, cómo te va este año en cada área y lo que viene mes a mes.", "animal": "Cada Luna nueva te llega un animal guía distinto, con su medicina, su mensaje y una meditación para conectar con él."};
 const PREM_GRUPOS = [
   ['carta', '🌌', 'Tu carta', 'Quién sos según el cielo', ['natal', 'draconica', 'revolucion', 'sinfonia']],
   ['tiempo', '🗓️', 'Tu tiempo', 'Lo que viene para vos', ['mes', 'tirada', 'vocacion']],
@@ -5941,6 +5949,117 @@ novedadesHTML = function(){
     return box.innerHTML;
   } catch (e) { console.error(e); return h; }
 };
+
+
+/* ───── v35: cada persona elige cómo le hablamos (ella / él / prefiero no decirlo) ───── */
+const PRON_OPC = [['Ella', 'Ella', '🌸'], ['Él', 'Él', '🌿'], ['Prefiero no decirlo', 'Prefiero no decirlo', '✨']];
+// Adjetivos y participios en femenino que describen a la persona (se adaptan)
+const GEN_ADJ = new Set(('abierta acelerada acompañada activa admirada afectiva afectuosa agotada alineada amada ambiciosa amistosa amorosa ansiosa apasionada apegada aplicada artística astuta atenta atrapada auténtica aventurera bella bendecida bloqueada buena buscadora calculada cansada cariñosa carismática celosa cálida cómoda compañera compasiva comprometida comunicativa concreta conectada confundida consejera constructora contenida contenta conversadora creativa cuidada curiosa decidida desapegada desconectada desenfocada despierta diplomática directa disfrutona dispuesta divertida divina elegida emotiva enamorada encantadora encendida enojada entregada enérgica equilibrada escuchada espontánea estresada exhausta frustrada generosa guardiana guerrera guiada hechicera herida hermosa honesta impulsiva ingeniosa inquieta insegura inspirada intensa intuitiva justa lista liviana llena luminosa maestra magnética mágica mensajera misteriosa mística motivada nacida ocupada orgullosa organizadora pacífica perceptiva perdida pionera poderosa posesiva práctica preparada profunda protectora protegida querida quieta receptiva reprimida romántica sabia sanadora segura seductora serena simpática sincera sola soñadora sostenida tierna tranquila trabajadora valiosa valorada verdadera vista viva').split(' '));
+// Adjetivos que no cambian (permiten reconocer frases como "Leal, justa y protectora.")
+const GEN_INV = new Set('guía líder leal fiel sensible libre alegre valiente paciente elegante confiable estable versátil detallista exigente independiente inteligente amable fuerte firme dulce noble humilde sociable responsable flexible adaptable sutil ágil hábil especial original emocional racional espiritual sensual cordial jovial optimista idealista realista perfeccionista feliz capaz audaz eficaz tenaz'.split(' '));
+function generoDe(){
+  const v = lsGet('luzguia_pronombre', '') || P.pronombre || '';
+  return v === 'Él' ? 'm' : v === 'Prefiero no decirlo' ? 'n' : 'f';
+}
+let GEN = 'f';
+function genPal(w, g){
+  const may = w[0] !== w[0].toLowerCase(), l = w.toLowerCase();
+  let r;
+  if (l === 'guardiana') r = g === 'm' ? 'guardián' : 'guardiane';
+  else if (/ora$/.test(l)) r = l.slice(0, -1) + (g === 'm' ? '' : 'e');
+  else if (/ona$/.test(l)) r = l.slice(0, -3) + (g === 'm' ? 'ón' : 'one');
+  else if (g === 'n' && /ca$/.test(l)) r = l.slice(0, -2) + 'que';
+  else if (g === 'n' && /ga$/.test(l)) r = l.slice(0, -2) + 'gue';
+  else r = l.slice(0, -1) + (g === 'm' ? 'o' : 'e');
+  return may ? r[0].toUpperCase() + r.slice(1) : r;
+}
+const GEN_W = '[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+';
+const GEN_SEP = '(?:, | y | e | o | ni )';
+const GEN_ADV = '(?:(?:muy|más|tan|re|bastante|súper|menos|demasiado|siempre|un poco|algo|todavía|aún|bien|realmente|profundamente|igual de|cada vez más) )*';
+const GEN_TRIG = '(?:sos|estás|estés|seas|serás|eras|fuiste|sentirte|te sentís|te sientas|sentite|te sentirás|te sentiste|quedás|te quedás|quedarte|te volvés|volverte|te ves|verte|mostrarte|mostrate|te muestres|te mostrás|te hace sentir|te hacen sentir|te deja|te dejan|andás|te notás|te descubrís|(?:vas a|podés|necesitás|querés|para|sin|de|al|y|tenés que|dejá de|animate a|permitite) (?:ser|estar|sentirte))';
+const GEN_RE_TRIG = new RegExp('(\\b' + GEN_TRIG + ' ' + GEN_ADV + ')(' + GEN_W + '(?:' + GEN_SEP + GEN_ADV + GEN_W + ')*)', 'gi');
+const GEN_RE_FRASE = new RegExp('(^|[.!?¡¿:;(]\\s*|\\n)(' + GEN_W + '(?:' + GEN_SEP + GEN_W + ')*)([.,;!]?)', 'g');
+function genCadena(txt, g){
+  // cambia los adjetivos de la lista hasta la primera palabra que no sea un adjetivo conocido
+  const partes = txt.split(/(, | y | e | o | ni )/);
+  for (let i = 0; i < partes.length; i += 2) {
+    const ws = partes[i].split(' '), w = ws[ws.length - 1], l = w.toLowerCase();
+    if (GEN_ADJ.has(l)) { ws[ws.length - 1] = genPal(w, g); partes[i] = ws.join(' '); }
+    else if (!GEN_INV.has(l)) break;
+  }
+  return partes.join('');
+}
+function genTexto(s, g){
+  if (!s || g === 'f' || !/a\b/.test(s)) return s;
+  const M = g === 'm';
+  s = s.replace(/(\b[Ll]a |\bde |\bsu |\btu )?\b([Bb])ienvenida\b/g, (m0, art, b) => art ? m0 : b + (M ? 'ienvenido' : 'ienvenide'))
+    .replace(/\b(vos|a vos|con vos|contigo|ti) misma\b/gi, (m0, a) => a + (M ? ' mismo' : ' misme'))
+    .replace(/\b([Dd])esde chica\b/g, (m0, d) => d + (M ? 'esde chico' : 'esde chique'))
+    .replace(/\b([Ss])os la que\b/g, (m0, x) => x + (M ? 'os el que' : 'os quien'))
+    .replace(/\b([Ss])os la protagonista\b/g, (m0, x) => x + (M ? 'os el protagonista' : 'os protagonista'))
+    .replace(/\b([Ss])os una (guía|líder)\b/g, (m0, x, n) => x + 'os ' + (M ? 'un ' : '') + n);
+  s = s.replace(GEN_RE_TRIG, (m0, pre, cad) => pre + genCadena(cad, g));
+  s = s.replace(GEN_RE_FRASE, (m0, pre, cad, punt) => {
+    const partes = cad.split(/(, | y | e | o | ni )/); let k = 0, adj = false;
+    for (let i = 0; i < partes.length; i += 2) { const l = partes[i].toLowerCase(); if (GEN_ADJ.has(l)) adj = true; else if (!GEN_INV.has(l)) break; k++; }
+    if (!adj || !(k >= 2 || (k === 1 && (partes.length === 1 ? punt : partes[1] === ', ')))) return m0;
+    for (let i = 0; i < k * 2; i += 2) if (GEN_ADJ.has(partes[i].toLowerCase())) partes[i] = genPal(partes[i], g);
+    return pre + partes.join('') + punt;
+  });
+  return s;
+}
+const GEN_SALTAR = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, CODE: 1 };
+const genFuera = el => !el || GEN_SALTAR[el.nodeName] || el.namespaceURI === 'http://www.w3.org/2000/svg' || (el.closest && el.closest('[data-nogen]'));
+function genNodo(n){
+  if (GEN === 'f' || !n) return;
+  if (n.nodeType === 3) { if (genFuera(n.parentElement)) return; const v = n.nodeValue, t = genTexto(v, GEN); if (t !== v) n.nodeValue = t; return; }
+  if (n.nodeType !== 1 || genFuera(n)) return;
+  const tw = document.createTreeWalker(n, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: x => x.nodeType === 1 ? ((GEN_SALTAR[x.nodeName] || x.namespaceURI === 'http://www.w3.org/2000/svg' || x.hasAttribute('data-nogen')) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_SKIP) : NodeFilter.FILTER_ACCEPT });
+  let x; while ((x = tw.nextNode())) { const v = x.nodeValue, t = genTexto(v, GEN); if (t !== v) x.nodeValue = t; }
+}
+const genObs = new MutationObserver(ms => { if (GEN === 'f') return; ms.forEach(m => { if (m.type === 'characterData') genNodo(m.target); else m.addedNodes.forEach(genNodo); }); });
+function activarGenero(){
+  GEN = generoDe();
+  genObs.disconnect();
+  if (GEN !== 'f') { genNodo(document.body); genObs.observe(document.body, { childList: true, subtree: true, characterData: true }); }
+}
+// Historias y fondos: el texto que se dibuja en la imagen también se adapta
+const _dibujarGen = dibujarTarjeta;
+dibujarTarjeta = function(o, modo){
+  if (GEN !== 'f' && o && !/NOMBRE/i.test(String(o.kicker || ''))) { const c = Object.assign({}, o); Object.keys(c).forEach(k => { if (typeof c[k] === 'string') c[k] = genTexto(c[k], GEN); else if (Array.isArray(c[k])) c[k] = c[k].map(x => typeof x === 'string' ? genTexto(x, GEN) : x); }); return _dibujarGen(c, modo); }
+  return _dibujarGen(o, modo);
+};
+function pronombreHTML(chico){
+  const v = lsGet('luzguia_pronombre', '') || P.pronombre || '';
+  return `<div class="pron-opc">${PRON_OPC.map(([k, t, ic]) => `<button type="button" class="${v === k ? 'on' : ''}" data-pron="${esc(k)}" aria-pressed="${v === k}">${ic} ${t}</button>`).join('')}</div>${chico ? '' : '<p class="ag-ayuda">Así adaptamos las palabras de tu espacio para que te representen. Lo podés cambiar cuando quieras desde ⚙️ Mi perfil.</p>'}`;
+}
+async function guardarPronombre(v, b){
+  lsSet('luzguia_pronombre', v); P.pronombre = v; lsSet('luzguia_pron_ok', 1);
+  try { fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, pronombre: v }) }); } catch (e) {}
+  evento('Sección', 'Eligió pronombre');
+  const enPerfil = b && b.closest('.perfil');
+  activarGenero();
+  if (enPerfil) { b.parentNode.querySelectorAll('button').forEach(x => { x.classList.toggle('on', x.dataset.pron === v); x.setAttribute('aria-pressed', x.dataset.pron === v); }); }
+  const y = window.scrollY; pintar(); window.scrollTo(0, y);
+  if (!enPerfil) toastPron();
+}
+function toastPron(){ const t = document.createElement('div'); t.className = 'pron-toast'; t.textContent = '✓ Listo, ya adaptamos tu espacio 💜'; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+const _hoyPron = hoyHTML;
+hoyHTML = function(){
+  const h = _hoyPron();
+  try {
+    if (lsGet('luzguia_pron_ok', 0) || P.pronombre) return h;
+    return `<section class="pron-caja" data-nogen><span>💬</span><div><b>¿Cómo querés que te hablemos?</b><p>Así adaptamos las palabras de tu espacio para que te representen. Lo podés cambiar cuando quieras.</p>${pronombreHTML(true)}</div></section>` + h;
+  } catch (e) { console.error(e); return h; }
+};
+const _perfilPron = abrirPerfil;
+abrirPerfil = function(){
+  _perfilPron();
+  try { const pf = document.querySelector('#dlg .perfil'); if (pf && !pf.querySelector('.pron-sec')) { const s = pf.querySelector('section'); s.insertAdjacentHTML('afterend', `<section class="pron-sec" data-nogen><h4>💬 Cómo querés que te hablemos</h4>${pronombreHTML(false)}</section>`); } } catch (e) { console.error(e); }
+};
+document.addEventListener('click', e => { const b = e.target.closest('[data-pron]'); if (b) guardarPronombre(b.dataset.pron, b); });
+const _postCargaGen = postCarga;
+postCarga = function(){ activarGenero(); return _postCargaGen(); };
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
