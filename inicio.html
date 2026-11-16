@@ -8,7 +8,7 @@
 <!-- BORRADOR: borrar la línea de abajo (noindex) el día que la página pase a luzguia.com.ar -->
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://luzguia.com.ar/">
-<meta name="theme-color" content="#0d0a1c">
+<meta name="theme-color" content="#0b111f">
 <link rel="icon" href="icono-192.png">
 <link rel="apple-touch-icon" href="icono-512.png">
 <meta property="og:type" content="website">
@@ -35,11 +35,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --noche:#0d0a1c; --tinta:#160f28; --violeta:#241a3a; --oro:#EFC35A; --oro-claro:#FFE3A0; --luna:#F3EEF7; --bruma:#BEB4CF; --alba:#F2A774; --rosa:#E7A9B9;
-  --linea:rgba(220,200,240,.18); --caja:rgba(160,140,200,.08); --borde-oro:rgba(239,195,90,.32);
+  /* Paleta "Trigo" (La Emperatriz y la noche pampeana): azul tinta, dorado trigo, granada */
+  --n:11,17,31; --pa:30,42,66; --pb:13,20,36; --pc:52,72,110; --lc:210,220,240;
+  --c1:#060a14; --c2:#0c1424; --c3:#142036;
+  --rosa:#E9A08F; --bruma:#B5BDCB; --luna:#F5EFE6;
+  --noche:rgb(var(--n)); --oro:#EFC35A; --oro-claro:#FFE3A0; --alba:#F2A774;
+  --linea:rgba(var(--lc),.18); --caja:rgba(var(--lc),.07); --borde-oro:rgba(239,195,90,.32);
   --serif:'Cormorant Garamond', Georgia, serif; --sans:'Jost', system-ui, sans-serif;
   --p:0; color-scheme:dark;
 }
+/* Paleta "Granada" (vino y Emperatriz) */
+:root[data-paleta=granada]{--n:22,10,16;--pa:62,28,42;--pb:26,11,18;--pc:110,45,70;--lc:240,205,215;--c1:#0d0509;--c2:#1a0a12;--c3:#27101b;--rosa:#F2A99E;--bruma:#CDB6BE;--luna:#F7EEEC}
+/* Paleta "Violeta" (la de la versión 2, para comparar) */
+:root[data-paleta=violeta]{--n:13,10,28;--pa:42,31,69;--pb:20,14,36;--pc:90,70,130;--lc:220,200,240;--c1:#0a0716;--c2:#120c24;--c3:#1a1230;--rosa:#E7A9B9;--bruma:#BEB4CF;--luna:#F3EEF7}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
@@ -51,7 +59,7 @@ button{font:inherit;color:inherit}
 .ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== El cielo: va de la noche al amanecer a medida que bajás ===== */
-#cielo{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#0a0716 0%,#120c24 55%,#1a1230 100%)}
+#cielo{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,var(--c1) 0%,var(--c2) 55%,var(--c3) 100%)}
 #cielo::after{content:"";position:absolute;inset:0;opacity:var(--p);background:radial-gradient(130% 55% at 50% 112%,rgba(242,167,116,.62),rgba(200,112,140,.32) 42%,transparent 72%)}
 #estrellas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:calc(1 - var(--p) * .7)}
 main,header.barra,footer{position:relative;z-index:1}
@@ -59,7 +67,7 @@ main,header.barra,footer{position:relative;z-index:1}
 
 /* ===== Barra ===== */
 header.barra{position:fixed;top:0;left:0;right:0;z-index:20;transition:background .3s;padding-top:env(safe-area-inset-top)}
-header.barra.solida{background:rgba(13,10,28,.84);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--linea)}
+header.barra.solida{background:rgba(var(--n),.84);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--linea)}
 .barra .ancho{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--serif);font-size:1.45rem;font-weight:600;color:var(--oro-claro)}
 .logo img{width:34px;height:34px;border-radius:50%}
@@ -74,7 +82,7 @@ header.barra.solida{background:rgba(13,10,28,.84);backdrop-filter:blur(10px);-we
 .hamb{display:none;background:none;border:1px solid var(--linea);border-radius:12px;width:44px;height:40px;font-size:1.2rem;cursor:pointer}
 @media (max-width:900px){
   .hamb{display:block}
-  .menu{position:fixed;top:calc(64px + env(safe-area-inset-top));left:0;right:0;flex-direction:column;gap:0;background:rgba(13,10,28,.97);border-bottom:1px solid var(--linea);padding:8px 20px 20px;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.25s}
+  .menu{position:fixed;top:calc(64px + env(safe-area-inset-top));left:0;right:0;flex-direction:column;gap:0;background:rgba(var(--n),.97);border-bottom:1px solid var(--linea);padding:8px 20px 20px;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.25s}
   .menu.abierto{transform:none;opacity:1;pointer-events:auto}
   .menu a{width:100%;padding:13px 0;border-bottom:1px solid var(--linea);font-size:1.05rem}
   .menu .btn{margin-top:14px;justify-content:center;border-bottom:0}
@@ -93,7 +101,7 @@ header.barra.solida{background:rgba(13,10,28,.84);backdrop-filter:blur(10px);-we
 .hero .foto{position:absolute;inset:0}
 .hero .foto img{width:100%;height:100%;object-fit:cover;object-position:center 72%;animation:respira 26s ease-in-out infinite alternate}
 @keyframes respira{from{transform:scale(1.03)}to{transform:scale(1.1) translateY(-1.5%)}}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,10,28,.6) 0%,rgba(13,10,28,.15) 35%,rgba(13,10,28,.55) 70%,var(--noche) 100%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--n),.6) 0%,rgba(var(--n),.15) 35%,rgba(var(--n),.55) 70%,var(--noche) 100%)}
 .hero .ancho{position:relative;z-index:2;padding-top:100px;padding-bottom:64px;width:100%}
 .marca{display:inline-flex;align-items:center;gap:12px;color:var(--oro);font-size:.78rem;letter-spacing:.26em;text-transform:uppercase}
 .marca::before,.marca::after{content:"";width:34px;height:1px;background:var(--oro);opacity:.6}
@@ -125,7 +133,7 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .historia p{margin:0 0 14px}
 .historia .remate{font-family:var(--serif);font-size:1.45rem;line-height:1.4;color:var(--oro-claro);margin-top:20px}
 .cielos{position:relative;width:min(340px,82vw);aspect-ratio:1.45;margin:0 auto}
-.cielos .c{position:absolute;top:0;width:68.9%;aspect-ratio:1;border-radius:50%;border:1px solid var(--oro);display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:3rem;color:var(--oro-claro);background:radial-gradient(circle at 35% 30%,rgba(90,70,130,.55),rgba(20,14,36,.6));box-shadow:0 0 50px rgba(239,195,90,.12);overflow:hidden}
+.cielos .c{position:absolute;top:0;width:68.9%;aspect-ratio:1;border-radius:50%;border:1px solid var(--oro);display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-size:3rem;color:var(--oro-claro);background:radial-gradient(circle at 35% 30%,rgba(var(--pc),.55),rgba(var(--pb),.6));box-shadow:0 0 50px rgba(239,195,90,.12);overflow:hidden}
 .cielos .c img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cielos .c span{position:relative}
 .cielos .c1{left:0}.cielos .c1 span{margin-right:42%}
@@ -141,8 +149,10 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .linea-t b{display:block;font-family:var(--serif);font-size:1.35rem;color:var(--oro-claro);font-weight:600;line-height:1.25}
 .linea-t p{margin:2px 0 0;font-size:.97rem}
 .emperatriz{display:flex;gap:16px;align-items:center;margin:62px 0 0;padding:16px 18px;border-radius:20px;border:1px solid var(--borde-oro);background:var(--caja)}
-.emperatriz .mini{flex:none;width:58px;height:90px;border-radius:9px;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;color:var(--oro);letter-spacing:.1em;border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.2),transparent 65%),linear-gradient(170deg,#2c2046,#120b20);box-shadow:inset 0 0 0 3px #160f28,inset 0 0 0 4px rgba(239,195,90,.4)}
+.emperatriz .mini{flex:none;width:72px;height:108px;overflow:hidden;border-radius:9px;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;color:var(--oro);letter-spacing:.1em;border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.2),transparent 65%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));box-shadow:inset 0 0 0 3px rgb(var(--pb)),inset 0 0 0 4px rgba(239,195,90,.4)}
 .emperatriz p{margin:0;font-size:.97rem}
+.emperatriz .mini img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.emperatriz .nota{display:block;margin-top:4px;font-size:.82rem}
 .emperatriz b{font-family:var(--serif);font-size:1.15rem;color:var(--oro-claro);font-weight:600}
 .dicen{font-family:var(--serif);font-style:italic;font-size:1.3rem;line-height:1.4;text-align:center;margin:22px 0 0}
 .dicen span{display:block;color:var(--oro-claro)}
@@ -162,7 +172,7 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .reverso{border:1px solid var(--oro);background:
   radial-gradient(circle at 50% 50%,rgba(239,195,90,.22) 0 14%,transparent 15%),
   repeating-radial-gradient(circle at 50% 50%,transparent 0 10px,rgba(239,195,90,.09) 10px 11px),
-  linear-gradient(160deg,#2a1f45,#140d24);box-shadow:inset 0 0 0 6px #160f28,inset 0 0 0 7px rgba(239,195,90,.45)}
+  linear-gradient(160deg,rgb(var(--pa)),rgb(var(--pb)));box-shadow:inset 0 0 0 6px rgb(var(--pb)),inset 0 0 0 7px rgba(239,195,90,.45)}
 .reverso::after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--oro-claro);font-size:1.4rem}
 
 /* ===== Tu carta de hoy ===== */
@@ -184,7 +194,7 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .resultado{display:none;margin:34px auto 0}
 .resultado.ver{display:block}
 .resultado .flip{width:min(300px,78vw);aspect-ratio:2/3.1;margin:0 auto}
-.frente-carta{border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.16),transparent 60%),linear-gradient(170deg,#2c2046,#120b20);padding:26px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 0 0 6px #160f28,inset 0 0 0 7px rgba(239,195,90,.45),0 20px 60px rgba(0,0,0,.5)}
+.frente-carta{border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.16),transparent 60%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));padding:26px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 0 0 6px rgb(var(--pb)),inset 0 0 0 7px rgba(239,195,90,.45),0 20px 60px rgba(0,0,0,.5)}
 .frente-carta .num{font-family:var(--serif);font-size:1.4rem;color:var(--oro);letter-spacing:.2em}
 .frente-carta .nom{font-family:var(--serif);font-style:italic;font-size:1.6rem;color:var(--oro-claro)}
 .frente-carta .lin{width:40px;height:1px;background:var(--oro);opacity:.6}
@@ -195,11 +205,11 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 /* ===== Tarjetas de servicio ===== */
 .servicios{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
 @media (max-width:860px){.servicios{grid-template-columns:1fr}}
-.serv{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;border:1px solid var(--borde-oro);background:rgba(20,14,36,.75)}
+.serv{position:relative;display:flex;flex-direction:column;border-radius:26px;overflow:hidden;border:1px solid var(--borde-oro);background:rgba(var(--pb),.75)}
 .serv .img{position:relative;height:230px;overflow:hidden}
 .serv .img img{width:100%;height:100%;object-fit:cover;transition:transform .8s}
 .serv:hover .img img{transform:scale(1.05)}
-.serv .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(20,14,36,.95))}
+.serv .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(var(--pb),.95))}
 .serv .txt{padding:4px 26px 26px;display:flex;flex-direction:column;flex:1}
 .serv small{color:var(--rosa);letter-spacing:.18em;text-transform:uppercase;font-size:.72rem}
 .serv h3{font-family:var(--serif);font-size:2rem;font-weight:600;margin:4px 0 8px;color:var(--oro-claro);line-height:1.1}
@@ -216,7 +226,7 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 @media (max-width:760px){.formatos{grid-template-columns:1fr}}
 .formato{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--borde-oro);min-height:250px;display:flex;align-items:flex-end;isolation:isolate}
 .formato img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
-.formato::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(13,10,28,.15),rgba(13,10,28,.94) 78%)}
+.formato::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(var(--n),.15),rgba(var(--n),.94) 78%)}
 .formato .txt{padding:22px 24px}
 .formato small{color:var(--rosa);letter-spacing:.18em;text-transform:uppercase;font-size:.72rem}
 .formato h3{font-family:var(--serif);font-size:1.9rem;margin:2px 0 4px;color:var(--oro-claro);font-weight:600}
@@ -229,9 +239,9 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .obj .frente b{font-family:var(--serif);font-size:1.3rem;font-weight:600;line-height:1.15;color:var(--luna)}
 .obj .frente i,.obj .frente b{display:block}
 .obj .frente i{font-style:normal;margin-bottom:4px;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bruma)}
-.obj .dorso{border:1px solid var(--oro);background:linear-gradient(160deg,#2a1f45,#150e26);padding:16px 18px;font-size:.9rem;line-height:1.5;display:flex;align-items:center}
+.obj .dorso{border:1px solid var(--oro);background:linear-gradient(160deg,rgb(var(--pa)),rgb(var(--pb)));padding:16px 18px;font-size:.9rem;line-height:1.5;display:flex;align-items:center}
 .obj:hover .frente{border-color:var(--borde-oro)}
-.proximo{margin-top:26px;border-radius:24px;border:1px solid var(--borde-oro);background:linear-gradient(120deg,rgba(42,31,69,.85),rgba(20,14,36,.85));padding:26px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.proximo{margin-top:26px;border-radius:24px;border:1px solid var(--borde-oro);background:linear-gradient(120deg,rgba(var(--pa),.85),rgba(var(--pb),.85));padding:26px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
 @media (max-width:760px){.proximo{grid-template-columns:1fr}}
 .proximo h3{font-family:var(--serif);font-size:1.7rem;margin:2px 0 4px;color:var(--oro-claro);font-weight:600}
 .proximo p{margin:0}
@@ -258,18 +268,18 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .voz figcaption b{color:var(--oro-claro);font-weight:500}
 
 /* ===== Mi Luz ===== */
-.miluz{position:relative;border-radius:32px;overflow:hidden;border:1px solid var(--borde-oro);background:radial-gradient(circle at 80% 0%,rgba(255,227,160,.12),transparent 55%),linear-gradient(160deg,#2a1f42,#140d22);padding:44px 34px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.miluz{position:relative;border-radius:32px;overflow:hidden;border:1px solid var(--borde-oro);background:radial-gradient(circle at 80% 0%,rgba(255,227,160,.12),transparent 55%),linear-gradient(160deg,rgb(var(--pa)),rgb(var(--pb)));padding:44px 34px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
 @media (max-width:860px){.miluz{grid-template-columns:1fr;padding:34px 22px}}
 .miluz .frase{font-family:var(--serif);font-size:clamp(2rem,5.4vw,2.8rem);line-height:1.1;margin:8px 0 14px;font-weight:600}
 .miluz .frase em{display:block;font-weight:500;color:var(--oro-claro)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 22px}
 .chips span{border:1px solid var(--linea);border-radius:999px;padding:6px 13px;font-size:.88rem;background:var(--caja)}
-.tel{position:relative;justify-self:center;width:min(260px,74vw);aspect-ratio:9/18.5;border-radius:38px;border:2px solid rgba(243,220,160,.5);background:#0d0418;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(239,195,90,.16);animation:levita 6s ease-in-out infinite}
+.tel{position:relative;justify-self:center;width:min(260px,74vw);aspect-ratio:9/18.5;border-radius:38px;border:2px solid rgba(243,220,160,.5);background:rgb(var(--n));overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(239,195,90,.16);animation:levita 6s ease-in-out infinite}
 @keyframes levita{50%{transform:translateY(-10px)}}
 .tel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;filter:blur(1px)}
-.tel .pant{position:absolute;inset:0;padding:34px 18px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(180deg,rgba(13,10,28,.25),rgba(13,10,28,.85))}
+.tel .pant{position:absolute;inset:0;padding:34px 18px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(180deg,rgba(var(--n),.25),rgba(var(--n),.85))}
 .tel .pant b{font-family:var(--serif);font-size:1.5rem;color:var(--oro-claro)}
-.tel .pant .t{border-radius:16px;padding:10px 12px;background:rgba(40,30,60,.75);border:1px solid var(--linea);font-size:.78rem;line-height:1.45}
+.tel .pant .t{border-radius:16px;padding:10px 12px;background:rgba(var(--pa),.75);border:1px solid var(--linea);font-size:.78rem;line-height:1.45}
 .tel .pant .t i{font-style:normal;color:var(--rosa);display:block;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
 .tel .pant .bl{filter:blur(3px);user-select:none}
 
@@ -279,7 +289,7 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .caja{position:relative;border-radius:26px;overflow:hidden;border:1px solid var(--borde-oro);min-height:400px;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate;text-decoration:none}
 .caja img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .8s}
 .caja:hover img{transform:scale(1.04)}
-.caja::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(13,10,28,.05),rgba(13,10,28,.95) 72%)}
+.caja::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(var(--n),.05),rgba(var(--n),.95) 72%)}
 .caja .txt{padding:26px}
 .caja h3{font-family:var(--serif);font-size:2rem;margin:4px 0 6px;color:var(--oro-claro);font-weight:600;line-height:1.1}
 .caja small{color:var(--rosa);letter-spacing:.18em;text-transform:uppercase;font-size:.72rem}
@@ -304,12 +314,48 @@ details p{margin:0 0 18px;opacity:.92}
 .cierre .lema{margin-bottom:10px}
 .firma{font-family:var(--serif);font-style:italic;font-size:1.9rem;color:var(--oro-claro);margin:8px 0 26px}
 .cierre .botones{justify-content:center}
-footer{border-top:1px solid var(--linea);background:rgba(13,10,28,.7);padding:26px 0 calc(26px + env(safe-area-inset-bottom));color:var(--bruma);font-size:.88rem}
+footer{border-top:1px solid var(--linea);background:rgba(var(--n),.7);padding:26px 0 calc(26px + env(safe-area-inset-bottom));color:var(--bruma);font-size:.88rem}
 footer .ancho{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center}
 footer nav{display:flex;flex-wrap:wrap;gap:16px}
 footer a{text-decoration:none}
 footer a:hover{color:var(--oro-claro)}
 
+
+/* ===== Hora gigante de fondo (estilo revista) ===== */
+section[data-hora]:not(.hero):not(.cierre){position:relative}
+section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);position:absolute;top:-34px;right:max(4px,env(safe-area-inset-right));font-family:var(--serif);font-weight:600;font-size:clamp(5rem,19vw,12.5rem);line-height:1;letter-spacing:-.02em;color:var(--oro);opacity:.05;pointer-events:none;z-index:-1}
+/* ===== Tu número ===== */
+.num-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+@media (max-width:860px){.num-grid{grid-template-columns:1fr;gap:26px}}
+.form-num{margin-top:22px}
+.form-num label{display:block;font-size:.85rem;letter-spacing:.06em;color:var(--bruma);margin-bottom:8px}
+.form-num .fila{display:flex;flex-wrap:wrap;gap:10px}
+.form-num input{flex:1 1 200px;min-height:48px;font:inherit;font-size:16px;color:var(--luna);background:rgba(var(--pa),.6);border:1px solid var(--borde-oro);border-radius:14px;padding:10px 14px;color-scheme:dark}
+.num-res{min-height:300px;border-radius:28px;border:1px solid var(--borde-oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.14),transparent 60%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));padding:30px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.num-vacio span{display:block;font-family:var(--serif);font-size:6rem;line-height:1;color:var(--oro);opacity:.5}
+.num-vacio p{margin:6px 0 0;color:var(--bruma);font-family:var(--serif);font-style:italic;font-size:1.2rem}
+.num-res .grande{font-family:var(--serif);font-weight:600;font-size:clamp(5rem,16vw,7rem);line-height:1;color:var(--oro-claro);text-shadow:0 0 40px rgba(239,195,90,.4)}
+.num-res .maestro{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rosa)}
+.num-res .nom{font-family:var(--serif);font-style:italic;font-size:1.6rem;color:var(--oro-claro)}
+.num-res .txt{margin:4px 0 6px;max-width:32ch}
+.num-res .suma{font-size:.8rem;color:var(--bruma);letter-spacing:.06em}
+.num-res .como{font-family:var(--serif);font-size:1.3rem;color:var(--luna);margin:4px 0}
+.num-res .btn{margin-top:10px}
+/* ===== Galería de cartas pintadas ===== */
+.galeria-tit{margin:44px 0 0}
+.galeria-tit h3{font-family:var(--serif);font-size:1.9rem;font-weight:600;margin:0;color:var(--oro-claro)}
+.galeria{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:18px calc(50% - 50vw) 0;padding:4px max(20px,calc(50vw - 520px)) 16px;scrollbar-width:thin;scrollbar-color:var(--borde-oro) transparent}
+.galeria figure{flex:none;width:min(250px,62vw);margin:0;scroll-snap-align:center}
+.galeria img{width:100%;aspect-ratio:3/4.4;object-fit:cover;border-radius:18px;border:1px solid var(--borde-oro)}
+.galeria figcaption{font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--bruma);margin-top:8px;line-height:1.3}
+/* ===== Sonido del amanecer ===== */
+.sonido{display:inline-flex;align-items:center;gap:8px;margin-top:22px;background:none;border:1px solid var(--linea);border-radius:999px;padding:9px 16px;color:var(--bruma);cursor:pointer;font-size:.9rem;min-height:44px}
+.sonido:hover,.sonido[aria-pressed=true]{color:var(--oro-claro);border-color:var(--borde-oro)}
+.sonido .ico{width:18px;height:18px}
+/* ===== Selector de paleta (solo borrador) ===== */
+.paletas{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:.75rem;color:#ddd}
+.paletas button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.paletas button[aria-pressed=true]{border-color:#FFE3A0}
 /* ===== Aparición ===== */
 .js .aparece{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
 .js .aparece.visto{opacity:1;transform:none}
@@ -331,6 +377,7 @@ footer a:hover{color:var(--oro-claro)}
   <symbol id="i-pregunta" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6M12 17h.01"/></symbol>
   <symbol id="i-pincel" viewBox="0 0 24 24"><path d="M14 4l6 6-7.5 7.5-6-6zM6.5 11.5 4 14c-1.5 1.5-1 4-2 6 2-.5 4.5-.5 6-2l2.5-2.5"/></symbol>
   <symbol id="i-taza" viewBox="0 0 24 24"><path d="M4 10h12v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 11.5h1.5a2.2 2.2 0 0 1 0 4.4H16M8 3.5c-.8 1 .8 2 0 3.5M12 3.5c-.8 1 .8 2 0 3.5"/></symbol>
+  <symbol id="i-sonido" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
   <symbol id="i-circulo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="4" r="1.6"/><circle cx="18.9" cy="8" r="1.6"/><circle cx="18.9" cy="16" r="1.6"/><circle cx="12" cy="20" r="1.6"/><circle cx="5.1" cy="16" r="1.6"/><circle cx="5.1" cy="8" r="1.6"/></symbol>
 </svg>
 
@@ -394,8 +441,8 @@ footer a:hover{color:var(--oro-claro)}
           <div class="pie">Amigas desde los 11 · las dos, 33</div>
         </div>
         <div class="emperatriz">
-          <div class="mini" aria-hidden="true"><span>III</span></div>
-          <p>Siempre decimos que somos <b>La Emperatriz</b>: la que nutre, la que crea, la que hace crecer lo que toca.</p>
+          <div class="mini"><img src="foto-emperatriz.jpg" alt="La Emperatriz pintada a mano en un encuentro" width="720" height="1280" loading="lazy"></div>
+          <p>Siempre decimos que somos <b>La Emperatriz</b>: la que nutre, la que crea, la que hace crecer lo que toca. <span class="nota">Esta la pintó alguien en una Merienda &amp; Tarot.</span></p>
         </div>
         <p class="dicen">Nos dicen cálidas, diferentes pero dulces, magnéticas, sabias. Algunas personas, brujas. <span>Todas tienen razón.</span></p>
       </div>
@@ -441,7 +488,25 @@ footer a:hover{color:var(--oro-claro)}
 
   <!-- ============ 23:00 · A DISTANCIA (MEY) ============ -->
   <div class="hz" aria-hidden="true"><i></i><b>23:00</b><i></i></div>
-  <section id="distancia" class="ancho aparece" data-hora="23:00">
+  <section id="numero" class="ancho aparece" data-hora="23:00">
+    <div class="num-grid">
+      <div>
+        <p class="eyebrow">Nada es casual</p>
+        <h2>¿Sos 33 <em>como nosotras?</em></h2>
+        <p class="lead">Las dos nacimos el mismo día y las dos sumamos 33, el número maestro de quienes guían. Poné tu fecha de nacimiento y descubrí tu número de camino de vida.</p>
+        <form class="form-num" id="formNum">
+          <label for="fnac">Tu fecha de nacimiento</label>
+          <div class="fila"><input type="date" id="fnac" required min="1900-01-01"><button class="btn" type="submit">Descubrir mi número</button></div>
+        </form>
+      </div>
+      <div class="num-res" id="numRes" aria-live="polite">
+        <div class="num-vacio"><span>?</span><p>Tu número te espera</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="hz" aria-hidden="true"><i></i><b>00:00</b><i></i></div>
+  <section id="distancia" class="ancho aparece" data-hora="00:00">
     <p class="eyebrow">Con Mey · desde donde estés</p>
     <h2>Lo que se abre <em>a distancia</em></h2>
     <p class="lead">No hace falta estar en Santa Rosa. La energía no entiende de kilómetros.</p>
@@ -451,7 +516,7 @@ footer a:hover{color:var(--oro-claro)}
         <div class="txt">
           <small>Individual · por videollamada</small>
           <h3>Registros akáshicos</h3>
-          <p>Las respuestas que tu alma guarda, leídas con calma.</p>
+          <p>Para las preguntas que te acompañan hace tiempo y no se van.</p>
           <ol class="pasos">
             <li>Escribís tus preguntas. No hace falta que nos las mandes.</li>
             <li>Mey abre tus registros con tus datos y escribe las respuestas que llegan.</li>
@@ -465,7 +530,7 @@ footer a:hover{color:var(--oro-claro)}
         <div class="txt">
           <small>Individual · a distancia</small>
           <h3>Limpiezas energéticas</h3>
-          <p>Para soltar lo que ya no es tuyo.</p>
+          <p>Para cuando algo pesa y no sabés bien qué es.</p>
           <ol class="pasos">
             <li>Mey prepara el espacio: sahumo, sprays y protección.</li>
             <li>Trabaja con tu planilla de chakras y el péndulo, y suma piedras, oráculos y cartas.</li>
@@ -484,8 +549,8 @@ footer a:hover{color:var(--oro-claro)}
     <h2>La mesa, <em>ahora abierta</em></h2>
     <p class="lead">Así eran nuestras noches en el departamento. Ahora te guardamos una silla.</p>
     <div class="formatos">
-      <div class="formato"><img src="web-altar.jpg" alt="" width="618" height="1100" loading="lazy" style="object-position:center 30%"><div class="txt"><small>Sábados</small><h3>Noche Vino &amp; Tarot</h3><p>Vino, picada y tu lectura individual.</p></div></div>
-      <div class="formato"><img src="web-cuenco.jpg" alt="" width="618" height="1100" loading="lazy" style="object-position:center 55%"><div class="txt"><small>Domingos</small><h3>Merienda &amp; Tarot</h3><p>Merienda, tu lectura y una carta que pintás vos.</p></div></div>
+      <div class="formato"><img src="foto-picada.jpg" alt="Picada con velas sobre la mesa de un encuentro" width="720" height="1280" loading="lazy" style="object-position:center 45%"><div class="txt"><small>Sábados</small><h3>Noche Vino &amp; Tarot</h3><p>Vino, picada y tu lectura individual.</p></div></div>
+      <div class="formato"><img src="foto-merienda.jpg" alt="Mesa de merienda vista desde arriba" width="720" height="1280" loading="lazy" style="object-position:center 40%"><div class="txt"><small>Domingos</small><h3>Merienda &amp; Tarot</h3><p>Merienda, tu lectura y una carta que pintás vos.</p></div></div>
     </div>
     <p class="nota" style="margin:16px 0 0">Tocá cada cosa de la mesa para ver qué es.</p>
     <div class="objetos">
@@ -498,6 +563,18 @@ footer a:hover{color:var(--oro-claro)}
       <button class="obj flip" type="button" aria-label="Tu carta pintada"><span class="in"><span class="cara frente"><svg class="ico"><use href="#i-pincel"/></svg><span><i>Domingos</i><b>Tu carta pintada</b></span></span><span class="cara dorso">Cada persona pinta su propia carta y se la lleva a casa.</span></span></button>
       <button class="obj flip" type="button" aria-label="Seis sillas"><span class="in"><span class="cara frente"><svg class="ico"><use href="#i-circulo"/></svg><span><i>A propósito</i><b>Seis sillas</b></span></span><span class="cara dorso">Máximo seis personas por encuentro. Así cada lectura tiene su tiempo y la mesa sigue siendo íntima.</span></span></button>
     </div>
+    <div class="galeria-tit">
+      <p class="eyebrow">De nuestra mesa, sin filtros</p>
+      <h3>Las cartas que se pintan</h3>
+    </div>
+    <div class="galeria" tabindex="0" aria-label="Fotos de los encuentros">
+      <figure><img src="foto-pintando.jpg" alt="Manos pintando la carta de Los Enamorados" width="720" height="1280" loading="lazy" style="object-position:center 55%"><figcaption>Los Enamorados, en proceso</figcaption></figure>
+      <figure><img src="foto-emperatriz.jpg" alt="La Emperatriz pintada a mano" width="720" height="1280" loading="lazy" style="object-position:center 30%"><figcaption>La Emperatriz, terminada</figcaption></figure>
+      <figure><img src="foto-carro.jpg" alt="El Carro pintado a mano" width="720" height="1280" loading="lazy" style="object-position:center 45%"><figcaption>El Carro, listo para llevar</figcaption></figure>
+      <figure><img src="foto-merienda-vela.jpg" alt="Mesa de Merienda &amp; Tarot con una vela" width="720" height="1280" loading="lazy" style="object-position:center 45%"><figcaption>Un domingo de Merienda &amp; Tarot</figcaption></figure>
+      <figure><img src="foto-picada.jpg" alt="Picada con velas" width="720" height="1280" loading="lazy"><figcaption>Un sábado de Vino &amp; Tarot</figcaption></figure>
+    </div>
+
     <div class="proximo" id="proximo">
       <div>
         <p class="eyebrow" style="margin:0">Próximo encuentro</p>
@@ -513,7 +590,7 @@ footer a:hover{color:var(--oro-claro)}
   <div class="hz" aria-hidden="true"><i></i><b>02:00</b><i></i></div>
   <section id="forma" class="ancho aparece" data-hora="02:00">
     <div class="dif">
-      <div class="img"><img src="web-carta.jpg" alt="Carta de tarot sobre terciopelo junto a una vela" width="618" height="1100" loading="lazy"></div>
+      <div class="img"><img src="foto-mesa-luces.jpg" alt="La mesa de los encuentros con velas y una cortina de luces" width="720" height="1280" loading="lazy" style="object-position:center 60%"></div>
       <div>
         <p class="eyebrow">Cómo te acompañamos</p>
         <h2>Acá no corre <em>el reloj</em></h2>
@@ -600,9 +677,17 @@ footer a:hover{color:var(--oro-claro)}
       <a class="btn cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Vi la página de Luz Guía y quiero empezar 🌙">Escribinos ✦</a>
       <a class="btn sec" href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">@luzguia2020</a>
     </div>
+    <div><button class="sonido" type="button" id="sonido" aria-pressed="false"><svg class="ico"><use href="#i-sonido"/></svg><span>Escuchá el amanecer</span></button></div>
+    <audio id="pajaros" src="freesound_community-birds-in-the-morning-24614.mp3" preload="none" loop></audio>
     <span class="lin-horizonte" aria-hidden="true"></span>
   </section>
 </main>
+
+<div class="paletas" id="paletas" hidden><span>Paleta</span>
+  <button type="button" data-p="trigo" aria-label="Paleta Trigo" style="background:linear-gradient(135deg,#0c1424 50%,#EFC35A 50%)"></button>
+  <button type="button" data-p="granada" aria-label="Paleta Granada" style="background:linear-gradient(135deg,#27101b 50%,#F2A99E 50%)"></button>
+  <button type="button" data-p="violeta" aria-label="Paleta Violeta" style="background:linear-gradient(135deg,#1a1230 50%,#E7A9B9 50%)"></button>
+</div>
 
 <footer>
   <div class="ancho">
@@ -632,7 +717,11 @@ const TESTIMONIOS = [
   // { texto: 'Lo que dijo la persona', nombre: 'Nombre o inicial', detalle: 'Noche Vino & Tarot' },
 ];
 
-// 4) Las 22 frases de "Tu carta de hoy". BORRADOR: Mey y Belu las reescriben con su voz.
+// 4) Paleta de colores: 'trigo', 'granada' o 'violeta'. MOSTRAR_PALETAS = true muestra los botones para comparar (sacarlo al publicar).
+const PALETA = 'trigo';
+const MOSTRAR_PALETAS = true;
+
+// 5) Las 22 frases de "Tu carta de hoy". BORRADOR: Mey y Belu las reescriben con su voz.
 const CARTAS = [
   ['0', 'El Loco', 'No hace falta ver todo el camino para dar el primer paso.'],
   ['I', 'El Mago', 'Ya tenés lo que necesitás. Animate a usarlo.'],
@@ -658,6 +747,17 @@ const CARTAS = [
   ['XXI', 'El Mundo', 'Celebrá todo lo que caminaste.']
 ];
 /* ===================================================================== */
+
+// Paleta
+(function(){
+  const raiz = document.documentElement; let p = PALETA;
+  try { if (MOSTRAR_PALETAS) p = localStorage.getItem('lg-paleta') || PALETA; } catch (e) {}
+  const poner = v => { if (v === 'trigo') raiz.removeAttribute('data-paleta'); else raiz.setAttribute('data-paleta', v); document.querySelectorAll('#paletas button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === v)); };
+  poner(p);
+  if (!MOSTRAR_PALETAS) return;
+  const box = document.getElementById('paletas'); box.hidden = false;
+  box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { poner(b.dataset.p); try { localStorage.setItem('lg-paleta', b.dataset.p); } catch (e) {} }));
+})();
 
 // Botones de mensaje: WhatsApp con mensaje según el botón, o Instagram
 if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
@@ -723,11 +823,12 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
   async function imagen(){
     try { await document.fonts.load('italic 500 70px "Cormorant Garamond"'); await document.fonts.load('600 70px "Cormorant Garamond"'); } catch (e) {}
     const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; const x = cv.getContext('2d');
-    const g = x.createLinearGradient(0, 0, 0, 1920); g.addColorStop(0, '#0a0716'); g.addColorStop(.55, '#1a1230'); g.addColorStop(.85, '#5a3350'); g.addColorStop(1, '#e09a6e'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
+    const cs = getComputedStyle(document.documentElement), cv1 = cs.getPropertyValue('--c1').trim() || '#060a14', cv3 = cs.getPropertyValue('--c3').trim() || '#142036', pa = cs.getPropertyValue('--pa').trim() || '30,42,66';
+    const g = x.createLinearGradient(0, 0, 0, 1920); g.addColorStop(0, cv1); g.addColorStop(.55, cv3); g.addColorStop(.85, '#5a3350'); g.addColorStop(1, '#e09a6e'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
     for (let k = 0; k < 220; k++) { x.globalAlpha = .3 + Math.random() * .7; x.fillStyle = Math.random() < .3 ? '#F3DCA0' : '#fff'; x.beginPath(); x.arc(Math.random() * 1080, Math.random() * 1400, Math.random() * 2.2 + .5, 0, 7); x.fill(); }
     x.globalAlpha = 1;
     const cx = 170, cy = 400, cw = 740, ch = 1080;
-    x.fillStyle = 'rgba(28,20,48,.92)'; x.strokeStyle = '#EFC35A'; x.lineWidth = 3; x.beginPath(); x.roundRect(cx, cy, cw, ch, 36); x.fill(); x.stroke();
+    x.fillStyle = 'rgba(' + pa + ',.92)'; x.strokeStyle = '#EFC35A'; x.lineWidth = 3; x.beginPath(); x.roundRect(cx, cy, cw, ch, 36); x.fill(); x.stroke();
     x.strokeStyle = 'rgba(239,195,90,.45)'; x.lineWidth = 2; x.beginPath(); x.roundRect(cx + 20, cy + 20, cw - 40, ch - 40, 24); x.stroke();
     x.textAlign = 'center'; x.fillStyle = '#EFC35A'; x.font = '600 56px "Cormorant Garamond", Georgia, serif'; x.fillText(carta[0], 540, cy + 190);
     x.fillStyle = '#FFE3A0'; x.font = 'italic 500 74px "Cormorant Garamond", Georgia, serif'; x.fillText(carta[1], 540, cy + 300);
@@ -744,6 +845,57 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     const archivo = new File([blob], 'mi-carta-luz-guia.png', { type: 'image/png' });
     try { if (navigator.canShare && navigator.canShare({ files: [archivo] })) { await navigator.share({ files: [archivo], text: 'Mi carta de hoy en Luz Guía ✨' }); return; } } catch (e) { if (e.name === 'AbortError') return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  });
+})();
+
+// Tu número de camino de vida
+(function(){
+  const NUM = {
+    1: ['Inicio', 'Venís a abrir caminos. Tu energía es la de empezar lo que todavía no existe.'],
+    2: ['Unión', 'Tu don es unir, escuchar y sentir lo que otras personas no dicen.'],
+    3: ['Expresión', 'Venís a crear, a decir y a contagiar alegría.'],
+    4: ['Raíz', 'Construís de a poco, y lo que hacés, perdura.'],
+    5: ['Movimiento', 'Libertad y cambio: aprendés viviendo.'],
+    6: ['Cuidado', 'Cuidar y armonizar es tu manera de amar.'],
+    7: ['Búsqueda', 'Tu camino va hacia adentro: el misterio, la verdad, lo profundo.'],
+    8: ['Abundancia', 'Venís a materializar: fuerza, equilibrio y prosperidad.'],
+    9: ['Sabiduría', 'Cerrás ciclos y compartís lo que aprendiste.'],
+    11: ['Intuición', 'Canal abierto: sentís antes de saber.'],
+    22: ['Visión', 'Venís a hacer realidad lo que otras personas solo sueñan.'],
+    33: ['Guía', 'El número de quienes guían con amor.']
+  };
+  const f = document.getElementById('formNum'), res = document.getElementById('numRes');
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = document.getElementById('fnac').value; if (!v) return;
+    const dig = v.replace(/\D/g, '').split('').map(Number);
+    let n = dig.reduce((a, b) => a + b, 0); const pasos = [dig.join('+') + ' = ' + n];
+    while (n > 9 && ![11, 22, 33].includes(n)) { const d = String(n).split('').map(Number); n = d.reduce((a, b) => a + b, 0); pasos.push(d.join('+') + ' = ' + n); }
+    const [nom, txt] = NUM[n] || ['', ''], maestro = [11, 22, 33].includes(n);
+    res.innerHTML = '';
+    const el = (tag, cls, t) => { const x = document.createElement(tag); if (cls) x.className = cls; if (t) x.textContent = t; res.appendChild(x); return x; };
+    if (maestro) el('span', 'maestro', 'Número maestro');
+    el('span', 'grande', String(n));
+    el('span', 'nom', nom);
+    el('p', 'txt', txt);
+    if (n === 33) el('p', 'como', 'Como nosotras. Nada es casual ✦');
+    el('span', 'suma', pasos.join(' · '));
+    const a = el('a', 'btn sec cta-msj', 'Quiero conocer mi carta completa');
+    a.target = '_blank'; a.rel = 'noopener';
+    const msj = 'Hola! Soy número ' + n + ' y quiero saber más sobre Mi Luz y mi carta natal ✨';
+    a.href = WHATSAPP ? 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(msj) : 'https://ig.me/m/luzguia2020';
+  });
+})();
+
+// Sonido del amanecer (solo si la persona lo activa)
+(function(){
+  const b = document.getElementById('sonido'), au = document.getElementById('pajaros'); let fade;
+  b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on);
+    b.querySelector('span').textContent = on ? 'Silenciar el amanecer' : 'Escuchá el amanecer';
+    clearInterval(fade);
+    if (on) { au.volume = 0; au.play().catch(() => {}); fade = setInterval(() => { au.volume = Math.min(.6, au.volume + .03); if (au.volume >= .6) clearInterval(fade); }, 120); }
+    else { fade = setInterval(() => { au.volume = Math.max(0, au.volume - .05); if (au.volume <= 0) { clearInterval(fade); au.pause(); } }, 80); }
   });
 })();
 
