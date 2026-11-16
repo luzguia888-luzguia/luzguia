@@ -8,7 +8,7 @@
 <!-- BORRADOR: borrar la línea de abajo (noindex) el día que la página pase a luzguia.com.ar -->
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://luzguia.com.ar/">
-<meta name="theme-color" content="#0b111f">
+<meta name="theme-color" content="#160a10">
 <link rel="icon" href="icono-192.png">
 <link rel="apple-touch-icon" href="icono-512.png">
 <meta property="og:type" content="website">
@@ -37,7 +37,7 @@
 :root{
   /* Paleta "Trigo" (La Emperatriz y la noche pampeana): azul tinta, dorado trigo, granada */
   --n:11,17,31; --pa:30,42,66; --pb:13,20,36; --pc:52,72,110; --lc:210,220,240;
-  --c1:#060a14; --c2:#0c1424; --c3:#142036;
+  --c1:#060a14; --c2:#0c1424; --c3:#142036; --e1:#18213c; --e2:#4b3f5e; --e3:#b97a58;
   --rosa:#E9A08F; --bruma:#B5BDCB; --luna:#F5EFE6;
   --noche:rgb(var(--n)); --oro:#EFC35A; --oro-claro:#FFE3A0; --alba:#F2A774;
   --linea:rgba(var(--lc),.18); --caja:rgba(var(--lc),.07); --borde-oro:rgba(239,195,90,.32);
@@ -45,9 +45,9 @@
   --p:0; color-scheme:dark;
 }
 /* Paleta "Granada" (vino y Emperatriz) */
-:root[data-paleta=granada]{--n:22,10,16;--pa:62,28,42;--pb:26,11,18;--pc:110,45,70;--lc:240,205,215;--c1:#0d0509;--c2:#1a0a12;--c3:#27101b;--rosa:#F2A99E;--bruma:#CDB6BE;--luna:#F7EEEC}
+:root[data-paleta=granada]{--n:22,10,16;--pa:62,28,42;--pb:26,11,18;--pc:110,45,70;--lc:240,205,215;--c1:#0d0509;--c2:#1a0a12;--c3:#27101b;--e1:#2e1322;--e2:#6c2b3b;--e3:#b9614d;--rosa:#F2A99E;--bruma:#CDB6BE;--luna:#F7EEEC}
 /* Paleta "Violeta" (la de la versión 2, para comparar) */
-:root[data-paleta=violeta]{--n:13,10,28;--pa:42,31,69;--pb:20,14,36;--pc:90,70,130;--lc:220,200,240;--c1:#0a0716;--c2:#120c24;--c3:#1a1230;--rosa:#E7A9B9;--bruma:#BEB4CF;--luna:#F3EEF7}
+:root[data-paleta=violeta]{--n:13,10,28;--pa:42,31,69;--pb:20,14,36;--pc:90,70,130;--lc:220,200,240;--c1:#0a0716;--c2:#120c24;--c3:#1a1230;--e1:#241a44;--e2:#643a62;--e3:#c07a6a;--rosa:#E7A9B9;--bruma:#BEB4CF;--luna:#F3EEF7}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
@@ -60,8 +60,8 @@ button{font:inherit;color:inherit}
 
 /* ===== El cielo: va de la noche al amanecer a medida que bajás ===== */
 #cielo{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,var(--c1) 0%,var(--c2) 55%,var(--c3) 100%)}
-#cielo::after{content:"";position:absolute;inset:0;opacity:var(--p);background:radial-gradient(130% 55% at 50% 112%,rgba(242,167,116,.62),rgba(200,112,140,.32) 42%,transparent 72%)}
-#estrellas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:calc(1 - var(--p) * .7)}
+#cielo::after{content:"";position:absolute;inset:0;opacity:calc(var(--p) * .7);background:radial-gradient(130% 55% at 50% 112%,rgba(242,167,116,.62),rgba(200,112,140,.32) 42%,transparent 72%)}
+#estrellas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:calc(1 - var(--p) * .88)}
 main,header.barra,footer{position:relative;z-index:1}
 .ancho{max-width:1080px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
 
@@ -386,6 +386,26 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
 .paletas{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:.75rem;color:#ddd}
 .paletas button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
 .paletas button[aria-pressed=true]{border-color:#FFE3A0}
+
+/* ===== Botones flotantes ===== */
+.dock{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));z-index:25;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.dk{position:relative;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(var(--n),.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--borde-oro);color:var(--oro-claro);cursor:pointer;padding:0;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .2s,background .2s}
+.dk:hover{transform:translateY(-2px);background:rgba(var(--pa),.95)}
+.dk .ico{width:22px;height:22px}
+.dk.wsp{background:linear-gradient(135deg,#FFEDB8,#E3AE3C);color:#1C0B2E;border:0}
+.musica .ondas{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:none;gap:2px;height:8px;align-items:flex-end}
+.musica .ondas i{width:2px;background:var(--oro-claro);border-radius:2px;animation:onda 1s ease-in-out infinite}
+.musica .ondas i:nth-child(2){animation-delay:.2s}.musica .ondas i:nth-child(3){animation-delay:.4s}
+@keyframes onda{0%,100%{height:2px}50%{height:8px}}
+.musica[aria-pressed=true]{border-color:var(--oro)}
+.musica[aria-pressed=true] .ondas{display:flex}
+.musica[aria-pressed=true] .ico{transform:translateY(-3px)}
+.etq{position:absolute;right:60px;top:12px;white-space:nowrap;font-size:.82rem;color:var(--luna);background:rgba(var(--n),.9);border:1px solid var(--borde-oro);border-radius:999px;padding:6px 12px;opacity:0;transform:translateX(8px);transition:opacity .5s,transform .5s;pointer-events:none}
+.etq.ver{opacity:1;transform:none}
+.seguinos{margin-top:22px;border-radius:24px;border:1px solid var(--borde-oro);background:linear-gradient(120deg,rgba(var(--pa),.8),rgba(var(--pb),.8));padding:22px 26px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
+.seg-frase{font-family:var(--serif);font-size:1.45rem;line-height:1.3;margin:2px 0 0}
+.cierre h2,.cierre .lema,.cierre .firma,.cierre .eyebrow{text-shadow:0 2px 18px rgba(0,0,0,.45)}
+@media (max-width:600px){.dk{width:46px;height:46px}.cierre{padding-bottom:150px}}
 /* ===== Aparición ===== */
 .js .aparece{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
 .js .aparece.visto{opacity:1;transform:none}
@@ -408,6 +428,10 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
   <symbol id="i-pincel" viewBox="0 0 24 24"><path d="M14 4l6 6-7.5 7.5-6-6zM6.5 11.5 4 14c-1.5 1.5-1 4-2 6 2-.5 4.5-.5 6-2l2.5-2.5"/></symbol>
   <symbol id="i-taza" viewBox="0 0 24 24"><path d="M4 10h12v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 11.5h1.5a2.2 2.2 0 0 1 0 4.4H16M8 3.5c-.8 1 .8 2 0 3.5M12 3.5c-.8 1 .8 2 0 3.5"/></symbol>
   <symbol id="i-sonido" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-wsp" viewBox="0 0 24 24"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.3 18.5z"/><path d="M9.2 8.6c.3-.6.8-.6 1.1-.1l.7 1.4c.1.3 0 .6-.2.8l-.5.5c.5 1.1 1.4 2 2.5 2.5l.5-.5c.2-.2.5-.3.8-.2l1.4.7c.5.3.5.8-.1 1.1-.7.4-1.6.6-2.5.2a7.6 7.6 0 0 1-3.9-3.9c-.4-.9-.2-1.8.2-2.5z"/></symbol>
+  <symbol id="i-musica" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-pausa" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></symbol>
   <symbol id="i-circulo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="4" r="1.6"/><circle cx="18.9" cy="8" r="1.6"/><circle cx="18.9" cy="16" r="1.6"/><circle cx="12" cy="20" r="1.6"/><circle cx="5.1" cy="16" r="1.6"/><circle cx="5.1" cy="8" r="1.6"/></symbol>
 </svg>
 
@@ -677,6 +701,10 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
       <a class="caja cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Quiero ver qué tarots, oráculos y piedras tienen disponibles 🔮"><img src="web-cristales.jpg" alt="" width="618" height="1100" loading="lazy"><div class="txt"><small>Tienda</small><h3>Tarots, oráculos y piedras</h3><p>Elegidos uno por uno, como los que usamos en la mesa. Muy pronto, kits de rituales con velas intencionadas hechas a mano.</p><span class="btn sec">Ver qué hay disponible ›</span></div></a>
       <a class="caja" href="https://luzguia.substack.com/subscribe" target="_blank" rel="noopener"><img src="web-luna.jpg" alt="" width="618" height="1100" loading="lazy" style="object-position:center 85%"><div class="txt"><small>Newsletter gratuito · cada 15 días</small><h3>Detrás del Velo</h3><p>Lo que charlábamos a las cuatro de la mañana: misterios, leyendas, conspiraciones y todo lo oculto. Una historia en tu mail.</p><span class="btn sec">Suscribirme gratis ›</span></div></a>
     </div>
+      <div class="seguinos">
+      <div><p class="eyebrow" style="margin:0">@luzguia2020</p><p class="seg-frase">Lo que pasa en la mesa, también lo contamos en Instagram.</p></div>
+      <a class="btn" href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener"><svg class="ico" style="width:20px;height:20px"><use href="#i-insta"/></svg>Seguinos en Instagram</a>
+    </div>
   </section>
 
   <!-- ============ 06:00 · PREGUNTAS ============ -->
@@ -707,7 +735,7 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
     <p class="firma">Con luz, Mey y Belu</p>
     <div class="botones">
       <a class="btn cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Vi la página de Luz Guía y quiero empezar 🌙">Escribinos ✦</a>
-      <a class="btn sec" href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">@luzguia2020</a>
+      <a class="btn sec" href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener"><svg class="ico" style="width:20px;height:20px"><use href="#i-insta"/></svg>Seguinos en Instagram</a>
     </div>
     <div><button class="sonido" type="button" id="sonido" aria-pressed="false"><svg class="ico"><use href="#i-sonido"/></svg><span>Escuchá el amanecer</span></button></div>
     <audio id="pajaros" src="freesound_community-birds-in-the-morning-24614.mp3" preload="none" loop></audio>
@@ -715,6 +743,12 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
   </section>
 </main>
 
+<div class="dock" id="dock">
+  <span class="etq" id="etqMusica">Música para bajar despacio</span>
+  <button type="button" class="dk musica" id="musica" aria-pressed="false" aria-label="Poner música"><svg class="ico"><use href="#i-musica"/></svg><span class="ondas" aria-hidden="true"><i></i><i></i><i></i></span></button>
+  <a class="dk" href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener" aria-label="Instagram de Luz Guía"><svg class="ico"><use href="#i-insta"/></svg></a>
+  <a class="dk wsp cta-msj" id="dockWsp" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" aria-label="Escribinos" data-msg="Hola! Vi la página de Luz Guía y quiero saber más 🌙"><svg class="ico"><use href="#i-wsp"/></svg></a>
+</div>
 <div class="paletas" id="paletas" hidden><span>Paleta</span>
   <button type="button" data-p="trigo" aria-label="Paleta Trigo" style="background:linear-gradient(135deg,#0c1424 50%,#EFC35A 50%)"></button>
   <button type="button" data-p="granada" aria-label="Paleta Granada" style="background:linear-gradient(135deg,#27101b 50%,#F2A99E 50%)"></button>
@@ -724,7 +758,7 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
 <footer>
   <div class="ancho">
     <span>© <span id="anio">2026</span> Luz Guía · Santa Rosa, La Pampa · Bajo el mismo cielo</span>
-    <nav aria-label="Enlaces"><a href="akashicos.html">Registros akáshicos</a><a href="limpiezas.html">Limpiezas</a><a href="encuentros.html">Encuentros</a><a href="https://luzguia.substack.com" target="_blank" rel="noopener">Newsletter</a><a href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">Instagram</a></nav>
+    <nav aria-label="Enlaces"><a href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">Seguinos en Instagram</a><a class="cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Vi la página de Luz Guía y quiero saber más 🌙">Escribinos</a><a href="akashicos.html">Registros akáshicos</a><a href="limpiezas.html">Limpiezas</a><a href="encuentros.html">Encuentros</a><a href="https://luzguia.substack.com" target="_blank" rel="noopener">Newsletter</a></nav>
   </div>
 </footer>
 
@@ -750,8 +784,8 @@ const TESTIMONIOS = [
 ];
 
 // 4) Paleta de colores: 'trigo', 'granada' o 'violeta'. MOSTRAR_PALETAS = true muestra los botones para comparar (sacarlo al publicar).
-const PALETA = 'trigo';
-const MOSTRAR_PALETAS = true;
+const PALETA = 'granada';
+const MOSTRAR_PALETAS = false;
 
 // 5) Las 22 frases de "Tu carta de hoy". BORRADOR: Mey y Belu las reescriben con su voz.
 // Cada carta usa su imagen del repositorio: RWS_Tarot_00_Fool.jpg … RWS_Tarot_21_World.jpg
@@ -786,7 +820,7 @@ const CARTAS = [
 (function(){
   const raiz = document.documentElement; let p = PALETA;
   try { if (MOSTRAR_PALETAS) p = localStorage.getItem('lg-paleta') || PALETA; } catch (e) {}
-  const poner = v => { if (v === 'trigo') raiz.removeAttribute('data-paleta'); else raiz.setAttribute('data-paleta', v); document.querySelectorAll('#paletas button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === v)); };
+  const poner = v => { if (v === 'trigo') raiz.removeAttribute('data-paleta'); else raiz.setAttribute('data-paleta', v); document.querySelectorAll('#paletas button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === v)); if (window.lgLeerColores) window.lgLeerColores(); };
   poner(p);
   if (!MOSTRAR_PALETAS) return;
   const box = document.getElementById('paletas'); box.hidden = false;
@@ -809,7 +843,19 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
 // De la noche al amanecer: el cielo se aclara en el horizonte a medida que bajás
 (function(){
   const raiz = document.documentElement; let pend = false;
-  function act(){ pend = false; const max = document.body.scrollHeight - innerHeight; const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0; raiz.style.setProperty('--p', Math.pow(p, 1.5).toFixed(3)); }
+  const cielo = document.getElementById('cielo');
+  const hex = h => { h = h.trim().replace('#', ''); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)); };
+  const mezcla = (a, b, t) => 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')';
+  let colores = null;
+  function leerColores(){ const cs = getComputedStyle(raiz); colores = ['--c1', '--c2', '--c3', '--e1', '--e2', '--e3'].map(v => hex(cs.getPropertyValue(v) || '#000000')); }
+  window.lgLeerColores = () => { leerColores(); act(); };
+  function act(){
+    pend = false; const max = document.body.scrollHeight - innerHeight; const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+    const t = Math.pow(p, 1.5); raiz.style.setProperty('--p', t.toFixed(3));
+    if (!colores) leerColores();
+    // Todo el cielo pasa de la noche al amanecer: arriba, al medio y en el horizonte
+    cielo.style.background = 'linear-gradient(180deg,' + mezcla(colores[0], colores[3], t) + ' 0%,' + mezcla(colores[1], colores[4], t) + ' 55%,' + mezcla(colores[2], colores[5], t) + ' 100%)';
+  }
   addEventListener('scroll', () => { if (!pend) { pend = true; requestAnimationFrame(act); } }, { passive: true });
   addEventListener('resize', act); act();
   // La hora de la noche en la barra
@@ -941,6 +987,64 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
   const els = document.querySelectorAll('.efecto'); if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('vivo')); return; }
   const io = new IntersectionObserver(en => en.forEach(e => e.target.classList.toggle('vivo', e.isIntersecting)), { threshold: .15 });
   els.forEach(e => io.observe(e));
+})();
+
+// WhatsApp flotante: aparece cuando se carga el número
+if (!WHATSAPP) document.getElementById('dockWsp').hidden = true;
+
+// Música: ambiente tranquilo generado en el momento (sin archivos, sin derechos de autor)
+(function(){
+  const btn = document.getElementById('musica'), etq = document.getElementById('etqMusica');
+  let ctx = null, master = null, rev = null, sonando = false, timer = null, prox = 0, acorde = 0;
+  const f = n => 440 * Math.pow(2, (n - 69) / 12);
+  const ACORDES = [[45, 52, 59, 60, 64], [41, 48, 52, 57, 60], [48, 55, 59, 64, 67], [40, 47, 55, 59, 62]];
+  const CAMPANAS = [69, 72, 74, 76, 79, 81, 84];
+  function reverb(){
+    const len = ctx.sampleRate * 4.5, b = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    const cv = ctx.createConvolver(); cv.buffer = b; return cv;
+  }
+  function iniciar(){
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+    rev = reverb(); const rg = ctx.createGain(); rg.gain.value = .55; rev.connect(rg); rg.connect(master);
+    prox = ctx.currentTime + .1;
+  }
+  function nota(n, t, dur, vol, tipo, aRev, ataque){
+    const g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = tipo === 'sine' ? 2400 : 900;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + ataque); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    [-4, 4].forEach(det => { const o = ctx.createOscillator(); o.type = tipo; o.frequency.value = f(n); o.detune.value = det; o.connect(lp); o.start(t); o.stop(t + dur + .1); });
+    lp.connect(g); g.connect(master); const s2 = ctx.createGain(); s2.gain.value = aRev; g.connect(s2); s2.connect(rev);
+  }
+  function programar(){
+    while (prox < ctx.currentTime + 2) {
+      const ac = ACORDES[acorde % ACORDES.length]; acorde++;
+      nota(ac[0] - 12, prox, 11, .05, 'sine', .4, 3);
+      ac.forEach((n, i) => nota(n, prox + i * .12, 10.5, .028, 'triangle', .6, 3.2));
+      for (let k = 0; k < 3; k++) if (Math.random() < .75) nota(CAMPANAS[Math.floor(Math.random() * CAMPANAS.length)], prox + 1 + k * 2.4 + Math.random(), 4.5, .02, 'sine', .9, .02);
+      prox += 8;
+    }
+  }
+  function prender(){
+    if (!ctx) iniciar();
+    ctx.resume(); sonando = true; programar(); clearInterval(timer); timer = setInterval(programar, 500);
+    master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(.75, ctx.currentTime, 1.2);
+    btn.setAttribute('aria-pressed', true); btn.setAttribute('aria-label', 'Pausar la música'); btn.querySelector('use').setAttribute('href', '#i-pausa');
+    try { localStorage.setItem('lg-musica', '1'); } catch (e) {}
+  }
+  function apagar(){
+    sonando = false; btn.setAttribute('aria-pressed', false); btn.setAttribute('aria-label', 'Poner música'); btn.querySelector('use').setAttribute('href', '#i-musica');
+    if (!ctx) return; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, .4);
+    clearInterval(timer); setTimeout(() => { if (!sonando) ctx.suspend(); }, 1500);
+    try { localStorage.setItem('lg-musica', '0'); } catch (e) {}
+  }
+  btn.addEventListener('click', () => { etq.classList.remove('ver'); sonando ? apagar() : prender(); });
+  document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (sonando) ctx.resume(); });
+  // Una invitación suave cuando la persona empieza a bajar
+  let mostrada = false;
+  addEventListener('scroll', () => { if (mostrada || scrollY < innerHeight * .6) return; mostrada = true; if (sonando) return; etq.classList.add('ver'); setTimeout(() => etq.classList.remove('ver'), 6000); }, { passive: true });
 })();
 
 // Objetos de la mesa: se dan vuelta al tocarlos
