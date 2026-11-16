@@ -149,9 +149,10 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .linea-t b{display:block;font-family:var(--serif);font-size:1.35rem;color:var(--oro-claro);font-weight:600;line-height:1.25}
 .linea-t p{margin:2px 0 0;font-size:.97rem}
 .emperatriz{display:flex;gap:16px;align-items:center;margin:62px 0 0;padding:16px 18px;border-radius:20px;border:1px solid var(--borde-oro);background:var(--caja)}
-.emperatriz .mini{flex:none;width:72px;height:108px;overflow:hidden;border-radius:9px;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;color:var(--oro);letter-spacing:.1em;border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.2),transparent 65%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));box-shadow:inset 0 0 0 3px rgb(var(--pb)),inset 0 0 0 4px rgba(239,195,90,.4)}
+.emperatriz .mini{flex:none;width:92px;height:157px;overflow:hidden;padding:0;border-radius:9px;display:grid;place-items:center;font-family:var(--serif);font-size:1.3rem;color:var(--oro);letter-spacing:.1em;border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.2),transparent 65%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));box-shadow:inset 0 0 0 3px rgb(var(--pb)),inset 0 0 0 4px rgba(239,195,90,.4)}
 .emperatriz p{margin:0;font-size:.97rem}
-.emperatriz .mini img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.emperatriz .mini img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.emperatriz .mini{box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 26px rgba(239,195,90,.22)!important;border:0!important;background:none!important;transform:rotate(-3deg)}
 .emperatriz .nota{display:block;margin-top:4px;font-size:.82rem}
 .emperatriz b{font-family:var(--serif);font-size:1.15rem;color:var(--oro-claro);font-weight:600}
 .dicen{font-family:var(--serif);font-style:italic;font-size:1.3rem;line-height:1.4;text-align:center;margin:22px 0 0}
@@ -193,7 +194,15 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .mazo button:nth-child(5):hover{transform:rotate(24deg) translateY(-8px)}
 .resultado{display:none;margin:34px auto 0}
 .resultado.ver{display:block}
-.resultado .flip{width:min(300px,78vw);aspect-ratio:2/3.1;margin:0 auto}
+.resultado .flip{width:min(240px,62vw);aspect-ratio:960/1641;margin:0 auto}
+.carta-img{overflow:hidden;background:#111;box-shadow:0 22px 60px rgba(0,0,0,.55),0 0 50px rgba(239,195,90,.25)}
+.carta-img img{width:100%;height:100%;object-fit:cover;display:block}
+.mensaje{margin:24px auto 0;max-width:30ch;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform:translateY(10px);transition:opacity .8s .7s,transform .8s .7s}
+.resultado.leida .mensaje{opacity:1;transform:none}
+.mensaje .num{font-family:var(--serif);font-size:1.2rem;color:var(--oro);letter-spacing:.2em}
+.mensaje .nom{font-family:var(--serif);font-style:italic;font-size:1.7rem;color:var(--oro-claro);line-height:1.1}
+.mensaje .lin{width:40px;height:1px;background:var(--oro);opacity:.6}
+.mensaje .msj{font-family:var(--serif);font-size:1.5rem;line-height:1.35}
 .frente-carta{border:1px solid var(--oro);background:radial-gradient(circle at 50% 0%,rgba(255,227,160,.16),transparent 60%),linear-gradient(170deg,rgb(var(--pa)),rgb(var(--pb)));padding:26px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 0 0 6px rgb(var(--pb)),inset 0 0 0 7px rgba(239,195,90,.45),0 20px 60px rgba(0,0,0,.5)}
 .frente-carta .num{font-family:var(--serif);font-size:1.4rem;color:var(--oro);letter-spacing:.2em}
 .frente-carta .nom{font-family:var(--serif);font-style:italic;font-size:1.6rem;color:var(--oro-claro)}
@@ -221,16 +230,37 @@ h2 em{font-style:italic;font-weight:500;color:var(--oro-claro)}
 .serv .ir{color:var(--oro-claro);font-size:.92rem;text-decoration:none}
 .serv .ir:hover{text-decoration:underline}
 
+
+/* ===== Efectos en registros y limpiezas ===== */
+.efecto>*{pointer-events:none}
+.efecto:not(.vivo) *{animation-play-state:paused!important}
+.libro img{transform-origin:50% 78%;animation:profundiza 22s ease-in-out infinite alternate}
+@keyframes profundiza{from{transform:scale(1)}to{transform:scale(1.18)}}
+.serv:hover .libro img{transform:none}
+.chispas{position:absolute;inset:0;z-index:1}
+.chispas i{position:absolute;left:var(--x);bottom:24%;width:var(--s);height:var(--s);border-radius:50%;background:#FFE3A0;box-shadow:0 0 8px 2px rgba(255,214,120,.8);opacity:0;animation:sube var(--t) ease-out var(--d) infinite}
+@keyframes sube{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),-210px);opacity:0}}
+.humo img{animation:respira-humo 14s ease-in-out infinite alternate}
+@keyframes respira-humo{from{transform:scale(1.02)}to{transform:scale(1.1) translateY(-2%)}}
+.volutas{position:absolute;inset:0;z-index:1;mix-blend-mode:screen}
+.volutas i{position:absolute;left:38%;bottom:32%;width:46%;height:60%;border-radius:50%;background:radial-gradient(ellipse at 50% 60%,rgba(255,240,225,.38),rgba(255,240,225,.12) 45%,transparent 70%);filter:blur(14px);opacity:0;animation:voluta 10s ease-in-out infinite}
+.volutas i:nth-child(2){left:30%;animation-delay:2.5s;animation-duration:11s}
+.volutas i:nth-child(3){left:44%;animation-delay:5s;animation-duration:9s}
+.volutas i:nth-child(4){left:34%;animation-delay:7.5s;animation-duration:12s}
+@keyframes voluta{0%{transform:translate(0,30%) scale(.6) rotate(0);opacity:0}25%{opacity:.85}60%{transform:translate(12%,-35%) scale(1.15) rotate(12deg);opacity:.5}100%{transform:translate(-8%,-90%) scale(1.6) rotate(-10deg);opacity:0}}
+.serv .img::after{z-index:2}
 /* ===== La mesa (encuentros) ===== */
 .formatos{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
 @media (max-width:760px){.formatos{grid-template-columns:1fr}}
-.formato{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--borde-oro);min-height:250px;display:flex;align-items:flex-end;isolation:isolate}
-.formato img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
-.formato::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(var(--n),.15),rgba(var(--n),.94) 78%)}
-.formato .txt{padding:22px 24px}
+.formato{border-radius:24px;overflow:hidden;border:1px solid var(--borde-oro);background:rgba(var(--pb),.8);display:flex;flex-direction:column}
+.formato .foto{position:relative;aspect-ratio:1/1;overflow:hidden}
+.formato .foto img{width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.formato:hover .foto img{transform:scale(1.04)}
+.formato .txt{padding:20px 24px 24px}
 .formato small{color:var(--rosa);letter-spacing:.18em;text-transform:uppercase;font-size:.72rem}
 .formato h3{font-family:var(--serif);font-size:1.9rem;margin:2px 0 4px;color:var(--oro-claro);font-weight:600}
 .formato p{margin:0;font-size:.97rem}
+.mas-info{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:20px}
 .objetos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
 @media (max-width:860px){.objetos{grid-template-columns:repeat(2,1fr)}}
 .obj{height:190px;border:0;padding:0;background:none;cursor:pointer;text-align:left}
@@ -441,8 +471,8 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
           <div class="pie">Amigas desde los 11 · las dos, 33</div>
         </div>
         <div class="emperatriz">
-          <div class="mini"><img src="foto-emperatriz.jpg" alt="La Emperatriz pintada a mano en un encuentro" width="720" height="1280" loading="lazy"></div>
-          <p>Siempre decimos que somos <b>La Emperatriz</b>: la que nutre, la que crea, la que hace crecer lo que toca. <span class="nota">Esta la pintó alguien en una Merienda &amp; Tarot.</span></p>
+          <div class="mini"><img src="carta-emperatriz.jpg" alt="Carta III, La Emperatriz" width="300" height="513" loading="lazy"></div>
+          <p>Siempre decimos que somos <b>La Emperatriz</b>: la que nutre, la que crea, la que hace crecer lo que toca. <span class="nota">III · La Emperatriz</span></p>
         </div>
         <p class="dicen">Nos dicen cálidas, diferentes pero dulces, magnéticas, sabias. Algunas personas, brujas. <span>Todas tienen razón.</span></p>
       </div>
@@ -470,13 +500,14 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
       <div class="flip" id="cartaFlip">
         <div class="in">
           <div class="cara reverso"></div>
-          <div class="cara dorso frente-carta">
-            <span class="num" id="cNum"></span>
-            <span class="nom" id="cNom"></span>
-            <span class="lin"></span>
-            <span class="msj" id="cMsj"></span>
-          </div>
+          <div class="cara dorso carta-img"><img id="cImg" alt=""></div>
         </div>
+      </div>
+      <div class="mensaje">
+        <span class="num" id="cNum"></span>
+        <span class="nom" id="cNom"></span>
+        <span class="lin"></span>
+        <span class="msj" id="cMsj"></span>
       </div>
       <div class="botones">
         <button class="btn" type="button" id="guardar">Guardar para mis historias</button>
@@ -512,7 +543,7 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
     <p class="lead">No hace falta estar en Santa Rosa. La energía no entiende de kilómetros.</p>
     <div class="servicios">
       <article class="serv">
-        <div class="img"><img src="web-akashicos.jpg" alt="" width="1100" height="618" loading="lazy"></div>
+        <div class="img efecto libro"><img src="web-akashicos.jpg" alt="" width="1100" height="618" loading="lazy"><span class="chispas" aria-hidden="true"><i style="--x:45%;--dx:39px;--d:3.6s;--t:4.9s;--s:4.3px"></i><i style="--x:53%;--dx:-8px;--d:3.8s;--t:4.7s;--s:2.0px"></i><i style="--x:53%;--dx:5px;--d:1.6s;--t:5.2s;--s:4.5px"></i><i style="--x:53%;--dx:27px;--d:3.2s;--t:6.1s;--s:3.0px"></i><i style="--x:42%;--dx:-37px;--d:1.4s;--t:5.0s;--s:4.3px"></i><i style="--x:50%;--dx:19px;--d:4.4s;--t:6.5s;--s:2.2px"></i><i style="--x:62%;--dx:-9px;--d:5.7s;--t:4.6s;--s:4.0px"></i><i style="--x:46%;--dx:-34px;--d:2.8s;--t:6.7s;--s:4.2px"></i><i style="--x:60%;--dx:-20px;--d:4.7s;--t:5.8s;--s:3.8px"></i><i style="--x:56%;--dx:-26px;--d:2.7s;--t:7.3s;--s:4.2px"></i><i style="--x:41%;--dx:7px;--d:0.2s;--t:6.0s;--s:2.6px"></i><i style="--x:59%;--dx:20px;--d:2.6s;--t:6.4s;--s:2.8px"></i><i style="--x:54%;--dx:-9px;--d:5.0s;--t:6.2s;--s:3.3px"></i><i style="--x:51%;--dx:8px;--d:3.5s;--t:7.2s;--s:3.7px"></i></span></div>
         <div class="txt">
           <small>Individual · por videollamada</small>
           <h3>Registros akáshicos</h3>
@@ -522,11 +553,11 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
             <li>Mey abre tus registros con tus datos y escribe las respuestas que llegan.</li>
             <li>Las charlan juntas en una videollamada de WhatsApp de alrededor de una hora.</li>
           </ol>
-          <div class="acc"><a class="btn sec cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola Mey! Quiero consultar por una lectura de registros akáshicos ✨">Consultar</a><a class="ir" href="akashicos.html">Cómo es una lectura ›</a></div>
+          <div class="acc"><a class="btn cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola Mey! Quiero consultar por una lectura de registros akáshicos ✨">Consultar</a><a class="btn sec" href="akashicos.html">Cómo es una lectura ›</a></div>
         </div>
       </article>
       <article class="serv">
-        <div class="img"><img src="web-humo.jpg" alt="" width="618" height="1100" loading="lazy" style="object-position:center 60%"></div>
+        <div class="img efecto humo"><img src="web-humo.jpg" alt="" width="618" height="1100" loading="lazy" style="object-position:center 60%"><span class="volutas" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
         <div class="txt">
           <small>Individual · a distancia</small>
           <h3>Limpiezas energéticas</h3>
@@ -536,7 +567,7 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
             <li>Trabaja con tu planilla de chakras y el péndulo, y suma piedras, oráculos y cartas.</li>
             <li>Al final te da una devolución con los mensajes que llegaron.</li>
           </ol>
-          <div class="acc"><a class="btn sec cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola Mey! Quiero consultar por una limpieza energética ✨">Consultar</a><a class="ir" href="limpiezas.html">Cómo es una limpieza ›</a></div>
+          <div class="acc"><a class="btn cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola Mey! Quiero consultar por una limpieza energética ✨">Consultar</a><a class="btn sec" href="limpiezas.html">Cómo es una limpieza ›</a></div>
         </div>
       </article>
     </div>
@@ -549,10 +580,11 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
     <h2>La mesa, <em>ahora abierta</em></h2>
     <p class="lead">Así eran nuestras noches en el departamento. Ahora te guardamos una silla.</p>
     <div class="formatos">
-      <div class="formato"><img src="foto-picada.jpg" alt="Picada con velas sobre la mesa de un encuentro" width="720" height="1280" loading="lazy" style="object-position:center 45%"><div class="txt"><small>Sábados</small><h3>Noche Vino &amp; Tarot</h3><p>Vino, picada y tu lectura individual.</p></div></div>
-      <div class="formato"><img src="foto-merienda.jpg" alt="Mesa de merienda vista desde arriba" width="720" height="1280" loading="lazy" style="object-position:center 40%"><div class="txt"><small>Domingos</small><h3>Merienda &amp; Tarot</h3><p>Merienda, tu lectura y una carta que pintás vos.</p></div></div>
+      <div class="formato"><div class="foto"><img src="foto-picada.jpg" alt="Picada con velas sobre la mesa de un encuentro" width="720" height="1280" loading="lazy" style="object-position:center 50%"></div><div class="txt"><small>Sábados</small><h3>Noche Vino &amp; Tarot</h3><p>Vino, picada y tu lectura individual.</p></div></div>
+      <div class="formato"><div class="foto"><img src="foto-merienda.jpg" alt="Mesa de merienda vista desde arriba" width="720" height="1280" loading="lazy" style="object-position:center 45%"></div><div class="txt"><small>Domingos</small><h3>Merienda &amp; Tarot</h3><p>Merienda, tu lectura y una carta que pintás vos.</p></div></div>
     </div>
-    <p class="nota" style="margin:16px 0 0">Tocá cada cosa de la mesa para ver qué es.</p>
+    <div class="mas-info"><a class="btn sec" href="encuentros.html">Todo sobre los encuentros ›</a><span class="nota">Fechas, cómo reservar y preguntas frecuentes.</span></div>
+    <p class="nota" style="margin:26px 0 0">Tocá cada cosa de la mesa para ver qué es.</p>
     <div class="objetos">
       <button class="obj flip" type="button" aria-label="Tu lectura"><span class="in"><span class="cara frente"><svg class="ico"><use href="#i-cartas"/></svg><span><i>El centro</i><b>Tu lectura</b></span></span><span class="cara dorso">Individual y confidencial, con Belu. Preguntás lo que necesites. Dura lo que tenga que durar.</span></span></button>
       <button class="obj flip" type="button" aria-label="Los oráculos"><span class="in"><span class="cara frente"><svg class="ico"><use href="#i-camara"/></svg><span><i>Para llevarte</i><b>Los oráculos</b></span></span><span class="cara dorso">Muchos oráculos con frases para leer, elegir y fotografiar. Te los llevás en el celular.</span></span></button>
@@ -722,6 +754,8 @@ const PALETA = 'trigo';
 const MOSTRAR_PALETAS = true;
 
 // 5) Las 22 frases de "Tu carta de hoy". BORRADOR: Mey y Belu las reescriben con su voz.
+// Cada carta usa su imagen del repositorio: RWS_Tarot_00_Fool.jpg … RWS_Tarot_21_World.jpg
+const ARCHIVOS = ['00_Fool','01_Magician','02_High_Priestess','03_Empress','04_Emperor','05_Hierophant','06_Lovers','07_Chariot','08_Strength','09_Hermit','10_Wheel_of_Fortune','11_Justice','12_Hanged_Man','13_Death','14_Temperance','15_Devil','16_Tower','17_Star','18_Moon','19_Sun','20_Judgement','21_World'];
 const CARTAS = [
   ['0', 'El Loco', 'No hace falta ver todo el camino para dar el primer paso.'],
   ['I', 'El Mago', 'Ya tenés lo que necesitás. Animate a usarlo.'],
@@ -807,13 +841,16 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
   const hoy = new Date().toISOString().slice(0, 10); let carta = null;
   function leer(){ try { const d = JSON.parse(localStorage.getItem('lg-carta') || 'null'); if (d && d.fecha === hoy && CARTAS[d.i]) return d.i; } catch (e) {} return null; }
   function guardar(i){ try { localStorage.setItem('lg-carta', JSON.stringify({ fecha: hoy, i })); } catch (e) {} }
+  let cartaImg = null;
   function mostrar(i, animar){
     carta = CARTAS[i];
+    const img = document.getElementById('cImg'); img.src = 'RWS_Tarot_' + ARCHIVOS[i] + '.jpg'; img.alt = 'Carta ' + carta[0] + ', ' + carta[1]; cartaImg = img;
     document.getElementById('cNum').textContent = carta[0];
     document.getElementById('cNom').textContent = carta[1];
     document.getElementById('cMsj').textContent = carta[2];
     mazo.hidden = true; res.classList.add('ver');
-    if (animar) { flip.classList.remove('vuelta'); setTimeout(() => flip.classList.add('vuelta'), 80); } else flip.classList.add('vuelta');
+    const girar = () => { flip.classList.add('vuelta'); res.classList.add('leida'); };
+    if (animar) { flip.classList.remove('vuelta'); res.classList.remove('leida'); const ok = () => setTimeout(girar, 120); (img.decode ? img.decode().then(ok, ok) : ok()); } else girar();
   }
   const ya = leer(); if (ya !== null) mostrar(ya, false);
   mazo.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const i = Math.floor(Math.random() * CARTAS.length); guardar(i); mostrar(i, true); }));
@@ -822,22 +859,22 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
   function partir(c, txt, ancho){ const p = txt.split(' '), l = []; let a = ''; p.forEach(w => { const t = a ? a + ' ' + w : w; if (c.measureText(t).width > ancho && a) { l.push(a); a = w; } else a = t; }); if (a) l.push(a); return l; }
   async function imagen(){
     try { await document.fonts.load('italic 500 70px "Cormorant Garamond"'); await document.fonts.load('600 70px "Cormorant Garamond"'); } catch (e) {}
+    const cs = getComputedStyle(document.documentElement), cv1 = cs.getPropertyValue('--c1').trim() || '#060a14', cv3 = cs.getPropertyValue('--c3').trim() || '#142036';
     const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; const x = cv.getContext('2d');
-    const cs = getComputedStyle(document.documentElement), cv1 = cs.getPropertyValue('--c1').trim() || '#060a14', cv3 = cs.getPropertyValue('--c3').trim() || '#142036', pa = cs.getPropertyValue('--pa').trim() || '30,42,66';
-    const g = x.createLinearGradient(0, 0, 0, 1920); g.addColorStop(0, cv1); g.addColorStop(.55, cv3); g.addColorStop(.85, '#5a3350'); g.addColorStop(1, '#e09a6e'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
-    for (let k = 0; k < 220; k++) { x.globalAlpha = .3 + Math.random() * .7; x.fillStyle = Math.random() < .3 ? '#F3DCA0' : '#fff'; x.beginPath(); x.arc(Math.random() * 1080, Math.random() * 1400, Math.random() * 2.2 + .5, 0, 7); x.fill(); }
-    x.globalAlpha = 1;
-    const cx = 170, cy = 400, cw = 740, ch = 1080;
-    x.fillStyle = 'rgba(' + pa + ',.92)'; x.strokeStyle = '#EFC35A'; x.lineWidth = 3; x.beginPath(); x.roundRect(cx, cy, cw, ch, 36); x.fill(); x.stroke();
-    x.strokeStyle = 'rgba(239,195,90,.45)'; x.lineWidth = 2; x.beginPath(); x.roundRect(cx + 20, cy + 20, cw - 40, ch - 40, 24); x.stroke();
-    x.textAlign = 'center'; x.fillStyle = '#EFC35A'; x.font = '600 56px "Cormorant Garamond", Georgia, serif'; x.fillText(carta[0], 540, cy + 190);
-    x.fillStyle = '#FFE3A0'; x.font = 'italic 500 74px "Cormorant Garamond", Georgia, serif'; x.fillText(carta[1], 540, cy + 300);
-    x.fillStyle = '#EFC35A'; x.fillRect(500, cy + 350, 80, 2);
-    x.fillStyle = '#F3EEF7'; x.font = '500 66px "Cormorant Garamond", Georgia, serif';
-    const ls = partir(x, carta[2], cw - 140), y0 = cy + 560 - (ls.length - 1) * 42; ls.forEach((l, k) => x.fillText(l, 540, y0 + k * 84));
-    x.fillStyle = '#BEB4CF'; x.font = '400 34px Jost, system-ui, sans-serif'; x.fillText('Mi carta de hoy', 540, cy + ch - 90);
-    x.fillStyle = '#FFE3A0'; x.font = '600 72px "Cormorant Garamond", Georgia, serif'; x.fillText('Luz Guía', 540, 1660);
-    x.fillStyle = '#F3EEF7'; x.font = '400 34px Jost, system-ui, sans-serif'; x.fillText('@luzguia2020 · Santa Rosa, La Pampa', 540, 1720);
+    const g = x.createLinearGradient(0, 0, 0, 1920); g.addColorStop(0, cv1); g.addColorStop(.6, cv3); g.addColorStop(.88, '#5a3350'); g.addColorStop(1, '#e09a6e'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
+    for (let k = 0; k < 200; k++) { x.globalAlpha = .3 + Math.random() * .7; x.fillStyle = Math.random() < .3 ? '#F3DCA0' : '#fff'; x.beginPath(); x.arc(Math.random() * 1080, Math.random() * 1300, Math.random() * 2.2 + .5, 0, 7); x.fill(); }
+    x.globalAlpha = 1; x.textAlign = 'center';
+    x.fillStyle = '#BEB4CF'; x.font = '400 34px Jost, system-ui, sans-serif'; x.fillText('Mi carta de hoy', 540, 170);
+    // la carta real, con brillo dorado
+    const cw = 500, ch = Math.round(cw * 1641 / 960), cx = 540 - cw / 2, cy = 220;
+    x.save(); x.shadowColor = 'rgba(239,195,90,.55)'; x.shadowBlur = 60; x.fillStyle = '#000'; x.beginPath(); x.roundRect(cx, cy, cw, ch, 22); x.fill(); x.restore();
+    try { if (cartaImg && cartaImg.complete) { x.save(); x.beginPath(); x.roundRect(cx, cy, cw, ch, 22); x.clip(); x.drawImage(cartaImg, cx, cy, cw, ch); x.restore(); } } catch (e) {}
+    let y = cy + ch + 90;
+    x.fillStyle = '#EFC35A'; x.font = '600 46px "Cormorant Garamond", Georgia, serif'; x.fillText(carta[0] + ' · ' + carta[1], 540, y);
+    x.fillStyle = '#F5EFE6'; x.font = '500 60px "Cormorant Garamond", Georgia, serif';
+    partir(x, carta[2], 860).forEach((l, k) => x.fillText(l, 540, y + 100 + k * 76));
+    x.fillStyle = '#FFE3A0'; x.font = '600 66px "Cormorant Garamond", Georgia, serif'; x.fillText('Luz Guía', 540, 1770);
+    x.fillStyle = '#F5EFE6'; x.font = '400 32px Jost, system-ui, sans-serif'; x.fillText('@luzguia2020 · Santa Rosa, La Pampa', 540, 1825);
     return new Promise(r => cv.toBlob(r, 'image/png'));
   }
   document.getElementById('guardar').addEventListener('click', async () => {
@@ -897,6 +934,13 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     if (on) { au.volume = 0; au.play().catch(() => {}); fade = setInterval(() => { au.volume = Math.min(.6, au.volume + .03); if (au.volume >= .6) clearInterval(fade); }, 120); }
     else { fade = setInterval(() => { au.volume = Math.max(0, au.volume - .05); if (au.volume <= 0) { clearInterval(fade); au.pause(); } }, 80); }
   });
+})();
+
+// Los efectos solo se mueven cuando están a la vista
+(function(){
+  const els = document.querySelectorAll('.efecto'); if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('vivo')); return; }
+  const io = new IntersectionObserver(en => en.forEach(e => e.target.classList.toggle('vivo', e.isIntersecting)), { threshold: .15 });
+  els.forEach(e => io.observe(e));
 })();
 
 // Objetos de la mesa: se dan vuelta al tocarlos
