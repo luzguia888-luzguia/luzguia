@@ -409,6 +409,26 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
 .js .aparece.visto{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .aparece{opacity:1;transform:none}}
 </style>
+<!-- Medición: Google Analytics + Microsoft Clarity -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5EFSV5WS4M"></script>
+<script>
+window.dataLayer = window.dataLayer || []; function gtag(){ dataLayer.push(arguments); }
+gtag('js', new Date()); gtag('config', 'G-5EFSV5WS4M');
+(function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window, document, "clarity", "script", "zf37hv9hlc");
+// Eventos propios: se ven en Analytics (Eventos) y en Clarity (filtro "Eventos personalizados")
+window.lgEvento = function(n, p){ try { gtag('event', n, Object.assign({ pagina: location.pathname }, p || {})); } catch(e){} try { clarity('event', n); } catch(e){} };
+document.addEventListener('click', function(e){
+  var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+  var h = a.href, n = null;
+  if (/wa\.me|whatsapp/i.test(h)) n = 'contacto_whatsapp';
+  else if (/ig\.me/i.test(h)) n = 'mensaje_instagram';
+  else if (/instagram\.com/i.test(h)) n = 'click_instagram';
+  else if (/facebook\.com/i.test(h)) n = 'click_facebook';
+  else if (/substack/i.test(h)) n = 'click_newsletter';
+  else if (/(akashicos|limpiezas|encuentros)\.html/i.test(h)) n = 'ver_servicio';
+  if (n) { var s = a.closest('section,header,footer,.dock'); lgEvento(n, { lugar: (s && (s.id || s.className)) || '', destino: h.split('?')[0] }); }
+}, true);
+</script>
 </head>
 <body>
 <!-- Íconos dibujados a mano (línea dorada) -->
@@ -549,10 +569,10 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
         <p class="lead">Las dos nacimos el mismo día y las dos sumamos 33, el número maestro de quienes guían. Poné tu fecha de nacimiento y descubrí tu número de camino de vida.</p>
         <form class="form-num" id="formNum">
           <label for="fnac">Tu fecha de nacimiento</label>
-          <div class="fila"><input type="date" id="fnac" required min="1900-01-01"><button class="btn" type="submit">Descubrir mi número</button></div>
+          <div class="fila"><input type="date" id="fnac" required min="1900-01-01" data-clarity-mask="true"><button class="btn" type="submit">Descubrir mi número</button></div>
         </form>
       </div>
-      <div class="num-res" id="numRes" aria-live="polite">
+      <div class="num-res" id="numRes" aria-live="polite" data-clarity-mask="true">
         <div class="num-vacio"><span>?</span><p>Tu número te espera</p></div>
       </div>
     </div>
@@ -756,7 +776,7 @@ section[data-hora]:not(.hero):not(.cierre)::before{content:attr(data-hora);posit
 <footer>
   <div class="ancho">
     <span>© <span id="anio">2026</span> Luz Guía · Santa Rosa, La Pampa · Bajo el mismo cielo</span>
-    <nav aria-label="Enlaces"><a href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/luzguia2020" target="_blank" rel="noopener">Facebook</a><a class="cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Vi la página de Luz Guía y quiero saber más 🌙">Escribinos</a><a href="akashicos.html">Registros akáshicos</a><a href="limpiezas.html">Limpiezas</a><a href="encuentros.html">Encuentros</a><a href="https://luzguia.substack.com" target="_blank" rel="noopener">Newsletter</a></nav>
+    <nav aria-label="Enlaces"><a href="https://www.instagram.com/luzguia2020" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/luzguia2020" target="_blank" rel="noopener">Facebook</a><a class="cta-msj" href="https://ig.me/m/luzguia2020" target="_blank" rel="noopener" data-msg="Hola! Vi la página de Luz Guía y quiero saber más 🌙">Escribinos</a><a href="privacidad.html">Privacidad</a><a href="akashicos.html">Registros akáshicos</a><a href="limpiezas.html">Limpiezas</a><a href="encuentros.html">Encuentros</a><a href="https://luzguia.substack.com" target="_blank" rel="noopener">Newsletter</a></nav>
   </div>
 </footer>
 
@@ -897,7 +917,7 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     if (animar) { flip.classList.remove('vuelta'); res.classList.remove('leida'); const ok = () => setTimeout(girar, 120); (img.decode ? img.decode().then(ok, ok) : ok()); } else girar();
   }
   const ya = leer(); if (ya !== null) mostrar(ya, false);
-  mazo.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const i = Math.floor(Math.random() * CARTAS.length); guardar(i); mostrar(i, true); }));
+  mazo.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const i = Math.floor(Math.random() * CARTAS.length); guardar(i); mostrar(i, true); lgEvento('carta_del_dia', { carta: CARTAS[i][1] }); }));
 
   // Imagen para historias de Instagram (1080×1920)
   function partir(c, txt, ancho){ const p = txt.split(' '), l = []; let a = ''; p.forEach(w => { const t = a ? a + ' ' + w : w; if (c.measureText(t).width > ancho && a) { l.push(a); a = w; } else a = t; }); if (a) l.push(a); return l; }
@@ -922,7 +942,7 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     return new Promise(r => cv.toBlob(r, 'image/png'));
   }
   document.getElementById('guardar').addEventListener('click', async () => {
-    if (!carta) return; const blob = await imagen(); if (!blob) return;
+    if (!carta) return; lgEvento('guardar_carta', { carta: carta[1] }); const blob = await imagen(); if (!blob) return;
     const archivo = new File([blob], 'mi-carta-luz-guia.png', { type: 'image/png' });
     try { if (navigator.canShare && navigator.canShare({ files: [archivo] })) { await navigator.share({ files: [archivo], text: 'Mi carta de hoy en Luz Guía ✨' }); return; } } catch (e) { if (e.name === 'AbortError') return; }
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
@@ -952,7 +972,7 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     const dig = v.replace(/\D/g, '').split('').map(Number);
     let n = dig.reduce((a, b) => a + b, 0); const pasos = [dig.join('+') + ' = ' + n];
     while (n > 9 && ![11, 22, 33].includes(n)) { const d = String(n).split('').map(Number); n = d.reduce((a, b) => a + b, 0); pasos.push(d.join('+') + ' = ' + n); }
-    const [nom, txt] = NUM[n] || ['', ''], maestro = [11, 22, 33].includes(n);
+    const [nom, txt] = NUM[n] || ['', ''], maestro = [11, 22, 33].includes(n); lgEvento('numero_calculado', { numero: n });
     res.innerHTML = '';
     const el = (tag, cls, t) => { const x = document.createElement(tag); if (cls) x.className = cls; if (t) x.textContent = t; res.appendChild(x); return x; };
     if (maestro) el('span', 'maestro', 'Número maestro');
@@ -975,7 +995,7 @@ if (WHATSAPP) document.querySelectorAll('.cta-msj').forEach(a => {
     const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on);
     b.querySelector('span').textContent = on ? 'Silenciar el amanecer' : 'Escuchá el amanecer';
     clearInterval(fade);
-    if (on) { au.volume = 0; au.play().catch(() => {}); fade = setInterval(() => { au.volume = Math.min(.6, au.volume + .03); if (au.volume >= .6) clearInterval(fade); }, 120); }
+    if (on) { lgEvento('sonido_amanecer'); au.volume = 0; au.play().catch(() => {}); fade = setInterval(() => { au.volume = Math.min(.6, au.volume + .03); if (au.volume >= .6) clearInterval(fade); }, 120); }
     else { fade = setInterval(() => { au.volume = Math.max(0, au.volume - .05); if (au.volume <= 0) { clearInterval(fade); au.pause(); } }, 80); }
   });
 })();
@@ -1026,6 +1046,7 @@ if (!WHATSAPP) document.getElementById('dockWsp').hidden = true;
     }
   }
   function prender(){
+    lgEvento('musica_on');
     if (!ctx) iniciar();
     ctx.resume(); sonando = true; programar(); clearInterval(timer); timer = setInterval(programar, 500);
     master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(.75, ctx.currentTime, 1.2);
