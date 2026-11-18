@@ -744,6 +744,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .pron-opc button{font:inherit;font-size:.88rem;padding:8px 14px;border-radius:999px;border:1px solid rgba(212,175,106,.45);background:rgba(255,255,255,.05);color:inherit;cursor:pointer}
 .pron-opc button.on{background:linear-gradient(135deg,#E9C77B,#C9A24E);color:#2A1240;border-color:transparent;font-weight:600}
 .pron-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;padding:10px 18px;border-radius:999px;background:rgba(28,11,46,.95);border:1px solid rgba(212,175,106,.5);color:#F3DCA0;font-size:.9rem;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.resp-fotos{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}.resp-fotos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid rgba(212,175,106,.35)}
 </style>
 </head>
 <body>
@@ -2595,7 +2596,7 @@ function premPregunta(){
   if (!puede) h += P.pedidos.includes('Pregunta extra ' + mk) ? '<p class="hecho">✓ Pediste una pregunta extra. Te escribimos para coordinarla ✨</p>' : `<div class="prem-cta"><p class="ag-ayuda">Ya usaste tu pregunta de ${MESES[hoy.getMonth()]}. La próxima se habilita el 1 de ${MESES[(hoy.getMonth() + 1) % 12]}.</p><button class="btn-sec" type="button" data-preguntaextra>Quiero una pregunta extra</button></div>`;
   ps.filter(x => x.respuesta).slice().reverse().forEach(x => {
     const cs = String(x.cartas || '').split(',').map(s => +s).filter(Boolean);
-    h += `<div class="respuesta"><small>${esc(x.fechaResp || '')} · Tu pregunta</small><p class="preg">${esc(x.pregunta)}</p>${cs.length ? `<div class="cartas-mes">${cs.map(n => `<div><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><small>${esc(NOM[n])}</small></div>`).join('')}</div>` : ''}<p>${esc(x.respuesta).replace(/\n/g, '<br>')}</p><p class="firma-r">Con luz, Belu y Mey 💜</p></div>`;
+    h += `<div class="respuesta"><small>${esc(x.fechaResp || '')} · Tu pregunta</small><p class="preg">${esc(x.pregunta)}</p>${cs.length ? `<div class="cartas-mes">${cs.map(n => `<div><div class="mini-c"><img src="${cartaSrc(n)}" alt="" onerror="this.remove()"><span>${romano(n)}</span></div><small>${esc(NOM[n])}</small></div>`).join('')}</div>` : ''}<p>${esc(x.respuesta).replace(/\n/g, '<br>')}</p>${(x.fotos || []).length ? `<div class="resp-fotos">${x.fotos.map(id => `<a href="https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w2000" target="_blank" rel="noopener"><img src="https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w800" alt="Foto de tu tirada" loading="lazy" onerror="this.parentNode.remove()"></a>`).join('')}</div>` : ''}<p class="firma-r">Con luz, Belu y Mey 💜</p></div>`;
   });
   return h;
 }

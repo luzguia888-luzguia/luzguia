@@ -2194,14 +2194,24 @@ document.addEventListener('click', async e => {
     modal('Responder la pregunta del mes', `<p class="ayuda" style="margin-top:0"><b>${esc(r['Nombre'])}</b> preguntó: <i>"${esc(r['Pregunta'])}"</i></p>
       <div class="form"><label>Carta 1${sel(1)}</label><label>Carta 2${sel(2)}</label><label>Carta 3${sel(3)}</label>
       <label class="full">Tu respuesta<textarea class="campo" id="rp-txt" rows="8" placeholder="Lo que te dicen las cartas para ella…"></textarea></label>
-      <label class="full">Video de tu tirada (opcional)<input class="campo" id="rp-vid" placeholder="Link de YouTube (oculto) o de Drive"></label></div>
-      <p class="ayuda">Aparece en su Mi Luz con las cartas, y si tiene mail le avisamos que llegó.</p>`,
+      <label class="full">📷 Fotos de la tirada (opcional, hasta 4)<input class="campo" id="rp-fotos" type="file" accept="image/*" multiple></label>
+      <label class="full">🎥 Video (opcional): subilo desde el celu o la compu<input class="campo" id="rp-vfile" type="file" accept="video/*"></label>
+      <label class="full">…o pegá un link de YouTube (oculto) o de Drive<input class="campo" id="rp-vid" placeholder="https://…"></label></div>
+      <p class="ayuda">Aparece en su Mi Luz con las cartas, las fotos y el video, y si tiene mail le avisamos que llegó. Para videos largos conviene YouTube "oculto": acá se pueden subir hasta 25 MB (un video corto del celu, de menos de un minuto).</p><p class="ayuda" id="rp-estado" style="color:var(--oro)"></p>`,
       `<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="rp-ok">Enviar respuesta</button>`);
     $('rp-ok').onclick = async ev => {
       const txt = $('rp-txt').value.trim(); if (!txt) { $('rp-txt').focus(); return; }
-      ev.target.disabled = true;
-      try { await guardarCambios('Preguntas', r, { 'Respuesta': txt, 'Cartas': [1, 2, 3].map(i => $('rp-c' + i).value).filter(Boolean).join(','), 'Fecha respuesta': iso(HOY), 'Estado': 'Respondida', 'Video': $('rp-vid').value.trim() }, '💌 Respuesta enviada'); }
-      catch (err) { toast(err.message, true); ev.target.disabled = false; }
+      const fotos = [...($('rp-fotos').files || [])].slice(0, 4), vf = ($('rp-vfile').files || [])[0];
+      if (vf && vf.size > 25 * 1024 * 1024) { toast('El video pesa ' + Math.round(vf.size / 1048576) + ' MB: el máximo es 25 MB. Subilo a YouTube como "oculto" y pegá el link.', true); return; }
+      ev.target.disabled = true; const est = t => { $('rp-estado').textContent = t; };
+      try {
+        const ids = [];
+        for (let i = 0; i < fotos.length; i++) { est('Subiendo foto ' + (i + 1) + ' de ' + fotos.length + '…'); ids.push(await subirFoto(fotos[i], true)); }
+        let video = $('rp-vid').value.trim();
+        if (vf) { est('Subiendo el video… puede tardar un par de minutos, no cierres esta ventana.'); const id = await subirFoto(vf, true); video = 'https://drive.google.com/file/d/' + id + '/view'; }
+        est('Guardando la respuesta…');
+        await guardarCambios('Preguntas', r, { 'Respuesta': txt, 'Cartas': [1, 2, 3].map(i => $('rp-c' + i).value).filter(Boolean).join(','), 'Fecha respuesta': iso(HOY), 'Estado': 'Respondida', 'Video': video, 'Fotos': ids.filter(Boolean).join(',') }, '💌 Respuesta enviada');
+      } catch (err) { toast(err.message, true); est(''); ev.target.disabled = false; }
     };
     return;
   }
