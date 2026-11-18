@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Luz Guía</title>
+<script>
+// Enlaces personales de Mi Luz: luzguia.com.ar/miluz/nombre-codigo → mi-luz.html?c=codigo
+(function(){
+  var m = location.pathname.match(/\/miluz\/(?:[^\/]*-)?([a-z2-9]{10})\/?$/i);
+  if (m) location.replace('/mi-luz.html?c=' + m[1].toLowerCase() + location.hash);
+})();
+</script>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#120a1e;color:#F1ECF7;font-family:Georgia,serif;text-align:center;padding:24px}
+h1{font-size:2.2rem;margin:.2em 0;color:#FFE3A0;font-weight:600}
+p{color:#BDB2CF;font-family:system-ui,sans-serif;max-width:34ch;margin:0 auto 22px;line-height:1.6}
+a{display:inline-block;padding:12px 22px;border-radius:999px;background:linear-gradient(135deg,#FFEDB8,#F5CF6B 45%,#E3AE3C);color:#1C0B2E;text-decoration:none;font-family:system-ui,sans-serif;font-weight:600}
+.l{font-size:2.6rem}
+</style>
+</head>
+<body>
+<main>
+  <div class="l" aria-hidden="true">☾</div>
+  <h1>Este camino no existe</h1>
+  <p>Puede que el enlace esté incompleto. Si es tu espacio de Mi Luz, abrilo desde el mensaje que te mandamos.</p>
+  <a href="/">Volver a Luz Guía</a>
+</main>
+</body>
+</html>

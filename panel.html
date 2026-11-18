@@ -374,6 +374,39 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
 #contenido h3[id^="sec-"]{scroll-margin-top:calc(var(--alto-barra, 0px) + 60px)}
 #btn-arriba{position:fixed;right:18px;bottom:18px;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid rgba(212,175,106,.6);background:rgba(28,11,46,.92);color:#F3DCA0;font-size:1.3rem;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 4px 18px rgba(0,0,0,.4)}
 #btn-arriba.ver{opacity:1;pointer-events:auto}
+
+/* ───── v23: menú lateral con íconos ───── */
+header.barra .barra-in{max-width:none}
+.menu-btn{display:none;font-size:1.2rem;width:40px;height:40px}
+.donde{display:none;color:var(--oro);font-family:var(--serif);font-size:1.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav.lateral{position:fixed;top:var(--alto-barra,64px);left:0;bottom:0;width:232px;max-width:none;margin:0;padding:14px 12px 24px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;background:rgba(22,9,38,.96);border-right:1px solid var(--linea);z-index:4;scrollbar-width:thin}
+nav.lateral .grupo{display:flex;flex-direction:column;gap:2px}
+nav.lateral .grupo:last-child{margin-top:auto;border-top:1px solid var(--linea);padding-top:10px}
+.grupo-t{margin:0 0 4px 12px;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--lila-suave)}
+nav.lateral .pestana{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 12px;border:0;border-radius:10px;font-size:.95rem;color:var(--bruma)}
+nav.lateral .pestana::after{display:none}
+nav.lateral .pestana svg{width:21px;height:21px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+nav.lateral .pestana:hover{background:rgba(185,138,230,.1);color:var(--luna)}
+nav.lateral .pestana[aria-selected="true"]{background:linear-gradient(90deg,rgba(212,175,106,.2),rgba(212,175,106,.04));color:var(--oro);box-shadow:inset 3px 0 0 var(--oro)}
+nav.lateral .pestana[aria-selected="true"] svg{opacity:1;filter:drop-shadow(0 0 6px rgba(212,175,106,.5))}
+#contenido{margin-left:232px;max-width:1160px}
+@media (min-width:1500px){#contenido{margin-left:max(232px,calc((100vw - 1160px) / 2))}}
+#velo-menu{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4}
+@media (max-width:980px){
+  .menu-btn{display:inline-flex;align-items:center;justify-content:center}
+  .donde{display:block}
+  .marca span{display:none}
+  nav.lateral{width:min(280px,84vw);transform:translateX(-102%);transition:transform .25s ease;z-index:6;box-shadow:12px 0 40px rgba(0,0,0,.5)}
+  nav.lateral.abierto{transform:none}
+  #velo-menu{z-index:5}
+  #contenido{margin-left:0}
+}
+.vender{padding:4px 10px;font-size:.82rem;margin-right:4px}
+.ev.publi{background:rgba(232,160,180,.16);color:#F2B8CB}
+.publi .prio{color:var(--oro);font-size:.85rem;letter-spacing:.05em}
+.publi .idea{display:block;margin-top:4px;color:var(--luna);opacity:.85;line-height:1.45}
+.publi.hecha{opacity:.6}
+.plan-publi{margin-bottom:26px}
 </style>
 </head>
 <body>
@@ -398,29 +431,24 @@ details.explica dd{margin:2px 0 0;color:var(--bruma)}
 <div id="app" class="oculto">
   <header class="barra">
     <div class="barra-in">
+      <button class="ic menu-btn" id="btn-menu" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="lateral">☰</button>
       <div class="marca"><img data-logo alt=""><span>Luz Guía</span><small id="quien-soy"></small></div>
+      <span class="donde" id="donde"></span>
       <div class="acciones">
         <button class="btn-sec" id="btn-actualizar" type="button">Actualizar</button>
         <button class="btn-sec" id="btn-salir" type="button">Salir</button>
       </div>
     </div>
-    <nav class="pestanas" role="tablist" aria-label="Secciones">
-      <button class="pestana" role="tab" data-vista="hoy">Hoy</button>
-      <button class="pestana" role="tab" data-vista="calendario">Calendario</button>
-      <button class="pestana" role="tab" data-vista="encuentros">Encuentros</button>
-      <button class="pestana" role="tab" data-vista="personas">Participantes</button>
-      <button class="pestana" role="tab" data-vista="cobros">Cobros</button>
-      <button class="pestana" role="tab" data-vista="gastos">Gastos</button>
-      <button class="pestana" role="tab" data-vista="reventa">Reventa y stock</button>
-      <button class="pestana" role="tab" data-vista="miluz">Mi Luz</button>
-      <button class="pestana" role="tab" data-vista="contenido">Contenido</button>
-      <button class="pestana" role="tab" data-vista="mensajes">Mensajes</button>
-      <button class="pestana" role="tab" data-vista="estadisticas">Estadísticas</button>
-      <button class="pestana" role="tab" data-vista="proyeccion">Proyección</button>
-      <button class="pestana" role="tab" data-vista="inversion">Inversión</button>
-      <button class="pestana" role="tab" data-vista="historial">Historial</button>
-    </nav>
   </header>
+  <div id="velo-menu" hidden></div>
+    <nav class="pestanas lateral" id="lateral" role="tablist" aria-label="Secciones">
+      <div class="grupo"><button class="pestana" role="tab" data-vista="hoy"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><span>Hoy</span></button><button class="pestana" role="tab" data-vista="calendario"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.3 6.3 0 0 0 10.1 10.1z"/><path d="M17 3.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"/></svg><span>Calendario</span></button></div>
+      <div class="grupo"><p class="grupo-t">El círculo</p><button class="pestana" role="tab" data-vista="encuentros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 10h6v10.5H9z"/><path d="M12 3c1.6 1.9 2 3.2 1.3 4.4-.6 1-2 1-2.6 0C10 6.2 10.4 4.9 12 3z"/><path d="M12 8v2M6.5 20.5h11"/></svg><span>Encuentros</span></button><button class="pestana" role="tab" data-vista="personas"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.7-3.2 2.8-5 5.5-5s4.8 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M16 14.6c2.3 0 4 1.5 4.6 4.4"/></svg><span>Participantes</span></button><button class="pestana" role="tab" data-vista="miluz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 6.1L20 12l-6.1 2.9L12 21l-1.9-6.1L4 12l6.1-2.9z"/></svg><span>Mi Luz</span></button></div>
+      <div class="grupo"><p class="grupo-t">Dinero</p><button class="pestana" role="tab" data-vista="cobros"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg><span>Cobros</span></button><button class="pestana" role="tab" data-vista="gastos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/></svg><span>Gastos</span></button><button class="pestana" role="tab" data-vista="reventa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l4 5-9 11L3 9z"/><path d="M3 9h18M9.5 4l-2 5 4.5 11M14.5 4l2 5L12 20"/></svg><span>Tienda y stock</span></button></div>
+      <div class="grupo"><p class="grupo-t">Comunicación</p><button class="pestana" role="tab" data-vista="contenido"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l7 4V6l-7 4z"/><path d="M17.5 9a4 4 0 0 1 0 6M7 14l1 5h2.5l-1-5"/></svg><span>Contenido</span></button><button class="pestana" role="tab" data-vista="mensajes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-4.5 3.5V16H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg><span>Mensajes</span></button></div>
+      <div class="grupo"><p class="grupo-t">Números</p><button class="pestana" role="tab" data-vista="estadisticas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M6.5 20v-6M11 20V9M15.5 20v-8M20 20V5"/></svg><span>Estadísticas</span></button><button class="pestana" role="tab" data-vista="proyeccion"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10.5" r="6.5"/><path d="M7.5 21h9l-1.5-3.5H9z"/><path d="M9.5 8.5a3 3 0 0 1 2.5-1.5"/></svg><span>Proyección</span></button><button class="pestana" role="tab" data-vista="inversion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 17.5l5.5-5.5 4 4 7.5-8"/><path d="M15.5 8h5v5"/></svg><span>Inversión</span></button></div>
+      <div class="grupo"><button class="pestana" role="tab" data-vista="historial"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3h11M6.5 21h11M7.5 3c0 4.5 4.5 5.5 4.5 9s-4.5 4.5-4.5 9M16.5 3c0 4.5-4.5 5.5-4.5 9s4.5 4.5 4.5 9"/></svg><span>Historial</span></button></div>
+    </nav>
   <main id="contenido"></main>
 </div>
 
@@ -793,7 +821,8 @@ function contexto(p, t, a){
 const rellenar = (txt, ctx) => String(txt || '').replace(/\{(\w+)\}/g, (m, k) => ctx[k] !== undefined ? (ctx[k] === '' && k !== 'proximo' ? '[' + k + ']' : ctx[k]) : '[' + k + ']');
 const optCobro = () => L('Quién cobró').length ? L('Quién cobró') : L('Socias');
 const otraSocia = q => (L('Socias').find(x => x !== q) || (q === 'Belu' ? 'Mey' : 'Belu'));
-const linkPortal = p => p && p['Código portal'] ? (D.params.portal || 'https://luzguia888-luzguia.github.io/luzguia/mi-luz.html') + '?c=' + p['Código portal'] : '';
+const slugNom = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24);
+const linkPortal = p => { if (!p || !p['Código portal']) return ''; const base = String(D.params.portal || 'https://luzguia.com.ar/mi-luz.html').replace('luzguia888-luzguia.github.io/luzguia', 'luzguia.com.ar'); const raiz = base.replace(/\/[^\/]*\.html.*$/, '').replace(/\/+$/, ''), n = slugNom(String(p['Nombre completo'] || '').split(' ')[0]); return raiz + '/miluz/' + (n ? n + '-' : '') + p['Código portal']; };
 function plantilla(clave){
   const p = H('Plantillas').find(x => x['Clave'] === clave), base = TEXTO_BASE[clave];
   if (base && (!p || !String(p['Texto']).includes(base.clave))) return { 'Clave': clave, 'Nombre': base.nombre, 'Texto': base.texto };
@@ -871,6 +900,12 @@ async function borrar(hoja, rec){
 const optEncuentros = () => H('Encuentros').slice().sort((a, b) => (fecha(b['Fecha'])||0) - (fecha(a['Fecha'])||0)).map(t => [t['ID Encuentro'], t['Nombre / temática'] + ' (' + (t['Fecha'] || 's/f') + ')']);
 const optPersonas = () => H('Personas').slice().sort((a, b) => String(a['Nombre completo']).localeCompare(b['Nombre completo'])).map(p => [p['ID Persona'], p['Nombre completo']]);
 const ESQ = {
+  'Calendario mágico': { nombre: 'publicación', clave: 'Evento', campos: [
+    {k:'Fecha', t:'date', req:1}, {k:'Hora (ARG)', t:'text', lab:'Hora (opcional)'}, {k:'Evento', t:'text', req:1, full:1},
+    {k:'Categoría', t:'sel', o:() => [...new Set(H('Calendario mágico').map(x => x['Categoría']).filter(Boolean))].concat(['Luz Guía', 'Ritual', 'Otro']).filter((x, i, a) => a.indexOf(x) === i)},
+    {k:'Formato', t:'text'}, {k:'Prioridad', t:'sel', o:() => ['★★★', '★★', '★']}, {k:'Arcano del día', t:'text'},
+    {k:'Estado', t:'sel', o:() => ['Pendiente', 'Armado', 'Publicado', 'No va'], def:'Pendiente'},
+    {k:'Energía / significado', t:'area', full:1}, {k:'Idea para Instagram', t:'area', full:1}]},
   Encuentros: { nombre: 'encuentro', clave: 'ID Encuentro', etiqueta: 'Nombre / temática', campos: [
     {k:'Nombre / temática', t:'text', req:1, full:1}, {k:'Formato', t:'sel', o:() => L('Formatos'), req:1}, {k:'Estado', t:'sel', o:() => L('Estados encuentro'), def:'Planificado'},
     {k:'Fecha', t:'date', req:1}, {k:'Hora', t:'time'}, {k:'Cupo', t:'num', def:6}, {k:'Precio por persona', t:'money'}, {k:'Notas', t:'area', full:1}]},
@@ -1774,7 +1809,7 @@ V.calendario = () => {
     const cls = ['dia', d.getMonth() !== m ? 'fuera' : '', iso(d) === iso(HOY) ? 'hoy' : '', CAL.sel === iso(d) ? 'sel' : ''].join(' ');
     h += `<button type="button" class="${cls}" data-dia="${iso(d)}" aria-label="${d.getDate()} de ${MESES[d.getMonth()]}${it.length ? ', ' + it.length + ' eventos' : ''}"><span class="n">${d.getDate()}</span>${it.slice(0,3).map(x => `<span class="ev ${x.tipo}">${esc(x.txt)}</span>`).join('')}${it.length > 3 ? `<span class="ev evento">+${it.length - 3}</span>` : ''}</button>`;
   }
-  h += '</div><div class="leyenda"><span><i style="background:var(--oro)"></i>Encuentros</span><span><i style="background:var(--lila)"></i>Eventos y campañas</span><span><i style="background:var(--ok)"></i>Cumpleaños</span><span><i style="background:#9AA5F0"></i>Lunas</span></div>';
+  h += '</div><div class="leyenda"><span><i style="background:var(--oro)"></i>Encuentros</span><span><i style="background:var(--lila)"></i>Eventos y campañas</span><span><i style="background:var(--ok)"></i>Cumpleaños</span><span><i style="background:#F2B8CB"></i>Publicaciones</span><span><i style="background:#9AA5F0"></i>Lunas</span></div>';
 
   if (CAL.sel) {
     const d = new Date(CAL.sel + 'T00:00:00'), it = itemsDelDia(d);
@@ -1784,6 +1819,7 @@ V.calendario = () => {
       if (x.tipo === 'evento') bt = acciones('Eventos', x.ref);
       if (x.tipo === 'encuentro') bt = `<button class="btn-sec" type="button" data-editar="Encuentros|${x.ref._fila}">Editar</button>`;
       if (x.tipo === 'cumple') bt = btnWA(x.ref['ID Persona'], 'cumpleanos', '', '', 'Saludo de cumpleaños');
+      if (x.tipo === 'publi') bt = (x.ref['Estado'] !== 'Publicado' ? `<button class="btn-sec oro" type="button" data-publi="${x.ref._fila}|Publicado">✓ Publicado</button>` : '') + `<button class="ic" type="button" title="Copiar idea" data-copiaridea="${x.ref._fila}">⧉</button><button class="ic" type="button" title="Editar" data-editar="Calendario mágico|${x.ref._fila}">✎</button>`;
       if (x.tipo === 'luna') bt = `<button class="btn-sec oro" type="button" data-msg="|||" data-plant="luna">Armar mensaje</button>`;
       return `<li class="tarea"><div class="txt">${esc(x.txt)}${x.sub ? `<small>${esc(x.sub)}</small>` : ''}${x.ref['Detalle'] ? `<small>${esc(x.ref['Detalle'])}</small>` : ''}</div><div class="bt">${bt}</div></li>`;
     }).join('') + '</ul>' : '<p class="ayuda">Nada agendado ese día.</p>';
@@ -1908,7 +1944,7 @@ V.gastos = () => {
 
 V.reventa = () => {
   const al = v => /Reponer/.test(v) ? '<span class="estado e-sena">Reponer</span>' : (v ? '<span class="estado e-ok">OK</span>' : '');
-  let h = cabeza('Reventa y stock');
+  let h = cabeza('Tienda y stock');
   h += '<p class="ayuda">Tarots, oráculos y accesorios a la venta, más los insumos de los encuentros. Las compras de mercadería se cargan en Gastos con destino "Compra para reventa".</p>';
   h += `<div class="herramientas">${btnNuevo('Ventas', 'Registrar venta')} <button class="btn-sec" type="button" data-nuevo="Productos">Nuevo producto</button> <button class="btn-sec" type="button" data-nuevo="Insumos">Nuevo insumo</button></div>`;
   h += '<h3>Productos</h3><p class="ayuda" style="margin-top:0">Tocá 📷 para sacarle o subirle una foto: aparece sola en Mi Luz (en Productos y en el carrusel de Novedades).</p>' + tabla([
@@ -2826,6 +2862,108 @@ document.addEventListener('click', e => {
   const ver = () => bt.classList.toggle('ver', window.scrollY > 500);
   window.addEventListener('scroll', ver, { passive: true }); ver();
 })();
+
+/* ───── v23: menú lateral ───── */
+(function(){
+  const lat = $('lateral'), bt = $('btn-menu'), velo = $('velo-menu');
+  const abrir = si => { lat.classList.toggle('abierto', si); velo.hidden = !si; bt.setAttribute('aria-expanded', si); bt.textContent = si ? '✕' : '☰'; };
+  bt.addEventListener('click', () => abrir(!lat.classList.contains('abierto')));
+  velo.addEventListener('click', () => abrir(false));
+  lat.addEventListener('click', e => { if (e.target.closest('[data-vista]')) abrir(false); });
+  const alto = () => { const hb = document.querySelector('header.barra'); if (hb) document.documentElement.style.setProperty('--alto-barra', hb.offsetHeight + 'px'); };
+  addEventListener('resize', alto); setTimeout(alto, 50);
+})();
+const _pintarLat = pintar;
+pintar = function(){
+  const r = _pintarLat.apply(this, arguments);
+  try { const b = document.querySelector('nav.lateral .pestana[aria-selected="true"]'); $('donde').textContent = b ? b.textContent.trim() : ''; const hb = document.querySelector('header.barra'); if (hb) document.documentElement.style.setProperty('--alto-barra', hb.offsetHeight + 'px'); } catch (e) {}
+  return r;
+};
+
+/* ───── v23: Cobros con lo pendiente y los últimos ingresos; vender desde cada producto ───── */
+function ingresosRecientes(dias){
+  const L = [];
+  H('Pagos').forEach(x => { const f = fecha(x['Fecha']); const pp = persona(x['ID Persona']); const t = encuentro(x['ID Encuentro']);
+    L.push({ f, ico: '🕯️', que: 'Pago de ' + (pp ? pp['Nombre completo'] : (x['Nombre'] || 'participante')) + (t ? ' · ' + t['Nombre / temática'] : ''), monto: num(x['Monto']), cobro: x['Cobró'] || '', medio: x['Medio de pago'] || '', ref: 'Pagos|' + x._fila }); });
+  H('Ventas').forEach(x => { const f = fecha(x['Fecha']);
+    L.push({ f, ico: '🛍️', que: 'Venta: ' + (x['Producto'] || '') + (num(x['Cantidad']) > 1 ? ' x' + num(x['Cantidad']) : '') + (x['Comprador/a'] ? ' · ' + x['Comprador/a'] : ''), monto: num(x['Total']), cobro: x['Cobró'] || '', medio: x['Medio de pago'] || '', ref: 'Ventas|' + x._fila }); });
+  const desde = new Date(HOY.getFullYear(), HOY.getMonth(), HOY.getDate() - dias);
+  return L.filter(x => x.f && x.f >= desde).sort((a, b) => b.f - a.f);
+}
+V.cobros = () => {
+  const pend = H('Asistencias').filter(a => a['Estado de pago'] === 'Debe' || a['Estado de pago'] === 'Señado');
+  const total = pend.reduce((s, a) => s + num(a['Pendiente']), 0);
+  const ing = ingresosRecientes(60), mes = ing.filter(x => x.f.getMonth() === HOY.getMonth() && x.f.getFullYear() === HOY.getFullYear());
+  const soc = L('Socias').length ? L('Socias') : ['Belu', 'Mey'], porSoc = {}; soc.forEach(x => porSoc[x] = 0);
+  mes.forEach(x => { if (x.cobro in porSoc) porSoc[x.cobro] += x.monto; });
+  let h = cabeza('Cobros', btnNuevo('Ventas', 'Registrar venta'));
+  h += `<div class="cifras" style="margin-top:0"><div class="cifra"><span>Cobrado en ${MESES[HOY.getMonth()].toLowerCase()}</span><b>${pesos(mes.reduce((s, x) => s + x.monto, 0))}</b></div>` +
+    soc.map(x => `<div class="cifra"><span>Lo cobró ${esc(x)}</span><b>${pesos(porSoc[x])}</b></div>`).join('') +
+    `<div class="cifra"><span>Falta cobrar</span><b class="${total > 0 ? 'oro' : ''}">${total > 0 ? pesos(total) : 'Nada 🎉'}</b></div></div>`;
+  h += '<h3>Pendiente de cobro</h3>';
+  h += pend.length ? `<p class="ayuda" style="margin-top:0">Tocá 💰 para registrar un pago: el saldo baja solo.</p>` + tabla([
+    { t:'Nombre', k:'Nombre' }, { t:'Encuentro', k:'Encuentro' }, { t:'Estado', f: a => estadoPago(a['Estado de pago']) },
+    { t:'Pagado', k:'Total pagado', num:1 }, { t:'Falta', k:'Pendiente', num:1 }, { t:'Seña cobrada por', k:'Cobró seña' },
+    { t:'', acc:1, f: a => btnPago(a) + btnWA(a['ID Persona'], 'cobro', a['ID Encuentro'], a._fila, 'Recordar saldo') + `<button class="ic" type="button" title="Editar inscripción" data-editar="Asistencias|${a._fila}">✎</button>` }
+  ], pend, '') : '<p class="ayuda" style="margin-top:0">✓ Todas las inscripciones están pagas.</p>';
+  h += '<h3>Últimos ingresos</h3><p class="ayuda" style="margin-top:0">Pagos de encuentros y ventas de los últimos 60 días. Las suscripciones de Premium están en Mi Luz.</p>';
+  h += ing.length ? '<ul class="tareas">' + ing.map(x => `<li class="tarea"><span class="ico" aria-hidden="true">${x.ico}</span><div class="txt">${esc(x.que)}<small>${esc(lindaFecha(x.f))}${x.cobro ? ' · cobró ' + esc(x.cobro) : ''}${x.medio ? ' · ' + esc(x.medio) : ''}</small></div><div class="bt"><b style="white-space:nowrap">${pesos(x.monto)}</b><button class="ic" type="button" title="Editar" data-editar="${esc(x.ref)}">✎</button></div></li>`).join('') + '</ul>'
+    : '<p class="ayuda">Todavía no hay ingresos registrados en los últimos 60 días.</p>';
+  return h;
+};
+const _reventaVender = V.reventa;
+V.reventa = () => {
+  const h = _reventaVender();
+  try {
+    const box = document.createElement('div'); box.innerHTML = h;
+    const tb = box.querySelector('h3 + p + .tabla-wrap table, h3 + p + table') || [...box.querySelectorAll('table')][0];
+    if (tb) tb.querySelectorAll('tbody tr').forEach((tr, i) => {
+      const pr = H('Productos')[i]; if (!pr) return;
+      const td = tr.querySelector('td:last-child'); if (!td) return;
+      const pre = { 'Producto': pr['Producto'], 'Precio unitario': pr['Precio de venta'] || '', 'Cantidad': 1 };
+      td.insertAdjacentHTML('afterbegin', `<button class="btn-sec oro vender" type="button" title="Registrar una venta de este producto" data-nuevo="Ventas" data-pre='${esc(JSON.stringify(pre))}'>💰 Vender</button>`);
+    });
+    return box.innerHTML;
+  } catch (e) { console.error(e); return h; }
+};
+
+/* ───── v23: calendario mágico (plan de publicaciones) en Calendario y Contenido ───── */
+const PUBLI_EST = { 'Pendiente': 'e-neutro', 'Armado': 'e-sena', 'Publicado': 'e-ok', 'No va': 'e-debe' };
+function publiDe(d){ const k = iso(d); return H('Calendario mágico').filter(x => { const f = fecha(x['Fecha']); return f && iso(f) === k; }); }
+function publiHTML(x, conFecha){
+  const est = x['Estado'] || 'Pendiente', f = fecha(x['Fecha']);
+  return `<li class="tarea publi${est === 'Publicado' || est === 'No va' ? ' hecha' : ''}"><span class="ico" aria-hidden="true">📣</span><div class="txt"><b>${esc(x['Evento'])}</b> <span class="prio">${esc(x['Prioridad'] || '')}</span> <span class="estado ${PUBLI_EST[est] || 'e-neutro'}">${esc(est)}</span>
+    <small>${conFecha && f ? esc(lindaFecha(f)) + (x['Hora (ARG)'] ? ' · ' + esc(x['Hora (ARG)']) + ' h' : '') + ' · ' : ''}${esc(x['Formato'] || '')}${x['Arcano del día'] ? ' · Arcano del día: ' + esc(x['Arcano del día']) : ''}</small>
+    ${x['Idea para Instagram'] ? `<small class="idea">💡 ${esc(x['Idea para Instagram'])}</small>` : ''}</div>
+    <div class="bt">${est !== 'Publicado' ? `<button class="btn-sec oro" type="button" data-publi="${x._fila}|Publicado">✓ Publicado</button>` : `<button class="btn-sec" type="button" data-publi="${x._fila}|Pendiente">Deshacer</button>`}${est === 'Pendiente' ? `<button class="btn-sec" type="button" data-publi="${x._fila}|Armado">Armado</button>` : ''}<button class="ic" type="button" title="Copiar idea" data-copiaridea="${x._fila}">⧉</button><button class="ic" type="button" title="Editar" data-editar="Calendario mágico|${x._fila}">✎</button></div></li>`;
+}
+const _itemsPubli = itemsDelDia;
+itemsDelDia = function(d){
+  const out = _itemsPubli(d);
+  try { publiDe(d).forEach(x => { if (x['Estado'] === 'No va') return; out.push({ tipo: 'publi', txt: '📣 ' + x['Evento'], sub: (x['Formato'] || '') + (x['Estado'] && x['Estado'] !== 'Pendiente' ? ' · ' + x['Estado'] : '') + (x['Idea para Instagram'] ? ' · 💡 ' + x['Idea para Instagram'] : ''), ref: x }); }); } catch (e) { console.error(e); }
+  return out;
+};
+const _contenidoPubli = V.contenido;
+V.contenido = () => {
+  const h = _contenidoPubli();
+  try {
+    const dias = CAL.contDias || 30, hasta = new Date(HOY.getFullYear(), HOY.getMonth(), HOY.getDate() + dias), desde = new Date(HOY.getFullYear(), HOY.getMonth(), HOY.getDate() - 3);
+    const L = H('Calendario mágico').filter(x => { const f = fecha(x['Fecha']); return f && f >= desde && f <= hasta; }).sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha']));
+    const total = H('Calendario mágico').length, hechas = H('Calendario mágico').filter(x => x['Estado'] === 'Publicado').length;
+    let sec = `<section class="plan-publi"><h3>🔮 Tu calendario mágico</h3><p class="ayuda" style="margin-top:0">Las fechas que eligieron para publicar, con la idea de cada una. Marcalas como <b>Armado</b> cuando la tengan lista y <b>Publicado</b> cuando salga. Van ${hechas} de ${total} publicadas.</p>`;
+    sec += L.length ? '<ul class="tareas">' + L.map(x => publiHTML(x, true)).join('') + '</ul>' : '<p class="ayuda">No hay publicaciones del calendario en este período.</p>';
+    sec += `<p style="margin:10px 0 0">${btnNuevo('Calendario mágico', 'Agregar una fecha al calendario')}</p></section><h3>Ideas automáticas del cielo</h3>`;
+    const i = h.indexOf('<p class="ayuda">');
+    return i > -1 ? h.slice(0, i) + sec + h.slice(i) : sec + h;
+  } catch (e) { console.error(e); return h; }
+};
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-publi], [data-copiaridea]'); if (!b) return;
+  if (b.dataset.copiaridea) { const x = H('Calendario mágico').find(r => String(r._fila) === b.dataset.copiaridea); if (!x) return; const t = x['Evento'] + '\n\n' + (x['Energía / significado'] || '') + '\n\n💡 ' + (x['Idea para Instagram'] || ''); try { await navigator.clipboard.writeText(t); toast('Idea copiada ✓'); } catch (er) { toast('No se pudo copiar', true); } return; }
+  const [fila, est] = b.dataset.publi.split('|'), rec = H('Calendario mágico').find(r => String(r._fila) === fila); if (!rec) return;
+  b.disabled = true;
+  try { await guardarCambios('Calendario mágico', rec, { 'Estado': est }, est === 'Publicado' ? '📣 ¡Publicado!' : 'Listo'); } catch (er) { b.disabled = false; toast(er.message || 'No se pudo guardar', true); }
+});
 </script>
 </body>
 </html>
