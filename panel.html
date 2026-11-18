@@ -407,6 +407,8 @@ nav.lateral .pestana[aria-selected="true"] svg{opacity:1;filter:drop-shadow(0 0 
 .publi .idea{display:block;margin-top:4px;color:var(--luna);opacity:.85;line-height:1.45}
 .publi.hecha{opacity:.6}
 .plan-publi{margin-bottom:26px}
+.link-vendidas{background:none;border:0;color:var(--oro);font:inherit;cursor:pointer;padding:2px 4px;border-bottom:1px dashed var(--oro-suave)}
+.link-vendidas:hover{color:var(--luna)}
 </style>
 </head>
 <body>
@@ -2815,7 +2817,7 @@ V.hoy = () => {
 document.addEventListener('click', async e => {
   const b = e.target.closest('[data-tiendaest]'); if (!b) return;
   const [ref, est] = b.dataset.tiendaest.split('|'), rec = H('Pedidos tienda').find(x => x['Ref'] === ref); if (!rec) return;
-  b.disabled = true; try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, est === 'Entregado' ? '🛍️ Pedido entregado. Acordate de registrar la venta en Reventa y stock.' : '🛍️ Marcado como pagado'); } catch (err) { toast(err.message, true); b.disabled = false; }
+  b.disabled = true; try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, est === 'Entregado' ? '🛍️ Pedido entregado' : '🛍️ Marcado como pagado'); } catch (err) { toast(err.message, true); b.disabled = false; }
 });
 
 /* ───── v22: orden y ayuda en cada pestaña (índice con botones, volver arriba, "¿Para qué sirve?") ───── */
@@ -2964,6 +2966,63 @@ document.addEventListener('click', async e => {
   b.disabled = true;
   try { await guardarCambios('Calendario mágico', rec, { 'Estado': est }, est === 'Publicado' ? '📣 ¡Publicado!' : 'Listo'); } catch (er) { b.disabled = false; toast(er.message || 'No se pudo guardar', true); }
 });
+
+/* ───── v23b: ventas sin errores (aviso de stock y repetidas, ver y corregir ventas por producto) y pedidos de Mi Luz que se registran solos ───── */
+const ventasDe = prod => H('Ventas').filter(v => v['Producto'] === prod);
+const _guardarVentaCheck = guardarCambios;
+guardarCambios = async function(hoja, rec, datos, msgOk){
+  if (hoja === 'Ventas' && datos && datos['Producto']) {
+    const pr = H('Productos').find(x => x['Producto'] === datos['Producto']), cant = num(datos['Cantidad']) || 1;
+    const stockAhora = pr ? num(pr['Stock actual']) + (rec && rec['Producto'] === datos['Producto'] ? (num(rec['Cantidad']) || 1) : 0) : null;
+    const avisos = [];
+    if (pr && stockAhora !== null && cant > stockAhora) avisos.push('Según el CRM quedan ' + Math.max(0, stockAhora) + ' de "' + datos['Producto'] + '" y estás registrando ' + cant + '. El stock va a quedar en negativo.');
+    if (!rec) { const hoyIso = iso(HOY), rep = ventasDe(datos['Producto']).filter(v => { const f = fecha(v['Fecha']); return f && iso(f) === hoyIso; }); if (rep.length) avisos.push('Ya hay ' + rep.length + (rep.length === 1 ? ' venta' : ' ventas') + ' de "' + datos['Producto'] + '" registrada' + (rep.length === 1 ? '' : 's') + ' hoy. ¿Es otra venta distinta?'); }
+    if (avisos.length && !confirm(avisos.join('\n\n') + '\n\nAceptar: registrarla igual\nCancelar: no guardar')) throw new Error('No se guardó la venta.');
+  }
+  return _guardarVentaCheck.apply(this, arguments);
+};
+function abrirVentasProd(prod){
+  const L = ventasDe(prod).slice().reverse();
+  modal('Ventas de ' + esc(prod), L.length ? '<p class="ayuda" style="margin-top:0">Si una venta quedó repetida o mal cargada, tocá 🗑 para borrarla o ✎ para corregirla: el stock y lo vendido se recalculan solos, también en Mi Luz.</p><ul class="tareas">' + L.map(v => `<li class="tarea"><span class="ico">🛍️</span><div class="txt">${esc(v['Cantidad'] || 1)} × ${esc(prod)} · ${esc(v['Total'] || '')}<small>${esc(v['Fecha'] || '')}${v['Comprador/a'] ? ' · ' + esc(v['Comprador/a']) : ''}${v['Cobró'] ? ' · cobró ' + esc(v['Cobró']) : ''}${v['Notas'] ? ' · ' + esc(v['Notas']) : ''}</small></div><div class="bt"><button class="ic" type="button" title="Editar" data-editar="Ventas|${v._fila}">✎</button><button class="ic" type="button" title="Borrar" data-borrar="Ventas|${v._fila}">🗑</button></div></li>`).join('') + '</ul>' : '<p class="ayuda">Todavía no hay ventas de este producto.</p>',
+    '<button class="btn-sec" type="button" data-cerrar>Cerrar</button>');
+}
+const _reventaVentas = V.reventa;
+V.reventa = () => {
+  const h = _reventaVentas();
+  try {
+    const box = document.createElement('div'); box.innerHTML = h;
+    const tb = box.querySelector('table'); if (!tb) return h;
+    const cols = [...tb.querySelectorAll('thead th')].map(t => t.textContent.trim()), iV = cols.indexOf('Vendidas');
+    if (iV < 0) return h;
+    tb.querySelectorAll('tbody tr').forEach((tr, i) => { const pr = H('Productos')[i], td = tr.children[iV]; if (!pr || !td) return;
+      td.innerHTML = `<button class="link-vendidas" type="button" data-ventasprod="${esc(pr['Producto'])}" title="Ver y corregir las ventas">${esc(td.textContent.trim() || '0')} ›</button>`;
+      const iS = cols.indexOf('Stock'); if (iS > -1 && num(pr['Stock actual']) < 0) tr.children[iS].innerHTML = `<span class="estado e-debe" title="Hay más ventas que unidades compradas: revisá si alguna venta quedó repetida">${esc(tr.children[iS].textContent)}</span>`; });
+    return box.innerHTML;
+  } catch (e) { console.error(e); return h; }
+};
+// Pedidos de la tienda de Mi Luz: al marcarlos pagados o entregados, se registran solos como ventas (una vez)
+async function registrarVentasPedido(rec){
+  const ref = rec['Ref']; if (!ref || H('Ventas').some(v => String(v['Notas'] || '').indexOf(ref) > -1)) return 0;
+  const lineas = String(rec['Detalle'] || '').split(' · ').map(t => t.match(/^(\d+)\s*[×x]\s*(.+)$/)).filter(Boolean);
+  const soc = L('Socias').length ? L('Socias') : ['Belu', 'Mey'], mp = /Mercado/.test(rec['Pago'] || '');
+  const cobro = mp ? (soc.find(x => /belu/i.test(x)) || soc[0]) : (QUIEN || soc[0]);
+  let n = 0;
+  for (const [, c, nom] of lineas) {
+    const pr = H('Productos').find(x => x['Producto'] === nom.trim());
+    await enviar({ accion: 'agregar', hoja: 'Ventas', datos: { 'Fecha': iso(HOY), 'Producto': nom.trim(), 'Cantidad': Number(c), 'Precio unitario': pr ? num(pr['Precio de venta']) : '', 'Cobró': cobro, 'Medio de pago': mp ? 'Mercado Pago' : '', 'Comprador/a': rec['Nombre'] || '', 'Notas': 'Pedido de Mi Luz ' + ref } });
+    n++;
+  }
+  return n;
+}
+document.addEventListener('click', async e => {
+  const v = e.target.closest('[data-ventasprod]'); if (v) { abrirVentasProd(v.dataset.ventasprod); return; }
+  const b = e.target.closest('[data-tiendaest]'); if (!b) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  const [ref, est] = b.dataset.tiendaest.split('|'), rec = H('Pedidos tienda').find(x => x['Ref'] === ref); if (!rec) return;
+  b.disabled = true;
+  let n = 0; try { n = await registrarVentasPedido(rec); } catch (err) { toast('No se pudo registrar la venta: ' + err.message, true); }
+  try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, (est === 'Entregado' ? '🛍️ Pedido entregado' : '🛍️ Marcado como pagado') + (n ? ' · la venta se registró sola y el stock ya bajó' : '')); } catch (err) { toast(err.message, true); b.disabled = false; }
+}, true);
 </script>
 </body>
 </html>
