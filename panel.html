@@ -409,6 +409,7 @@ nav.lateral .pestana[aria-selected="true"] svg{opacity:1;filter:drop-shadow(0 0 
 .plan-publi{margin-bottom:26px}
 .link-vendidas{background:none;border:0;color:var(--oro);font:inherit;cursor:pointer;padding:2px 4px;border-bottom:1px dashed var(--oro-suave)}
 .link-vendidas:hover{color:var(--luna)}
+.chico-dep{padding:3px 9px;font-size:.8rem}
 </style>
 </head>
 <body>
@@ -938,7 +939,7 @@ const ESQ = {
   Ventas: { nombre: 'venta', clave: 'Producto', campos: [
     {k:'Fecha', t:'date', def:'hoy', req:1}, {k:'Producto', t:'sel', o:() => H('Productos').map(p => p['Producto']), req:1},
     {k:'Cantidad', t:'num', def:1}, {k:'Precio unitario', t:'money', req:1}, {k:'Cobró', t:'sel', o:optCobro, def:'yo', req:1},
-    {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Comprador/a', t:'text'}, {k:'ID Encuentro (opcional)', t:'sel', o:optEncuentros, lab:'Encuentro (opcional)'}, {k:'Notas', t:'area', full:1}]},
+    {k:'Medio de pago', t:'sel', o:() => L('Medios de pago')}, {k:'Comprador/a', t:'text'}, {k:'Canal de venta', t:'text', sug:() => [...new Set(['Mi Luz (app)', 'WhatsApp', 'Instagram', 'En un encuentro', 'En persona', 'Web'].concat(H('Ventas').map(v => v['Canal de venta']).filter(Boolean)))], lab:'Canal de venta (elegí o escribí otro)'}, {k:'Depositado en MP Luz Guía', t:'sel', o:() => ['Sí', 'No', 'No corresponde'], lab:'¿Se depositó en el Mercado Pago de Luz Guía?'}, {k:'ID Encuentro (opcional)', t:'sel', o:optEncuentros, lab:'Encuentro (opcional)'}, {k:'Notas', t:'area', full:1}]},
   Productos: { nombre: 'producto', clave: 'Producto', campos: [
     {k:'Producto', t:'text', req:1, full:1}, {k:'Categoría', t:'sel', o:() => L('Categorías producto')}, {k:'Costo de compra', t:'money'},
     {k:'Precio de venta', t:'money'}, {k:'Unidades compradas', t:'num'}, {k:'Stock mínimo', t:'num'},
@@ -1954,11 +1955,13 @@ V.reventa = () => {
       return id ? `<button class="foto-prod" type="button" data-fotoprod="${p._fila}" title="Cambiar foto"><img src="https://drive.google.com/thumbnail?id=${id}&sz=w120" alt="" loading="lazy" onerror="this.replaceWith('🖼️')"></button>` : `<button class="foto-prod vacia" type="button" data-fotoprod="${p._fila}" title="Agregar foto">📷</button>`; } },
     { t:'Producto', k:'Producto' }, { t:'Costo', k:'Costo de compra', num:1 }, { t:'Venta', k:'Precio de venta', num:1 },
     { t:'Ganancia x u.', k:'Ganancia por unidad', num:1 }, { t:'Margen', k:'Margen %', num:1 }, { t:'Vendidas', k:'Vendidas', num:1 },
-    { t:'Stock', k:'Stock actual', num:1 }, { t:'', f: p => al(p['Alerta']) }, colAcc('Productos')
+    { t:'Stock', k:'Stock actual', num:1 }, { t:'Ganancia total', k:'Ganancia realizada', num:1 }, { t:'', f: p => al(p['Alerta']) }, colAcc('Productos')
   ], H('Productos'), 'No hay productos cargados.');
   h += '<h3>Ventas</h3>' + tabla([
     { t:'Fecha', k:'Fecha' }, { t:'Producto', k:'Producto' }, { t:'Cant.', k:'Cantidad', num:1 }, { t:'Total', k:'Total', num:1 },
-    { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Cobró', k:'Cobró' }, { t:'Comprador/a', k:'Comprador/a' }, colAcc('Ventas')
+    { t:'Ganancia', k:'Ganancia', num:1 }, { t:'Canal', k:'Canal de venta' }, { t:'Cobró', k:'Cobró' }, { t:'Comprador/a', k:'Comprador/a' },
+    { t:'¿En MP Luz Guía?', f: v => { const d = v['Depositado en MP Luz Guía']; return d === 'Sí' ? '<span class="estado e-ok">Sí</span>' : d === 'No corresponde' ? '<span class="estado e-neutro">No corresponde</span>' : `<button class="btn-sec chico-dep" type="button" data-deposito="${v._fila}" title="Marcar que ya se depositó">${d === 'No' ? 'No · marcar Sí' : 'Marcar Sí'}</button>`; } },
+    colAcc('Ventas')
   ], H('Ventas').slice().reverse(), 'Todavía no hay ventas.');
   h += '<h3>Insumos de encuentros</h3>' + tabla([
     { t:'Insumo', k:'Insumo' }, { t:'Tipo', k:'Tipo' }, { t:'Costo unitario', k:'Costo unitario', num:1 }, { t:'Stock', f: i => esc(i['Stock actual'] || 0) + ' ' + esc(i['Unidad']) }, { t:'Mínimo', k:'Stock mínimo', num:1 },
@@ -3009,7 +3012,7 @@ async function registrarVentasPedido(rec){
   let n = 0;
   for (const [, c, nom] of lineas) {
     const pr = H('Productos').find(x => x['Producto'] === nom.trim());
-    await enviar({ accion: 'agregar', hoja: 'Ventas', datos: { 'Fecha': iso(HOY), 'Producto': nom.trim(), 'Cantidad': Number(c), 'Precio unitario': pr ? num(pr['Precio de venta']) : '', 'Cobró': cobro, 'Medio de pago': mp ? 'Mercado Pago' : '', 'Comprador/a': rec['Nombre'] || '', 'Notas': 'Pedido de Mi Luz ' + ref } });
+    await enviar({ accion: 'agregar', hoja: 'Ventas', datos: { 'Fecha': iso(HOY), 'Producto': nom.trim(), 'Cantidad': Number(c), 'Precio unitario': pr ? num(pr['Precio de venta']) : '', 'Cobró': cobro, 'Medio de pago': mp ? 'Mercado Pago' : '', 'Comprador/a': rec['Nombre'] || '', 'Canal de venta': 'Mi Luz (app)', 'Depositado en MP Luz Guía': mp ? 'Sí' : 'No', 'Notas': 'Pedido de Mi Luz ' + ref } });
     n++;
   }
   return n;
@@ -3023,6 +3026,13 @@ document.addEventListener('click', async e => {
   let n = 0; try { n = await registrarVentasPedido(rec); } catch (err) { toast('No se pudo registrar la venta: ' + err.message, true); }
   try { await guardarCambios('Pedidos tienda', rec, { 'Estado': est }, (est === 'Entregado' ? '🛍️ Pedido entregado' : '🛍️ Marcado como pagado') + (n ? ' · la venta se registró sola y el stock ya bajó' : '')); } catch (err) { toast(err.message, true); b.disabled = false; }
 }, true);
+
+/* ───── v23c: ventas con canal y depósito en Mercado Pago ───── */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-deposito]'); if (!b) return;
+  const rec = H('Ventas').find(r => String(r._fila) === b.dataset.deposito); if (!rec) return;
+  b.disabled = true; try { await guardarCambios('Ventas', rec, { 'Depositado en MP Luz Guía': 'Sí' }, '✓ Marcado como depositado'); } catch (er) { toast(er.message, true); b.disabled = false; }
+});
 </script>
 </body>
 </html>
