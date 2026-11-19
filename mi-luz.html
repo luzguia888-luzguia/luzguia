@@ -806,6 +806,25 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .sj-area ul{margin:8px 0 0;padding-left:18px}.sj-area li{font-size:.88rem;line-height:1.5;margin-bottom:6px}.sj-area li small{color:#E8A0B4}
 .sj-area>p{margin:8px 0 0;font-size:.86rem;line-height:1.5}
 .sj-meses p.sj-desp{color:#F3DCA0;font-size:.8rem;margin-top:4px}
+.sj-mes{padding:14px;border-radius:16px;border:1px solid color-mix(in srgb,var(--sjc) 55%,transparent);background:linear-gradient(150deg,color-mix(in srgb,var(--sjc) 14%,transparent),rgba(28,11,46,.65));margin:10px 0 14px}
+.sj-mes>small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.sj-mes>b{display:block;font-family:var(--serif);font-size:1.25rem;color:#F3DCA0;margin:3px 0 6px}
+.sj-mes>p{margin:0 0 8px;font-size:.92rem;line-height:1.55}
+.sj-mes ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.sj-mes li{font-size:.9rem;line-height:1.5;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04)}
+.sj-mes li span{display:block;color:#F3DCA0;font-weight:600;font-size:.82rem}
+.don{padding:14px;border-radius:16px;border:1px solid rgba(212,175,106,.35);background:linear-gradient(150deg,rgba(91,42,134,.35),rgba(28,11,46,.6));margin:10px 0}
+.don.uno{border-color:#F3DCA0;box-shadow:0 0 22px rgba(212,175,106,.22)}
+.don-cab{display:flex;align-items:center;gap:12px}.don-cab>span{font-size:2rem}
+.don-cab small{display:block;color:#E8A0B4;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}
+.don-cab b{display:block;font-family:var(--serif);font-size:1.35rem;color:#F3DCA0}
+.don>p{font-size:.92rem;line-height:1.55;margin:8px 0}
+.don-orig{display:flex;flex-wrap:wrap;gap:6px}.don-orig em{font-style:normal;font-size:.78rem;padding:4px 10px;border-radius:999px;border:1px solid rgba(212,175,106,.4);background:rgba(212,175,106,.1);color:#F3DCA0}
+.don-por summary{cursor:pointer;color:#E8A0B4;font-size:.86rem}.don-por ul{margin:6px 0 0;padding-left:18px}.don-por li{font-size:.86rem;line-height:1.5;margin-bottom:4px}
+.don-herr{color:#F3DCA0}
+.don-cta{padding:14px;border-radius:16px;border:1px dashed rgba(212,175,106,.5);margin:14px 0;text-align:center}.don-cta p{margin:0 0 10px;font-size:.92rem;line-height:1.55}
+.preg-suelta{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.45);background:linear-gradient(150deg,rgba(232,160,180,.12),rgba(28,11,46,.6));margin:12px 0}
+.preg-suelta>span{font-size:1.8rem}.preg-suelta b{color:#F3DCA0;font-family:var(--serif);font-size:1.15rem}.preg-suelta p{margin:4px 0 10px;font-size:.9rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -5446,7 +5465,7 @@ arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } ca
 
 /* 5) Premium agrupado en 5 temas, con la prueba gratis arriba y "seguir donde quedaste" */
 (function(){
-  const ren = { sinastria: ['Compatibilidad', 'Sinastría: cómo se combinan tu carta y la de otra persona.'], revolucion: ['Tu año de cumpleaños', 'Revolución Solar: la energía de tu año, de cumpleaños a cumpleaños.'], diario: ['Intenciones lunares', 'Sembrá en Luna nueva y revisá en Luna llena cómo van.'], matriz: ['Tu Matriz del Destino', 'Tu mapa de vida con los 22 arcanos del tarot, y tu programa por edades.'], mes: ['Tu semana y tu mes', 'Qué se mueve en tu vida estos días y cuáles son tus mejores fechas.'] };
+  const ren = { sinastria: ['Compatibilidad', 'Sinastría: cómo se combinan tu carta y la de otra persona.'], revolucion: ['Tu Revolución Solar', 'Tu año de cumpleaños a cumpleaños: la energía de tu año, cada área y tus fechas clave.'], diario: ['Intenciones lunares', 'Sembrá en Luna nueva y revisá en Luna llena cómo van.'], matriz: ['Tu Matriz del Destino', 'Tu mapa de vida con los 22 arcanos del tarot, y tu programa por edades.'], mes: ['Tu semana y tu mes', 'Qué se mueve en tu vida estos días y cuáles son tus mejores fechas.'] };
   PREMIUM_LISTA.forEach(x => { const r = ren[x[0]]; if (r) { x[2] = r[0]; x[3] = r[1]; } });
 })();
 const PREM_VENTA = {"natal": "Tu mapa completo: por qué sos como sos, tus dones, tus desafíos y lo que viniste a desarrollar, planeta por planeta.", "draconica": "La carta de tu alma: lo que traés de otras vidas, para qué viniste y cómo se mueve tu alma cada mes.", "revolucion": "Cómo viene tu año, de cumpleaños a cumpleaños: el tono general, cada área de tu vida, mes a mes y tus fechas clave.", "sinfonia": "Tu carta convertida en música: escuchá tu huella sonora completa y compartila en tus historias con sonido.", "mes": "Sabé qué se mueve en tu vida esta semana y este mes, y cuáles son tus mejores días para animarte.", "tirada": "Cada mes, Belu tira las cartas para toda la comunidad: qué energía trae, qué soltar y el consejo para atravesarlo.", "vocacion": "Para qué sos buena, ideas concretas para emprender, cómo te llega la plata y en qué meses te conviene moverte.", "amor": "Cómo amás, qué necesitás en una pareja, quién te complementa y dónde es más probable que conozcas a esa persona.", "sinastria": "Compará tu carta con la de tu pareja, una amistad o quien quieras: en qué fluyen y dónde chocan.", "oraculo": "¿Tenés una duda puntual? Preguntá y recibí tres cartas leídas junto con tu carta natal, tus tránsitos y tus números.", "pregunta": "Una vez por mes, Belu y Mey responden tu pregunta con una tirada de tarot hecha para vos. Te llega en 48 a 72 horas.", "diario": "En Luna nueva sembrás tus intenciones y en Luna llena revisás cómo van. Y tu diario en la agenda, con recordatorios.", "caminos": "Elegí abundancia, amor propio o soltar, y recorré 7 o 21 días con una práctica cortita por día, una pregunta y una afirmación.", "meditaciones": "Meditaciones guiadas grabadas por Belu y Mey para cada momento de tu vida.", "matriz": "Tu mapa de vida con los 22 arcanos: tu esencia, el dinero, el amor, tu linaje, tu propósito y qué te toca en cada etapa.", "chino": "Tu animal y tu elemento, cómo te va este año en cada área y lo que viene mes a mes.", "animal": "Cada Luna nueva te llega un animal guía distinto, con su medicina, su mensaje y una meditación para conectar con él."};
@@ -6453,7 +6472,7 @@ function sajuGratisHTML(){
   else {
     const a = sjAnalisis(sj);
     h += `<div class="teaser-velo"><p>Tus cuatro pilares: ${sj.p.map(sjNomP).join(', ')}. Tu balance: ${a.cnt.map((c, i) => SJ_EL[i] + ' ' + c).join(', ')}. ${a.faltan.length ? 'Te falta ' + sjLista(a.faltan.map(i => SJ_EL[i])) + '.' : ''} Tu elemento aliado es ${SJ_EL[a.aliado]}.</p><span>🔒 Premium</span></div>
-      <p class="ag-ayuda">En Premium: tus cuatro pilares, tu balance de los 5 elementos y el que te falta, cómo equilibrarte (colores, rituales y piedras), tus diez dioses y tu año mes a mes.</p>
+      <p class="ag-ayuda">En Premium: tus cuatro pilares, tu balance de los 5 elementos y el que te falta, cómo equilibrarte (colores, rituales y piedras), tus diez dioses y <b>tu Saju de cada mes</b>, con consejos de dinero, amor y espiritualidad.</p>
       <button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu Saju completo ✨</button>`;
   }
   return h + '</div>';
@@ -6662,6 +6681,200 @@ async function compartirSaju(btn){
     $('vid-si').onclick = async () => { try { await compartirArchivo(blob, nom, texto); } catch (e) {} $('dlg').close(); };
   } catch (e) { console.error(e); $('dlg-texto').textContent = 'Tu celular no pudo crear el video. Probá con la imagen.'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn-sec" type="button" onclick="document.getElementById(\'dlg\').close()">Cerrar</button></div>'; }
 }
+
+
+/* ───── v38: tu Saju del mes · tus dones espirituales · tu zona de dinero · pregunta suelta ───── */
+// ── Saju del mes ──
+const SJ_MES_TXT = {
+  yo: ['Cuidá la plata compartida y no prestes por compromiso. Es un buen mes para trabajar por tu cuenta.', 'Mes de amistades y de recuperar tu independencia dentro de los vínculos.', 'Tu fuerza interior está alta: ideal para limpiar tu energía y poner límites.'],
+  exp: ['Lo que creás se puede vender: mostrá tu trabajo, publicá y ofrecé lo tuyo.', 'Mes para el disfrute, la seducción y decir lo que sentís.', 'Se abre tu canal creativo: escribí, pintá o cantá, porque la inspiración baja fácil.'],
+  plata: ['Mes de oportunidades de dinero: movete, vendé, cobrá lo que te deben y negociá.', 'Buen mes para concretar y cuidar el vínculo con hechos.', 'Agradecé la abundancia: un ritual de prosperidad este mes rinde el doble.'],
+  poder: ['Ordená tus cuentas y cumplí tus compromisos: el reconocimiento llega por la constancia.', 'Mes de definiciones y de compromisos serios.', 'Disciplina espiritual: una práctica corta todos los días te transforma.'],
+  sabe: ['Invertí en aprender: un curso o una formación hoy es plata mañana.', 'Mes para recibir cuidado y dejarte ayudar.', 'Tu intuición y tus sueños están muy activos: anotá todo y leé las señales.'] };
+function sjMesActual(){
+  const hoy = new Date(), ya = sjAnioDe(hoy);
+  const L = sjMesesDe(ya.y - 1).concat(sjMesesDe(ya.y)).filter((x, i, a) => a.findIndex(y => +y.ini === +x.ini) === i).sort((a, b) => a.ini - b.ini);
+  const i = L.map(x => x.ini <= hoy).lastIndexOf(true);
+  return i > -1 ? { m: L[i], sig: L[i + 1] } : null;
+}
+function sjMesHTML(conTitulo){
+  try {
+    const sj = sajuDe(), ma = sjMesActual(); if (!sj || !ma) return '';
+    const a = sjAnalisis(sj), x = ma.m, dd = sjDios(sj.dm, x.s), g = SJ_GRUPO.find(gg => gg[2].includes(dd)), tx = SJ_MES_TXT[g[0]];
+    const elM = SJ_T[x.s].el, R = SJ_REM[a.aliado], pied = R.pied[x.mi % R.pied.length];
+    const hasta = ma.sig ? new Date(ma.sig.ini.getTime() - 86400000) : null;
+    return `${conTitulo ? '<p class="sub">Tu Saju de este mes</p>' : ''}<div class="sj-mes" style="--sjc:${SJ_COL[elM]}"><small>Tu Saju del mes · ${fechaCorta(x.ini)}${hasta ? ' al ' + fechaCorta(hasta) : ''}</small>
+      <b>${SJ_T[x.s].h}${SJ_R[x.b].h} ${SJ_EL[elM]}-${SJ_R[x.b].an} · ${esc(SJ_DIOS[dd][0])}</b>
+      <p>Para tu esencia de ${SJ_EL[SJ_T[sj.dm].el]}, es un mes de <b>${g[1].toLowerCase()}</b>: ${SJ_DIOS[dd][2]}.${a.dioses.some(d => d.d === dd) ? ` ✦ Se despierta tu ${esc(SJ_DIOS[dd][0])}, que ya está en tu carta.` : ''}</p>
+      <ul><li><span>💰 Dinero</span>${tx[0]}</li><li><span>💞 Amor y vínculos</span>${tx[1]}</li><li><span>🔮 Espiritualidad</span>${tx[2]}</li>
+      <li><span>💎 Tu piedra y tu color</span>${pied}, y los ${R.col}${elM === a.aliado ? '. Este mes trae tu elemento aliado: aprovechalo.' : ', para sostener tu equilibrio.'}</li></ul>
+      <p class="ag-ayuda" style="margin:6px 0 0">Se renueva solo cuando cambia el mes del Saju (alrededor del 4 al 8 de cada mes).</p></div>`;
+  } catch (e) { console.error(e); return ''; }
+}
+(function(){
+  const _ps = premSaju;
+  premSaju = function(){ const h = _ps(), m = sjMesHTML(true); if (!m) return h; const k = h.indexOf('<p class="sub">Tus cuatro pilares'); return k > -1 ? h.slice(0, k) + m + h.slice(k) : m + h; };
+  PREM_FN.saju = () => premSaju();
+  const _pm = PREM_FN.mes; PREM_FN.mes = () => _pm() + sjMesHTML(true);
+  PREM_VENTA.saju = 'Los cuatro pilares de tu destino: tu balance de elementos y el que te falta, cómo equilibrarte con colores, rituales y piedras, tus diez dioses y tu Saju de cada mes, con consejos de dinero, amor y espiritualidad.';
+})();
+
+// ── Tus dones espirituales ──
+const DONES = {
+  clarividencia: ['👁️', 'Clarividencia', 'Ver con el ojo interior: imágenes, símbolos y sueños que se cumplen. Las intuiciones te llegan como una película.', 'Antes de dormir, hacete una pregunta y, al despertar, anotá la primera imagen que recuerdes. Mirá la llama de una vela durante tres minutos y cerrá los ojos: observá lo que aparece.', 'Tarot y oráculos de imágenes, diario de sueños'],
+  empatia: ['🌊', 'Clarisentencia', 'Sentir en tu cuerpo la energía de los lugares y de las personas. Sabés cómo está alguien antes de que te hable.', 'Antes de entrar a un lugar, registrá cómo te sentís; al salir, compará. Cuando cargues emociones ajenas, limpiate con sal gruesa y sahumo, y preguntate: ¿esto es mío?', 'Péndulo, limpiezas energéticas, cristales'],
+  canal: ['🪶', 'Canalización', 'Recibir mensajes en palabras: frases que aparecen en tu mente, respuestas que llegan solas, escritura que fluye.', 'Escritura automática: hacé una pregunta y escribí diez minutos sin parar y sin corregir. Leelo al día siguiente.', 'Escritura canalizada, Registros Akáshicos'],
+  sanacion: ['🤲', 'Sanación', 'Tu presencia y tus manos calman, ordenan y sanan. La gente se siente mejor después de estar con vos.', 'Apoyá tus manos en tu pecho cinco minutos por día y respirá. Probá pasar tus manos por encima de una planta y sentí el calor.', 'Reiki, cristales, plantas medicinales'],
+  ancestros: ['🕯️', 'Conexión con los ancestros', 'Un puente con tu linaje y con lo que está del otro lado del velo. Sentís presencias, recibís señales de quienes ya no están.', 'Armá un pequeño altar con fotos y una vela. Una vez por semana, encendela y contales lo que te pasa. Preguntá en tu familia por las historias que nadie cuenta.', 'Altar ancestral, Registros Akáshicos, árbol genealógico'],
+  oraculo: ['🃏', 'Lectura de señales', 'Leer el lenguaje de los símbolos: cartas, números, sincronicidades. El universo te habla y vos lo entendés.', 'Sacá una carta por día y anotá qué pasó. Prestá atención a los números repetidos y a las canciones que aparecen justo.', 'Tarot, numerología, astrología'],
+  magia: ['✨', 'Manifestación', 'Transformar la energía en hechos: lo que intencionás con fuerza, se concreta. Tenés poder de ritual.', 'Hacé un ritual en cada Luna nueva con una vela del color de tu deseo. Escribí tu intención en presente, como si ya hubiera pasado.', 'Velas, rituales lunares, intenciones escritas'],
+  tierra: ['🌿', 'Magia de la tierra', 'Hablás el idioma de la naturaleza: plantas, piedras y hierbas te responden y te recargan.', 'Tené una planta que sea solo tuya y hablale. Elegí una piedra por intuición y llevala con vos una semana: anotá qué cambia.', 'Herbolaria, cristales, sahumos'],
+  vision: ['🔭', 'Visión', 'Ver patrones y adelantarte al futuro: corazonadas súbitas que después se confirman.', 'Anotá tus corazonadas con fecha y revisalas al mes. Estudiá astrología o numerología: tu mente ya piensa en ciclos.', 'Astrología, numerología, I Ching'] };
+const ORIGEN_DON = { antes: '🌀 Lo traés de otras vidas', linaje: '🌳 Lo heredaste de tu linaje', vida: '🌱 Lo venís a desarrollar en esta vida' };
+const NODO_SUR = ['En otras vidas abriste caminos y supiste defenderte: el coraje es tuyo de memoria. Ahora te toca aprender a cooperar.', 'En otras vidas supiste construir, sostener y disfrutar de la materia. Ahora te toca soltar la seguridad y animarte a transformarte.', 'En otras vidas fuiste mensajera de palabras: escribías, enseñabas, llevabas noticias. Ahora te toca buscar la verdad profunda, no solo la información.', 'En otras vidas cuidaste un hogar y un clan: sabés nutrir y proteger. Ahora te toca salir al mundo y construir tu lugar.', 'En otras vidas brillaste en un escenario o en una corte: sabés inspirar. Ahora te toca brillar para algo más grande que vos.', 'En otras vidas sanaste con hierbas, con las manos o con el servicio. Traés el don de ordenar y sanar. Ahora te toca confiar y fluir.', 'En otras vidas viviste para el otro y aprendiste la diplomacia. Ahora te toca descubrir quién sos por tu cuenta.', 'En otras vidas conociste los misterios, la muerte y el renacer: fuiste guardiana de secretos, chamana o bruja. Ahora te toca disfrutar de lo simple.', 'En otras vidas estudiaste lo sagrado, viajaste y enseñaste la fe. Ahora te toca escuchar lo pequeño y cotidiano.', 'En otras vidas ocupaste lugares de autoridad y responsabilidad. Ahora te toca abrirte a tus emociones y a tu intuición.', 'En otras vidas fuiste parte de comunidades y causas colectivas, adelantada a tu tiempo. Ahora te toca seguir tu propio corazón.', 'En otras vidas viviste en el mundo invisible como en tu casa: retiro, oración, sueños. Ahora te toca bajar ese don a la tierra.'];
+function donesDe(){
+  const n = natal(); if (!n) return null;
+  const S = {}; Object.keys(DONES).forEach(k => S[k] = { p: 0, r: [] });
+  const sum = (k, p, o, txt) => { S[k].p += p; S[k].r.push([o, txt]); };
+  const sg = l => Math.floor(nrm2(l) / 30), cs = l => n.casa(l) + 1;
+  const asp = (a, b, orb) => { const d = Math.abs(((n.pos[a] - n.pos[b] + 540) % 360) - 180); return [0, 60, 90, 120, 180].some(x => Math.abs(d - x) <= (orb || 6)); };
+  const PERS = ['Sol', 'Luna', 'Mercurio', 'Venus', 'Marte'], AGUA = [3, 7, 11], TIERRA = [1, 5, 9];
+  const agua = PERS.filter(p => AGUA.includes(sg(n.pos[p]))), tierra = PERS.filter(p => TIERRA.includes(sg(n.pos[p])));
+  const enCasa = c => PL_NAT.filter(p => cs(n.pos[p]) === c);
+  const ns = nrm2(n.pos.Nodo + 180), nsS = sg(ns), nsC = cs(ns);
+  // Neptuno, el planeta de lo invisible
+  if ([12, 9, 1, 8].includes(cs(n.pos.Neptuno)) && n.hora) sum('clarividencia', 2, 'vida', `Neptuno en tu casa ${cs(n.pos.Neptuno)}: lo invisible es parte de tu vida cotidiana`);
+  ['Sol', 'Luna', 'Mercurio', 'Venus'].forEach(p => { if (asp('Neptuno', p, 5)) { sum(p === 'Mercurio' ? 'canal' : 'clarividencia', p === 'Mercurio' ? 3 : 2, 'vida', `Neptuno en contacto con ${p === 'Sol' ? 'tu Sol' : p === 'Luna' ? 'tu Luna' : 'tu ' + p}: ${p === 'Mercurio' ? 'tu mente recibe mensajes' : 'tu sensibilidad es mediúmnica'}`); } });
+  if (sg(n.pos.Luna) === 11) sum('clarividencia', 2, 'linaje', 'Luna en Piscis: la sensibilidad psíquica viene por la línea femenina de tu familia');
+  if (AGUA.includes(sg(n.pos.Luna))) sum('empatia', 2, 'linaje', `Luna en ${ZOD[sg(n.pos.Luna)]}: sentís todo, como la línea femenina de tu familia`);
+  if (agua.length >= 2) sum('empatia', agua.length, 'vida', `${agua.length} planetas personales en signos de agua (${agua.join(', ')})`);
+  if (n.hora) { const c12 = enCasa(12); if (c12.length) { sum('clarividencia', c12.length, 'antes', `${sjLista(c12)} en tu casa 12, la casa de las vidas pasadas`); sum('canal', c12.length * .5, 'antes', `${sjLista(c12)} en tu casa 12: escuchás lo que viene del más allá`); } }
+  if (n.hora) { const c8 = enCasa(8); if (c8.length) sum('ancestros', c8.length * 1.5, 'linaje', `${sjLista(c8)} en tu casa 8, la casa de la herencia, la muerte y el renacer`); }
+  if (n.hora) { const c9 = enCasa(9); if (c9.length) sum('oraculo', c9.length * 1.5, 'vida', `${sjLista(c9)} en tu casa 9, la de la fe y el conocimiento sagrado`); }
+  if (n.hora) { const c6 = enCasa(6); if (c6.length) sum('sanacion', c6.length, 'vida', `${sjLista(c6)} en tu casa 6, la casa de la salud y el servicio`); }
+  if (n.hora) { const c11 = enCasa(11); if (c11.length) sum('vision', c11.length, 'vida', `${sjLista(c11)} en tu casa 11, la casa del futuro`); }
+  if (n.hora && [1, 10].includes(cs(n.pos['Plutón']))) sum('magia', 2, 'vida', `Plutón en tu casa ${cs(n.pos['Plutón'])}: tenés poder de transformación visible`);
+  ['Sol', 'Luna'].forEach(p => { if (asp('Plutón', p, 5)) sum('ancestros', 2, 'linaje', `Plutón en contacto con ${p === 'Sol' ? 'tu Sol' : 'tu Luna'}: atravesás los velos y no le temés a lo oscuro`); });
+  if (asp('Marte', 'Plutón', 5)) sum('magia', 2, 'vida', 'Marte y Plutón conectados: tu voluntad mueve energía');
+  ['Sol', 'Mercurio', 'Luna'].forEach(p => { if (asp('Urano', p, 5)) sum('vision', 2, 'vida', `Urano en contacto con ${p === 'Sol' ? 'tu Sol' : p === 'Luna' ? 'tu Luna' : 'tu Mercurio'}: intuiciones como rayos`); });
+  if ([7, 8, 11].includes(sg(n.pos.Mercurio))) sum('oraculo', 1, 'vida', `Mercurio en ${ZOD[sg(n.pos.Mercurio)]}: tu mente lee entre líneas`);
+  if ([10, 11].includes(sg(n.pos.Mercurio))) sum('canal', 1, 'vida', `Mercurio en ${ZOD[sg(n.pos.Mercurio)]}: pensamientos que llegan de otro plano`);
+  if ([7].includes(sg(n.pos.Sol)) || [7].includes(sg(n.pos.Luna))) sum('ancestros', 1, 'vida', 'Escorpio fuerte en tu carta: el signo de los misterios');
+  ['Sol', 'Luna', 'Venus'].forEach(p => { if ([5, 11].includes(sg(n.pos[p]))) sum('sanacion', 1, 'vida', `${p} en ${ZOD[sg(n.pos[p])]}, un signo sanador`); });
+  if (tierra.length >= 2) sum('tierra', tierra.length, 'vida', `${tierra.length} planetas personales en signos de tierra (${tierra.join(', ')})`);
+  if ([1, 5].includes(sg(n.pos.Venus))) sum('tierra', 1, 'vida', `Venus en ${ZOD[sg(n.pos.Venus)]}: amás la naturaleza y sus regalos`);
+  if ([7, 9].includes(sg(n.pos.Sol))) sum('magia', 1, 'vida', `Sol en ${ZOD[sg(n.pos.Sol)]}: sabés concretar lo que intencionás`);
+  if ([10, 8].includes(sg(n.pos.Sol))) sum('vision', 1, 'vida', `Sol en ${ZOD[sg(n.pos.Sol)]}: mirás lejos`);
+  // Nodo Sur: lo que traés de antes
+  const NS_DON = ['magia', 'tierra', 'canal', 'empatia', 'magia', 'sanacion', 'oraculo', 'ancestros', 'oraculo', 'magia', 'vision', 'clarividencia'];
+  sum(NS_DON[nsS], 2.5, 'antes', `Tu Nodo Sur en ${ZOD[nsS]}${n.hora ? ', casa ' + nsC : ''}: un saber que ya dominabas antes de nacer`);
+  if (n.hora && [4, 8, 12].includes(nsC)) sum('ancestros', 1.5, 'antes', `Tu Nodo Sur en la casa ${nsC}: tu alma viene de linajes de sabiduría`);
+  // Numerología
+  try { const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre), c = num.camino;
+    if (c === 11 || c === 33) sum('canal', 2.5, 'vida', `Tu camino de vida es el ${c}, un número maestro: sos canal`);
+    if (c === 22) sum('magia', 2.5, 'vida', 'Tu camino de vida es el 22, el maestro constructor: materializás lo espiritual');
+    if (c === 7) sum('oraculo', 2, 'vida', 'Tu camino de vida es el 7, el número del místico');
+    if (c === 9) sum('sanacion', 1.5, 'vida', 'Tu camino de vida es el 9, el número del alma vieja que sana');
+    if (c === 2) sum('empatia', 1, 'vida', 'Tu camino de vida es el 2: sentís lo que el otro siente');
+  } catch (e) {}
+  // Matriz: el linaje y el talento
+  const mz = matrizCompleta(P.diaMes, P.anioNac);
+  if (mz) {
+    const MZD = { 1: 'magia', 2: 'clarividencia', 3: 'tierra', 5: 'oraculo', 9: 'oraculo', 10: 'vision', 12: 'ancestros', 13: 'ancestros', 14: 'sanacion', 17: 'vision', 18: 'clarividencia', 19: 'sanacion', 20: 'ancestros', 21: 'magia', 22: 'canal' };
+    if (MZD[mz.B]) sum(MZD[mz.B], 2, 'vida', `Tu talento principal en la Matriz es el arcano ${romano(mz.B)} · ${NOM[mz.B]}`);
+    if (MZD[mz.padre]) sum(MZD[mz.padre], 1.5, 'linaje', `Por la línea paterna, la Matriz te da ${NOM[mz.padre]}`);
+    if (MZD[mz.madre]) sum(MZD[mz.madre], 1.5, 'linaje', `Por la línea materna, la Matriz te da ${NOM[mz.madre]}`);
+  }
+  // Saju
+  const sj = sajuDe();
+  if (sj) {
+    const a = sjAnalisis(sj);
+    if (a.dioses.some(d => d.d === 'pin')) sum('clarividencia', 1.5, a.dioses.some(d => d.d === 'pin' && d.pos === 0) ? 'linaje' : 'vida', 'En tu Saju aparece la Intuición (편인), la estrella de lo místico');
+    if (a.dioses.some(d => d.d === 'jin' && d.pos === 0)) sum('ancestros', 1.5, 'linaje', 'En tu Saju, la Protección (정인) está en el pilar de tus raíces: tus ancestros te cuidan');
+    if (SJ_T[sj.dm].el === 4) sum('empatia', 1, 'vida', `Tu esencia en el Saju es Agua ${SJ_T[sj.dm].yang ? 'yang' : 'yin'}`);
+    if (sj.dm === 3) sum('magia', 1, 'vida', 'Tu esencia en el Saju es Fuego yin, la llama que transforma');
+    if ([1, 5].includes(sj.dm)) sum('tierra', 1, 'vida', `Tu esencia en el Saju es ${SJ_EL[SJ_T[sj.dm].el]} yin, cercana a la tierra viva`);
+  }
+  const top = Object.keys(S).filter(k => S[k].p > 0).sort((a, b) => S[b].p - S[a].p).slice(0, 3);
+  return { top, S, ns, nsS, nsC, mz, hora: n.hora };
+}
+function premDones(){
+  const D = donesDe(); if (!D) return faltaFecha;
+  let h = `<p class="intro">Todas las personas traemos dones espirituales, pero cada una los trae por un camino distinto: algunos vienen de otras vidas, otros se heredan del linaje y otros se despiertan en esta vida. Acá los leemos cruzando tu carta natal, tu Matriz, tu numerología y tu Saju.</p>`;
+  if (!D.hora) h += '<p class="ag-ayuda">Sin tu hora de nacimiento no podemos ver las casas (como la 8 o la 12, las más espirituales). Si la conseguís, tu lectura se vuelve mucho más precisa.</p>';
+  h += '<p class="sub">Tus tres dones principales</p>';
+  D.top.forEach((k, i) => { const d = DONES[k], R = D.S[k].r, orig = [...new Set(R.map(x => x[0]))];
+    h += `<div class="don${i === 0 ? ' uno' : ''}"><div class="don-cab"><span>${d[0]}</span><div><small>${i === 0 ? 'Tu don más fuerte' : 'Tu don n.º ' + (i + 1)}</small><b>${d[1]}</b></div></div>
+      <p>${d[2]}</p><p class="don-orig">${orig.map(o => `<em>${ORIGEN_DON[o]}</em>`).join('')}</p>
+      <details class="don-por"><summary>Por qué lo tenés</summary><ul>${R.map(x => `<li>${esc(x[1])}.</li>`).join('')}</ul></details>
+      <p><b>Cómo desarrollarlo:</b> ${d[3]}</p><p class="don-herr">🔑 Tus herramientas: ${d[4]}</p></div>`; });
+  h += `<p class="sub">🌀 Lo que traés de otras vidas</p><p>Tu <b>Nodo Sur en ${ZOD[D.nsS]}</b>${D.hora ? ` (casa ${D.nsC})` : ''} muestra lo que tu alma ya sabe hacer de memoria. ${NODO_SUR[D.nsS]}</p>`;
+  if (D.mz) h += `<p class="sub">🌳 Lo que heredaste de tu linaje</p><ul class="num-lista">${D.mz.padre === D.mz.madre ? `<li><b>${romano(D.mz.padre)}</b><div><span>Por las dos líneas, la de tu padre y la de tu madre · ${esc(NOM[D.mz.padre])}</span>Las dos ramas de tu familia te dejan el mismo regalo, así que en vos se duplica: ${esc(luzDe(D.mz.padre))}.</div></li>` : `<li><b>${romano(D.mz.padre)}</b><div><span>Por la línea de tu padre · ${esc(NOM[D.mz.padre])}</span>Heredaste ${esc(luzDe(D.mz.padre))}.</div></li><li><b>${romano(D.mz.madre)}</b><div><span>Por la línea de tu madre · ${esc(NOM[D.mz.madre])}</span>Heredaste ${esc(luzDe(D.mz.madre))}.</div></li>`}<li><b>${romano(D.mz.B)}</b><div><span>Tu talento espiritual · ${esc(NOM[D.mz.B])}</span>Se activa cuando te conectás con lo espiritual: ${esc(luzDe(D.mz.B))}.</div></li></ul>`;
+  h += `<div class="don-cta"><p>¿Querés ir más profundo? En una lectura de <b>Registros Akáshicos</b>, Mey abre tu historia de alma y te cuenta de dónde vienen tus dones y para qué los traés.</p><button class="btn-sec oro" type="button" data-pedirregistros>Quiero mis Registros Akáshicos ✨</button></div>`;
+  return h + '<p class="ag-ayuda">Interpretación de Luz Guía a partir de tu carta natal (Neptuno, Plutón, Urano, las casas 6, 8, 9, 11 y 12 y el Nodo Sur), tu Matriz del Destino, tu numerología y tu Saju.</p>';
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-pedirregistros]')) pedir('Producto', 'Registros Akáshicos', 'Una lectura de Registros Akáshicos con Mey'); });
+
+// ── Tu zona de dinero ──
+const DIN_SIGNO = ['con iniciativa propia: la plata llega cuando arrancás algo y te animás primero. Ojo con gastar por impulso.', 'con constancia y buen gusto: lo lento y seguro te da riqueza. Lo bello, lo artesanal y la comida son tu terreno.', 'con la palabra: vender, enseñar, escribir y conectar personas. Tener más de una fuente de ingreso te sienta bien.', 'cuidando: lo que nutre, el hogar, la familia y la comida. Ahorrar te da paz, y tu intuición sabe cuándo invertir.', 'brillando: tu creatividad y tu marca personal valen oro. Cobrá lo que vale tu talento.', 'con método y servicio: ordenar, sanar, mejorar procesos. Te pagan por tu precisión.', 'en sociedad: alianzas, clientes y belleza. Asociarte bien multiplica tu plata.', 'con lo profundo: inversiones, herencias, terapia, lo oculto y la plata de otros. Transformás recursos.', 'expandiéndote: enseñar, viajar, lo extranjero y lo espiritual. Tu fe atrae abundancia.', 'construyendo a largo plazo: estructura, jerarquía y paciencia. Lo que armás, dura.', 'innovando: tecnología, comunidades y lo distinto. Te va mejor cuando rompés el molde.', 'con inspiración: el arte, lo espiritual y la sanación. Confiá, pero poné límites claros con el dinero.'];
+const JUP_CASA = ['en vos: tu presencia abre puertas', 'en tus ingresos: tenés facilidad para ganar', 'en la palabra, los cursos y los vecinos', 'en tu casa, la familia y las propiedades', 'en tu creatividad, tus hobbies y los emprendimientos', 'en tu trabajo diario y en servir a otros', 'en tus socios, tu pareja y tus clientes', 'en las inversiones, las herencias y el dinero compartido', 'en viajar, enseñar, estudiar y lo espiritual', 'en tu carrera y tu reconocimiento público', 'en tus amistades, tus redes y tus comunidades', 'en lo invisible: la intuición, la ayuda oculta y la espiritualidad'];
+const DIN_PL = { Sol: 'brillás cuando generás tu propia plata', Luna: 'tus ingresos suben y bajan como la Luna: armá un colchón', Mercurio: 'tu mente y tu palabra son tu capital', Venus: 'atraés plata con facilidad, sobre todo a través de lo bello', Marte: 'ganás peleándola, con energía y competencia', 'Júpiter': 'la abundancia te busca, cuidá no derrocharla', Saturno: 'la plata llega con esfuerzo, pero lo que construís es sólido', Urano: 'tus ingresos llegan por caminos inesperados', Neptuno: 'el dinero te llega por la inspiración o por lo espiritual; ojo con la confusión', 'Plutón': 'tenés poder de transformar recursos y reinventarte económicamente' };
+const DIN_RIT = [
+  'Ritual de fuego: un jueves (el día de Júpiter), encendé una vela dorada o verde, escribí cuánto querés ganar y para qué, y dejala consumir. Guardá el papel en tu billetera.',
+  'Ritual de tierra: poné una pirita y tres monedas en una maceta con una planta de dinero (potus o jade). Regá la planta con intención y cuidala vos.',
+  'Ritual de aire: escribí en un papel tres ideas para generar plata y leelas en voz alta en Luna creciente. Sahumá tu espacio de trabajo con canela.',
+  'Ritual de agua: en Luna llena, dejá un vaso de agua con un citrino a la luz de la Luna. A la mañana, lavate las manos con esa agua antes de trabajar.'];
+function premDinero(){
+  const n = natal(); if (!n) return faltaFecha;
+  const sg = l => Math.floor(nrm2(l) / 30), c2 = sg(n.cus[1]), jc = n.casa(n.pos['Júpiter']), mz = matrizCompleta(P.diaMes, P.anioNac);
+  let h = `<p class="intro">Tu zona de dinero es la forma en que la abundancia llega a tu vida. Para leerla cruzamos tu casa 2 (tus ingresos), tu Júpiter (tu suerte), tu Matriz del Destino y tu Saju.</p>`;
+  if (!n.hora) h += '<p class="ag-ayuda">Sin tu hora de nacimiento, las casas son aproximadas. Si la conseguís, esta lectura se vuelve mucho más precisa.</p>';
+  h += `<p class="sub">💰 Cómo generás tu plata · casa 2 en ${ZOD[c2]}</p><p>Ganás ${DIN_SIGNO[c2]}</p>`;
+  const en2 = PL_NAT.filter(p => n.casa(n.pos[p]) === 1), en8 = PL_NAT.filter(p => n.casa(n.pos[p]) === 7);
+  if (n.hora && (en2.length || en8.length)) h += `<ul class="num-lista">${en2.map(p => `<li><b>${TXT(GLIFO[p])}</b><div><span>${p} en tu casa 2</span>${DIN_PL[p]}.</div></li>`).join('')}${en8.map(p => `<li><b>${TXT(GLIFO[p])}</b><div><span>${p} en tu casa 8 (el dinero compartido)</span>${DIN_PL[p]}, sobre todo a través de inversiones, socios o herencias.</div></li>`).join('')}</ul>`;
+  h += `<p class="sub">🍀 Dónde está tu suerte · Júpiter en tu casa ${jc + 1}</p><p>Tu abundancia crece con facilidad ${JUP_CASA[jc]}. Cuando dudes por dónde moverte, empezá por ahí.</p>`;
+  if (mz) h += `<p class="sub">🔯 Tu canal del dinero en la Matriz</p><ul class="num-lista"><li><b>${romano(mz.P)}</b><div><span>Tu punto del dinero · ${esc(NOM[mz.P])}</span>${MZ_DINERO[mz.P] || esc(luzDe(mz.P))}</div></li><li><b>${romano(mz.L)}</b><div><span>Lo que destraba la plata · ${esc(NOM[mz.L])}</span>${esc(luzDe(mz.L))}.</div></li></ul>`;
+  const sj = sajuDe();
+  if (sj) { const a = sjAnalisis(sj), r = a.grupos.find(g => g.g[0] === 'plata');
+    h += `<p class="sub">☯️ El dinero en tu Saju</p><p>${r.n ? `Tenés ${r.n === 1 ? 'una estrella' : r.n + ' estrellas'} de riqueza en tu carta (${[...new Set(a.dioses.filter(d => ['pjae', 'jjae'].includes(d.d)).map(d => SJ_DIOS[d.d][0]))].join(' y ')}): ${a.dioses.some(d => d.d === 'pjae') ? 'el dinero que se mueve, los negocios y las oportunidades son lo tuyo' : 'lo tuyo es el dinero estable, el ahorro y el trabajo constante'}.` : 'En tu carta no aparece la estrella de la riqueza: no significa que no vayas a tener plata, sino que la generás a través de tu talento y tu camino, no persiguiéndola. Los meses de riqueza te la acercan.'} ${a.fuerte ? 'Como tu esencia es fuerte, podés manejar bien mucha plata y riesgo.' : 'Como tu esencia es sensible, te conviene la plata ordenada y sin riesgos grandes.'}</p>`; }
+  h += `<p class="sub">✨ Cómo potenciar tu zona de dinero</p><ul class="num-lista"><li><b>🕯️</b><div><span>Tu ritual de abundancia</span>${DIN_RIT[c2 % 4]}</div></li><li><b>📅</b><div><span>Tu día de la plata</span>Los jueves (Júpiter) para pedir, cobrar y lanzar; los viernes (Venus) para vender y negociar.</div></li><li><b>💎</b><div><span>Tus piedras</span>Pirita y citrino para atraer, ${['cornalina', 'aventurina verde', 'fluorita', 'piedra luna'][c2 % 4]} para tu forma de ganar.</div></li></ul>`;
+  h += sjMesHTML(true);
+  return h + `<div class="fila-bt" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn-sec" type="button" data-premir="vocacion">💼 Tus meses para moverte y tus mejores días</button></div>`;
+}
+PREM_FN.dones = () => premDones();
+PREM_FN.dinero = () => premDinero();
+(function(){
+  const add = (despues, item) => { if (PREMIUM_LISTA.some(x => x[0] === item[0])) return; const i = PREMIUM_LISTA.findIndex(x => x[0] === despues); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, item); };
+  add('draconica', ['dones', '🔮', 'Tus dones espirituales', 'Tus tres dones principales, cuáles traés de otras vidas, cuáles heredaste y cómo desarrollarlos.']);
+  add('vocacion', ['dinero', '💰', 'Tu zona de dinero', 'Cómo generás plata, dónde está tu suerte, tu canal del dinero y cómo potenciarlo.']);
+  PREM_VENTA.dones = 'Qué habilidades espirituales traés (clarividencia, sanación, canalización…), cuáles vienen de otras vidas, cuáles heredaste de tu linaje y cómo desarrollarlas paso a paso.';
+  PREM_VENTA.dinero = 'Cómo te llega la plata según tu carta, dónde está tu suerte, tu canal del dinero en la Matriz y en el Saju, y un ritual de abundancia hecho para vos.';
+  PREM_VENTA.revolucion = 'Tu Revolución Solar: cómo viene tu año de cumpleaños a cumpleaños, el tono general, cada área de tu vida, mes a mes y tus fechas clave.';
+  const gc = PREM_GRUPOS.find(x => x[0] === 'carta'); if (gc && !gc[4].includes('dones')) gc[4].splice(gc[4].indexOf('draconica') + 1, 0, 'dones');
+  const gt = PREM_GRUPOS.find(x => x[0] === 'tiempo'); if (gt && !gt[4].includes('dinero')) { gt[4].splice(gt[4].indexOf('vocacion') + 1, 0, 'dinero'); gt[2] = 'Tu tiempo y tu dinero'; gt[3] = 'Lo que viene para vos y cómo atraer abundancia'; }
+})();
+
+// ── La pregunta suelta (también para quien no es Premium) ──
+const precioPreg = () => String(P.precioPregunta || '').trim();
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-preguntasuelta]')) { const h = new Date(); pedir('Pregunta extra', 'Pregunta suelta ' + h.getFullYear() + '-' + (h.getMonth() + 1), 'Una pregunta respondida con tarot' + (precioPreg() ? ' (' + precioPreg() + ')' : '')); setTimeout(() => { const t = $('dlg-msg'); if (t) t.placeholder = 'Escribí tu pregunta acá (opcional, también la podés mandar después)'; }, 30); }
+});
+(function(){
+  const _rp = reordenarPremium;
+  reordenarPremium = function(h){
+    let out = _rp(h);
+    try {
+      const pr = precioPreg();
+      if (pr) out = out.replace(/Quiero una pregunta extra<\/button>/, 'Quiero una pregunta extra · ' + esc(pr) + '</button>');
+      if (!(P.premium && !VISTA_GRATIS)) {
+        const ya = (P.pedidos || []).some(x => /^Pregunta suelta/.test(x));
+        const caja = `<div class="preg-suelta"><span>💌</span><div><b>¿Solo querés hacer una pregunta?</b><p>Belu te la responde con una tirada de tarot hecha para vos, en video, dentro de las 48 a 72 horas.${pr ? ` Valor: <b>${esc(pr)}</b>.` : ''}</p>${ya ? '<p class="hecho">✓ Ya la pediste. Te escribimos para coordinar ✨</p>' : '<button class="btn-sec oro" type="button" data-preguntasuelta>Quiero hacer una pregunta</button>'}</div></div>`;
+        out = out.replace('<div class="prem-grupos">', caja + '<div class="prem-grupos">');
+      }
+    } catch (e) { console.error(e); }
+    return out;
+  };
+})();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();

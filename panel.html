@@ -3076,6 +3076,21 @@ V.miluz = () => {
   const h = _miluzOrigen();
   try { const i = h.indexOf('<h3'); const sec = miluzOrigenHTML(); return i > -1 ? h.slice(0, i) + sec + h.slice(i) : h + sec; } catch (e) { console.error(e); return h; }
 };
+
+/* v24: precio de la pregunta suelta (lo ven en Mi Luz) */
+function precioPreguntaHTML(){
+  const v = String(D.params.precioPregunta || '');
+  return `<div class="tabla-caja" style="padding:14px 16px;margin-bottom:14px"><p style="margin:0 0 8px"><b>💌 Precio de la pregunta suelta</b></p><p class="ayuda" style="margin:0 0 10px">Lo ve en Mi Luz cualquier persona (Premium o no) cuando quiere hacer una pregunta extra. Dejalo vacío si preferís "consultar".</p><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="campo" id="pp-valor" maxlength="40" placeholder="Ej: $10.000" value="${esc(v)}" style="max-width:200px"><button class="btn" type="button" id="pp-guardar">Guardar</button></div></div>`;
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('#pp-guardar'); if (!b) return;
+  b.disabled = true; const val = $('pp-valor').value.trim();
+  try { const d = await enviar({ accion: 'config', celda: 'B27', valor: val }); D.params.precioPregunta = d.valor != null ? d.valor : val; toast(val ? 'Listo: la pregunta suelta ahora sale ' + D.params.precioPregunta : 'Listo: la pregunta queda "a consultar"'); }
+  catch (err) { toast(err.message, true); }
+  b.disabled = false;
+});
+const _miluzPrecio = V.miluz;
+V.miluz = () => { const h = _miluzPrecio(); try { const i = h.indexOf('<h3'); return i > -1 ? h.slice(0, i) + precioPreguntaHTML() + h.slice(i) : h + precioPreguntaHTML(); } catch (e) { console.error(e); return h; } };
 </script>
 </body>
 </html>
