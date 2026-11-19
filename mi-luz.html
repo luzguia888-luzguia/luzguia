@@ -758,6 +758,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .nom-union p,.nom-cambio p{margin:0;font-size:.92rem;line-height:1.55}
 .nom-cambio .btn-sec{margin-top:10px}
 .nm-chk{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(212,175,106,.45);background:rgba(255,255,255,.05);font-size:.9rem;cursor:pointer}
+.nom-preg{margin:6px 0 0;padding-left:20px}.nom-preg li{margin:4px 0;font-size:.92rem;font-style:italic}
 </style>
 </head>
 <body>
@@ -6106,48 +6107,95 @@ function transitoEdad(e){
   if ((e >= 21 && e <= 22) || (e >= 7 && e <= 8) || (e >= 50 && e <= 52)) return { t: 'En una cuadratura de Saturno', x: 'un tiempo de construir estructura propia y de afirmarte frente a los demás' };
   return { t: 'A esa edad', x: 'tu camino te pedía un cambio de piel' };
 }
+const MOTIVOS_NOM = [['cambio', 'Lo cambié en un momento de mi vida'], ['siempre', 'Siempre me llamaron así'], ['gusto', 'Me gusta más este'], ['apodo', 'Es un apodo o un nombre espiritual']];
+const EP_PL = { 'Plutón': [5, 'una transformación profunda: algo tuyo tenía que morir para renacer', '¿Qué terminó o se transformó por completo en tu vida ese año?'], 'Neptuno': [4.5, 'un tiempo de disolver la identidad conocida y buscar algo más verdadero o espiritual', '¿Qué sueño o qué búsqueda espiritual apareció en ese momento?'], 'Urano': [4.5, 'un despertar: la necesidad urgente de libertad y de mostrarte como sos', '¿De qué te liberaste? ¿Qué rompiste para poder ser vos?'], 'Saturno': [4, 'madurez y límites: dejar lo heredado y hacerte cargo de quién sos', '¿Qué responsabilidad asumiste o qué mandato dejaste atrás?'], 'Nodo': [3, 'un llamado del destino, un giro hacia tu propósito', '¿Qué encuentro o qué decisión cambió tu rumbo?'], 'Júpiter': [2, 'expansión y fe: animarte a ser más grande', '¿Qué puerta nueva se abrió? Un viaje, un estudio, una persona…'] };
+const EP_PT = { Sol: [3, 'tu identidad y tu esencia'], Asc: [3, 'tu forma de presentarte al mundo, justo lo que expresa un nombre'], Luna: [2.5, 'tus emociones y tu historia familiar'], MC: [2, 'tu lugar en el mundo y cómo te ven'], Venus: [1.5, 'tu valor propio y cómo te querés'] };
+const EP_ASP = [[0, 'se unía con', 1], [180, 'se oponía a', .9], [90, 'tensionaba', .8]];
+function episodiosNombre(edad){
+  const n = natal(); if (!n) return [];
+  const m = String(P.diaMes).match(/(\d{2})\/(\d{2})/); if (!m) return [];
+  const ini = jdDe(new Date(Date.UTC(+P.anioNac + (+edad), +m[2] - 1, +m[1], 12)));
+  const pts = { Sol: n.pos.Sol, Luna: n.pos.Luna, Venus: n.pos.Venus }; if (n.hora) { pts.Asc = n.asc; pts.MC = n.mc; }
+  const hits = {};
+  for (let d = 0; d <= 365; d += 8) {
+    const t = posTodas(ini + d);
+    Object.keys(EP_PL).forEach(pl => {
+      const lt = t[pl]; if (lt == null) return;
+      const orbe = pl === 'Júpiter' ? 2 : 1.5;
+      const objetivos = Object.assign({}, pts); if (['Saturno', 'Júpiter', 'Nodo', 'Urano'].includes(pl) && n.pos[pl] != null) objetivos['propio'] = n.pos[pl];
+      Object.keys(objetivos).forEach(pt => EP_ASP.forEach(([ang, verbo, w]) => {
+        let dif = Math.abs(nrm2(lt - objetivos[pt]) - ang); if (ang === 0) dif = Math.min(dif, 360 - nrm2(lt - objetivos[pt]));
+        if (dif > orbe) return;
+        if (pt === 'propio' && !((pl === 'Urano' && ang === 180) || ang === 0 || (pl === 'Saturno' && ang === 180))) return;
+        const k = pl + '|' + pt + '|' + ang, peso = EP_PL[pl][0] * (pt === 'propio' ? 3 : EP_PT[pt][0]) * w;
+        if (!hits[k] || hits[k].dif > dif) hits[k] = { pl, pt, ang, verbo, peso, dif };
+      }));
+    });
+  }
+  const out = [], vistos = new Set(); Object.values(hits).sort((a, b) => b.peso - a.peso).forEach(h => { if (out.length < 2 && !vistos.has(h.pl)) { vistos.add(h.pl); out.push(h); } }); return out;
+}
+function episodioTxt(h){
+  if (h.pt === 'propio') {
+    const nom = h.pl === 'Saturno' ? (h.ang === 0 ? 'tu retorno de Saturno' : 'tu oposición de Saturno') : h.pl === 'Júpiter' ? 'tu retorno de Júpiter' : h.pl === 'Nodo' ? 'tu retorno de los nodos lunares' : 'tu oposición de Urano';
+    return `Estabas en ${nom}: ${EP_PL[h.pl][1]}.`;
+  }
+  return `${h.pl === 'Nodo' ? 'El Nodo Norte' : h.pl} ${h.verbo} ${h.pt === 'Asc' ? 'tu Ascendente' : h.pt === 'MC' ? 'tu Medio Cielo' : 'tu ' + h.pt} natal, que habla de ${EP_PT[h.pt][1]}: ${EP_PL[h.pl][1]}.`;
+}
 function nombresExtraHTML(){
   try {
-    const ns = misNombres(), eleg = capi(P.nombreElegido || ''), edad = +P.edadCambio || 0;
+    const ns = misNombres(), eleg = capi(P.nombreElegido || ''), edad = +P.edadCambio || 0, mot = P.motivoNombre || (edad ? 'cambio' : '');
     let h = '<div class="nombres-extra">';
     if (ns.length >= 2) {
       const cards = ns.map(w => { const raw = numPalabra(w), n = arcDeNum(raw), s = significadoNombre(w); return { w, raw, n, s }; });
       const u = arcDeNum(cards.reduce((a, c) => a + c.raw, 0));
       h += `<p class="sub">Tus nombres, uno por uno</p><div class="nombres-cartas">${cards.map(c => `<div class="nom-c${eleg && sinTildes(c.w) === sinTildes(eleg) ? ' elegido' : ''}"><b>${esc(c.w)}</b><span>${romano(c.n)} · ${esc(NOM[c.n])}</span><p data-nogen>${c.s ? esc(c.s) : 'Su significado lo sumamos pronto ✨'}</p></div>`).join('')}</div>
-        <div class="nom-union"><small>La unión de tus nombres</small><b>${romano(u)} · ${esc(NOM[u])}</b><p>${cards.map((c, i) => `${i === 0 ? '' : i === cards.length - 1 ? ' y ' : ', '}<i>${esc(c.w)}</i> aporta ${esc(luzDe(c.n))}`).join('')}. Juntos suman <b>${esc(NOM[u])}</b>: ${esc(luzDe(u))}. Tu camino es integrar esas energías, no elegir una sola.</p></div>`;
+        <div class="nom-union"><small>La unión de tus ${cards.length} nombres</small><b>${romano(u)} · ${esc(NOM[u])}</b><p>${cards.map((c, i) => `${i === 0 ? '' : i === cards.length - 1 ? ' y ' : ', '}<i>${esc(c.w)}</i> aporta ${esc(luzDe(c.n))}`).join('')}. Juntos suman <b>${esc(NOM[u])}</b>: ${esc(luzDe(u))}. Tu camino es integrar esas energías, no elegir una sola.</p></div>`;
     }
-    if (eleg && edad && ns.length && P.diaMes && P.anioNac) {
+    if (eleg && mot && mot !== 'cambio') {
+      const B = arcDeNum(numPalabra(eleg));
+      h += `<div class="nom-union"><small>El nombre que elegís</small><b>${esc(eleg)} · ${esc(NOM[B])}</b><p>${mot === 'apodo' ? 'Un apodo o un nombre espiritual es un nombre que te ganaste: ' : mot === 'siempre' ? 'Es el nombre con el que te conocen desde siempre: ' : 'Es el nombre en el que te reconocés: '}vibra con ${esc(NOM[B])}, ${esc(luzDe(B))}. Es la energía con la que te presentás al mundo.</p></div>`;
+    }
+    if (eleg && mot === 'cambio' && ns.length && P.diaMes && P.anioNac) {
       const orig = ns.find(w => sinTildes(w) !== sinTildes(eleg)) || ns[0];
-      const A = arcDeNum(numPalabra(orig)), B = arcDeNum(numPalabra(eleg)), tr = transitoEdad(edad), anioArc = arcanoDeAnio(P.diaMes, (+P.anioNac) + edad);
-      const txt = `${tr.t} (a los ${edad}), ${tr.x}, empezaste a llamarte ${eleg}. Ese año transitabas el arcano ${romano(anioArc)} · ${NOM[anioArc]}: ${luzDe(anioArc)}. Pasaste de ${orig}, que vibra con ${NOM[A]} (${luzDe(A)}), a ${eleg}, que vibra con ${NOM[B]} (${luzDe(B)}). No fue casual: es como si una parte tuya que vivía en ${luzDe(B)} hubiera pedido lugar. El nombre que elegiste es la energía que viniste a encarnar desde ese momento.`;
-      h += `<div class="nom-cambio"><small>Tu cambio de nombre · a los ${edad}</small><b>De ${esc(orig)} a ${esc(eleg)}</b>`;
-      h += P.premium ? `<p>${esc(txt)}</p>` : `<div class="teaser-velo"><p>${esc(txt)}</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí por qué cambiaste de nombre ✨</button>`;
-      h += '</div>';
+      if (!edad) h += `<div class="nom-cambio"><small>Tu cambio de nombre</small><b>De ${esc(orig)} a ${esc(eleg)}</b><p>Contanos desde qué edad usás ${esc(eleg)} y leemos qué estaba pasando en tu carta en ese momento.</p></div>`;
+      else {
+        const A = arcDeNum(numPalabra(orig)), B = arcDeNum(numPalabra(eleg)), anioArc = arcanoDeAnio(P.diaMes, (+P.anioNac) + edad);
+        let eps = []; try { eps = episodiosNombre(edad); } catch (e) { console.error(e); }
+        const cielo = eps.length ? `Ese año, en tu carta: ${eps.map((x, i) => { const t = episodioTxt(x); return i ? 'Además, ' + t[0].toLowerCase() + t.slice(1) : t; }).join(' ')}` : (() => { const tr = transitoEdad(edad); return `${tr.t}: ${tr.x}.`; })();
+        const preg = [...new Set(eps.map(x => EP_PL[x.pl][2]).concat(['¿Quién fue la primera persona en llamarte ' + eleg + '?', '¿Qué parte tuya sentís que nombra ' + eleg + ' y no nombraba ' + orig + '?']))].slice(0, 3);
+        const txt = `A los ${edad} empezaste a llamarte ${eleg}. ${cielo} También transitabas el arcano ${romano(anioArc)} · ${NOM[anioArc]}: ${luzDe(anioArc)}. Pasaste de ${orig}, que vibra con ${NOM[A]} (${luzDe(A)}), a ${eleg}, que vibra con ${NOM[B]} (${luzDe(B)}). No fue casual: una parte tuya que vivía en ${luzDe(B)} pidió lugar, y el nombre que elegiste es la energía que viniste a encarnar desde ahí.`;
+        h += `<div class="nom-cambio"><small>Tu cambio de nombre · a los ${edad}</small><b>De ${esc(orig)} a ${esc(eleg)}</b>`;
+        h += P.premium ? `<p>${esc(txt)}</p><p class="sub" style="margin-top:12px">Para escribir en tu diario</p><ul class="nom-preg">${preg.map(q => `<li>${esc(q)}</li>`).join('')}</ul>`
+          : `<div class="teaser-velo"><p>${esc(txt)}</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí qué pasaba en tu carta cuando cambiaste de nombre ✨</button>`;
+        h += '</div>';
+      }
     }
     h += `<p class="fila-comp"><button class="btn-sec" type="button" data-misnombres>✏️ ${eleg || ns.length >= 2 ? 'Editar mis nombres' : '¿Tenés más de un nombre o usás otro?'}</button></p></div>`;
     return h;
   } catch (e) { console.error(e); return ''; }
 }
 function abrirNombres(){
-  const pal = String(P.nombreCompleto || P.nombre || '').trim().split(/\s+/).filter(Boolean), ns = misNombres().map(sinTildes);
+  const pal = String(P.nombreCompleto || P.nombre || '').trim().split(/\s+/).filter(Boolean), ns = misNombres().map(sinTildes), mot = P.motivoNombre || (P.edadCambio ? 'cambio' : '');
   $('dlg-titulo').textContent = '✏️ Tus nombres';
-  $('dlg-texto').textContent = 'Así leemos el significado de cada nombre, su unión y, si cambiaste de nombre, qué estaba pasando en tu vida.';
-  $('dlg-cuerpo').innerHTML = `<p class="ag-ayuda">1. Marcá cuáles son tus nombres (no los apellidos):</p><div class="pron-opc" id="nm-pal">${pal.map(w => `<label class="nm-chk"><input type="checkbox" value="${esc(w)}"${ns.includes(sinTildes(w)) ? ' checked' : ''}> ${esc(capi(w))}</label>`).join('')}</div>
+  $('dlg-texto').textContent = 'Así leemos el significado de cada nombre, su unión y, si cambiaste de nombre, qué estaba pasando en tu carta.';
+  $('dlg-cuerpo').innerHTML = `<p class="ag-ayuda">1. Marcá todos tus nombres (los apellidos, no):</p><div class="pron-opc" id="nm-pal">${pal.map(w => `<label class="nm-chk"><input type="checkbox" value="${esc(w)}"${ns.includes(sinTildes(w)) ? ' checked' : ''}> ${esc(capi(w))}</label>`).join('')}</div>
     <label class="diario-lab">2. ¿Cómo te gusta que te llamen?<input class="campo-codigo" id="nm-eleg" maxlength="30" value="${esc(P.nombreElegido || P.nombre || '')}" placeholder="Tu nombre"></label>
-    <label class="diario-lab">3. Si empezaste a usar otro nombre, ¿desde qué edad? (opcional)<input class="campo-codigo" id="nm-edad" type="number" min="1" max="99" inputmode="numeric" value="${esc(P.edadCambio || '')}" placeholder="Ej: 29"></label>
+    <label class="diario-lab">3. ¿Por qué ese nombre?<select class="campo-codigo" id="nm-mot"><option value="">Elegí una opción</option>${MOTIVOS_NOM.map(([k, t]) => `<option value="${k}"${mot === k ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
+    <label class="diario-lab" id="nm-edad-lab"${mot === 'cambio' ? '' : ' hidden'}>4. ¿Desde qué edad usás ese nombre?<input class="campo-codigo" id="nm-edad" type="number" min="1" max="99" inputmode="numeric" value="${esc(P.edadCambio || '')}" placeholder="Ej: 29"></label>
     <div class="fila-bt"><button class="btn" type="button" id="nm-ok">Guardar</button></div><p class="ag-ayuda" id="nm-est"></p>`;
   if (!$('dlg').open) $('dlg').showModal();
+  $('nm-mot').onchange = () => { $('nm-edad-lab').hidden = $('nm-mot').value !== 'cambio'; };
   $('nm-ok').onclick = guardarNombres;
 }
 async function guardarNombres(){
   const nombres = [...document.querySelectorAll('#nm-pal input:checked')].map(i => i.value).join(' ');
-  const eleg = $('nm-eleg').value.trim().replace(/\s+/g, ' '), edad = $('nm-edad').value.trim();
+  const eleg = $('nm-eleg').value.trim().replace(/\s+/g, ' '), mot = $('nm-mot').value, edad = mot === 'cambio' ? $('nm-edad').value.trim() : '';
   if (!eleg) { $('nm-eleg').focus(); return; }
   if (edad && !(+edad >= 1 && +edad <= 99)) { $('nm-edad').focus(); return; }
   const b = $('nm-ok'); b.disabled = true; $('nm-est').textContent = 'Guardando…';
-  let d = {}; try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, nombres, nombreElegido: eleg, edadCambio: edad }) }); d = await r.json(); } catch (e) {}
+  let d = {}; try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, nombres, nombreElegido: eleg, edadCambio: edad, motivoNombre: mot }) }); d = await r.json(); } catch (e) {}
   if (!d.ok) { b.disabled = false; $('nm-est').textContent = d.error || 'No se pudo guardar. Revisá tu conexión y probá de nuevo.'; return; }
-  P.nombres = d.nombres != null ? d.nombres : nombres; P.nombreElegido = d.nombreElegido != null ? d.nombreElegido : eleg; P.edadCambio = d.edadCambio != null ? d.edadCambio : edad;
+  P.nombres = d.nombres != null ? d.nombres : nombres; P.nombreElegido = d.nombreElegido != null ? d.nombreElegido : eleg; P.edadCambio = d.edadCambio != null ? d.edadCambio : edad; P.motivoNombre = d.motivoNombre != null ? d.motivoNombre : mot;
   if (P.nombreElegido) P.nombre = P.nombreElegido;
   evento('Sección', 'Editó sus nombres');
   $('dlg').close(); const y = window.scrollY; pintar(); window.scrollTo(0, y);
