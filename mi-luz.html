@@ -864,6 +864,8 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .energia-hoy li{display:flex;gap:10px;align-items:flex-start}.energia-hoy li>span{font-size:1.15rem;line-height:1.4}.energia-hoy li p{margin:0;font-size:.92rem;line-height:1.5}
 .glos-buscar{padding:0 16px 6px;display:flex;flex-direction:column;gap:4px}.glos-buscar input{width:100%;box-sizing:border-box}.glos-buscar small{color:#BDB2CF;font-size:.78rem}
 .glos-item[hidden]{display:none}.glos-item.glos-top dt{color:#FFE3A0}
+.glos-link{background:none;border:0;padding:0;font:inherit;font-weight:600;color:#F3DCA0;text-decoration:underline dotted rgba(243,220,160,.7);text-underline-offset:3px;cursor:pointer;text-align:inherit}
+.glos-lista{max-height:60vh;overflow-y:auto;overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -7606,6 +7608,72 @@ document.addEventListener('input', e => {
 (function(){
   const _a = arcanosHTML; arcanosHTML = function(){ return _a() + glosarioHTML(); };
   const _h = hoyHTML; hoyHTML = function(){ return _h() + glosarioHTML(); };
+})();
+
+
+/* ───── v44: el diccionario completo (cada nombre que usa la app) y palabras tocables ───── */
+const GLOS_SEC = {}; // término → sección de Premium donde se profundiza
+(function(){
+  const add = (t, d, sec) => { if (!GLOSARIO.some(x => x[0] === t)) GLOSARIO.push([t, d]); if (sec) GLOS_SEC[t] = sec; };
+  ['Saju', 'Cuatro pilares', 'Elemento esencial (Maestro del Día)', 'Cinco elementos', 'Elemento aliado', 'Diez dioses', 'Energías escondidas'].forEach(t => GLOS_SEC[t] = 'saju');
+  ['Diseño Humano', 'Bodygraph', 'Tipo (Diseño Humano)', 'Estrategia', 'Autoridad interna', 'Perfil', 'Centros definidos y abiertos', 'Canales', 'Cruz de encarnación'].forEach(t => GLOS_SEC[t] = 'hd');
+  ['Nakshatra', 'Pada', 'Astrología védica (Jyotish)', 'Zodíaco sideral', 'Dasha'].forEach(t => GLOS_SEC[t] = 'vedica');
+  ['Número Kua', 'Feng Shui'].forEach(t => GLOS_SEC[t] = 'kua');
+  GLOS_SEC['Dones espirituales'] = 'dones'; GLOS_SEC['Zona de dinero'] = 'dinero'; GLOS_SEC['Revolución Solar'] = 'revolucion'; GLOS_SEC['Carta dracónica'] = 'draconica'; GLOS_SEC['Matriz del Destino'] = 'matriz'; GLOS_SEC['Sinastría'] = 'compat';
+  NAKS.forEach((n, i) => add(n[0], `La mansión lunar n.º ${i + 1} de las 27 de la astrología védica (un Nakshatra). Su tema es ${n[6].toLowerCase()}. Su deidad es ${n[1]}, su símbolo ${n[2]} y su animal, el ${n[3].toLowerCase()}. Cuando "la Luna pasa por ${n[0]}", ese día se tiñe de su energía.`, 'vedica'));
+  Object.values(SJ_DIOS).forEach(D => add(D[0] + ' (Saju)', `Uno de los diez dioses del Saju (${D[1]}). Habla de ${D[2]}. Cuando un día o un mes "es de ${D[0]}", esa energía se activa en tu vida, según tu elemento esencial.`, 'saju'));
+  SJ_EL.forEach((e, i) => add(e + ' (elemento)', `Uno de los cinco elementos (${SJ_ELH[i]}). Representa ${SJ_ELTXT[i]}. Colores: ${SJ_REM[i].col}. Piedras: ${SJ_REM[i].pied.join(', ').toLowerCase()}.`, 'saju'));
+  KIN_SELLO.forEach(S => add(`${S[0]} ${S[1]} (sello maya)`, `Uno de los 20 sellos del Sincronario de las 13 Lunas. Su acción es ${S[3].toLowerCase()} y su poder, ${S[4]}. ${S[5]}`));
+  KIN_TONO.forEach((T, i) => add(`Tono ${T[0].toLowerCase()} (${i + 1})`, `El tono ${i + 1} de los 13 del Sincronario. Su acción es ${T[1]}, y su pregunta: ${T[2]}`));
+  Object.values(HD_TIPOS).forEach(T => add(T[0] + ' (Diseño Humano)', `Uno de los 5 tipos del Diseño Humano (${T[2]}% de las personas). ${T[7]} Su estrategia: ${T[3].toLowerCase()}.`, 'hd'));
+  Object.values(HD_AUT).forEach(A => add('Autoridad ' + A[0].toLowerCase(), 'Una de las formas de tomar decisiones en el Diseño Humano. ' + A[1], 'hd'));
+  ARBOLES.forEach(A => add(A[0] + ' (árbol celta)', `Uno de los 13 árboles del calendario celta (Ogham ${A[1]} ${A[2]}): ${A[4].toLowerCase()}. ${A[5]}`));
+  DASHA.forEach(d => add(`Período de ${d[0]} (dasha)`, `En la astrología védica, el gran período de ${d[0]} dura ${d[1]} años: ${d[2]}.`, 'vedica'));
+  KUA_TIPO.forEach(T => add(T[0] + ' (Feng Shui)', `Una de las 8 direcciones del Feng Shui personal: ${T[1].toLowerCase()}. ${T[3]}`, 'kua'));
+  add('Mahadasha y antardasha', 'En los dashas védicos, el mahadasha es tu gran período planetario (dura años) y el antardasha, el subperíodo que va cambiando dentro de él.', 'vedica');
+  add('Kin del día', 'La energía maya de cada día en el Sincronario. Cambia todos los días y se relaciona con tu kin de nacimiento.');
+  add('Firma y señal de alerta', 'En el Diseño Humano, la firma es la sensación que aparece cuando vivís según tu diseño (paz, satisfacción, éxito o sorpresa). La señal de alerta (enojo, frustración, amargura o decepción) te avisa que te desviaste.', 'hd');
+  add('Definición (Diseño Humano)', 'Cómo se conectan entre sí tus centros definidos: simple (todo unido), partida (dos grupos), triple o cuádruple.', 'hd');
+  add('Puertas (Diseño Humano)', 'Los 64 puntos del bodygraph, uno por cada hexagrama del I Ching. Cada planeta activa una puerta según dónde estaba.', 'hd');
+  add('Aura (Diseño Humano)', 'La forma en que tu energía se relaciona con la de los demás: abierta, cerrada, enfocada o muestreadora, según tu tipo.', 'hd');
+  add('Mansión lunar', 'Otra forma de llamar a los Nakshatras: las 27 "casas" por las que pasa la Luna en un mes.', 'vedica');
+  add('Arcángel', 'Cada uno de los guías de los nueve coros de ángeles (Metatrón, Raziel, Rafael, Miguel, Gabriel…).');
+  add('Pregunta del mes', 'En Premium, una pregunta por mes que Belu te responde con una tirada de tarot hecha para vos, en video.');
+  add('Tirada del mes', 'La lectura de tarot que Belu hace cada mes para toda la comunidad: qué energía trae, qué soltar y un consejo.');
+  add('Luna de tu árbol', 'Cada árbol celta gobierna una luna (unas cuatro semanas). Cuando llega la de tu árbol, es un tiempo de poder para vos.');
+})();
+function glosBuscarT(t){ const q = sinT(t); return GLOSARIO.find(x => sinT(x[0]) === q) || GLOSARIO.find(x => sinT(x[0]).startsWith(q + ' (')) || null; }
+const glosLink = (texto, termino) => `<button type="button" class="glos-link" data-glos="${esc(termino || texto)}">${esc(texto)}</button>`;
+const SEC_NOM = { saju: 'tu Saju', hd: 'tu Diseño Humano', vedica: 'tu astrología védica', kua: 'tu Feng Shui', dones: 'tus dones espirituales', dinero: 'tu zona de dinero', revolucion: 'tu Revolución Solar', draconica: 'tu carta dracónica', matriz: 'tu Matriz del Destino', compat: 'la compatibilidad' };
+function abrirGlosTermino(t){
+  const g = glosBuscarT(t); if (!g) return;
+  const sec = GLOS_SEC[g[0]], prem = P.premium && !VISTA_GRATIS;
+  $('dlg-titulo').textContent = '📖 ' + g[0]; $('dlg-texto').textContent = g[1];
+  $('dlg-cuerpo').innerHTML = `<div class="fila-bt">${sec && PREM_FN[sec] ? `<button class="btn-sec oro" type="button" id="glos-ir">${prem ? 'Ver ' + SEC_NOM[sec] : 'Descubrí ' + SEC_NOM[sec] + ' en Premium ✨'}</button>` : ''}<button class="btn" type="button" id="glos-ok">Entendido</button></div>`;
+  if (!$('dlg').open) $('dlg').showModal();
+  $('glos-ok').onclick = () => $('dlg').close();
+  if ($('glos-ir')) $('glos-ir').onclick = () => { $('dlg').close(); abrirPremium(sec); };
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-glos]'); if (b) { e.preventDefault(); abrirGlosTermino(b.dataset.glos); } });
+// Tu energía de hoy, con cada palabra tocable
+energiaHoyHTML = function(){
+  const L = [];
+  try { const sj = sajuDe(); if (sj) { const d = sjDiaHoy(), dd = sjDios(sj.dm, d.s), g = SJ_GRUPO.find(x => x[2].includes(dd)); L.push(['☯️', `En tu ${glosLink('Saju')}, hoy es un día de ${glosLink(SJ_DIOS[dd][0], SJ_DIOS[dd][0] + ' (Saju)')}: ${SJ_DIA_TXT[g[0]]}.`]); } } catch (e) {}
+  try { const yo = kinNacimiento(), h = new Date(), K = kinDe(kinNum(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate())));
+    if (yo) { const rel = K.s === yo.s ? 'es tu mismo sello: un día de poder' : K.s === yo.guia ? 'trae tu sello guía: escuchá las señales' : K.s === yo.analogo ? 'trae tu sello aliado: todo fluye más fácil' : K.s === yo.antipoda ? 'trae tu sello desafío: paciencia, que te fortalece' : K.s === yo.oculto ? 'trae tu poder oculto: animate a lo que no te animás' : K.t === yo.t ? 'tiene tu mismo tono: estás en sintonía' : '';
+      L.push(['🌀', `El ${glosLink('kin', 'Kin del día')} de hoy es ${glosLink(K.nombre, K.S[0] + ' ' + K.S[1] + ' (sello maya)')}${rel ? `, y <b>${rel}</b>` : `: trae ${K.S[4]}`}.`]); } } catch (e) {}
+  try { const { N, nak } = naksHoy(), V = vedicaDe(); L.push(['🪷', `La Luna pasa por ${glosLink(nak[0])}${V && V.N.i === N.i ? ', ¡tu propia mansión lunar! Un día muy tuyo' : ': energía de ' + nak[6].toLowerCase()}.`]); } catch (e) {}
+  try { const sj = sajuDe(), ma = sjMesActual(); if (sj && ma) { const dd = sjDios(sj.dm, ma.m.s), g = SJ_GRUPO.find(x => x[2].includes(dd)); L.push(['🗓️', `Estás en tu mes de ${glosLink(SJ_DIOS[dd][0], SJ_DIOS[dd][0] + ' (Saju)')} del Saju: un mes de ${g[1].toLowerCase()}.`]); } } catch (e) {}
+  try { const V = vedicaDe(); if (V && V.act) L.push(['🪐', `Y en tu gran período (${glosLink('dasha', 'Dasha')}) de ${glosLink(V.act.d[0], 'Período de ' + V.act.d[0] + ' (dasha)')}${V.sub ? ', con un toque de ' + glosLink(V.sub.d[0], 'Período de ' + V.sub.d[0] + ' (dasha)') : ''}.`]); } catch (e) {}
+  try { const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/), h = new Date(); if (m && arbolDe(h.getDate(), h.getMonth() + 1) === arbolDe(+m[1], +m[2])) L.push(['🌳', `Además, es la ${glosLink('luna de tu árbol celta', 'Luna de tu árbol')}: un tiempo de poder para vos.`]); } catch (e) {}
+  if (L.length < 2) return '';
+  const nom = sjNombre(), prem = P.premium && !VISTA_GRATIS;
+  return `<div class="energia-hoy"><small>Tu energía de hoy${nom ? ', ' + esc(nom) : ''}</small><b>Lo que te dicen todas las tradiciones</b><ul>${L.map(([i, t]) => `<li><span>${i}</span><p>${t}</p></li>`).join('')}</ul><p class="ag-ayuda" style="margin:8px 0 0">Cambia todos los días. Tocá las palabras subrayadas para saber qué significan${prem ? '' : ', y descubrí en Premium tu lectura completa de cada tradición ✨'}.</p></div>`;
+};
+// el diccionario con su lista en una caja con scroll (ya son muchas palabras)
+(function(){
+  const _g = glosarioHTML;
+  glosarioHTML = function(){ return _g().replace('<dl>', '<dl class="glos-lista">'); };
 })();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
