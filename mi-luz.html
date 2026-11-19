@@ -797,6 +797,15 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .sj-meses small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.05em}
 .sj-meses b{display:block;color:#F3DCA0;font-weight:600;margin:2px 0}
 .sj-meses p{margin:0;font-size:.88rem;line-height:1.5}
+.sj-que{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px dashed rgba(212,175,106,.35);margin:6px 0 12px}
+.sj-que p{margin:0 0 8px;font-size:.9rem;line-height:1.55}.sj-que p:last-child{margin:0}
+.sj-areas{display:grid;gap:10px;margin:10px 0 14px}
+.sj-area{padding:12px 14px;border-radius:14px;border:1px solid rgba(212,175,106,.3);background:rgba(59,23,96,.3)}
+.sj-area.vacia{opacity:.8;border-style:dashed}
+.sj-area-cab{display:flex;align-items:center;gap:8px}.sj-area-cab>span{font-size:1.3rem}.sj-area-cab>b{flex:1;color:#F3DCA0;font-family:var(--serif);font-size:1.15rem}.sj-area-cab>i{font-style:normal;color:#F3DCA0;letter-spacing:2px;font-size:.8rem}
+.sj-area ul{margin:8px 0 0;padding-left:18px}.sj-area li{font-size:.88rem;line-height:1.5;margin-bottom:6px}.sj-area li small{color:#E8A0B4}
+.sj-area>p{margin:8px 0 0;font-size:.86rem;line-height:1.5}
+.sj-meses p.sj-desp{color:#F3DCA0;font-size:.8rem;margin-top:4px}
 </style>
 </head>
 <body>
@@ -6486,11 +6495,18 @@ function premSaju(){
   const prods = (P.productos || []).filter(x => !x.agotado && (R.rx.test((x.nombre || '') + ' ' + (x.categoria || '')) || RA.rx.test((x.nombre || '') + ' ' + (x.categoria || '')))).slice(0, 4);
   if (prods.length) h += `<p class="sub">En nuestra tienda, para tu equilibrio</p><div class="sj-prods">${prods.map(x => `<button type="button" class="sj-prod" data-irtab="productos">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy">` : '<span>💎</span>'}<b>${esc(x.nombre)}</b>${x.precio ? `<small>$${Number(x.precio).toLocaleString('es-AR')}</small>` : ''}</button>`).join('')}</div>`;
   else h += `<p class="ag-ayuda">¿Querés una piedra para tu ${SJ_EL[foco]}? Escribinos y te la conseguimos 💜</p>`;
-  // diez dioses
+  // diez dioses: las 5 áreas de tu vida, explicadas en simple
+  const SJ_DONDE = ['en tus raíces (tu familia y tu infancia)', 'en tu entorno (tu trabajo y tu juventud)', 'en tu vida íntima y tu pareja', 'en tus proyectos y tu futuro'];
+  const SJ_AREA_IC = { yo: '🤝', exp: '🎨', plata: '💰', poder: '🏔️', sabe: '📜' };
   const gr = a.grupos.slice().sort((x, y) => y.n - x.n), top = gr[0], nada = a.grupos.filter(g => !g.n);
-  h += `<p class="sub">Tus diez dioses (십성)</p><p class="ag-ayuda" style="margin-top:0">En el Saju, cada carácter de tu carta se relaciona con tu elemento esencial de una forma distinta. Esas relaciones se llaman los diez dioses, y muestran dónde está puesta tu energía.</p>
-    <p><b>Tu fuerza dominante: ${top.g[1]}.</b> ${top.g[3]}</p>${nada.length ? `<p><b>Lo que vas a aprender:</b> no tenés energía de ${sjLista(nada.map(g => g.g[1].toLowerCase()))} en tu carta. Eso no significa que te falte en la vida: significa que lo vas construyendo con conciencia, y que llega a través de otras personas y de los años que lo activan.</p>` : ''}
-    <ul class="num-lista">${a.dioses.map(x => { const D = SJ_DIOS[x.d]; return `<li><b>${SJ_PILAR[x.pos][0].slice(0, 1)}${x.arriba ? '↑' : '↓'}</b><div><span>${esc(D[0])} · ${D[1]}</span>En tu pilar del ${SJ_PILAR[x.pos][0].toLowerCase()} (${x.arriba ? 'cielo' : 'tierra'}): ${D[2]}.</div></li>`; }).join('')}</ul>`;
+  h += `<p class="sub">Tus diez dioses (십성): las 5 áreas de tu vida</p>
+    <div class="sj-que"><p><b>¿Qué son?</b> En el Saju, cada carácter de tu carta habla de un área de tu vida: <b>vos y tu gente, tu expresión, tu dinero, tu camino y tu sabiduría</b>. A esas energías se las llama "los diez dioses" (son 10 porque cada área tiene dos versiones).</p>
+    <p><b>¿Dónde se ven?</b> En tu personalidad y en tu historia. Las áreas que más aparecen en tu carta son las que más se notan en tu vida: lo que te sale natural, lo que te pasa una y otra vez.</p>
+    <p><b>¿Cuándo se activan?</b> Están siempre con vos, pero se encienden más fuerte en los años y meses que traen esa misma energía. Por eso, más abajo, en <b>Tu año</b> y <b>Mes a mes</b>, te marcamos con ✦ cuándo se despierta algo que ya está en tu carta.</p></div>
+    <p><b>Lo que más se nota en vos: ${top.g[1].toLowerCase()}.</b> ${top.g[3]}</p>
+    <div class="sj-areas">${gr.map(({ g, n }) => { const L = a.dioses.filter(d => g[2].includes(d.d));
+      const det = L.length ? [...new Set(L.map(d => d.d))].map(k => `<li><b>${esc(SJ_DIOS[k][0])}</b> <small>${SJ_DIOS[k][1]}</small> aparece ${sjLista([...new Set(L.filter(d => d.d === k).map(d => SJ_DONDE[d.pos]))])}: ${SJ_DIOS[k][2]}.</li>`).join('') : '';
+      return `<div class="sj-area${n ? '' : ' vacia'}"><div class="sj-area-cab"><span>${SJ_AREA_IC[g[0]]}</span><b>${g[1]}</b><i>${'●'.repeat(Math.min(n, 4))}${'○'.repeat(Math.max(0, 4 - n))}</i></div>${n ? `<ul>${det}</ul>` : `<p>No aparece en tu carta: no es que te falte, sino que lo vas construyendo con conciencia, a través de otras personas y de los años que lo despiertan.</p>`}</div>`; }).join('')}</div>`;
   // energías escondidas
   const oc = []; sj.p.forEach(x => SJ_R[x.b].oc.forEach(s => oc.push(s)));
   const ocC = [0, 0, 0, 0, 0]; oc.forEach(s => ocC[SJ_T[s].el]++);
@@ -6499,9 +6515,9 @@ function premSaju(){
   // el año
   const hoy = new Date(), ya = sjAnioDe(hoy), dY = sjDios(sj.dm, ya.s), gY = SJ_GRUPO.find(g => g[2].includes(dY));
   h += `<div class="anio-chino"><small>Tu año en el Saju · ${ya.y}-${ya.y + 1}</small><h4>${SJ_T[ya.s].h}${SJ_R[ya.b].h} ${SJ_EL[SJ_T[ya.s].el]}-${SJ_R[ya.b].an} · ${esc(SJ_DIOS[dY][0])}</h4>
-    <p>Para tu ${SJ_EL[T.el]}, este año ${gY[4]}</p><p>${sjRelRamas(ya.b, sj.p[2].b)}</p>${SJ_T[ya.s].el === al || SJ_R[ya.b].el === al ? '<p>✨ Además, el año trae tu elemento aliado: es un tiempo que te equilibra.</p>' : ''}</div>`;
+    <p>Para tu ${SJ_EL[T.el]}, este año ${gY[4]}</p>${a.dioses.some(d => d.d === dY) ? `<p>✦ Este año se despierta tu <b>${esc(SJ_DIOS[dY][0])}</b>, que ya está en tu carta: lo vas a sentir con más fuerza.</p>` : ''}<p>${sjRelRamas(ya.b, sj.p[2].b)}</p>${SJ_T[ya.s].el === al || SJ_R[ya.b].el === al ? '<p>✨ Además, el año trae tu elemento aliado: es un tiempo que te equilibra.</p>' : ''}</div>`;
   const meses = sjMesesDe(ya.y), act = meses.filter(x => x.ini <= hoy).pop();
-  h += `<p class="sub">Mes a mes</p><ul class="sj-meses">${meses.map(x => { const dd = sjDios(sj.dm, x.s), g = SJ_GRUPO.find(gg => gg[2].includes(dd)); return `<li${x === act ? ' class="ahora"' : x.ini > hoy ? ' class="futuro"' : ''}><small>Desde el ${fechaConAnio(x.ini, ya.y)}${x === act ? ' · ahora ✦' : ''}</small><b>${SJ_T[x.s].h}${SJ_R[x.b].h} ${SJ_EL[SJ_T[x.s].el]}-${SJ_R[x.b].an} · ${esc(SJ_DIOS[dd][0])}</b><p>Un mes de ${g[1].toLowerCase()}: ${SJ_DIOS[dd][2]}.</p></li>`; }).join('')}</ul>`;
+  h += `<p class="sub">Mes a mes</p><ul class="sj-meses">${meses.map(x => { const dd = sjDios(sj.dm, x.s), g = SJ_GRUPO.find(gg => gg[2].includes(dd)); return `<li${x === act ? ' class="ahora"' : x.ini > hoy ? ' class="futuro"' : ''}><small>Desde el ${fechaConAnio(x.ini, ya.y)}${x === act ? ' · ahora ✦' : ''}</small><b>${SJ_T[x.s].h}${SJ_R[x.b].h} ${SJ_EL[SJ_T[x.s].el]}-${SJ_R[x.b].an} · ${esc(SJ_DIOS[dd][0])}</b><p>Un mes de ${g[1].toLowerCase()}: ${SJ_DIOS[dd][2]}.</p>${a.dioses.some(d2 => d2.d === dd) ? `<p class="sj-desp">✦ Se despierta tu ${esc(SJ_DIOS[dd][0])}, que ya está en tu carta</p>` : ''}</li>`; }).join('')}</ul>`;
   const yn = { y: ya.y + 1, s: (ya.s + 1) % 10, b: (ya.b + 1) % 12 }, dN = sjDios(sj.dm, yn.s), gN = SJ_GRUPO.find(g => g[2].includes(dN));
   h += `<div class="anio-chino prox"><small>Lo que viene · ${yn.y}</small><h4>${SJ_T[yn.s].h}${SJ_R[yn.b].h} ${SJ_EL[SJ_T[yn.s].el]}-${SJ_R[yn.b].an} · ${esc(SJ_DIOS[dN][0])}</h4><p>Para tu ${SJ_EL[T.el]}, el año que viene ${gN[4]}</p></div>`;
   return h + `<p class="ag-ayuda">Calculado con la hora solar verdadera de ${esc(lugarCoord(P.lugarNac, P.coordNac)[0])}. El año y los meses del Saju cambian con el Sol (alrededor del 4 de febrero), no el 1° de enero.</p>
