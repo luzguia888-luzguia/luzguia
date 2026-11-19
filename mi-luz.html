@@ -838,6 +838,18 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .angel-inv{padding:12px;border-radius:12px;border:1px dashed rgba(212,175,106,.45);margin:10px 0}.angel-inv small{color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.angel-inv p{margin:4px 0 0;font-size:.92rem;line-height:1.55}
 .kin-hoy{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid rgba(212,175,106,.35);background:linear-gradient(150deg,rgba(91,42,134,.3),rgba(28,11,46,.6));margin:14px 0}
 .kin-hoy>span{font-size:2rem}.kin-hoy small{display:block;color:#E8A0B4;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}.kin-hoy>div>b{display:block;font-family:var(--serif);font-size:1.2rem;color:#F3DCA0}.kin-hoy p{margin:4px 0 0;font-size:.9rem;line-height:1.5}
+.hd-caja{border:1px solid rgba(212,175,106,.4);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(91,42,134,.35),rgba(20,8,36,.65));margin:10px 0 18px}
+.hd-tit{display:flex;align-items:center;gap:14px;margin:4px 0 8px}.hd-tit>span{font-size:2.4rem}
+.hd-tit small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.hd-tit b{display:block;font-family:var(--serif);font-size:1.5rem;color:#F3DCA0}
+.hd-graf{display:flex;justify-content:center;margin:6px 0 10px}.hd-svg{width:min(260px,70vw);height:auto}
+.hd-ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:8px 0 12px}
+.hd-ficha>div{padding:10px;border-radius:12px;border:1px solid rgba(212,175,106,.3);background:rgba(255,255,255,.04)}
+.hd-ficha small{display:block;color:#E8A0B4;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}.hd-ficha b{display:block;color:#F3DCA0;font-size:.95rem;line-height:1.3;margin-top:2px}
+.hd-centros{list-style:none;padding:0;margin:8px 0 12px;display:grid;gap:8px}
+.hd-centros li{padding:10px 12px;border-radius:12px;border:1px dashed rgba(212,175,106,.35);background:rgba(255,255,255,.02)}
+.hd-centros li.def{border-style:solid;border-color:rgba(243,220,160,.7);background:rgba(212,175,106,.1)}
+.hd-centros b{color:#F3DCA0;font-family:var(--serif);font-size:1.05rem}.hd-centros small{display:block;color:#E8A0B4;font-size:.76rem}.hd-centros p{margin:4px 0 0;font-size:.88rem;line-height:1.5}
+.hd-tabla{overflow-x:auto}.hd-tabla table{border-collapse:collapse;font-size:.74rem;min-width:620px}.hd-tabla th,.hd-tabla td{padding:5px 6px;border-bottom:1px solid rgba(212,175,106,.18);text-align:center}.hd-tabla th{color:#F3DCA0;font-weight:500}.hd-tabla td:first-child{text-align:left;color:#E8A0B4}
 </style>
 </head>
 <body>
@@ -5466,12 +5478,12 @@ function reordenarVos(h){
   const chip = (id, t) => `<button type="button" class="chip-vos" data-vosir="${id}">${t}</button>`;
   const idDe = (g2, re) => { const x = B[g2].find(e => e.tagName === 'H3' && re.test(e.textContent)); return x ? x.id : ''; };
   const chips = [
-    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel']]],
+    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /diseño humano/i), 'Diseño Humano'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
   const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
-  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre, el Saju, el Sincronario maya y tu ángel.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
+  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre, el Saju, el Diseño Humano, el Sincronario maya y tu ángel.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
 const _vosUX = arcanosHTML;
 arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } catch (e) { console.error(e); return h; } };
@@ -5983,7 +5995,7 @@ function valorPremiumHTML(){
   return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
 }
 function gratisSiempreHTML(){
-  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu kin maya, tu ángel, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu tipo de Diseño Humano, tu kin maya, tu ángel, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
   return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
 }
 const _premValor = premiumHTML;
@@ -7021,6 +7033,221 @@ document.addEventListener('click', async e => {
     else { const A = angelDe(); evento('Compartió', 'Ángel cabalístico'); await compartirArchivo(await tarjetaSimple('MI ÁNGEL CABALÍSTICO', A.nom, 'Coro de los ' + A.coro, '“Me regala ' + A.don.split(':')[0] + '.”', '👼'), 'mi-angel-luz-guia.png', `Mi ángel cabalístico es ${A.nom} 👼 · Mi Luz, Luz Guía`); }
   } catch (err) { console.error(err); }
   b.disabled = false; b.textContent = o;
+});
+
+
+/* ───── v40: Diseño Humano ───── */
+const HD_RUEDA = [41, 19, 13, 49, 30, 55, 37, 63, 22, 36, 25, 17, 21, 51, 42, 3, 27, 24, 2, 23, 8, 20, 16, 35, 45, 12, 15, 52, 39, 53, 62, 56, 31, 33, 7, 4, 29, 59, 40, 64, 47, 6, 46, 18, 48, 57, 32, 50, 28, 44, 1, 43, 14, 34, 9, 5, 26, 11, 10, 58, 38, 54, 61, 60];
+const HD_CENTROS = {
+  cabeza: ['Cabeza', 'Inspiración', 'Tenés una forma fija de inspirarte y de hacerte preguntas: tu mente genera sus propias ideas.', 'Te llenás de las preguntas de los demás. Tu sabiduría es elegir qué preguntas valen la pena, sin presionarte por responderlas todas.'],
+  ajna: ['Ajna', 'Mente', 'Tu forma de pensar es estable y confiable: procesás la información siempre a tu manera.', 'Tu mente es flexible y abierta: podés ver todos los puntos de vista. No necesitás tener certezas para todo.'],
+  garganta: ['Garganta', 'Expresión', 'Tu voz tiene una forma propia de expresarse y de concretar: te escuchan.', 'Tu voz cambia según con quién estés. Tu sabiduría es esperar el momento justo para hablar, sin forzar la atención.'],
+  g: ['G', 'Identidad y amor', 'Sabés quién sos y hacia dónde vas: tu identidad es estable.', 'Tu identidad es fluida y los lugares te marcan mucho: rodeate de espacios y personas que te hagan bien.'],
+  ego: ['Corazón', 'Voluntad', 'Tenés fuerza de voluntad propia: podés prometer y cumplir. Respetá tu descanso.', 'No tenés que demostrar nada. Tu sabiduría es reconocer el verdadero valor de las cosas y no prometer de más.'],
+  bazo: ['Bazo', 'Intuición y salud', 'Tu intuición es instantánea y tu sistema inmune, fuerte: escuchá esa primera vocecita.', 'Sentís el bienestar y el malestar de los demás. Tu sabiduría es saber qué es saludable y soltar lo que te hace mal.'],
+  plexo: ['Plexo Solar', 'Emociones', 'Tus emociones van en olas: no hay verdad en el momento. Esperá a estar en calma para decidir.', 'Absorbés y amplificás las emociones ajenas. Tu sabiduría es la empatía, sin hacerte cargo de lo que no es tuyo.'],
+  sacro: ['Sacro', 'Energía vital', 'Tenés energía de vida sostenible para trabajar y crear, siempre que hagas lo que te enciende.', 'Tu cuerpo no está hecho para el trabajo constante: sabé cuándo es suficiente y descansá antes de agotarte.'],
+  raiz: ['Raíz', 'Presión y adrenalina', 'Manejás la presión a tu propio ritmo: la adrenalina te impulsa sin desbordarte.', 'Sentís toda la presión del entorno. Tu sabiduría es no apurarte: lo importante puede esperar.']};
+const HD_CANALES = [
+  [1, 'g', 8, 'garganta', 'Inspiración', 'tu forma única de ser es un ejemplo creativo para otras personas'], [2, 'g', 14, 'sacro', 'El latido', 'tenés la llave de los recursos y una dirección clara'],
+  [3, 'sacro', 60, 'raiz', 'Mutación', 'traés cambios e innovación, a pulsos'], [4, 'ajna', 63, 'cabeza', 'Lógica', 'tu mente busca respuestas lógicas y patrones'],
+  [5, 'sacro', 15, 'g', 'Ritmo', 'estás en armonía con los ritmos naturales'], [6, 'plexo', 59, 'sacro', 'Intimidad', 'creás vínculos profundos y fértiles'],
+  [7, 'g', 31, 'garganta', 'El liderazgo', 'tenés el don de guiar hacia el futuro'], [9, 'sacro', 52, 'raiz', 'Concentración', 'podés enfocarte con una determinación enorme'],
+  [10, 'g', 20, 'garganta', 'Despertar', 'tu compromiso es ser fiel a vos'], [10, 'g', 34, 'sacro', 'Exploración', 'seguís tus propias convicciones'],
+  [10, 'g', 57, 'bazo', 'Forma perfeccionada', 'tenés un instinto de supervivencia muy fino'], [11, 'ajna', 56, 'garganta', 'Curiosidad', 'tenés el don de narrar ideas y experiencias'],
+  [12, 'garganta', 22, 'plexo', 'Apertura', 'tu voz emociona cuando estás de buen ánimo'], [13, 'g', 33, 'garganta', 'El testigo', 'guardás las historias y aprendés del pasado'],
+  [16, 'garganta', 48, 'bazo', 'Talento', 'tenés talento que se vuelve maestría con práctica'], [17, 'ajna', 62, 'garganta', 'Organización', 'ordenás los detalles en una visión clara'],
+  [18, 'bazo', 58, 'raiz', 'Juicio', 'tu don es mejorar y corregir lo que no funciona'], [19, 'raiz', 49, 'plexo', 'Síntesis', 'sentís las necesidades de tu comunidad'],
+  [20, 'garganta', 34, 'sacro', 'Carisma', 'convertís la energía en acción inmediata'], [20, 'garganta', 57, 'bazo', 'Onda cerebral', 'tu intuición habla en el momento justo'],
+  [21, 'ego', 45, 'garganta', 'El dinero', 'tenés talento para lo material y para administrar'], [23, 'garganta', 43, 'ajna', 'Genio', 'tenés ideas originales que cambian la forma de pensar'],
+  [24, 'ajna', 61, 'cabeza', 'Conciencia', 'buscás el sentido profundo de la vida'], [25, 'g', 51, 'ego', 'Iniciación', 'tenés el coraje de lanzarte a lo desconocido'],
+  [26, 'ego', 44, 'bazo', 'Transmisión', 'sabés vender, convencer y transmitir'], [27, 'sacro', 50, 'bazo', 'Preservación', 'cuidás y protegés a quienes querés'],
+  [28, 'bazo', 38, 'raiz', 'Lucha', 'buscás un propósito por el cual vale la pena luchar'], [29, 'sacro', 46, 'g', 'Descubrimiento', 'cuando decís que sí, vas hasta el final'],
+  [30, 'plexo', 41, 'raiz', 'Reconocimiento', 'tus sentimientos y deseos te llevan a vivir experiencias nuevas'], [32, 'bazo', 54, 'raiz', 'Transformación', 'tenés ambición y sabés transformar'],
+  [34, 'sacro', 57, 'bazo', 'Poder', 'tu poder está en sobrevivir y responder al instante'], [35, 'garganta', 36, 'plexo', 'Transitoriedad', 'buscás experiencias que te hagan crecer'],
+  [37, 'plexo', 40, 'ego', 'Comunidad', 'sostenés la familia y los acuerdos'], [39, 'raiz', 55, 'plexo', 'Emoción', 'tu ánimo cambia y desde ahí nace tu espíritu'],
+  [42, 'sacro', 53, 'raiz', 'Maduración', 'sabés empezar y terminar ciclos'], [47, 'ajna', 64, 'cabeza', 'Abstracción', 'le das sentido al pasado a través de la mente']];
+const HD_PUERTA = { 1: 'la creatividad', 2: 'la dirección', 3: 'el orden que nace del caos', 4: 'las respuestas', 5: 'los ritmos', 6: 'la intimidad', 7: 'el liderazgo', 8: 'la contribución', 9: 'el enfoque', 10: 'el amor propio', 11: 'las ideas', 12: 'la palabra justa', 13: 'la escucha', 14: 'la riqueza', 15: 'la humanidad', 16: 'el entusiasmo', 17: 'las opiniones', 18: 'la corrección', 19: 'la sensibilidad', 20: 'el ahora', 21: 'el control', 22: 'la gracia', 23: 'la simplicidad', 24: 'el retorno', 25: 'la inocencia', 26: 'la persuasión', 27: 'el cuidado', 28: 'el propósito', 29: 'decir que sí', 30: 'el deseo', 31: 'la influencia', 32: 'la continuidad', 33: 'la memoria', 34: 'el poder', 35: 'el cambio', 36: 'la experiencia', 37: 'la familia', 38: 'la lucha', 39: 'la provocación', 40: 'la soledad', 41: 'la fantasía', 42: 'el crecimiento', 43: 'la percepción', 44: 'los patrones', 45: 'la reunión', 46: 'el amor al cuerpo', 47: 'la realización', 48: 'la profundidad', 49: 'los principios', 50: 'los valores', 51: 'el impacto', 52: 'la quietud', 53: 'los comienzos', 54: 'la ambición', 55: 'la abundancia', 56: 'la narración', 57: 'la intuición', 58: 'la alegría', 59: 'la unión', 60: 'los límites', 61: 'el misterio', 62: 'los detalles', 63: 'la duda', 64: 'la imaginación' };
+const HD_TIPOS = {
+  M: ['Manifestador', '⚡', 9, 'Informar antes de actuar', 'la paz', 'el enojo', 'cerrada y repelente: impacta', 'Sos la chispa que inicia. Tenés el poder de empezar cosas sin esperar a nadie y tu energía mueve a los demás.', 'Iniciar, abrir caminos, crear lo que todavía no existe.', 'Cuando avisás lo que vas a hacer antes de hacerlo, las resistencias desaparecen y fluís en paz.', 'Inicio, aviso y fluyo en paz.'],
+  G: ['Generador', '🔥', 37, 'Esperar para responder', 'la satisfacción', 'la frustración', 'abierta y envolvente: atrae', 'Sos la fuerza vital del mundo. Tenés una energía sostenible enorme cuando hacés lo que te enciende de verdad.', 'Construir, dominar un oficio, sostener la energía en lo que amás.', 'La vida te trae oportunidades: tu cuerpo responde con un "¡ajá!" o un "mmm" antes que tu mente. Seguí esa respuesta.', 'Hago lo que me enciende y la vida responde.'],
+  MG: ['Generador Manifestante', '💫', 33, 'Esperar para responder, y después informar', 'la satisfacción y la paz', 'la frustración y el enojo', 'abierta y envolvente: atrae', 'Sos energía rápida y multitarea: respondés a la vida y en seguida la convertís en acción. Te salteás pasos y llegás antes.', 'Hacer muchas cosas a la vez, encontrar atajos y avanzar a toda velocidad.', 'Esperá a que algo te encienda, avisá lo que vas a hacer y después lanzate. Está bien cambiar de rumbo.', 'Respondo, me enciendo y vuelo.'],
+  P: ['Proyector', '🔦', 20, 'Esperar la invitación', 'el éxito', 'la amargura', 'enfocada y penetrante: ve a las personas', 'Sos guía. Ves a las personas y los sistemas con una claridad que nadie más tiene, y sabés cómo hacerlos funcionar mejor.', 'Guiar, ver el potencial en otras personas y dirigir la energía de los demás.', 'Tu sabiduría brilla cuando te invitan. Descansá mucho y elegí bien quién te reconoce.', 'Mi luz guía a quien me invita.'],
+  R: ['Reflector', '🌕', 1, 'Esperar un ciclo lunar (28 días) para las grandes decisiones', 'la sorpresa', 'la decepción', 'resistente y muestreadora: refleja', 'Sos un espejo de tu comunidad. Muy pocas personas son como vos: reflejás la salud de tu entorno y ves lo que nadie ve.', 'Leer el ambiente, evaluar a las personas y mostrar lo que necesita cambiar.', 'Tus grandes decisiones necesitan una Luna entera. Elegí lugares y personas que te hagan bien, porque te convertís en ellos.', 'Reflejo la luz como la Luna.']};
+const HD_AUT = {
+  emocional: ['Emocional', 'Tus decisiones necesitan tiempo. Tus emociones van en olas: esperá a estar en calma, "consultalo con la almohada" varias veces, y ahí aparece tu verdad.'],
+  sacral: ['Sacral', 'Tu verdad está en el cuerpo, en el momento: un "ajá" de entusiasmo o un "mmm" que no. Hacete preguntas de sí o no y escuchá el sonido de tu panza.'],
+  esplenica: ['Esplénica', 'Tu intuición habla una sola vez, en el instante, muy bajito. Esa primera sensación es la correcta: no la discutas con la mente.'],
+  ego: ['Del Corazón', 'Decidí desde lo que realmente querés y desde tu voluntad: "¿qué gano yo con esto?" es una pregunta sana para vos.'],
+  self: ['Autoproyectada', 'Tu verdad aparece cuando te escuchás hablar. Contale tu decisión a alguien de confianza y fijate qué sale de tu boca.'],
+  mental: ['Del entorno (mental)', 'Decidís hablando con distintas personas en distintos lugares: no para que te digan qué hacer, sino para escucharte y sentir qué lugar es correcto.'],
+  lunar: ['Lunar', 'Tus grandes decisiones necesitan 28 días: dejá que la Luna recorra todos tus centros y vas a sentir la respuesta.']};
+const HD_LINEA = [
+  ['Investigación', 'necesitás bases sólidas: estudiás, investigás y sentís seguridad cuando sabés'],
+  ['Retiro', 'tenés talentos naturales que salen cuando te llaman, y necesitás tiempo a solas'],
+  ['Experimentación', 'aprendés probando y equivocándote: tus errores son tu sabiduría'],
+  ['Conexión', 'tu fuerza son tus vínculos: las oportunidades llegan por tu red de personas'],
+  ['Solución', 'la gente proyecta en vos que vas a salvarla: sos práctica para resolver crisis'],
+  ['Ejemplo', 'vivís en tres etapas y terminás siendo un ejemplo de vida para los demás']];
+const HD_PL = ['Sol', 'Tierra', 'Nodo', 'NodoS', 'Luna', 'Mercurio', 'Venus', 'Marte', 'Júpiter', 'Saturno', 'Urano', 'Neptuno', 'Plutón'];
+function hdPuerta(l){ const x = nrm2(l - 302), i = Math.floor(x / 5.625); return { g: HD_RUEDA[i % 64], l: Math.floor((x % 5.625) / .9375) + 1 }; }
+function hdActivaciones(pos){ const o = {}; HD_PL.forEach(p => { const l = p === 'Tierra' ? pos.Sol + 180 : p === 'NodoS' ? pos.Nodo + 180 : pos[p]; o[p] = hdPuerta(l); }); return o; }
+let HD_K = '', HD = null;
+function hdDe(){
+  try {
+    const n = natal(); if (!n) return null; const k = n.jd + '|' + n.pos.Sol; if (k === HD_K) return HD;
+    const meta = nrm2(n.pos.Sol - 88); let jd = n.jd - 89;
+    for (let i = 0; i < 8; i++) { const d = ((longSolar(jd) - meta + 540) % 360) - 180; jd -= d / .98565; }
+    const per = hdActivaciones(n.pos), dis = hdActivaciones(posTodas(jd));
+    const puertas = new Set([...Object.values(per), ...Object.values(dis)].map(x => x.g));
+    const canales = HD_CANALES.filter(c => puertas.has(c[0]) && puertas.has(c[2]));
+    const def = new Set(); canales.forEach(c => { def.add(c[1]); def.add(c[3]); });
+    const ady = {}; canales.forEach(c => { (ady[c[1]] = ady[c[1]] || new Set()).add(c[3]); (ady[c[3]] = ady[c[3]] || new Set()).add(c[1]); });
+    const alcanza = (a, metas) => { const vis = new Set([a]), q = [a]; while (q.length) { const x = q.shift(); if (metas.includes(x) && x !== a) return true; (ady[x] || []).forEach(y => { if (!vis.has(y)) { vis.add(y); q.push(y); } }); } return false; };
+    const motorGarganta = def.has('garganta') && alcanza('garganta', ['ego', 'plexo', 'sacro', 'raiz']);
+    const tipo = !def.size ? 'R' : def.has('sacro') ? (motorGarganta ? 'MG' : 'G') : motorGarganta ? 'M' : 'P';
+    const aut = tipo === 'R' ? 'lunar' : def.has('plexo') ? 'emocional' : def.has('sacro') ? 'sacral' : def.has('bazo') ? 'esplenica' : def.has('ego') ? 'ego' : def.has('g') ? 'self' : 'mental';
+    // definición: cuántos grupos separados de centros definidos
+    const vis = new Set(); let grupos = 0; def.forEach(c => { if (vis.has(c)) return; grupos++; const q = [c]; vis.add(c); while (q.length) { const x = q.shift(); (ady[x] || []).forEach(y => { if (!vis.has(y)) { vis.add(y); q.push(y); } }); } });
+    HD_K = k; HD = { per, dis, puertas, canales, def, tipo, aut, perfil: [per.Sol.l, dis.Sol.l], grupos, hora: n.hora };
+    return HD;
+  } catch (e) { console.error(e); return null; }
+}
+// el bodygraph: posiciones de los centros (en un lienzo de 200 × 300)
+const HD_POS = { cabeza: [100, 22, 'tri'], ajna: [100, 66, 'inv'], garganta: [100, 112, 'cua'], g: [100, 160, 'rom'], ego: [140, 178, 'tri'], bazo: [36, 214, 'der'], plexo: [164, 214, 'izq'], sacro: [100, 222, 'cua'], raiz: [100, 272, 'cua'] };
+function hdFormaPts(f, x, y, r){
+  if (f === 'tri') return [[x, y - r], [x + r, y + r * .8], [x - r, y + r * .8]];
+  if (f === 'inv') return [[x - r, y - r * .8], [x + r, y - r * .8], [x, y + r]];
+  if (f === 'rom') return [[x, y - r * 1.15], [x + r * 1.15, y], [x, y + r * 1.15], [x - r * 1.15, y]];
+  if (f === 'der') return [[x - r * .8, y - r], [x + r, y], [x - r * .8, y + r]];
+  if (f === 'izq') return [[x + r * .8, y - r], [x - r, y], [x + r * .8, y + r]];
+  return [[x - r, y - r], [x + r, y - r], [x + r, y + r], [x - r, y + r]];
+}
+function hdSVG(H){
+  let s = '<svg class="hd-svg" viewBox="0 0 200 300" role="img" aria-label="Tu bodygraph de Diseño Humano"><defs><filter id="hdg"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+  const par = {}; HD_CANALES.forEach(c => { const k = c[1] + c[3]; par[k] = (par[k] || 0) + 1; const i = par[k] - 1, on = H.canales.includes(c);
+    const [x1, y1] = HD_POS[c[1]], [x2, y2] = HD_POS[c[3]], dx = y2 - y1, dy = x1 - x2, L = Math.hypot(dx, dy) || 1, o = (i - .5) * 5;
+    s += `<line x1="${x1 + dx / L * o}" y1="${y1 + dy / L * o}" x2="${x2 + dx / L * o}" y2="${y2 + dy / L * o}" stroke="${on ? '#F3DCA0' : 'rgba(243,220,160,.12)'}" stroke-width="${on ? 3 : 1.5}" stroke-linecap="round"/>`; });
+  Object.entries(HD_POS).forEach(([k, [x, y, f]]) => { const on = H.def.has(k), r = k === 'ego' ? 11 : 16;
+    s += `<polygon points="${hdFormaPts(f, x, y, r).map(p => p.join(',')).join(' ')}" fill="${on ? '#D4AF6A' : '#1c0b2e'}" stroke="#F3DCA0" stroke-width="1.4"${on ? ' filter="url(#hdg)"' : ''}/>`; });
+  return s + '</svg>';
+}
+function hdGratisHTML(){
+  const H = hdDe(); if (!H) return ''; const T = HD_TIPOS[H.tipo], ver = P.premium && !VISTA_GRATIS;
+  let h = `<h3>Tu Diseño Humano</h3><div class="hd-caja"><p class="ag-ayuda" style="margin-top:0">El Diseño Humano une la astrología, el I Ching, la Cábala y los chakras en un mapa de tu energía: cómo está diseñada tu energía para decidir, trabajar y vincularte.</p>
+    <div class="sj-vivo"><canvas class="sj-canvas" width="432" height="768" data-hdvivo aria-label="Tu tipo de Diseño Humano en movimiento"></canvas></div>
+    <div class="hd-tit"><span>${T[1]}</span><div><small>Tu tipo · ${T[2]}% de las personas</small><b>${T[0]}</b></div></div>
+    <p>${T[7]}</p><p><b>Tu estrategia:</b> ${T[3]}. ${T[9]}</p>${H.hora ? '' : '<p class="ag-ayuda">⚠️ Sin tu hora de nacimiento, tu Diseño Humano puede variar. Si la conseguís, se vuelve exacto.</p>'}
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-hdshare>✨ Compartir mi Diseño Humano (video o imagen)</button></p>`;
+  if (ver) h += `<button class="btn-sec oro" type="button" data-premir="hd">🧬 Ver mi Diseño Humano completo</button>`;
+  else h += `<div class="teaser-velo"><p>Tu autoridad interna es ${HD_AUT[H.aut][0]}. Tu perfil es ${H.perfil.join('/')}. Tenés ${H.def.size} centros definidos y ${H.canales.length} canales.</p><span>🔒 Premium</span></div>
+    <p class="ag-ayuda">En Premium: tu bodygraph completo, cómo tomar decisiones según tu autoridad, tu perfil, tus 9 centros, tus canales y tus puertas del Sol y la Tierra.</p><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu Diseño Humano completo ✨</button>`;
+  return h + '</div>';
+}
+function premHD(){
+  const H = hdDe(); if (!H) return faltaFecha; const T = HD_TIPOS[H.tipo], A = HD_AUT[H.aut], L1 = HD_LINEA[H.perfil[0] - 1], L2 = HD_LINEA[H.perfil[1] - 1];
+  let h = `<p class="intro">El Diseño Humano se calcula con dos momentos: el instante en que naciste (tu personalidad, lo que conocés de vos) y unos 88 días antes, cuando se formó tu cuerpo (tu diseño, lo que vive en vos sin que lo veas).</p>`;
+  if (!H.hora) h += '<p class="ag-ayuda">⚠️ Sin tu hora de nacimiento, la Luna y algunas puertas pueden cambiar. Si la conseguís, tu lectura se vuelve exacta.</p>';
+  h += `<div class="hd-graf">${hdSVG(H)}</div><div class="hd-ficha"><div><small>Tipo</small><b>${T[1]} ${T[0]}</b></div><div><small>Estrategia</small><b>${T[3]}</b></div><div><small>Autoridad</small><b>${A[0]}</b></div><div><small>Perfil</small><b>${H.perfil.join('/')}</b></div><div><small>Firma</small><b>${hdCap(T[4])}</b></div><div><small>Señal de alerta</small><b>${hdCap(T[5])}</b></div></div>`;
+  h += `<p class="sub">Tu tipo: ${T[0]}</p><p>${T[7]}</p><ul class="num-lista"><li><b>✦</b><div><span>Tu don</span>${T[8]}</div></li><li><b>🧭</b><div><span>Tu estrategia: ${T[3].toLowerCase()}</span>${T[9]}</div></li><li><b>🌟</b><div><span>Cuando vas bien</span>Sentís ${T[4]}: es la señal de que estás viviendo tu diseño.</div></li><li><b>⚠️</b><div><span>Cuando te desviás</span>Aparece ${T[5]}: no es un error, es una brújula que te avisa que volviste a forzar.</div></li><li><b>🌫️</b><div><span>Tu aura</span>Es ${T[6]}.</div></li></ul>`;
+  h += `<p class="sub">Cómo tomar decisiones · autoridad ${A[0].toLowerCase()}</p><p>${A[1]}</p>`;
+  h += `<p class="sub">Tu perfil ${H.perfil.join('/')} · ${L1[0]} / ${L2[0]}</p><p>Tu perfil es el "disfraz" con el que vivís tu propósito. Con la línea ${H.perfil[0]} (lo que sabés de vos), ${L1[1]}. Con la línea ${H.perfil[1]} (lo que los demás ven en vos), ${L2[1]}.</p>`;
+  h += `<p class="sub">Tus 9 centros</p><p class="ag-ayuda" style="margin-top:0">Los centros pintados (definidos) son tu energía fija y confiable. Los blancos (abiertos) son donde absorbés y amplificás la energía de los demás: ahí está tu mayor sabiduría, y también tu mayor condicionamiento.</p><ul class="hd-centros">${Object.entries(HD_CENTROS).map(([k, c]) => `<li class="${H.def.has(k) ? 'def' : ''}"><b>${c[0]}</b><small>${c[1]} · ${H.def.has(k) ? 'definido' : 'abierto'}</small><p>${H.def.has(k) ? c[2] : c[3]}</p></li>`).join('')}</ul>`;
+  if (H.canales.length) h += `<p class="sub">Tus canales (tus talentos fijos)</p><ul class="num-lista">${H.canales.map(c => `<li><b>${c[0]}-${c[2]}</b><div><span>${c[4]}</span>${hdCap(c[5])}.</div></li>`).join('')}</ul>`;
+  h += `<p class="sub">Tu definición: ${['', 'simple', 'partida', 'triple', 'cuádruple'][Math.min(H.grupos, 4)] || 'sin definición'}</p><p>${H.grupos <= 1 ? (H.grupos ? 'Toda tu energía definida está conectada: procesás las cosas por tu cuenta y a tu ritmo.' : 'No tenés centros definidos: sos pura apertura.') : `Tu energía está en ${H.grupos} partes que no se tocan: hay personas que te "completan" y con ellas todo fluye mejor. Darte tiempo y salir al mundo te ayuda a integrarte.`}</p>`;
+  const sp = H.per.Sol, tp = H.per.Tierra, sd = H.dis.Sol, td = H.dis.Tierra;
+  h += `<p class="sub">Tu propósito (tu cruz de encarnación)</p><p>Tu propósito de vida se arma con cuatro puertas: tu Sol y tu Tierra al nacer, y tu Sol y tu Tierra de diseño. Son el 70% de quien sos.</p><ul class="num-lista">
+    <li><b>☉ ${sp.g}.${sp.l}</b><div><span>Tu Sol consciente · puerta ${sp.g}</span>Tu luz en el mundo es ${HD_PUERTA[sp.g]}.</div></li>
+    <li><b>⊕ ${tp.g}.${tp.l}</b><div><span>Tu Tierra consciente · puerta ${tp.g}</span>Lo que te da raíz es ${HD_PUERTA[tp.g]}.</div></li>
+    <li><b>☉ ${sd.g}.${sd.l}</b><div><span>Tu Sol de diseño · puerta ${sd.g}</span>En tu cuerpo, sin darte cuenta, vive ${HD_PUERTA[sd.g]}.</div></li>
+    <li><b>⊕ ${td.g}.${td.l}</b><div><span>Tu Tierra de diseño · puerta ${td.g}</span>Tu sostén inconsciente es ${HD_PUERTA[td.g]}.</div></li></ul>`;
+  const fila = (lbl, a) => `<tr><td>${lbl}</td>${HD_PL.map(p => `<td>${a[p].g}.${a[p].l}</td>`).join('')}</tr>`;
+  h += `<details class="mas"><summary>Ver todas tus activaciones <span aria-hidden="true">✦</span></summary><div class="hd-tabla"><table><tr><th></th>${HD_PL.map(p => `<th>${p === 'NodoS' ? 'Nodo S' : p === 'Nodo' ? 'Nodo N' : p}</th>`).join('')}</tr>${fila('Personalidad', H.per)}${fila('Diseño', H.dis)}</table></div></details>`;
+  return h + '<p class="ag-ayuda">Calculado con tu carta natal y la posición de los planetas 88° de Sol antes de tu nacimiento. Interpretación de Luz Guía.</p><p class="fila-comp"><button class="btn-sec comp" type="button" data-hdshare>✨ Compartir mi Diseño Humano</button></p>';
+}
+const hdCap = t => String(t || '').charAt(0).toUpperCase() + String(t || '').slice(1);
+PREM_FN.hd = () => premHD();
+(function(){
+  if (!PREMIUM_LISTA.some(x => x[0] === 'hd')) { const i = PREMIUM_LISTA.findIndex(x => x[0] === 'saju'); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, ['hd', '🧬', 'Tu Diseño Humano', 'Tu bodygraph, tu tipo, cómo decidir, tu perfil, tus 9 centros, tus canales y tu propósito.']); }
+  PREM_VENTA.hd = 'Tu bodygraph completo: tu tipo y tu estrategia, cómo tomar decisiones según tu autoridad, tu perfil, tus 9 centros, tus canales y tu propósito de vida.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'trad'); if (g) { g[3] = 'Matriz, horóscopo chino, Saju, Diseño Humano y animal'; if (!g[4].includes('hd')) g[4].splice(g[4].indexOf('saju') + 1, 0, 'hd'); }
+})();
+const _serHD = serHTML;
+serHTML = function(){ let h = _serHD(); try { const k = h.indexOf('<h3>Tu Kin maya'); const x = hdGratisHTML(); h = k > -1 ? h.slice(0, k) + x + h.slice(k) : h + x; } catch (e) { console.error(e); } return h; };
+
+/* ── La tarjeta viva del Diseño Humano ── */
+const HD_ORDEN = ['M', 'G', 'MG', 'P', 'R'], HD_FALLBACK = { M: 'fondo-fuego.jpg', G: 'fondo-bosque.jpg', MG: 'fondo-fuego.jpg', P: 'fondo-cristales.jpg', R: 'fondo-luna.jpg' }, HD_IMG = {};
+function hdImagen(t){
+  if (!HD_IMG[t]) HD_IMG[t] = new Promise(ok => { const prueba = L => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; }; prueba(['hd-' + (HD_ORDEN.indexOf(t) + 1) + '.jpg', HD_FALLBACK[t]]); });
+  return HD_IMG[t];
+}
+function hdEscena(H, img, nombre){
+  const T = HD_TIPOS[H.tipo], rnd = sjRand(H.perfil[0] * 7 + H.def.size), spr = sjBrillo('rgba(255,236,190,1)');
+  const mot = Array.from({ length: 70 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd() }));
+  return function(c, W, H2, t){
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H2);
+    if (img) { const k = 1.1 + .05 * Math.sin(t * .25), e = Math.max(W / img.width, H2 / img.height) * k; c.drawImage(img, (W - img.width * e) / 2 + Math.sin(t * .2) * W * .015, (H2 - img.height * e) / 2, img.width * e, img.height * e); }
+    const v = c.createLinearGradient(0, 0, 0, H2); v.addColorStop(0, 'rgba(18,8,32,.6)'); v.addColorStop(.2, 'rgba(18,8,32,.25)'); v.addColorStop(.5, 'rgba(18,8,32,.4)'); v.addColorStop(.62, 'rgba(18,8,32,.75)'); v.addColorStop(1, 'rgba(12,5,22,.94)'); c.fillStyle = v; c.fillRect(0, 0, W, H2);
+    c.save(); c.globalCompositeOperation = 'lighter'; mot.forEach(p => { const y = ((p.y - t * p.v * .03) % 1 + 1) % 1 * H2, x = p.x * W + Math.sin(t * .6 + p.f) * 30 * s, z = (8 + 24 * p.z) * s; c.globalAlpha = .3 + .6 * Math.abs(Math.sin(t * 1.3 * p.v + p.f)); c.drawImage(spr, x - z / 2, y - z / 2, z, z); }); c.restore();
+    // bodygraph
+    const bx = W / 2 - 100 * 2.2 * s, by = 330 * s, e = 2.2 * s;
+    c.save(); c.translate(bx, by); c.scale(e, e);
+    const par = {}; HD_CANALES.forEach(ch => { const kk = ch[1] + ch[3]; par[kk] = (par[kk] || 0) + 1; const i = par[kk] - 1, on = H.canales.includes(ch); const [x1, y1] = HD_POS[ch[1]], [x2, y2] = HD_POS[ch[3]], dx = y2 - y1, dy = x1 - x2, L = Math.hypot(dx, dy) || 1, o = (i - .5) * 5;
+      c.strokeStyle = on ? `rgba(243,220,160,${.75 + .25 * pul})` : 'rgba(243,220,160,.14)'; c.lineWidth = on ? 3 : 1.4; c.lineCap = 'round'; if (on) { c.shadowColor = '#F3DCA0'; c.shadowBlur = 8 * pul; } c.beginPath(); c.moveTo(x1 + dx / L * o, y1 + dy / L * o); c.lineTo(x2 + dx / L * o, y2 + dy / L * o); c.stroke(); c.shadowBlur = 0; });
+    Object.entries(HD_POS).forEach(([k, [x, y, f]]) => { const on = H.def.has(k), pts = hdFormaPts(f, x, y, k === 'ego' ? 11 : 16); c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); if (on) { c.shadowColor = '#F3DCA0'; c.shadowBlur = 10 + 10 * pul; } c.fillStyle = on ? '#D4AF6A' : 'rgba(28,11,46,.85)'; c.fill(); c.shadowBlur = 0; c.strokeStyle = '#F3DCA0'; c.lineWidth = 1.4; c.stroke(); });
+    c.restore();
+    c.textAlign = 'center';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText('MI DISEÑO HUMANO', W / 2, 150 * s); c.letterSpacing = '0px';
+    if (nombre) { c.fillStyle = '#FFF4DA'; c.font = `${92 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(nombre, W / 2, 262 * s); c.shadowBlur = 0; }
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${32 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText(`PERFIL ${H.perfil.join('/')}  ·  ${HD_AUT[H.aut][0].toUpperCase()}`, W / 2, 1090 * s); c.letterSpacing = '0px';
+    c.fillStyle = '#fff'; c.font = `600 ${92 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 20 * s; sjLineas(c, T[0], 940 * s).forEach((l, i) => c.fillText(l, W / 2, (1195 + i * 92) * s)); c.shadowBlur = 0;
+    const yE = T[0].length > 16 ? 1400 : 1310; c.fillStyle = '#E8A0B4'; c.font = `500 ${34 * s}px Jost, sans-serif`; c.fillText(T[3], W / 2, yE * s);
+    c.fillStyle = '#F1ECF7'; c.font = `italic ${52 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 14 * s; sjLineas(c, '“' + T[10] + '”', 860 * s).forEach((l, i) => c.fillText(l, W / 2, (yE + 120 + i * 62) * s)); c.shadowBlur = 0;
+    c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
+    c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+  };
+}
+function hdActivarVivo(){
+  const cv = document.querySelector('canvas[data-hdvivo]:not([data-on])'); if (!cv) return; cv.dataset.on = '1';
+  const H = hdDe(); if (!H) return;
+  Promise.all([hdImagen(H.tipo), sjFuentes()]).then(([img]) => {
+    const dib = hdEscena(H, img, sjNombre()), c = cv.getContext('2d'), t0 = performance.now(); let visible = true;
+    try { new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv); } catch (e) {}
+    const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const frame = now => { if (!cv.isConnected) return; if (visible && !document.hidden) dib(c, cv.width, cv.height, quieto ? 2 : (now - t0) / 1000); if (!quieto) requestAnimationFrame(frame); };
+    requestAnimationFrame(frame);
+  });
+}
+new MutationObserver(() => { if (document.querySelector('canvas[data-hdvivo]:not([data-on])')) hdActivarVivo(); }).observe(document.body, { childList: true, subtree: true });
+setTimeout(hdActivarVivo, 600);
+async function grabarEscena(dib, dur){
+  const W = 720, H2 = 1280, cv = document.createElement('canvas'); cv.width = W; cv.height = H2; const c = cv.getContext('2d'); dib(c, W, H2, 0);
+  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: VIDEO_MIME, videoBitsPerSecond: 7000000 }), partes = [];
+  rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); }; rec.start(200); const t0 = performance.now();
+  await new Promise(fin => { const f = now => { dib(c, W, H2, (now - t0) / 1000); if (now - t0 < dur) requestAnimationFrame(f); else fin(); }; requestAnimationFrame(f); });
+  await new Promise(ok => { rec.onstop = ok; rec.stop(); });
+  return new Blob(partes, { type: VIDEO_MIME.split(';')[0] });
+}
+async function compartirEscena(btn, hacer, nombreArch, texto, evNom){
+  evento('Compartió', evNom);
+  const formato = VIDEO_MIME ? await elegirFormato() : 'imagen'; if (!formato) return;
+  const { dib } = await hacer();
+  if (formato === 'imagen') { const o = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…'; try { const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; dib(cv.getContext('2d'), 1080, 1920, 2.4); await compartirArchivo(await new Promise(ok => cv.toBlob(ok, 'image/png')), nombreArch + '.png', texto); } catch (e) {} btn.disabled = false; btn.textContent = o; return; }
+  $('dlg-titulo').textContent = 'Creando tu video ✨'; $('dlg-texto').textContent = 'Dejá esta pantalla abierta unos segundos…';
+  $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:9s"></i></div>';
+  if (!$('dlg').open) $('dlg').showModal();
+  try {
+    const blob = await grabarEscena(dib, 8000), nom = nombreArch + (/mp4/.test(blob.type) ? '.mp4' : '.webm');
+    $('dlg-titulo').textContent = '¡Tu video está listo! ✨'; $('dlg-texto').textContent = 'Tocá compartir y elegí Instagram (historia o reel).';
+    $('dlg-cuerpo').innerHTML = `<video src="${URL.createObjectURL(blob)}" autoplay loop muted playsinline style="width:100%;max-height:46vh;border-radius:12px;border:1px solid var(--linea)"></video><div class="fila-bt"><button class="btn-sec" type="button" id="vid-no">Cerrar</button><button class="btn" type="button" id="vid-si">Compartir</button></div>`;
+    $('vid-no').onclick = () => $('dlg').close();
+    $('vid-si').onclick = async () => { try { await compartirArchivo(blob, nom, texto); } catch (e) {} $('dlg').close(); };
+  } catch (e) { console.error(e); $('dlg-texto').textContent = 'Tu celular no pudo crear el video. Probá con la imagen.'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn-sec" type="button" onclick="document.getElementById(\'dlg\').close()">Cerrar</button></div>'; }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-hdshare]'); if (!b) return; const H = hdDe(); if (!H) return; const T = HD_TIPOS[H.tipo];
+  compartirEscena(b, async () => { const [img] = await Promise.all([hdImagen(H.tipo), sjFuentes()]); return { dib: hdEscena(H, img, sjNombre()) }; }, 'mi-diseno-humano-luz-guia', `Soy ${T[0]} ${H.perfil.join('/')} en Diseño Humano ${T[1]} · Mi Luz, Luz Guía`, 'Diseño Humano');
 });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
