@@ -825,6 +825,19 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .don-cta{padding:14px;border-radius:16px;border:1px dashed rgba(212,175,106,.5);margin:14px 0;text-align:center}.don-cta p{margin:0 0 10px;font-size:.92rem;line-height:1.55}
 .preg-suelta{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.45);background:linear-gradient(150deg,rgba(232,160,180,.12),rgba(28,11,46,.6));margin:12px 0}
 .preg-suelta>span{font-size:1.8rem}.preg-suelta b{color:#F3DCA0;font-family:var(--serif);font-size:1.15rem}.preg-suelta p{margin:4px 0 10px;font-size:.9rem;line-height:1.5}
+.kin-caja,.angel-caja{border:1px solid rgba(212,175,106,.4);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(91,42,134,.35),rgba(20,8,36,.65));margin:10px 0 18px}
+.kin-tit,.angel-tit{display:flex;align-items:center;gap:14px;margin:4px 0 8px}
+.kin-ic,.angel-tit>span{font-size:2.6rem;line-height:1}
+.kin-tit small,.angel-tit small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}
+.kin-tit b,.angel-tit b{display:block;font-family:var(--serif);font-size:1.45rem;color:#F3DCA0;line-height:1.2}
+.kin-tit em{display:block;font-style:normal;font-size:.82rem;color:#E3D6F2}
+.kin-orc{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:6px 0 10px}
+.kin-orc>div{padding:10px;border-radius:12px;border:1px solid rgba(212,175,106,.25);background:rgba(255,255,255,.04)}
+.kin-orc small{display:block;color:#E8A0B4;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+.kin-orc b{display:block;color:#F3DCA0;font-size:.95rem;margin:2px 0}.kin-orc span{font-size:.82rem;line-height:1.4;color:#E3D6F2}
+.angel-inv{padding:12px;border-radius:12px;border:1px dashed rgba(212,175,106,.45);margin:10px 0}.angel-inv small{color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.angel-inv p{margin:4px 0 0;font-size:.92rem;line-height:1.55}
+.kin-hoy{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1px solid rgba(212,175,106,.35);background:linear-gradient(150deg,rgba(91,42,134,.3),rgba(28,11,46,.6));margin:14px 0}
+.kin-hoy>span{font-size:2rem}.kin-hoy small{display:block;color:#E8A0B4;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase}.kin-hoy>div>b{display:block;font-family:var(--serif);font-size:1.2rem;color:#F3DCA0}.kin-hoy p{margin:4px 0 0;font-size:.9rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -5453,12 +5466,12 @@ function reordenarVos(h){
   const chip = (id, t) => `<button type="button" class="chip-vos" data-vosir="${id}">${t}</button>`;
   const idDe = (g2, re) => { const x = B[g2].find(e => e.tagName === 'H3' && re.test(e.textContent)); return x ? x.id : ''; };
   const chips = [
-    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️']]],
+    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
   const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
-  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre y el Saju.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
+  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre, el Saju, el Sincronario maya y tu ángel.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
 const _vosUX = arcanosHTML;
 arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } catch (e) { console.error(e); return h; } };
@@ -5970,7 +5983,7 @@ function valorPremiumHTML(){
   return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
 }
 function gratisSiempreHTML(){
-  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu kin maya, tu ángel, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
   return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
 }
 const _premValor = premiumHTML;
@@ -6875,6 +6888,140 @@ document.addEventListener('click', e => {
     return out;
   };
 })();
+
+
+/* ───── v39: tu Kin maya (Sincronario de las 13 Lunas) y tu ángel cabalístico ───── */
+const KIN_SELLO = [
+  ['Dragón', 'Rojo', '🐉', 'Nutrir', 'el nacimiento y la memoria del origen', 'Sos energía de madre primordial: nutrís, protegés y das vida a lo nuevo. Tu desafío es también dejarte nutrir.'],
+  ['Viento', 'Blanco', '🌬️', 'Comunicar', 'el espíritu y el aliento', 'Tu palabra tiene poder: inspirás, transmitís y movés a las personas con tu voz. Sos canal del espíritu.'],
+  ['Noche', 'Azul', '🌌', 'Soñar', 'la abundancia y la intuición', 'Sos la casa de los sueños: tu mundo interior es inmenso y de ahí nace tu abundancia. Confiá en lo que soñás.'],
+  ['Semilla', 'Amarilla', '🌱', 'Florecer', 'la conciencia y el florecimiento', 'Llevás dentro todo lo que podés llegar a ser. Tu camino es sembrar con paciencia y florecer a tu tiempo.'],
+  ['Serpiente', 'Roja', '🐍', 'Sobrevivir', 'la fuerza vital y el instinto', 'Tu cuerpo sabe: tenés una energía vital enorme, pasión e instinto. Cambiás de piel cuantas veces haga falta.'],
+  ['Enlazador de Mundos', 'Blanco', '🌉', 'Igualar', 'la muerte, la oportunidad y los puentes', 'Unís mundos: sabés soltar, cerrar ciclos y abrir oportunidades donde otros ven finales. Sos puente entre lo visible y lo invisible.'],
+  ['Mano', 'Azul', '✋', 'Conocer', 'la sanación y el logro', 'Tus manos sanan y concretan. Aprendés haciendo, y lo que tocás se ordena y se cura.'],
+  ['Estrella', 'Amarilla', '⭐', 'Embellecer', 'el arte y la armonía', 'Sos belleza en movimiento: buscás la armonía en todo y la creás a tu alrededor. El arte es tu lenguaje.'],
+  ['Luna', 'Roja', '🌙', 'Purificar', 'el agua universal y el flujo', 'Sentís como el agua: tus emociones limpian, purifican y hacen fluir. Sanás a través de lo emocional.'],
+  ['Perro', 'Blanco', '🐕', 'Amar', 'el corazón y la lealtad', 'Tu medicina es el amor: lealtad, compañía y corazón abierto. Venís a aprender a amar empezando por vos.'],
+  ['Mono', 'Azul', '🐒', 'Jugar', 'la magia y la ilusión', 'Tu magia es el juego: alegría, creatividad e inocencia. Desarmás lo serio con humor y transformás con la risa.'],
+  ['Humano', 'Amarillo', '🧑', 'Influir', 'el libre albedrío y la sabiduría', 'Tus elecciones son tuyas: tenés sabiduría práctica y la capacidad de influir con tu ejemplo.'],
+  ['Caminante del Cielo', 'Rojo', '🚶', 'Explorar', 'el espacio y la vigilancia', 'Explorás el cielo y la tierra: viajás, abrís caminos y conectás lo de arriba con lo de abajo.'],
+  ['Mago', 'Blanco', '🪄', 'Encantar', 'la atemporalidad y la receptividad', 'Tu magia está en el corazón: cuando dejás de controlar y recibís, todo se acomoda como por encanto.'],
+  ['Águila', 'Azul', '🦅', 'Crear', 'la visión y la mente', 'Ves desde lo alto: tenés visión, estrategia y la capacidad de anticiparte. Tu mente crea futuros.'],
+  ['Guerrero', 'Amarillo', '⚔️', 'Cuestionar', 'la inteligencia y la intrepidez', 'Tu fuerza es la pregunta: sos valiente, no te conformás y vas a fondo hasta encontrar la verdad.'],
+  ['Tierra', 'Roja', '🌍', 'Evolucionar', 'la navegación y la sincronía', 'Estás en sintonía con la Tierra y sus señales: las sincronicidades te guían y sabés navegar los cambios.'],
+  ['Espejo', 'Blanco', '🪞', 'Reflejar', 'el orden y la verdad', 'Sos espejo: mostrás a cada persona lo que necesita ver. Tu camino es la verdad sin máscaras, empezando por la tuya.'],
+  ['Tormenta', 'Azul', '⛈️', 'Catalizar', 'la energía y la autogeneración', 'Sos tormenta que renueva: llegás, transformás todo y dejás el aire limpio. Tu energía activa los cambios.'],
+  ['Sol', 'Amarillo', '☀️', 'Iluminar', 'el fuego universal y la vida', 'Sos luz: tu presencia ilumina, da calor y enciende a las demás personas. Venís a irradiar amor incondicional.']];
+const KIN_TONO = [
+  ['Magnético', 'unificar', '¿Cuál es mi propósito?'], ['Lunar', 'polarizar', '¿Cuál es mi desafío?'], ['Eléctrico', 'activar', '¿Cómo puedo servir mejor?'],
+  ['Autoexistente', 'definir', '¿Qué forma tomará mi servicio?'], ['Entonado', 'empoderar', '¿Cómo me empodero?'], ['Rítmico', 'organizar', '¿Cómo encuentro el equilibrio?'],
+  ['Resonante', 'canalizar', '¿Cómo me sintonizo?'], ['Galáctico', 'armonizar', '¿Vivo lo que creo?'], ['Solar', 'pulsar', '¿Cómo logro mi propósito?'],
+  ['Planetario', 'perfeccionar', '¿Cómo perfecciono lo que hago?'], ['Espectral', 'disolver', '¿Cómo me libero?'], ['Cristal', 'dedicar', '¿Cómo me dedico a todo lo que vive?'],
+  ['Cósmico', 'perdurar', '¿Cómo expando mi alegría y mi amor?']];
+const KIN_TONO_F = ['Magnética', 'Lunar', 'Eléctrica', 'Autoexistente', 'Entonada', 'Rítmica', 'Resonante', 'Galáctica', 'Solar', 'Planetaria', 'Espectral', 'Cristal', 'Cósmica'];
+const KIN_FEMS = [2, 3, 4, 6, 7, 8, 14, 16, 18];
+function kinNum(fechaUTC){
+  // Sincronario de las 13 Lunas: el 29 de febrero comparte kin con el 28 (día fuera del tiempo)
+  const sinBis = t => { const d = new Date(t); let y = d.getUTCFullYear(), m = d.getUTCMonth(), dd = d.getUTCDate(); if (m === 1 && dd === 29) dd = 28;
+    let n = Math.floor(Date.UTC(y, m, dd) / 864e5), bis = 0;
+    for (let a = 1900; a <= y; a++) if (((a % 4 === 0 && a % 100) || a % 400 === 0) && Date.UTC(a, 1, 29) < Date.UTC(y, m, dd)) bis++;
+    return n - bis; };
+  return (((33 + sinBis(fechaUTC) - sinBis(Date.UTC(1987, 6, 26))) % 260) + 260) % 260 + 1;
+}
+function kinDe(k){
+  const s = (k - 1) % 20, t = (k - 1) % 13 + 1, S = KIN_SELLO[s], T = KIN_TONO[t - 1];
+  const g = [8, 0, 12, 4, 16][t % 5], guia = (s + g) % 20, analogo = ((17 - s) % 20 + 20) % 20, antipoda = (s + 10) % 20, oculto = 19 - s, tOc = 14 - t;
+  return { k, s, t, S, T, nombre: `${S[0]} ${KIN_FEMS.includes(s) ? KIN_TONO_F[t - 1] : T[0]} ${S[1]}`, guia, analogo, antipoda, oculto, tOc };
+}
+function kinNacimiento(){ const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); return m && P.anioNac ? kinDe(kinNum(Date.UTC(+P.anioNac, +m[2] - 1, +m[1]))) : null; }
+const kinSelloTxt = i => `${KIN_SELLO[i][2]} ${KIN_SELLO[i][0]} ${KIN_SELLO[i][1]}`;
+function kinGratisHTML(){
+  const K = kinNacimiento(); if (!K) return '';
+  return `<h3>Tu Kin maya · Sincronario</h3><div class="kin-caja"><p class="ag-ayuda" style="margin-top:0">En el Sincronario de las 13 Lunas, cada día tiene un kin: un sello (su energía) y un tono (su forma de moverse). El kin del día en que naciste es tu firma galáctica.</p>
+    <div class="kin-tit"><span class="kin-ic">${K.S[2]}</span><div><small>Kin ${K.k} · Tono ${K.t}</small><b>${esc(K.nombre)}</b><em>${K.S[3]} · ${K.S[4]}</em></div></div>
+    <p>${esc(K.S[5])}</p><p><b>Tu tono ${K.T[0].toLowerCase()} (${K.t}):</b> tu forma de ${K.T[1]}. Tu pregunta de vida: <i>${K.T[2]}</i></p>
+    <p class="sub">Tu oráculo de destino</p><div class="kin-orc">
+      <div><small>Te guía</small><b>${kinSelloTxt(K.guia)}</b><span>${KIN_SELLO[K.guia][3]}: la energía que te orienta.</span></div>
+      <div><small>Tu aliado</small><b>${kinSelloTxt(K.analogo)}</b><span>${KIN_SELLO[K.analogo][3]}: lo que te apoya y te complementa.</span></div>
+      <div><small>Tu desafío</small><b>${kinSelloTxt(K.antipoda)}</b><span>${KIN_SELLO[K.antipoda][3]}: lo que te pone a prueba y te fortalece.</span></div>
+      <div><small>Tu poder oculto</small><b>${kinSelloTxt(K.oculto)}</b><span>Tono ${K.tOc} · ${KIN_SELLO[K.oculto][3]}: tu fuerza escondida.</span></div></div>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-kinshare>✨ Compartir mi kin</button></p></div>`;
+}
+function kinHoyHTML(){
+  const h = new Date(), K = kinDe(kinNum(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate()))), yo = kinNacimiento();
+  const mismo = yo && yo.s === K.s, guia = yo && K.s === yo.guia;
+  return `<div class="kin-hoy"><span>${K.S[2]}</span><div><small>Kin de hoy · ${K.k}</small><b>${esc(K.nombre)}</b><p>Hoy el cielo trae ${K.S[4]}. Tono ${(KIN_FEMS.includes(K.s) ? KIN_TONO_F[K.t - 1] : K.T[0]).toLowerCase()}: un día para <b>${K.T[1]}</b>. ${mismo ? '✨ ¡Es tu mismo sello! Un día de poder para vos.' : guia ? '✨ Hoy está en el cielo tu sello guía: escuchá las señales.' : esc(K.T[2])}</p></div></div>`;
+}
+
+// ── Ángel cabalístico: 72 ángeles, cada uno rige 5 grados del Sol desde 0° de Aries ──
+const ANGELES = [
+  ['Vehuiah', 'la voluntad y los nuevos comienzos: te da coraje para empezar'], ['Jeliel', 'el amor y la fidelidad: armoniza las parejas y los vínculos'], ['Sitael', 'la protección ante la adversidad: te ayuda a cumplir tu palabra'], ['Elemiah', 'el poder espiritual: calma el alma después de las crisis y guía los viajes'],
+  ['Mahasiah', 'la paz y el aprendizaje: abre la puerta al conocimiento espiritual'], ['Lelahel', 'la luz y la sanación: trae claridad, salud y belleza interior'], ['Achaiah', 'la paciencia: te enseña a entender los secretos de la naturaleza'], ['Cahetel', 'la bendición divina: protege las cosechas, los proyectos y el hogar'],
+  ['Haziel', 'la misericordia: el perdón, la reconciliación y la amistad sincera'], ['Aladiah', 'la gracia divina: sana las heridas y regenera el cuerpo y el alma'], ['Lauviah', 'la victoria: el éxito, la inspiración y el reconocimiento'], ['Hahaiah', 'el refugio: los sueños reveladores y la protección del mundo interior'],
+  ['Iezalel', 'la fidelidad: la reconciliación, la memoria y el estudio'], ['Mebahel', 'la verdad y la justicia: protege a quien es víctima de injusticias'], ['Hariel', 'la purificación: limpia hábitos y pensamientos, y trae inspiración'], ['Hekamiah', 'la lealtad: la protección, el liderazgo y la valentía'],
+  ['Lauviah', 'la revelación: los sueños proféticos, la música y la intuición'], ['Caliel', 'la verdad: te ayuda a ver con claridad y a salir de las situaciones injustas'], ['Leuviah', 'la memoria: la inteligencia, la paciencia y la alegría ante la adversidad'], ['Pahaliah', 'la redención: la vocación espiritual y la conexión con lo sagrado'],
+  ['Nelchael', 'el aprendizaje: el estudio, la astrología, la ciencia y la protección ante la calumnia'], ['Ieiaiel', 'el destino: la fama, la fortuna y la diplomacia'], ['Melahel', 'la sanación con plantas: la protección y el poder de las hierbas medicinales'], ['Haheuiah', 'la protección: el refugio para quien se arrepiente y busca un nuevo comienzo'],
+  ['Nith-Haiah', 'la sabiduría y la magia blanca: revela los misterios ocultos'], ['Haaiah', 'la política y la diplomacia: la claridad para decidir y la búsqueda de la verdad'], ['Ierathel', 'la confianza: la libertad, la expresión y la propagación de la luz'], ['Seheiah', 'la longevidad: la salud, la prudencia y la protección ante los accidentes'],
+  ['Reiyel', 'la liberación: la meditación, la oración y el desarrollo espiritual'], ['Omael', 'la fecundidad: la paciencia, la alegría y la multiplicación de lo bueno'], ['Lecabel', 'el talento: las ideas brillantes, la abundancia y la solución de problemas'], ['Vasariah', 'la clemencia: la generosidad, la memoria y el buen hablar'],
+  ['Iehuiah', 'la lucidez: el discernimiento, la lealtad y la protección ante las traiciones'], ['Lehahiah', 'la obediencia y la armonía: la calma, la confianza y la paz'], ['Chavakiah', 'la reconciliación: la paz en las familias y las herencias'], ['Menadel', 'el trabajo: la vocación, la libertad y la constancia'],
+  ['Aniel', 'la ruptura de esquemas: el conocimiento, la innovación y la fuerza interior'], ['Haamiah', 'el ritual: la protección espiritual, el amor y la verdad'], ['Rehael', 'la sumisión filial: la salud, la regeneración y el amor entre generaciones'], ['Ieiazel', 'la consolación: la liberación, la creatividad y la palabra que sana'],
+  ['Hahahel', 'la misión: la fe, el liderazgo espiritual y la vocación de servicio'], ['Mikael', 'el orden político: la protección, la autoridad y la intuición para los asuntos públicos'], ['Veuliah', 'la prosperidad: la fortaleza, el éxito y la liberación de lo que te oprime'], ['Ielahiah', 'el talento militar: el coraje, la justicia y el éxito en los proyectos'],
+  ['Sealiah', 'la motivación: la voluntad, la salud y la fuerza para levantarte'], ['Ariel', 'la percepción: los sueños reveladores, los descubrimientos y los tesoros ocultos'], ['Asaliah', 'la contemplación: la verdad, la justicia y la visión elevada'], ['Mihael', 'la fertilidad: la armonía en la pareja, el amor y la intuición'],
+  ['Vehuel', 'la elevación: la grandeza del alma, la generosidad y la sabiduría'], ['Daniel', 'la elocuencia: la claridad para decidir y el consuelo'], ['Hahasiah', 'la medicina universal: la sabiduría oculta, la alquimia y la sanación'], ['Imamiah', 'la expiación: la liberación de los errores y la fuerza ante los enemigos'],
+  ['Nanael', 'la comunicación espiritual: el estudio de lo sagrado y la meditación'], ['Nithael', 'la juventud eterna: la belleza, la estabilidad y la longevidad'], ['Mebahiah', 'la lucidez intelectual: la moral, la religión y el deseo de tener hijes'], ['Poiel', 'la fortuna: la humildad, la modestia y el cumplimiento de los deseos'],
+  ['Nemamiah', 'el discernimiento: la prosperidad, la comprensión y la defensa de las causas justas'], ['Ieialel', 'la fuerza mental: la sanación de las penas y la protección de la vista'], ['Harahel', 'la riqueza intelectual: el conocimiento, la abundancia y la armonía familiar'], ['Mitzrael', 'la reparación: la sanación de la mente y la armonía entre cuerpo y alma'],
+  ['Umabel', 'la amistad: la afinidad, el conocimiento de los astros y la naturaleza'], ['Iah-Hel', 'el deseo de saber: la sabiduría, la paz interior y el retiro'], ['Anauel', 'la unidad: la prosperidad, el comercio y la protección ante los accidentes'], ['Mehiel', 'la vivificación: la inspiración, la escritura y la protección de quienes crean'],
+  ['Damabiah', 'la fuente de sabiduría: el éxito en las empresas y la protección en el agua'], ['Manakel', 'el conocimiento del bien y del mal: la calma, el sueño y la sanación emocional'], ['Eiael', 'la transformación: la longevidad, el consuelo y la sabiduría profunda'], ['Habuhiah', 'la sanación: la salud, la fertilidad y la abundancia de la tierra'],
+  ['Rochel', 'la restitución: te ayuda a encontrar lo perdido y a recuperar lo tuyo'], ['Jabamiah', 'la alquimia: la regeneración, la transformación y el renacer'], ['Haiaiel', 'las armas divinas: la protección, el coraje y la paz'], ['Mumiah', 'los finales y los renacimientos: cierra ciclos y abre caminos nuevos']];
+const COROS = [['Serafines', 'Metatrón'], ['Querubines', 'Raziel'], ['Tronos', 'Tsaphkiel'], ['Dominaciones', 'Tsadkiel'], ['Potencias', 'Camael'], ['Virtudes', 'Rafael'], ['Principados', 'Haniel'], ['Arcángeles', 'Miguel'], ['Ángeles', 'Gabriel']];
+function angelDe(){
+  try { const n = natal(); if (!n) return null; const i = Math.floor(nrm2(n.pos.Sol) / 5) % 72, c = COROS[Math.floor(i / 8)];
+    // los días del año en que gobierna (aprox., según el Sol)
+    const y = new Date().getFullYear(); let ini = null, fin = null;
+    for (let d = 0; d < 370; d++) { const f = new Date(y, 2, 15 + d, 12), j = Math.floor(nrm2(longSolar(jdDe(f))) / 5) % 72; if (j === i && !ini) ini = f; if (ini && j !== i) { fin = new Date(f.getTime() - 864e5); break; } }
+    return { i, n: i + 1, nom: ANGELES[i][0], don: ANGELES[i][1], coro: c[0], arc: c[1], ini, fin };
+  } catch (e) { console.error(e); return null; }
+}
+function angelGratisHTML(){
+  const A = angelDe(); if (!A) return '';
+  return `<h3>Tu ángel cabalístico</h3><div class="angel-caja"><p class="ag-ayuda" style="margin-top:0">Según la Cábala, 72 ángeles acompañan el recorrido del Sol durante el año, y cada uno cuida a quienes nacen en sus días.</p>
+    <div class="angel-tit"><span>👼</span><div><small>Ángel n.º ${A.n} · Coro de los ${A.coro}</small><b>${esc(A.nom)}</b></div></div>
+    <p>Te acompaña desde que naciste y te regala <b>${esc(A.don.split(':')[0])}</b>${A.don.includes(':') ? ':' + esc(A.don.split(':').slice(1).join(':')) : ''}.</p>
+    <p>Su coro está guiado por el arcángel <b>${A.arc}</b>.${A.ini && A.fin ? ` Sus días en el año son del <b>${fechaCorta(A.ini)} al ${fechaCorta(A.fin)}</b>: es tu momento para pedirle.` : ''}</p>
+    <div class="angel-inv"><small>Para invocarlo</small><p>Encendé una vela blanca, respirá tres veces y decí: <i>"${esc(A.nom)}, ángel de mi nacimiento, te pido que me acompañes con tu luz y me ayudes en… (lo que necesites). Gracias."</i></p></div>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-angelshare>✨ Compartir mi ángel</button></p></div>`;
+}
+// En Vos, después del Saju
+const _serKin = serHTML;
+serHTML = function(){ let h = _serKin(); try { h += kinGratisHTML() + angelGratisHTML(); } catch (e) { console.error(e); } return h; };
+// En Hoy, el kin del día
+const _hoyKin = hoyHTML;
+hoyHTML = function(){ const h = _hoyKin(); try { const k = kinHoyHTML(), i = h.indexOf('<details class="mas-hoy"'); return i > -1 ? h.slice(0, i) + k + h.slice(i) : h + k; } catch (e) { console.error(e); return h; } };
+// Compartir como imagen (tarjeta de historias)
+async function tarjetaSimple(kicker, titulo, sub, frase, ic){
+  await sjFuentes(); const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2a0f45'); g.addColorStop(.55, '#1a0a2e'); g.addColorStop(1, '#0d0518'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const r = sjRand(titulo.length * 31 + 7); for (let i = 0; i < 220; i++) { c.globalAlpha = .2 + r() * .7; c.fillStyle = r() > .8 ? '#F3DCA0' : '#fff'; c.beginPath(); c.arc(r() * W, r() * H, r() * 2.4 + .4, 0, 6.283); c.fill(); } c.globalAlpha = 1;
+  const hal = c.createRadialGradient(W / 2, 700, 10, W / 2, 700, 420); hal.addColorStop(0, 'rgba(243,220,160,.35)'); hal.addColorStop(1, 'rgba(243,220,160,0)'); c.fillStyle = hal; c.fillRect(0, 200, W, 1000);
+  c.textAlign = 'center'; c.fillStyle = '#F3DCA0'; c.font = '500 32px Jost, sans-serif'; c.letterSpacing = '8px'; c.fillText(kicker, W / 2, 190); c.letterSpacing = '0px';
+  const nom = sjNombre(); if (nom) { c.fillStyle = '#FFF4DA'; c.font = '100px "Great Vibes", cursive'; c.fillText(nom, W / 2, 320); }
+  c.font = '240px serif'; c.textBaseline = 'middle'; c.fillText(ic, W / 2, 700); c.textBaseline = 'alphabetic';
+  c.fillStyle = '#fff'; c.font = '600 96px "Cormorant Garamond", serif'; sjLineas(c, titulo, 940).forEach((l, i) => c.fillText(l, W / 2, 1080 + i * 96));
+  c.fillStyle = '#E8A0B4'; c.font = '500 36px Jost, sans-serif'; c.fillText(sub, W / 2, 1230);
+  c.fillStyle = '#F1ECF7'; c.font = 'italic 50px "Cormorant Garamond", serif'; sjLineas(c, frase, 860).slice(0, 5).forEach((l, i) => c.fillText(l, W / 2, 1370 + i * 64));
+  c.fillStyle = 'rgba(243,220,160,.9)'; c.font = '500 28px Jost, sans-serif'; c.letterSpacing = '4px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790); c.letterSpacing = '0px';
+  c.fillStyle = 'rgba(241,236,247,.7)'; c.font = '400 26px Jost, sans-serif'; c.fillText('luzguia.com.ar', W / 2, 1835);
+  return new Promise(ok => cv.toBlob(ok, 'image/png'));
+}
+document.addEventListener('click', async e => {
+  const bk = e.target.closest('[data-kinshare]'), ba = e.target.closest('[data-angelshare]'); if (!bk && !ba) return;
+  const b = bk || ba, o = b.textContent; b.disabled = true; b.textContent = 'Preparando tu imagen…';
+  try {
+    if (bk) { const K = kinNacimiento(); evento('Compartió', 'Kin maya'); await compartirArchivo(await tarjetaSimple('MI KIN MAYA · ' + K.k, K.nombre, K.S[3] + ' · Tono ' + K.T[0].toLowerCase(), '“' + K.S[5].split('. ')[0] + '.”', K.S[2]), 'mi-kin-luz-guia.png', `Mi kin maya es el ${K.k}: ${K.nombre} ✨ · Mi Luz, Luz Guía`); }
+    else { const A = angelDe(); evento('Compartió', 'Ángel cabalístico'); await compartirArchivo(await tarjetaSimple('MI ÁNGEL CABALÍSTICO', A.nom, 'Coro de los ' + A.coro, '“Me regala ' + A.don.split(':')[0] + '.”', '👼'), 'mi-angel-luz-guia.png', `Mi ángel cabalístico es ${A.nom} 👼 · Mi Luz, Luz Guía`); }
+  } catch (err) { console.error(err); }
+  b.disabled = false; b.textContent = o;
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
