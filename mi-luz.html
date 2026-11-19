@@ -745,6 +745,19 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .pron-opc button.on{background:linear-gradient(135deg,#E9C77B,#C9A24E);color:#2A1240;border-color:transparent;font-weight:600}
 .pron-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;padding:10px 18px;border-radius:999px;background:rgba(28,11,46,.95);border:1px solid rgba(212,175,106,.5);color:#F3DCA0;font-size:.9rem;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .resp-fotos{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}.resp-fotos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid rgba(212,175,106,.35)}
+.nombres-extra{margin-top:14px}
+.nombres-cartas{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:8px 0 12px}
+.nom-c{padding:12px;border-radius:14px;border:1px solid rgba(212,175,106,.3);background:rgba(59,23,96,.3)}
+.nom-c.elegido{border-color:#F3DCA0;box-shadow:0 0 18px rgba(212,175,106,.25)}
+.nom-c b{display:block;font-family:var(--serif);font-size:1.35rem;color:#F3DCA0}
+.nom-c span{display:block;font-size:.78rem;color:#E8A0B4;letter-spacing:.05em;margin:2px 0 6px}
+.nom-c p{margin:0;font-size:.86rem;line-height:1.45}
+.nom-union,.nom-cambio{padding:14px;border-radius:16px;border:1px solid rgba(212,175,106,.35);background:linear-gradient(150deg,rgba(91,42,134,.35),rgba(28,11,46,.6));margin:10px 0}
+.nom-union>small,.nom-cambio>small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase}
+.nom-union>b,.nom-cambio>b{display:block;font-family:var(--serif);font-size:1.3rem;color:#F3DCA0;margin:2px 0 6px}
+.nom-union p,.nom-cambio p{margin:0;font-size:.92rem;line-height:1.55}
+.nom-cambio .btn-sec{margin-top:10px}
+.nm-chk{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(212,175,106,.45);background:rgba(255,255,255,.05);font-size:.9rem;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2849,6 +2862,7 @@ function arcanosHTML(){
       <li><b>${num.alma}</b><div><span>Número del alma</span>${NUM_TXT[num.alma][0]}: lo que tu corazón desea en lo profundo.</div></li>
       <li><b>${num.personalidad}</b><div><span>Número de personalidad</span>${NUM_TXT[num.personalidad][0]}: la primera impresión que dejás.</div></li></ul>
       <p class="ag-ayuda">Calculado con tu nombre completo, según la numerología pitagórica.</p>` : ''}</div>`;
+  h += nombresExtraHTML();
   if (num.camino) {
     h += `<h3>Tu numerología</h3><div class="num-caja">
       <div class="num-grande"><b>${num.camino}</b><div><small>Tu número de camino de vida</small><h4>${NUM_TXT[num.camino][0]}</h4><p>${NUM_TXT[num.camino][1]}</p></div></div>
@@ -6066,6 +6080,80 @@ postCarga = function(){ activarGenero(); return _postCargaGen(); };
 /* ───── v35b: si algo vuelve a pintar la app, la agenda se vuelve a dibujar ───── */
 const _pintarAgFix = pintar;
 pintar = function(){ const r = _pintarAgFix.apply(this, arguments); try { const a = $('agenda'); if (a && !a.innerHTML.trim() && AG) pintarAgenda(); } catch (e) { console.error(e); } return r; };
+
+/* ───── v36: tus nombres (cada uno, su unión) y el cambio de nombre (Premium) ───── */
+const LETRA_V = { A:1, B:2, C:3, D:4, E:5, F:6, G:7, H:8, I:9, J:1, K:2, L:3, M:4, N:5, O:6, P:7, Q:8, R:9, S:1, T:2, U:3, V:4, W:5, X:6, Y:7, Z:8 };
+const numPalabra = w => sinTildes(w).replace(/[^A-Z]/g, '').split('').reduce((a, c) => a + (LETRA_V[c] || 0), 0);
+function arcDeNum(n){ n = +n || 0; while (n > 22) n = String(n).split('').reduce((a, c) => a + +c, 0); return n || 22; }
+const capi = w => String(w || '').toLowerCase().replace(/(^|\s)\S/g, m => m.toUpperCase());
+function misNombres(){
+  const pal = String(P.nombreCompleto || P.nombre || '').trim().split(/\s+/).filter(Boolean);
+  const dados = String(P.nombres || '').trim().split(/\s+/).filter(Boolean);
+  if (dados.length) return dados.map(capi);
+  const det = pal.filter(w => NOMBRES[sinTildes(w)]);
+  return (det.length ? det : pal.slice(0, 1)).map(capi);
+}
+function luzDe(n){ const a = ARC[n]; return a && a.luz ? String(a.luz).split(',').slice(0, 2).map(t => t.trim()).join(' y ') : ''; }
+function transitoEdad(e){
+  e = +e;
+  if (e < 7) return { t: 'En tu infancia', x: 'el nombre llega desde tu entorno, pero ya expresa algo de quien vas a ser' };
+  if (e >= 27 && e <= 30) return { t: 'En tu retorno de Saturno', x: 'el momento de la madurez, en el que se suelta lo heredado y se elige quién ser de verdad' };
+  if (e >= 57 && e <= 60) return { t: 'En tu segundo retorno de Saturno', x: 'el tiempo de la sabiduría, de quedarte solo con lo que es auténticamente tuyo' };
+  if (e >= 39 && e <= 43) return { t: 'En tu oposición de Urano', x: 'la crisis de la mitad de la vida, cuando el alma pide libertad y romper los moldes' };
+  if ((e >= 18 && e <= 20) || (e >= 37 && e <= 38) || (e >= 55 && e <= 56)) return { t: 'En tu retorno de los nodos lunares', x: 'cuando el alma recalibra su propósito y se acerca a lo que vino a hacer' };
+  if ([12, 24, 36, 48, 60, 72].some(j => Math.abs(e - j) <= 1)) return { t: 'En tu retorno de Júpiter', x: 'un nuevo ciclo de crecimiento, fe y expansión, en el que te animás a ser más grande' };
+  if ((e >= 14 && e <= 15) || (e >= 44 && e <= 45)) return { t: 'En tu oposición de Saturno', x: 'un tiempo de poner a prueba la identidad y de diferenciarte de lo que esperaban de vos' };
+  if ((e >= 21 && e <= 22) || (e >= 7 && e <= 8) || (e >= 50 && e <= 52)) return { t: 'En una cuadratura de Saturno', x: 'un tiempo de construir estructura propia y de afirmarte frente a los demás' };
+  return { t: 'A esa edad', x: 'tu camino te pedía un cambio de piel' };
+}
+function nombresExtraHTML(){
+  try {
+    const ns = misNombres(), eleg = capi(P.nombreElegido || ''), edad = +P.edadCambio || 0;
+    let h = '<div class="nombres-extra">';
+    if (ns.length >= 2) {
+      const cards = ns.map(w => { const raw = numPalabra(w), n = arcDeNum(raw), s = significadoNombre(w); return { w, raw, n, s }; });
+      const u = arcDeNum(cards.reduce((a, c) => a + c.raw, 0));
+      h += `<p class="sub">Tus nombres, uno por uno</p><div class="nombres-cartas">${cards.map(c => `<div class="nom-c${eleg && sinTildes(c.w) === sinTildes(eleg) ? ' elegido' : ''}"><b>${esc(c.w)}</b><span>${romano(c.n)} · ${esc(NOM[c.n])}</span><p data-nogen>${c.s ? esc(c.s) : 'Su significado lo sumamos pronto ✨'}</p></div>`).join('')}</div>
+        <div class="nom-union"><small>La unión de tus nombres</small><b>${romano(u)} · ${esc(NOM[u])}</b><p>${cards.map((c, i) => `${i === 0 ? '' : i === cards.length - 1 ? ' y ' : ', '}<i>${esc(c.w)}</i> aporta ${esc(luzDe(c.n))}`).join('')}. Juntos suman <b>${esc(NOM[u])}</b>: ${esc(luzDe(u))}. Tu camino es integrar esas energías, no elegir una sola.</p></div>`;
+    }
+    if (eleg && edad && ns.length && P.diaMes && P.anioNac) {
+      const orig = ns.find(w => sinTildes(w) !== sinTildes(eleg)) || ns[0];
+      const A = arcDeNum(numPalabra(orig)), B = arcDeNum(numPalabra(eleg)), tr = transitoEdad(edad), anioArc = arcanoDeAnio(P.diaMes, (+P.anioNac) + edad);
+      const txt = `${tr.t} (a los ${edad}), ${tr.x}, empezaste a llamarte ${eleg}. Ese año transitabas el arcano ${romano(anioArc)} · ${NOM[anioArc]}: ${luzDe(anioArc)}. Pasaste de ${orig}, que vibra con ${NOM[A]} (${luzDe(A)}), a ${eleg}, que vibra con ${NOM[B]} (${luzDe(B)}). No fue casual: es como si una parte tuya que vivía en ${luzDe(B)} hubiera pedido lugar. El nombre que elegiste es la energía que viniste a encarnar desde ese momento.`;
+      h += `<div class="nom-cambio"><small>Tu cambio de nombre · a los ${edad}</small><b>De ${esc(orig)} a ${esc(eleg)}</b>`;
+      h += P.premium ? `<p>${esc(txt)}</p>` : `<div class="teaser-velo"><p>${esc(txt)}</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí por qué cambiaste de nombre ✨</button>`;
+      h += '</div>';
+    }
+    h += `<p class="fila-comp"><button class="btn-sec" type="button" data-misnombres>✏️ ${eleg || ns.length >= 2 ? 'Editar mis nombres' : '¿Tenés más de un nombre o usás otro?'}</button></p></div>`;
+    return h;
+  } catch (e) { console.error(e); return ''; }
+}
+function abrirNombres(){
+  const pal = String(P.nombreCompleto || P.nombre || '').trim().split(/\s+/).filter(Boolean), ns = misNombres().map(sinTildes);
+  $('dlg-titulo').textContent = '✏️ Tus nombres';
+  $('dlg-texto').textContent = 'Así leemos el significado de cada nombre, su unión y, si cambiaste de nombre, qué estaba pasando en tu vida.';
+  $('dlg-cuerpo').innerHTML = `<p class="ag-ayuda">1. Marcá cuáles son tus nombres (no los apellidos):</p><div class="pron-opc" id="nm-pal">${pal.map(w => `<label class="nm-chk"><input type="checkbox" value="${esc(w)}"${ns.includes(sinTildes(w)) ? ' checked' : ''}> ${esc(capi(w))}</label>`).join('')}</div>
+    <label class="diario-lab">2. ¿Cómo te gusta que te llamen?<input class="campo-codigo" id="nm-eleg" maxlength="30" value="${esc(P.nombreElegido || P.nombre || '')}" placeholder="Tu nombre"></label>
+    <label class="diario-lab">3. Si empezaste a usar otro nombre, ¿desde qué edad? (opcional)<input class="campo-codigo" id="nm-edad" type="number" min="1" max="99" inputmode="numeric" value="${esc(P.edadCambio || '')}" placeholder="Ej: 29"></label>
+    <div class="fila-bt"><button class="btn" type="button" id="nm-ok">Guardar</button></div><p class="ag-ayuda" id="nm-est"></p>`;
+  if (!$('dlg').open) $('dlg').showModal();
+  $('nm-ok').onclick = guardarNombres;
+}
+async function guardarNombres(){
+  const nombres = [...document.querySelectorAll('#nm-pal input:checked')].map(i => i.value).join(' ');
+  const eleg = $('nm-eleg').value.trim().replace(/\s+/g, ' '), edad = $('nm-edad').value.trim();
+  if (!eleg) { $('nm-eleg').focus(); return; }
+  if (edad && !(+edad >= 1 && +edad <= 99)) { $('nm-edad').focus(); return; }
+  const b = $('nm-ok'); b.disabled = true; $('nm-est').textContent = 'Guardando…';
+  let d = {}; try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'perfil', codigo: CODIGO, nombres, nombreElegido: eleg, edadCambio: edad }) }); d = await r.json(); } catch (e) {}
+  if (!d.ok) { b.disabled = false; $('nm-est').textContent = d.error || 'No se pudo guardar. Revisá tu conexión y probá de nuevo.'; return; }
+  P.nombres = d.nombres != null ? d.nombres : nombres; P.nombreElegido = d.nombreElegido != null ? d.nombreElegido : eleg; P.edadCambio = d.edadCambio != null ? d.edadCambio : edad;
+  if (P.nombreElegido) P.nombre = P.nombreElegido;
+  evento('Sección', 'Editó sus nombres');
+  $('dlg').close(); const y = window.scrollY; pintar(); window.scrollTo(0, y);
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-misnombres]')) abrirNombres(); });
+
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
 </script>
