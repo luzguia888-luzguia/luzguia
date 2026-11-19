@@ -914,7 +914,7 @@ const ESQ = {
     {k:'Fecha', t:'date', req:1}, {k:'Hora', t:'time'}, {k:'Cupo', t:'num', def:6}, {k:'Precio por persona', t:'money'}, {k:'Notas', t:'area', full:1}]},
   Personas: { nombre: 'persona', clave: 'ID Persona', etiqueta: 'Nombre completo', campos: [
     {k:'Nombre completo', t:'text', req:1, full:1}, {k:'Fecha de nacimiento', t:'date'}, {k:'Teléfono', t:'tel', ph:'2954 123456'},
-    {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text'},
+    {k:'Email', t:'email', ph:'para el saludo automático de cumpleaños'}, {k:'Instagram', t:'text', ph:'@usuario'}, {k:'Canal de llegada', t:'sel', o:() => L('Canales')}, {k:'Referida por', t:'text', sug:() => H('Personas').map(x => x['Nombre completo']).filter(Boolean), lab:'Referida por (quién la trajo)'}, {k:'Cómo llegó a Mi Luz', t:'sel', o:() => ORIGENES_ML}, {k:'Pidió Mi Luz por', t:'text', sug:() => [...new Set(['Historia de Instagram', 'Mensaje de Instagram', 'WhatsApp', 'En persona', 'Recomendación'].concat(H('Personas').map(x => x['Pidió Mi Luz por']).filter(Boolean)))], lab:'Si la pidió: ¿por dónde? (elegí o escribí)'},
     {k:'Rol', t:'sel', o:() => L('Roles').length ? L('Roles') : ['Participante','Organizadora'], def:'Participante'},
     {k:'Pronombre', t:'sel', o:() => ['Ella', 'Él', 'Prefiero no decirlo'], lab:'Pronombre (cómo prefiere que le hablemos en Mi Luz)'},
     {k:'Hora de nacimiento', t:'text', ph:'20:20 (para la revolución solar)'}, {k:'Lugar de nacimiento', t:'text', ph:'Santa Rosa, La Pampa'},
@@ -3043,6 +3043,39 @@ document.addEventListener('click', async e => {
   const rec = H('Ventas').find(r => String(r._fila) === b.dataset.deposito); if (!rec) return;
   b.disabled = true; try { await guardarCambios('Ventas', rec, { 'Depositado en MP Luz Guía': 'Sí' }, '✓ Marcado como depositado'); } catch (er) { toast(er.message, true); b.disabled = false; }
 });
+
+/* ───── v23d: cómo llega la gente a Mi Luz (encuentro, la pidió, regalo, invitación) ───── */
+const ORIGENES_ML = ['Fue a un encuentro', 'La pidió', 'Regalo de Premium', 'Invitación de alguien', 'Otro'];
+function origenMiLuz(p){
+  const o = String(p['Cómo llegó a Mi Luz'] || '').trim(); if (o) return o;
+  return H('Asistencias').some(a => a['ID Persona'] === p['ID Persona'] && a['Asistencia'] !== 'Canceló') ? 'Fue a un encuentro' : 'Sin dato';
+}
+function miluzOrigenHTML(){
+  const ps = H('Personas').filter(p => !esOrg(p) && p['Código portal']);
+  const abrio = new Set(H('Visitas').map(v => v['ID Persona']));
+  const esPrem = p => /premium/i.test(p['Plan'] || '') && (!fecha(p['Premium hasta']) || fecha(p['Premium hasta']) >= HOY);
+  const vino = p => H('Asistencias').some(a => a['ID Persona'] === p['ID Persona'] && a['Asistencia'] === 'Asistió');
+  const G = {}; ps.forEach(p => { const o = origenMiLuz(p); (G[o] = G[o] || []).push(p); });
+  const orden = ORIGENES_ML.concat(['Sin dato']).filter(o => G[o]);
+  const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '—';
+  let h = `<h3>Cómo llegan a Mi Luz</h3><p class="ayuda" style="margin-top:0">Quiénes tienen Mi Luz y por qué: porque vinieron a un encuentro, porque la pidieron (por una historia, un mensaje…), por un regalo o una invitación. Cargalo en cada participante, en "Cómo llegó a Mi Luz". Si no está cargado y vino a un encuentro, cuenta como encuentro.</p>`;
+  h += `<p style="margin:0 0 12px">${btnNuevo('Personas', '➕ Alguien pidió Mi Luz', { 'Cómo llegó a Mi Luz': 'La pidió' })}</p>`;
+  h += ps.length ? '<div class="tabla-caja"><table><thead><tr><th>Cómo llegó</th><th class="num">Personas</th><th class="num">La abrieron</th><th class="num">Son Premium</th><th class="num">Vinieron a un encuentro</th></tr></thead><tbody>' +
+    orden.map(o => { const L = G[o], a = L.filter(p => abrio.has(p['ID Persona'])).length, pr = L.filter(esPrem).length, v = L.filter(vino).length;
+      return `<tr><td>${esc(o)}</td><td class="num"><b>${L.length}</b></td><td class="num">${a} <small>(${pct(a, L.length)})</small></td><td class="num">${pr} <small>(${pct(pr, L.length)})</small></td><td class="num">${o === 'Fue a un encuentro' ? '—' : v + ' <small>(' + pct(v, L.length) + ')</small>'}</td></tr>`; }).join('') +
+    `<tr><td><b>Total</b></td><td class="num"><b>${ps.length}</b></td><td class="num">${ps.filter(p => abrio.has(p['ID Persona'])).length}</td><td class="num">${ps.filter(esPrem).length}</td><td class="num"></td></tr></tbody></table></div>` : '<p class="ayuda">Todavía no hay personas con Mi Luz.</p>';
+  const pid = (G['La pidió'] || []), canal = {}; pid.forEach(p => { const c = String(p['Pidió Mi Luz por'] || 'Sin dato').trim(); canal[c] = (canal[c] || 0) + 1; });
+  if (pid.length) h += '<p class="ayuda" style="margin:14px 0 6px"><b>La pidieron por:</b> ' + Object.entries(canal).sort((a, b) => b[1] - a[1]).map(([c, n]) => esc(c) + ' (' + n + ')').join(' · ') + '</p>';
+  const ref = {}; H('Personas').forEach(p => { const r = String(p['Referida por'] || '').trim(); if (r) ref[r] = (ref[r] || 0) + 1; });
+  const top = Object.entries(ref).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (top.length) h += '<p class="ayuda" style="margin:6px 0 0"><b>✨ Quién trae más gente:</b> ' + top.map(([n, c]) => esc(n) + ' (' + c + ')').join(' · ') + '. Un mimo para ellas: un descuento o una pregunta extra.</p>';
+  return h;
+}
+const _miluzOrigen = V.miluz;
+V.miluz = () => {
+  const h = _miluzOrigen();
+  try { const i = h.indexOf('<h3'); const sec = miluzOrigenHTML(); return i > -1 ? h.slice(0, i) + sec + h.slice(i) : h + sec; } catch (e) { console.error(e); return h; }
+};
 </script>
 </body>
 </html>
