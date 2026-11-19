@@ -855,6 +855,8 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .kua-tit small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.kua-tit b{display:block;font-family:var(--serif);font-size:1.35rem;color:#F3DCA0}.kua-tit em{display:block;font-style:normal;font-size:.82rem;color:#E3D6F2}
 .kua-graf{display:flex;justify-content:center;margin:8px 0 12px}.kua-svg{width:min(280px,78vw);height:auto}
 .kua-e{margin:8px 0}.nm-chk.on{background:rgba(212,175,106,.25);border-color:#F3DCA0;color:#F3DCA0}
+.nak-caja,.arbol-caja{border:1px solid rgba(212,175,106,.4);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(91,42,134,.35),rgba(20,8,36,.65));margin:10px 0 18px}
+.ogham{font-family:"Segoe UI Symbol","Noto Sans Ogham",serif;color:#F3DCA0;text-shadow:0 0 14px rgba(243,220,160,.6)}
 </style>
 </head>
 <body>
@@ -5483,12 +5485,12 @@ function reordenarVos(h){
   const chip = (id, t) => `<button type="button" class="chip-vos" data-vosir="${id}">${t}</button>`;
   const idDe = (g2, re) => { const x = B[g2].find(e => e.tagName === 'H3' && re.test(e.textContent)); return x ? x.id : ''; };
   const chips = [
-    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /diseño humano/i), 'Diseño Humano'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel'], [idDe('quien', /kua/i), 'Feng Shui']]],
+    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /diseño humano/i), 'Diseño Humano'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel'], [idDe('quien', /kua/i), 'Feng Shui'], [idDe('quien', /nakshatra/i), 'Nakshatra'], [idDe('quien', /árbol celta/i), 'Árbol celta']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
   const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
-  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre, el Saju, el Diseño Humano, el Sincronario maya, tu ángel y el Feng Shui.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
+  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre, el Saju, el Diseño Humano, el Sincronario maya, tu ángel, el Feng Shui, la astrología védica y los árboles celtas.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
 const _vosUX = arcanosHTML;
 arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } catch (e) { console.error(e); return h; } };
@@ -6000,7 +6002,7 @@ function valorPremiumHTML(){
   return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
 }
 function gratisSiempreHTML(){
-  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu tipo de Diseño Humano, tu kin maya, tu ángel, tu número Kua, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu tipo de Diseño Humano, tu kin maya, tu ángel, tu número Kua, tu Nakshatra, tu árbol celta, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
   return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
 }
 const _premValor = premiumHTML;
@@ -7343,6 +7345,179 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-kuashare]'); if (!b) return; const K = kuaDe(); if (!K) return; const o = b.textContent; b.disabled = true; b.textContent = 'Preparando tu imagen…';
   try { evento('Compartió', 'Feng Shui'); await compartirArchivo(await tarjetaSimple('MI FENG SHUI · KUA ' + K.k, 'Mi dirección de la suerte: ' + KUA_DIR[K.dirs[0]], 'Grupo ' + K.grupo + ' · ' + K.info[0] + ' ' + K.info[1], '“Salud al ' + KUA_DIR[K.dirs[1]] + ', amor al ' + KUA_DIR[K.dirs[2]] + ', calma al ' + KUA_DIR[K.dirs[3]] + '.”', '🧭'), 'mi-feng-shui-luz-guia.png', `Mi número Kua es el ${K.k} 🧭 · Mi Luz, Luz Guía`); } catch (err) { console.error(err); }
   b.disabled = false; b.textContent = o;
+});
+
+
+/* ───── v42: tu Nakshatra (astrología védica) y tu árbol celta ───── */
+const NAKS = [
+  ['Ashwini', 'los Ashwini Kumaras, médicos de los dioses', 'una cabeza de caballo', 'Caballo', '🐎', 'Ketu', 'Sanación, rapidez y nuevos comienzos', 'Tenés una energía veloz y sanadora: llegás primero, ayudás a recuperarse y te encanta empezar cosas.'],
+  ['Bharani', 'Yama, señor de los ciclos de la vida', 'el vientre que da vida', 'Elefante', '🐘', 'Venus', 'Transformación, creación e intensidad', 'Sostenés los grandes pasajes de la vida: nacimientos, finales y renacimientos. Tu creatividad es poderosa.'],
+  ['Krittika', 'Agni, el dios del fuego', 'una llama o una navaja', 'Oveja', '🐑', 'Sol', 'Purificación, coraje y verdad', 'Sos fuego que purifica: cortás con lo falso, protegés y decís la verdad aunque queme.'],
+  ['Rohini', 'Brahma, el creador', 'un carro tirado por bueyes', 'Serpiente', '🐍', 'Luna', 'Belleza, fertilidad y abundancia', 'Todo florece a tu alrededor: tenés magnetismo, sensualidad y el don de hacer crecer lo que tocás.'],
+  ['Mrigashira', 'Soma, el néctar de la Luna', 'la cabeza de un ciervo', 'Serpiente', '🐍', 'Marte', 'Búsqueda, curiosidad y dulzura', 'Sos eterna buscadora: curiosa, sensible y con una mente que siempre quiere ir más allá.'],
+  ['Ardra', 'Rudra, el señor de las tormentas', 'una lágrima o un diamante', 'Perro', '🐕', 'Rahu', 'Tormenta, renovación y profundidad emocional', 'Atravesás tormentas y salís renovada: tu fuerza nace de sentir todo y transformarlo.'],
+  ['Punarvasu', 'Aditi, la madre de los dioses', 'un carcaj de flechas', 'Gato', '🐈', 'Júpiter', 'Renovación, regreso de la luz y hogar', 'Siempre volvés a la luz: sabés empezar de nuevo, sos optimista y das refugio.'],
+  ['Pushya', 'Brihaspati, el maestro de los dioses', 'la ubre de una vaca o una flor', 'Cabra', '🐐', 'Saturno', 'Nutrición, protección y sabiduría', 'Es la mansión más auspiciosa: nutrís, cuidás y enseñás. Tu presencia trae prosperidad.'],
+  ['Ashlesha', 'los Nagas, las serpientes sabias', 'una serpiente enroscada', 'Gato', '🐈', 'Mercurio', 'Misterio, kundalini y percepción', 'Tenés una mirada hipnótica y una intuición que ve lo oculto. Tu poder es la transformación interior.'],
+  ['Magha', 'los Pitris, los ancestros', 'un trono real', 'Rata', '🐀', 'Ketu', 'Linaje, ancestros y nobleza', 'Llevás la fuerza de tus ancestros: tenés presencia, dignidad y una misión que viene de tu linaje.'],
+  ['Purva Phalguni', 'Bhaga, el dios del placer y la fortuna', 'una hamaca', 'Rata', '🐀', 'Venus', 'Placer, amor y creatividad', 'Viniste a disfrutar: el arte, el amor y la alegría son tu camino espiritual.'],
+  ['Uttara Phalguni', 'Aryaman, el dios de los pactos', 'las patas de una cama', 'Vaca', '🐄', 'Sol', 'Compromiso, amistad y generosidad', 'Sos de palabra: construís vínculos duraderos, ayudás y sostenés los acuerdos.'],
+  ['Hasta', 'Savitar, el sol que da vida', 'una mano abierta', 'Búfala', '🐃', 'Luna', 'Habilidad, sanación y humor', 'Tus manos son mágicas: creás, sanás y resolvés con destreza, y con mucho humor.'],
+  ['Chitra', 'Tvashtar, el arquitecto celestial', 'una perla brillante', 'Tigre', '🐅', 'Marte', 'Belleza, arte y diseño', 'Sos artista del mundo: ves la belleza en todo y sabés darle forma.'],
+  ['Swati', 'Vayu, el dios del viento', 'un brote movido por el viento', 'Búfalo', '🐃', 'Rahu', 'Libertad, flexibilidad e independencia', 'Sos viento libre: te adaptás, negociás y necesitás espacio para crecer a tu manera.'],
+  ['Vishakha', 'Indra y Agni, la fuerza y el fuego', 'un arco de triunfo', 'Tigre', '🐅', 'Júpiter', 'Propósito, determinación y logro', 'Cuando tenés una meta, nada te detiene: tu determinación te lleva a la victoria.'],
+  ['Anuradha', 'Mitra, el dios de la amistad', 'una flor de loto', 'Ciervo', '🦌', 'Saturno', 'Amistad, devoción y cooperación', 'Florecés en el barro como el loto: sos leal, devota y sabés crear comunidad.'],
+  ['Jyeshtha', 'Indra, rey de los dioses', 'un amuleto protector', 'Ciervo', '🦌', 'Mercurio', 'Protección, liderazgo y sabiduría', 'Tenés alma de hermana mayor: protegés, liderás y cargás responsabilidades con sabiduría.'],
+  ['Mula', 'Nirriti, la diosa de la disolución', 'raíces atadas', 'Perro', '🐕', 'Ketu', 'Ir a la raíz, investigar y renacer', 'Vas a la raíz de todo: investigás, desarmás lo falso y renacés más auténtica.'],
+  ['Purva Ashadha', 'Apas, las aguas sagradas', 'un abanico', 'Mono', '🐒', 'Venus', 'Invencibilidad, purificación y fe', 'Tu fe es invencible: purificás, inspirás y convencés con tu entusiasmo.'],
+  ['Uttara Ashadha', 'los Vishvadevas, los dioses universales', 'el colmillo de un elefante', 'Mangosta', '🦦', 'Sol', 'Victoria final, integridad y ética', 'Tu victoria llega con el tiempo y es definitiva: sos íntegra, justa y perseverante.'],
+  ['Shravana', 'Vishnu, el que sostiene el universo', 'una oreja', 'Mono', '🐒', 'Luna', 'Escucha, aprendizaje y conexión', 'Tu don es escuchar: aprendés, guardás la sabiduría y la transmitís.'],
+  ['Dhanishta', 'los Vasus, dioses de la abundancia', 'un tambor', 'León', '🦁', 'Marte', 'Ritmo, música y prosperidad', 'Llevás el ritmo del universo: tenés talento musical, generosidad y atraés abundancia.'],
+  ['Shatabhisha', 'Varuna, el dios de las aguas cósmicas', 'un círculo vacío', 'Caballo', '🐎', 'Rahu', 'Sanación, misterio e independencia', 'Es la mansión de los cien sanadores: tenés el don de curar y una mente que explora lo desconocido.'],
+  ['Purva Bhadrapada', 'Aja Ekapada, el fuego espiritual', 'una espada', 'León', '🦁', 'Júpiter', 'Fuego espiritual y transformación', 'Tenés una pasión espiritual intensa: venís a transformar y a encender conciencias.'],
+  ['Uttara Bhadrapada', 'Ahir Budhnya, la serpiente de las profundidades', 'las patas traseras de una cama', 'Vaca', '🐄', 'Saturno', 'Sabiduría profunda y calma', 'Sos un océano en calma: profunda, sabia y con una paz interior que sostiene a los demás.'],
+  ['Revati', 'Pushan, el que guía los caminos', 'un pez o un tambor', 'Elefante', '🐘', 'Mercurio', 'Protección, compasión y finales felices', 'Guiás a las almas en su camino: sos compasiva, creativa y protegés a quien viaja.']];
+const DASHA = [['Ketu', 7, 'un tiempo espiritual y de desapego: se cierran ciclos y crece la intuición'], ['Venus', 20, 'un tiempo de amor, placer, arte, belleza y prosperidad material'], ['Sol', 6, 'un tiempo de identidad, liderazgo y reconocimiento, donde aparece la figura del padre'],
+  ['Luna', 10, 'un tiempo emocional, de hogar, familia y cuidado, donde aparece la figura de la madre'], ['Marte', 7, 'un tiempo de acción, coraje, energía y decisiones valientes'], ['Rahu', 18, 'un tiempo de ambición, deseos intensos, cambios inesperados y lo extranjero'],
+  ['Júpiter', 16, 'un tiempo de expansión, maestros, fe, estudios y buena suerte'], ['Saturno', 19, 'un tiempo de disciplina, trabajo, maduración y cosecha de lo sembrado'], ['Mercurio', 17, 'un tiempo de comunicación, estudios, comercio y nuevas ideas']];
+const ayanamsa = jd => 23.853 + (jd - 2451545) / 365.25 * .013969;
+function naksDe(lonTrop, jd){ const s = nrm2(lonTrop - ayanamsa(jd)), i = Math.floor(s / (360 / 27)); return { i, pada: Math.floor((s % (360 / 27)) / (360 / 108)) + 1, frac: (s % (360 / 27)) / (360 / 27), sid: s }; }
+function vedicaDe(){
+  const n = natal(); if (!n) return null; const N = naksDe(n.pos.Luna, n.jd);
+  // Vimshottari: el período de nacimiento es el del regente de tu nakshatra, y ya transcurrió la parte que la Luna recorrió
+  let k = DASHA.findIndex(d => d[0] === NAKS[N.i][5]), ini = new Date((n.jd - 2440587.5) * 864e5 - (N.frac * DASHA[k][1]) * 365.25 * 864e5);
+  const lista = []; for (let j = 0; j < 12; j++) { const d = DASHA[(k + j) % 9], fin = new Date(ini.getTime() + d[1] * 365.25 * 864e5); lista.push({ d, ini, fin, k: (k + j) % 9 }); ini = fin; }
+  const hoy = new Date(), act = lista.find(x => x.ini <= hoy && x.fin > hoy);
+  let sub = null; if (act) { let a = act.ini; for (let j = 0; j < 9; j++) { const d = DASHA[(act.k + j) % 9], dur = act.d[1] * d[1] / 120 * 365.25 * 864e5, f = new Date(a.getTime() + dur); if (a <= hoy && f > hoy) { sub = { d, ini: a, fin: f }; break; } a = f; } }
+  const sg = l => ZOD[Math.floor(nrm2(l - ayanamsa(n.jd)) / 30)];
+  return { N, nak: NAKS[N.i], lista, act, sub, luna: sg(n.pos.Luna), sol: sg(n.pos.Sol), asc: n.hora ? sg(n.asc) : '', hora: n.hora };
+}
+function naksHoy(){ const h = new Date(); h.setHours(12, 0, 0, 0); const jd = jdDe(h), N = naksDe(posTodas(jd).Luna, jd); return { N, nak: NAKS[N.i] }; }
+const fechaMesAnio = f => MESES[f.getMonth()] + ' de ' + f.getFullYear();
+function naksGratisHTML(){
+  const V = vedicaDe(); if (!V) return ''; const A = V.nak, ver = P.premium && !VISTA_GRATIS;
+  let h = `<h3>Tu Nakshatra · astrología védica</h3><div class="nak-caja"><p class="ag-ayuda" style="margin-top:0">En la astrología de la India, el cielo se divide en 27 mansiones lunares. La mansión donde estaba la Luna cuando naciste es tu Nakshatra: la forma de tu alma.</p>
+    <div class="sj-vivo"><canvas class="sj-canvas" width="432" height="768" data-escena="naks" aria-label="Tu Nakshatra en movimiento"></canvas></div>
+    <div class="kin-tit"><span class="kin-ic">${A[4]}</span><div><small>Mansión ${V.N.i + 1} de 27 · Pada ${V.N.pada}</small><b>${A[0]}</b><em>${A[6]}</em></div></div>
+    <p>${A[7]}</p><p>Su deidad es <b>${A[1]}</b>, su símbolo es ${A[2]} y su animal sagrado, el <b>${A[3].toLowerCase()}</b>.</p>${V.hora ? '' : '<p class="ag-ayuda">⚠️ Sin tu hora de nacimiento, la Luna puede estar en la mansión de al lado. Si la conseguís, tu lectura se vuelve exacta.</p>'}
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-escshare="naks">✨ Compartir mi Nakshatra (video o imagen)</button></p>`;
+  if (ver) h += `<button class="btn-sec oro" type="button" data-premabrir="vedica">🪷 Ver mi astrología védica completa</button>`;
+  else h += `<div class="teaser-velo"><p>Estás viviendo tu período de ${V.act ? V.act.d[0] : '…'}${V.act ? ' hasta ' + fechaMesAnio(V.act.fin) : ''}. Tu Luna védica está en ${V.luna} y tu Sol védico en ${V.sol}.</p><span>🔒 Premium</span></div>
+    <p class="ag-ayuda">En Premium: qué período planetario estás viviendo (el dasha), hasta cuándo dura, qué viene después, y tus signos en la astrología védica.</p><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu astrología védica ✨</button>`;
+  return h + '</div>';
+}
+function premVedica(){
+  const V = vedicaDe(); if (!V) return faltaFecha; const A = V.nak;
+  let h = `<p class="intro">La astrología védica (Jyotish) usa el zodíaco de las estrellas fijas, que hoy está corrido unos 24° respecto del occidental. Por eso tus signos védicos pueden ser distintos. Su joya es el sistema de los dashas: los grandes períodos planetarios de tu vida.</p>`;
+  if (!V.hora) h += '<p class="ag-ayuda">⚠️ Sin tu hora de nacimiento, tu Nakshatra y las fechas de tus períodos pueden variar.</p>';
+  h += `<div class="hd-ficha"><div><small>Nakshatra</small><b>${A[4]} ${A[0]}</b></div><div><small>Pada</small><b>${V.N.pada} de 4</b></div><div><small>Regente</small><b>${A[5]}</b></div><div><small>Luna védica</small><b>${V.luna}</b></div><div><small>Sol védico</small><b>${V.sol}</b></div>${V.asc ? `<div><small>Ascendente védico</small><b>${V.asc}</b></div>` : ''}</div>`;
+  h += `<p class="sub">Tu mansión lunar: ${A[0]}</p><p>${A[7]} Su tema es <b>${A[6].toLowerCase()}</b>.</p><ul class="num-lista"><li><b>🙏</b><div><span>Su deidad</span>${cap1(A[1])}. Podés invocar su energía cuando necesites su cualidad.</div></li><li><b>${A[4]}</b><div><span>Su animal sagrado: ${A[3].toLowerCase()}</span>En la tradición, las personas con el mismo animal tienen una conexión instintiva y natural.</div></li><li><b>🪐</b><div><span>Su regente: ${A[5]}</span>Es el planeta que marcó el primer período de tu vida.</div></li><li><b>✦</b><div><span>Tu pada ${V.N.pada}</span>${['La primera parte de la mansión: la energía más impulsiva y de acción.', 'La segunda parte: la energía más práctica y material.', 'La tercera parte: la energía más mental y comunicativa.', 'La cuarta parte: la energía más emocional y espiritual.'][V.N.pada - 1]}</div></li></ul>`;
+  if (V.act) {
+    h += `<div class="sj-mes" style="--sjc:#E9C277"><small>Tu gran período actual (mahadasha)</small><b>🪐 ${V.act.d[0]} · ${fechaMesAnio(V.act.ini)} a ${fechaMesAnio(V.act.fin)}</b><p>Estás en ${V.act.d[2]}. Dura ${V.act.d[1]} años en total.</p>${V.sub ? `<ul><li><span>Ahora, dentro de ese período: ${V.sub.d[0]} (hasta ${fechaMesAnio(V.sub.fin)})</span>Se suma ${V.sub.d[2]}.</li></ul>` : ''}</div>`;
+    const i = V.lista.indexOf(V.act);
+    h += `<p class="sub">Los grandes períodos de tu vida</p><ul class="sj-meses">${V.lista.slice(Math.max(0, i - 2), i + 4).map(x => `<li${x === V.act ? ' class="ahora"' : x.ini > new Date() ? ' class="futuro"' : ''}><small>${fechaMesAnio(x.ini)} a ${fechaMesAnio(x.fin)}${x === V.act ? ' · ahora ✦' : ''}</small><b>${x.d[0]} · ${x.d[1]} años</b><p>${cap1(x.d[2])}.</p></li>`).join('')}</ul>`;
+  }
+  return h + '<p class="ag-ayuda">Zodíaco sideral con ayanamsa de Lahiri y dashas de Vimshottari. Interpretación de Luz Guía.</p>';
+}
+const cap1 = t => String(t || '').charAt(0).toUpperCase() + String(t || '').slice(1);
+
+// ── Árbol celta (calendario de los árboles del Ogham) ──
+const ARBOLES = [
+  ['Abedul', 'Beth', 'ᚁ', [12, 24], 'El comienzo', 'Sos pionera y luminosa: limpiás el camino para que otros puedan empezar. Tenés ambición, elegancia y una gran capacidad de renacer.', 'Empezá aunque no esté todo listo.'],
+  ['Serbal', 'Luis', 'ᚂ', [1, 21], 'La protección', 'Sos visionaria y original: tenés una intuición protectora y una mente que va adelantada a su tiempo.', 'Confiá en tu visión aunque nadie la vea todavía.'],
+  ['Fresno', 'Nion', 'ᚅ', [2, 18], 'La conexión entre mundos', 'Sos un puente entre lo visible y lo invisible: soñadora, artística y con una sensibilidad que conecta todo.', 'Tus sueños son mensajes: anotalos.'],
+  ['Aliso', 'Fearn', 'ᚃ', [3, 18], 'El guía', 'Sos valiente y apasionada: abrís caminos, defendés lo que amás y das confianza a los demás.', 'Tu coraje inspira: animate a guiar.'],
+  ['Sauce', 'Saille', 'ᚄ', [4, 15], 'La intuición lunar', 'Sos intuitiva y profunda como la Luna: sentís los ciclos, tenés memoria emocional y una magia suave.', 'Escuchá a la Luna: ella marca tus tiempos.'],
+  ['Espino', 'Huath', 'ᚆ', [5, 13], 'La fertilidad y el encanto', 'Parecés tranquila, pero por dentro sos fuego creativo: tenés encanto, fertilidad de ideas y mucha fuerza.', 'Lo que guardás adentro quiere florecer.'],
+  ['Roble', 'Duir', 'ᚇ', [6, 10], 'La puerta y la fuerza', 'Sos fuerte, protectora y sabia: das sombra a quien la necesita y sos una puerta hacia la verdad. Tu nombre en el Ogham significa "puerta".', 'Tu fuerza está en tus raíces.'],
+  ['Acebo', 'Tinne', 'ᚈ', [7, 8], 'El guerrero noble', 'Sos noble y determinada: no te rendís, tenés honor y sabés defender lo que es justo.', 'Elegí bien tus batallas.'],
+  ['Avellano', 'Coll', 'ᚉ', [8, 5], 'La sabiduría', 'Sos sabia y creativa: tenés una mente brillante, intuición y el don de encontrar respuestas.', 'La respuesta ya está en vos.'],
+  ['Vid', 'Muin', 'ᚋ', [9, 2], 'La cosecha y la alegría', 'Sos sensible y refinada: amás la belleza, el placer y los vínculos profundos. Sabés cosechar.', 'Disfrutá de lo que ya sembraste.'],
+  ['Hiedra', 'Gort', 'ᚌ', [9, 30], 'La perseverancia', 'Sos resistente y leal: sobrevivís a todo, te reinventás y tenés una fuerza espiritual enorme.', 'Lo que te ata también te sostiene: elegí bien.'],
+  ['Caña', 'nGéadal', 'ᚍ', [10, 28], 'Los secretos y la profundidad', 'Sos profunda y misteriosa: buscás la verdad oculta, guardás secretos y tenés poder de transformación.', 'Ir hacia adentro es tu camino.'],
+  ['Saúco', 'Ruis', 'ᚏ', [11, 25], 'Los finales y el renacer', 'Sos libre y aventurera: tenés el don de cerrar ciclos, soltar y volver a empezar con sabiduría.', 'Cada final es una semilla.']];
+function arbolDe(d, m){ // m: 1-12
+  const v = m * 100 + d; if (v >= 1224 || v < 121) return 0;
+  let i = 1; for (let j = 1; j < ARBOLES.length; j++) if (v >= ARBOLES[j][3][0] * 100 + ARBOLES[j][3][1]) i = j;
+  return i;
+}
+function arbolGratisHTML(){
+  const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m) return ''; const i = arbolDe(+m[1], +m[2]), A = ARBOLES[i];
+  const h0 = new Date(), ia = arbolDe(h0.getDate(), h0.getMonth() + 1), Ah = ARBOLES[ia];
+  return `<h3>Tu árbol celta</h3><div class="arbol-caja"><p class="ag-ayuda" style="margin-top:0">Los antiguos celtas asociaban cada luna del año a un árbol sagrado y a una letra del Ogham, su alfabeto mágico. El árbol de tu nacimiento es tu guardián.</p>
+    <div class="sj-vivo"><canvas class="sj-canvas" width="432" height="768" data-escena="arbol" aria-label="Tu árbol celta en movimiento"></canvas></div>
+    <div class="kin-tit"><span class="kin-ic ogham">${A[2]}</span><div><small>Ogham ${A[1]}</small><b>${A[0]}</b><em>${A[4]}</em></div></div>
+    <p>${A[5]}</p><p class="don-herr">🌿 Su mensaje para vos: ${A[6]}</p>
+    <div class="kin-hoy"><span class="ogham">${Ah[2]}</span><div><small>Ahora estamos en la luna del…</small><b>${Ah[0]} · ${Ah[4]}</b><p>${ia === i ? '✨ ¡Es la luna de tu árbol! Un tiempo de poder para vos.' : esc(Ah[6])}</p></div></div>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-escshare="arbol">✨ Compartir mi árbol (video o imagen)</button></p></div>`;
+}
+PREM_FN.vedica = () => premVedica();
+(function(){
+  if (!PREMIUM_LISTA.some(x => x[0] === 'vedica')) { const i = PREMIUM_LISTA.findIndex(x => x[0] === 'kua'); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, ['vedica', '🪷', 'Tu astrología védica', 'Tu Nakshatra completo, tus signos védicos y el gran período planetario que estás viviendo.']); }
+  PREM_VENTA.vedica = 'Tu mansión lunar en profundidad, tus signos en el zodíaco védico y tus dashas: qué período planetario estás viviendo, hasta cuándo dura y qué viene después.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'trad'); if (g) { g[3] = 'Matriz, chino, Saju, Diseño Humano, Feng Shui, védica y animal'; if (!g[4].includes('vedica')) g[4].splice(g[4].indexOf('kua') + 1, 0, 'vedica'); }
+})();
+const _serNak = serHTML;
+serHTML = function(){ let h = _serNak(); try { h += naksGratisHTML() + arbolGratisHTML(); } catch (e) { console.error(e); } return h; };
+// En Hoy: la mansión lunar del día, junto al kin
+const _hoyNak = hoyHTML;
+hoyHTML = function(){ const h = _hoyNak(); try { const { N, nak } = naksHoy(), V = vedicaDe(), mia = V && V.N.i === N.i;
+  const x = `<div class="kin-hoy"><span>${nak[4]}</span><div><small>La Luna hoy · mansión ${N.i + 1}</small><b>${nak[0]}</b><p>Energía de ${nak[6].toLowerCase()}. ${mia ? '✨ ¡La Luna pasa por tu Nakshatra! Un día muy tuyo.' : 'Ideal para lo que tenga que ver con eso.'}</p></div></div>`;
+  const i = h.indexOf('<details class="mas-hoy"'); return i > -1 ? h.slice(0, i) + x + h.slice(i) : h + x; } catch (e) { console.error(e); return h; } };
+
+/* ── Tarjetas vivas del Nakshatra y del árbol ── */
+const ESC_IMG = {};
+function imgCon(lista){ const k = lista.join('|'); if (!ESC_IMG[k]) ESC_IMG[k] = new Promise(ok => { const prueba = L => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; }; prueba(lista); }); return ESC_IMG[k]; }
+function escenaFoto(o){
+  const rnd = sjRand(o.semilla || 7), spr = sjBrillo(o.hojas ? 'rgba(220,255,180,1)' : 'rgba(255,240,210,1)');
+  const pt = Array.from({ length: 70 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd(), r: rnd() }));
+  return function(c, W, H, t){
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
+    if (o.img) { const k = 1.1 + .05 * Math.sin(t * .25), e = Math.max(W / o.img.width, H / o.img.height) * k; c.drawImage(o.img, (W - o.img.width * e) / 2 + Math.sin(t * .2) * W * .015, (H - o.img.height * e) / 2, o.img.width * e, o.img.height * e); }
+    const v = c.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.55)'); v.addColorStop(.2, 'rgba(18,8,32,.15)'); v.addColorStop(.5, 'rgba(18,8,32,.3)'); v.addColorStop(.62, 'rgba(18,8,32,.72)'); v.addColorStop(1, 'rgba(12,5,22,.94)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+    c.save();
+    pt.forEach((p, i) => {
+      if (o.hojas && i % 2) { const y = ((p.y + t * p.v * .05) % 1) * H, x = p.x * W + Math.sin(t * .9 + p.f) * 50 * s; c.globalCompositeOperation = 'source-over'; c.globalAlpha = .7; c.save(); c.translate(x, y); c.rotate(t * p.v + p.f); c.fillStyle = p.r > .5 ? 'rgba(170,215,140,.85)' : 'rgba(235,200,120,.85)'; c.beginPath(); c.ellipse(0, 0, 13 * s * p.z, 6 * s * p.z, 0, 0, 6.283); c.fill(); c.restore(); }
+      else { c.globalCompositeOperation = 'lighter'; const al = o.hojas ? Math.max(0, Math.sin(t * 2 * p.v + p.f)) : Math.pow(Math.max(0, Math.sin(t * 1.8 * p.v + p.f)), 2); c.globalAlpha = al; const z = (o.hojas ? 34 : 26) * s * p.z; c.drawImage(spr, p.x * W - z / 2, (o.hojas ? p.y : p.y * .6) * H - z / 2, z, z); }
+    });
+    c.restore();
+    c.textAlign = 'center';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText(o.kicker, W / 2, 150 * s); c.letterSpacing = '0px';
+    if (o.nombre) { c.fillStyle = '#FFF4DA'; c.font = `${92 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(o.nombre, W / 2, 262 * s); c.shadowBlur = 0; }
+    const g = c.createRadialGradient(W / 2, 690 * s, 0, W / 2, 690 * s, 230 * s); g.addColorStop(0, `rgba(255,236,190,${.25 + .15 * pul})`); g.addColorStop(1, 'rgba(255,236,190,0)'); c.fillStyle = g; c.beginPath(); c.arc(W / 2, 690 * s, 230 * s, 0, 6.283); c.fill();
+    c.strokeStyle = 'rgba(243,220,160,.45)'; c.lineWidth = 2 * s; c.setLineDash([3 * s, 12 * s]); c.beginPath(); c.arc(W / 2, 690 * s, 210 * s, t * .15, t * .15 + 6.283); c.stroke(); c.setLineDash([]);
+    c.textBaseline = 'middle'; c.font = `${230 * s}px serif`; c.shadowColor = '#F3DCA0'; c.shadowBlur = (20 + 25 * pul) * s; c.fillStyle = '#FFF7E4'; c.fillText(o.glifo, W / 2, 700 * s); c.shadowBlur = 0; c.textBaseline = 'alphabetic';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${32 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText(o.sub.toUpperCase(), W / 2, 1060 * s); c.letterSpacing = '0px';
+    c.fillStyle = '#fff'; c.font = `600 ${92 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 20 * s; sjLineas(c, o.titulo, 940 * s).forEach((l, i) => c.fillText(l, W / 2, (1165 + i * 92) * s)); c.shadowBlur = 0;
+    c.fillStyle = '#E8A0B4'; c.font = `500 ${34 * s}px Jost, sans-serif`; c.fillText(o.pal, W / 2, 1290 * s);
+    c.fillStyle = '#F1ECF7'; c.font = `italic ${50 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 14 * s; sjLineas(c, '“' + o.frase + '”', 860 * s).slice(0, 4).forEach((l, i) => c.fillText(l, W / 2, (1420 + i * 62) * s)); c.shadowBlur = 0;
+    c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
+    c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+  };
+}
+const ESCENAS = {
+  naks: async () => { const V = vedicaDe(); if (!V) return null; const A = V.nak, img = await imgCon(['naks.jpg', 'fondo-luna.jpg']);
+    return { dib: escenaFoto({ img, kicker: 'MI NAKSHATRA', nombre: sjNombre(), glifo: A[4], sub: 'Mansión ' + (V.N.i + 1) + ' · ' + A[3], titulo: A[0], pal: 'Deidad: ' + A[1].split(',')[0], frase: A[6] + '.', semilla: V.N.i + 3 }), texto: `Mi Nakshatra es ${A[0]} ${A[4]} · Mi Luz, Luz Guía`, arch: 'mi-nakshatra-luz-guia', ev: 'Nakshatra' }; },
+  arbol: async () => { const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m) return null; const i = arbolDe(+m[1], +m[2]), A = ARBOLES[i], img = await imgCon(['arbol-' + (i + 1) + '.jpg', 'fondo-bosque.jpg']);
+    return { dib: escenaFoto({ img, kicker: 'MI ÁRBOL CELTA', nombre: sjNombre(), glifo: A[2], sub: 'Ogham ' + A[1], titulo: A[0], pal: A[4], frase: A[6], hojas: true, semilla: i + 11 }), texto: `Mi árbol celta es el ${A[0]} ${A[2]} · Mi Luz, Luz Guía`, arch: 'mi-arbol-celta-luz-guia', ev: 'Árbol celta' }; }
+};
+function escActivar(){
+  document.querySelectorAll('canvas[data-escena]:not([data-on])').forEach(cv => {
+    cv.dataset.on = '1'; const f = ESCENAS[cv.dataset.escena]; if (!f) return;
+    Promise.all([f(), sjFuentes()]).then(([E]) => { if (!E) return;
+      const c = cv.getContext('2d'), t0 = performance.now(); let visible = true;
+      try { new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv); } catch (e) {}
+      const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const frame = now => { if (!cv.isConnected) return; if (visible && !document.hidden) E.dib(c, cv.width, cv.height, quieto ? 2 : Math.max(0, now - t0) / 1000); if (!quieto) requestAnimationFrame(frame); };
+      requestAnimationFrame(frame); });
+  });
+}
+new MutationObserver(() => { if (document.querySelector('canvas[data-escena]:not([data-on])')) escActivar(); }).observe(document.body, { childList: true, subtree: true });
+setTimeout(escActivar, 700);
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-escshare]'); if (!b) return; const f = ESCENAS[b.dataset.escshare]; if (!f) return;
+  f().then(E => { if (E) compartirEscena(b, async () => { await sjFuentes(); return { dib: E.dib }; }, E.arch, E.texto, E.ev); });
 });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
