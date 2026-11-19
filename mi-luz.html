@@ -759,6 +759,44 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .nom-cambio .btn-sec{margin-top:10px}
 .nm-chk{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(212,175,106,.45);background:rgba(255,255,255,.05);font-size:.9rem;cursor:pointer}
 .nom-preg{margin:6px 0 0;padding-left:20px}.nom-preg li{margin:4px 0;font-size:.92rem;font-style:italic}
+.sj-caja{border:1px solid rgba(212,175,106,.4);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(91,42,134,.35),rgba(20,8,36,.65));margin:10px 0 18px}
+.sj-vivo{display:flex;justify-content:center;margin:6px 0 14px}
+.sj-canvas{width:100%;max-width:300px;aspect-ratio:9/16;height:auto;border-radius:18px;border:1px solid rgba(243,220,160,.45);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px color-mix(in srgb,var(--sjc,#D4AF6A) 25%,transparent);background:#120a1e}
+.sj-tit{display:flex;align-items:center;gap:14px}
+.sj-han{font-size:3rem;line-height:1;color:var(--sjc,#F3DCA0);text-shadow:0 0 18px var(--sjc,#F3DCA0);font-family:serif}
+.sj-tit small{display:block;color:#E8A0B4;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+.sj-tit b{display:block;font-family:var(--serif);font-size:1.5rem;color:#F3DCA0}
+.sj-pal{color:#F3DCA0;font-size:.85rem;letter-spacing:.06em;margin:8px 0}
+.sj-pilares{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,1fr));gap:8px;margin:8px 0 12px}
+.sj-pil{text-align:center;border-radius:14px;padding:8px 4px;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,106,.25)}
+.sj-pil.yo{border-color:#F3DCA0;box-shadow:0 0 16px rgba(212,175,106,.3)}
+.sj-pil>small{display:block;color:#F3DCA0;font-weight:600;font-size:.8rem}
+.sj-pil>em{display:block;font-style:normal;color:#BDB2CF;font-size:.68rem;margin-bottom:6px}
+.sj-c{border-radius:10px;padding:6px 2px;margin-top:6px;background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.sj-c>b{display:block;font-size:1.9rem;line-height:1.15;color:var(--c);font-family:serif;font-weight:600}
+.sj-c>span{display:block;font-size:.66rem;color:#E3D6F2;line-height:1.3}
+.sj-c>i{display:block;font-style:normal;font-size:.66rem;color:#E8A0B4;margin-top:2px}
+.sj-esencia,.sj-aliado{padding:14px;border-radius:16px;border:1px solid color-mix(in srgb,var(--sjc) 55%,transparent);background:linear-gradient(150deg,color-mix(in srgb,var(--sjc) 16%,transparent),rgba(28,11,46,.6));margin:12px 0}
+.sj-esencia>small,.sj-aliado>small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase}
+.sj-esencia>b,.sj-aliado>b{display:block;font-family:var(--serif);font-size:1.35rem;color:var(--sjc);margin:2px 0 6px}
+.sj-esencia>p,.sj-aliado>p{margin:0;font-size:.92rem;line-height:1.55}
+.sj-bal{display:grid;gap:7px;margin:8px 0 10px}
+.sj-bar{display:grid;grid-template-columns:96px 1fr 22px;align-items:center;gap:8px;font-size:.88rem}
+.sj-bar>i{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.sj-bar>i>em{display:block;height:100%;border-radius:99px}
+.sj-bar>b{color:#F3DCA0;text-align:right}
+.sj-bar.cero>span{opacity:.6}.sj-bar.cero>b{color:#E8A0B4}
+.sj-prods{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:8px 0 12px}
+.sj-prod{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px;border-radius:14px;border:1px solid rgba(212,175,106,.35);background:rgba(255,255,255,.04);color:inherit;font:inherit;cursor:pointer;text-align:center}
+.sj-prod img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}.sj-prod>span{font-size:2rem}
+.sj-prod b{font-size:.86rem}.sj-prod small{color:#F3DCA0}
+.sj-meses{list-style:none;padding:0;margin:6px 0;display:grid;gap:8px}
+.sj-meses li{padding:10px 12px;border-radius:12px;border:1px solid rgba(212,175,106,.22);background:rgba(255,255,255,.03)}
+.sj-meses li.ahora{border-color:#F3DCA0;background:rgba(212,175,106,.12);box-shadow:0 0 14px rgba(212,175,106,.2)}
+.sj-meses li.futuro{opacity:.85}
+.sj-meses small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.05em}
+.sj-meses b{display:block;color:#F3DCA0;font-weight:600;margin:2px 0}
+.sj-meses p{margin:0;font-size:.88rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -5387,12 +5425,12 @@ function reordenarVos(h){
   const chip = (id, t) => `<button type="button" class="chip-vos" data-vosir="${id}">${t}</button>`;
   const idDe = (g2, re) => { const x = B[g2].find(e => e.tagName === 'H3' && re.test(e.textContent)); return x ? x.id : ''; };
   const chips = [
-    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder']]],
+    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
   const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
   const sec = (t, d, L) => L.length ? `<div class="vos-grupo"><h2>${t}</h2><p>${d}</p></div>` + L.map(x => x.outerHTML).join('') : '';
-  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología y tu nombre.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
+  return idx + sec('Quién sos', 'Tu esencia según el tarot, la numerología, tu nombre y el Saju.', B.quien) + sec('Tu año', 'La energía que te acompaña este año y cómo se mueve en cada área.', B.anio) + sec('Para compartir', 'Fondos de pantalla e historias con tu energía.', B.comp);
 }
 const _vosUX = arcanosHTML;
 arcanosHTML = function(){ const h = _vosUX(); try { return reordenarVos(h); } catch (e) { console.error(e); return h; } };
@@ -5904,7 +5942,7 @@ function valorPremiumHTML(){
   return `<section class="prem-valor"><h3>Qué se abre con Premium</h3><div class="pv-grid">${PREM_VALOR.map(([ic, t, d]) => `<div><span>${ic}</span><b>${t}</b><small>${d}</small></div>`).join('')}</div></section>`;
 }
 function gratisSiempreHTML(){
-  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
+  const L = [['☀️', 'Hoy', 'Tu energía, tu tirada y la Luna de cada día'], ['🌙', 'Vos', 'Tu arcano, tus números, tu ser sobrenatural, tu elemento del Saju, tu año y la biblioteca de arcanos para manifestar'], ['📅', 'Agenda', 'Lunas, portales y fechas de poder de todo el año'], ['💜', 'Luz Guía', 'Encuentros, novedades y la tienda']];
   return `<section class="gratis-siempre"><h3>✓ Esto ya es tuyo, gratis para siempre</h3><p>No tenés que pagar nada para usar Mi Luz. Premium es un extra para ir más profundo.</p><ul>${L.map(([ic, t, d]) => `<li><span>${ic}</span><div><b>${t}</b><small>${d}</small></div></li>`).join('')}</ul></section>`;
 }
 const _premValor = premiumHTML;
@@ -6201,6 +6239,413 @@ async function guardarNombres(){
   $('dlg').close(); const y = window.scrollY; pintar(); window.scrollTo(0, y);
 }
 document.addEventListener('click', e => { if (e.target.closest('[data-misnombres]')) abrirNombres(); });
+
+
+/* ───── v37: Saju coreano (los cuatro pilares del destino) ───── */
+const SJ_EL = ['Madera', 'Fuego', 'Tierra', 'Metal', 'Agua'];
+const SJ_ELH = ['木', '火', '土', '金', '水'];
+const SJ_COL = ['#8FD69B', '#F59A7A', '#E9C277', '#E9E6F2', '#86B2F0'];
+const SJ_T = [
+  { h: '甲', k: '갑', el: 0, yang: 1 }, { h: '乙', k: '을', el: 0, yang: 0 }, { h: '丙', k: '병', el: 1, yang: 1 }, { h: '丁', k: '정', el: 1, yang: 0 },
+  { h: '戊', k: '무', el: 2, yang: 1 }, { h: '己', k: '기', el: 2, yang: 0 }, { h: '庚', k: '경', el: 3, yang: 1 }, { h: '辛', k: '신', el: 3, yang: 0 },
+  { h: '壬', k: '임', el: 4, yang: 1 }, { h: '癸', k: '계', el: 4, yang: 0 }];
+const SJ_R = [
+  { h: '子', k: '자', an: 'Rata', ic: '🐀', el: 4, oc: [9] }, { h: '丑', k: '축', an: 'Buey', ic: '🐂', el: 2, oc: [5, 9, 7] }, { h: '寅', k: '인', an: 'Tigre', ic: '🐅', el: 0, oc: [0, 2, 4] },
+  { h: '卯', k: '묘', an: 'Conejo', ic: '🐇', el: 0, oc: [1] }, { h: '辰', k: '진', an: 'Dragón', ic: '🐉', el: 2, oc: [4, 1, 9] }, { h: '巳', k: '사', an: 'Serpiente', ic: '🐍', el: 1, oc: [2, 4, 6] },
+  { h: '午', k: '오', an: 'Caballo', ic: '🐎', el: 1, oc: [3, 5] }, { h: '未', k: '미', an: 'Cabra', ic: '🐐', el: 2, oc: [5, 3, 1] }, { h: '申', k: '신', an: 'Mono', ic: '🐒', el: 3, oc: [6, 8, 4] },
+  { h: '酉', k: '유', an: 'Gallo', ic: '🐓', el: 3, oc: [7] }, { h: '戌', k: '술', an: 'Perro', ic: '🐕', el: 2, oc: [4, 7, 3] }, { h: '亥', k: '해', an: 'Cerdo', ic: '🐖', el: 4, oc: [8, 0] }];
+// Las 10 esencias (el "Maestro del Día")
+const SJ_DM = [
+  { t: 'Madera yang', img: 'El gran árbol', pal: ['Rectitud', 'Liderazgo', 'Crecimiento'],
+    es: 'Sos el árbol alto que crece derecho hacia el cielo. Tenés principios firmes, una presencia que da sombra y refugio, y una necesidad profunda de crecer y de que tu vida tenga sentido.',
+    don: 'Abrir caminos. Cuando creés en algo, lo sostenés aunque nadie más lo vea, y la gente se apoya en vos como en un tronco.',
+    som: 'La rigidez. Un árbol que no se dobla se quiebra con el viento: aprender a ceder sin perderte es tu gran trabajo.',
+    amor: 'Amás con lealtad y protección. Necesitás admirar a quien está a tu lado y crecer en pareja, sin estancarte en un vínculo.',
+    trab: 'Brillás donde podés iniciar, guiar o enseñar: proyectos propios, educación, causas, todo lo que crezca con el tiempo.',
+    frase: 'Echo raíces profundas para crecer hacia la luz.' },
+  { t: 'Madera yin', img: 'La flor y la enredadera', pal: ['Gracia', 'Adaptación', 'Ternura'],
+    es: 'Sos la flor, la hierba y la enredadera. Tu fuerza no es el choque sino la flexibilidad: encontrás la forma de florecer incluso en las grietas.',
+    don: 'Conectar a las personas y embellecer todo lo que tocás. Te adaptás, negociás y unís como nadie.',
+    som: 'Depender demasiado de un apoyo para trepar. Tu tarea es confiar en tu propia raíz.',
+    amor: 'Amás con dulzura y detalle. Necesitás un vínculo que te sostenga sin asfixiarte, con espacio para florecer.',
+    trab: 'Te va bien en lo creativo, lo estético, el cuidado de otras personas, la comunicación y los vínculos.',
+    frase: 'Florezco donde la vida me siembra.' },
+  { t: 'Fuego yang', img: 'El sol', pal: ['Calidez', 'Generosidad', 'Brillo'],
+    es: 'Sos el sol: das luz y calor sin pedir nada a cambio. Tu presencia ilumina, contagia entusiasmo y hace que los demás se sientan vistos.',
+    don: 'Inspirar. Tenés una alegría expansiva que motiva, y una honestidad tan directa como la luz del mediodía.',
+    som: 'Quemarte por dar todo, o encandilar sin darte cuenta. Hasta el sol necesita la noche para descansar.',
+    amor: 'Amás con pasión, transparencia y generosidad. Necesitás admiración, alegría y un vínculo vivo.',
+    trab: 'Brillás frente a la gente: liderar, enseñar, comunicar, el arte, el escenario, todo lo que necesite energía.',
+    frase: 'Mi luz no se apaga: se comparte.' },
+  { t: 'Fuego yin', img: 'La llama de la vela', pal: ['Intuición', 'Calidez', 'Profundidad'],
+    es: 'Sos la vela, el fuego del hogar y la estrella en la noche. Tu luz es íntima y constante: alumbra justo donde más se necesita.',
+    don: 'Ver en la oscuridad. Tenés una intuición fina, una calidez que reconforta y una gran capacidad de transformar.',
+    som: 'La ansiedad y la sensibilidad a las corrientes de aire: cuidá tu llama de las energías que la apagan.',
+    amor: 'Amás con intensidad y devoción. Necesitás un vínculo íntimo, seguro y con complicidad.',
+    trab: 'Te va bien en lo espiritual, lo terapéutico, la enseñanza, la escritura y todo lo que acompañe procesos.',
+    frase: 'Soy la luz que acompaña en la noche.' },
+  { t: 'Tierra yang', img: 'La montaña', pal: ['Firmeza', 'Confianza', 'Protección'],
+    es: 'Sos la montaña: tenés su estabilidad, su presencia y su firmeza. La gente encuentra en vos un lugar seguro donde apoyarse.',
+    don: 'Sostener. Tu paciencia, tu palabra y tu calma son un refugio en medio de cualquier tormenta.',
+    som: 'La terquedad y guardarte todo. Una montaña también necesita dejar correr sus ríos.',
+    amor: 'Amás con fidelidad y hechos. Necesitás un vínculo estable, con proyectos y con tiempo.',
+    trab: 'Brillás donde se necesita estructura: gestionar, construir, administrar, proteger y mediar.',
+    frase: 'Soy refugio firme en medio de la tormenta.' },
+  { t: 'Tierra yin', img: 'El jardín fértil', pal: ['Cuidado', 'Paciencia', 'Abundancia'],
+    es: 'Sos la tierra fértil del jardín: recibís, nutrís y hacés crecer. Todo lo que se siembra en vos da frutos.',
+    don: 'Cuidar y hacer prosperar. Tenés un sentido práctico enorme y una ternura que alimenta a quienes te rodean.',
+    som: 'Absorber los problemas de todo el mundo. Aprendé a poner límites para no quedarte sin nutrientes.',
+    amor: 'Amás cuidando, con detalles y presencia. Necesitás que te valoren en lo cotidiano.',
+    trab: 'Te va bien en la salud, la educación, la gastronomía, la naturaleza y todo lo que haga crecer a otros.',
+    frase: 'Lo que siembro con amor, florece.' },
+  { t: 'Metal yang', img: 'La espada', pal: ['Coraje', 'Justicia', 'Decisión'],
+    es: 'Sos el hierro y la espada: tenés su fuerza, su franqueza y su lealtad. Tenés un sentido de la justicia muy claro y la valentía de defenderlo.',
+    don: 'Cortar lo que no sirve. Decidís, actuás y protegés a los tuyos con una lealtad inquebrantable.',
+    som: 'La dureza. El metal en bruto necesita el fuego para volverse una obra: dejá que la vida te pula.',
+    amor: 'Amás con lealtad total y franqueza. Necesitás respeto, sinceridad y alguien que no te tema.',
+    trab: 'Brillás en los desafíos: liderar equipos, la justicia, el deporte, emprender y resolver crisis.',
+    frase: 'Corto lo que no es mío y defiendo lo que amo.' },
+  { t: 'Metal yin', img: 'La joya', pal: ['Refinamiento', 'Precisión', 'Brillo propio'],
+    es: 'Sos la joya: tenés su brillo, su refinamiento y su valor. Tenés un gusto exquisito, una mirada precisa y una sensibilidad que capta cada detalle.',
+    don: 'Hacer que todo sea mejor. Ves lo que falta, pulís, mejorás y le das valor a lo que tocás.',
+    som: 'La autoexigencia y la sensibilidad a la crítica. Una joya no necesita demostrar que brilla.',
+    amor: 'Amás con delicadeza y lealtad. Necesitás un vínculo que te valore y te cuide.',
+    trab: 'Te va bien en la estética, el diseño, la joyería, la belleza, la comunicación precisa y lo que requiera calidad.',
+    frase: 'Brillo con luz propia.' },
+  { t: 'Agua yang', img: 'El océano', pal: ['Libertad', 'Sabiduría', 'Inmensidad'],
+    es: 'Sos el océano y los grandes ríos: tenés su inmensidad, su libertad y su profundidad. Tu mente es enorme, curiosa, y no se deja encerrar.',
+    don: 'Ver el panorama completo. Tu inteligencia, tu capacidad de adaptarte y tu visión mueven montañas.',
+    som: 'Desbordarte o dispersarte. El agua sin cauce inunda: elegí hacia dónde querés correr.',
+    amor: 'Amás con intensidad y libertad. Necesitás un vínculo con profundidad, aventura y espacio propio.',
+    trab: 'Brillás en lo que tenga movimiento e ideas: viajes, comercio, comunicación, investigación y estrategia.',
+    frase: 'Fluyo libre hacia mi propio mar.' },
+  { t: 'Agua yin', img: 'La lluvia y el rocío', pal: ['Sensibilidad', 'Intuición', 'Sanación'],
+    es: 'Sos la lluvia suave, el rocío y la niebla. Nutrís en silencio, percibís lo que nadie dice y llegás a los lugares más escondidos.',
+    don: 'La intuición. Sentís las energías, comprendés sin explicaciones y sanás con tu sola presencia.',
+    som: 'Absorber las emociones ajenas y perderte en ellas. Tu tarea es reconocer qué es tuyo y qué no.',
+    amor: 'Amás de forma profunda, empática y mágica. Necesitás un vínculo con alma, ternura y misterio.',
+    trab: 'Te va bien en lo espiritual, lo terapéutico, el arte, la investigación y todo lo que necesite sensibilidad.',
+    frase: 'Soy la lluvia suave que todo lo nutre.' }];
+const SJ_ELTXT = [
+  'crecimiento, iniciativa, proyectos nuevos y la capacidad de expandirte',
+  'pasión, alegría, visibilidad, el disfrute y el encuentro con otras personas',
+  'estabilidad, cuerpo, raíces, hogar y la capacidad de sostener',
+  'orden, límites, decisión, claridad y la capacidad de soltar lo que sobra',
+  'intuición, descanso, sabiduría, emociones y la capacidad de fluir'];
+const SJ_REM = [
+  { col: 'verdes y turquesas', dir: 'el Este', est: 'la primavera', hab: ['Caminá entre árboles o tené plantas cerca y cuidalas vos.', 'Empezá algo nuevo, aunque sea chiquito: un curso, un proyecto, una rutina.', 'Estirá el cuerpo cada mañana, como una planta que se abre.'], rit: 'En Luna creciente, plantá una semilla y escribí en un papel lo que querés hacer crecer. Enterralo junto a ella y regá la planta con amor cada día.', pied: ['Aventurina verde', 'Jade', 'Malaquita', 'Amazonita'], rx: /aventurina|jade|malaquita|amazonita|madera|palo santo|planta/i },
+  { col: 'rojos, naranjas y rosas', dir: 'el Sur', est: 'el verano', hab: ['Tomá sol por la mañana y encendé velas en tu casa.', 'Bailá, cantá, reíte: el Fuego se alimenta de alegría.', 'Animate a mostrarte: compartí lo que hacés y encontrate con gente.'], rit: 'Un domingo al mediodía, encendé una vela roja o naranja y nombrá en voz alta tres cosas que te apasionan. Dejala consumir con cuidado.', pied: ['Cornalina', 'Granate', 'Piedra sol', 'Ojo de tigre rojo'], rx: /cornalina|granate|piedra (del )?sol|rub[ií]|vela/i },
+  { col: 'amarillos, ocres, terracotas y marrones', dir: 'el centro de tu casa', est: 'los cambios de estación', hab: ['Cociná con tus manos y comé con tiempo, sin pantallas.', 'Ordená tu casa y armá rutinas que te den suelo.', 'Caminá descalza sobre la tierra o el pasto.'], rit: 'Poné un cuenco con sal gruesa y un citrino en el centro de tu casa. Cada semana renová la sal y agradecé lo que te sostiene.', pied: ['Citrino', 'Ojo de tigre', 'Jaspe', 'Calcita naranja'], rx: /citrino|ojo de tigre|jaspe|calcita/i },
+  { col: 'blancos, plateados y dorados', dir: 'el Oeste', est: 'el otoño', hab: ['Ordená y regalá lo que ya no usás: el Metal ama el espacio vacío.', 'Practicá la respiración profunda: el Metal rige los pulmones.', 'Poné límites claros y decí que no cuando haga falta.'], rit: 'En Luna menguante, escribí lo que querés cortar de tu vida y quemalo con cuidado. Sostené un cuarzo cristal y respirá profundo siete veces.', pied: ['Cuarzo cristal', 'Pirita', 'Hematita', 'Selenita'], rx: /cuarzo cristal|cristal de roca|pirita|hematita|selenita|cuarzo blanco/i },
+  { col: 'azules, negros y violetas profundos', dir: 'el Norte', est: 'el invierno', hab: ['Descansá de verdad: dormí bien y regalate silencio.', 'Tomá baños de inmersión o andá cerca del agua (río, laguna, mar).', 'Escribí tus sueños y tus emociones, sin juzgarlas.'], rit: 'En Luna llena, dejá un vaso de agua con una piedra luna a la luz de la Luna. A la mañana, tomá un sorbo con una intención y regá una planta con el resto.', pied: ['Piedra luna', 'Aguamarina', 'Sodalita', 'Obsidiana'], rx: /piedra (de )?luna|aguamarina|sodalita|obsidiana|lapisl[aá]zuli|amatista/i }];
+// Los diez dioses (십성): qué representa cada energía en relación con vos
+const SJ_DIOS = {
+  bi: ['Compañero', '비견', 'tu autonomía, tus pares y tu forma de sostenerte por tu cuenta'],
+  geop: ['Competidor', '겁재', 'tu empuje, tu espíritu competitivo y lo que compartís con otras personas'],
+  sik: ['Disfrute', '식신', 'tu talento natural, el placer, la creatividad tranquila y lo que das con gusto'],
+  sang: ['Rebelde', '상관', 'tu brillo, tu palabra, el arte y la necesidad de romper moldes'],
+  pjae: ['Fortuna', '편재', 'el dinero que va y viene, los negocios, las oportunidades y los viajes'],
+  jjae: ['Riqueza estable', '정재', 'el ahorro, el trabajo constante y lo que construís paso a paso'],
+  pgwan: ['Guerrero', '편관', 'los desafíos, la presión que te hace fuerte y tu coraje'],
+  jgwan: ['Honor', '정관', 'la responsabilidad, el reconocimiento, tu reputación y tu lugar en el mundo'],
+  pin: ['Intuición', '편인', 'el saber místico, lo espiritual, lo no convencional y tus dones ocultos'],
+  jin: ['Protección', '정인', 'el estudio, el apoyo que recibís, tu linaje y la sabiduría heredada'] };
+const SJ_GRUPO = [
+  ['yo', 'Vos y tu tribu', ['bi', 'geop'], 'Tenés mucha fuerza propia: independencia, amistades y ganas de hacer las cosas a tu manera.', 'te pide independencia, amistades nuevas y defender tu lugar. Cuidá la plata compartida y no compitas de más.'],
+  ['exp', 'Tu expresión', ['sik', 'sang'], 'Tu energía sale hacia afuera: crear, hablar, mostrarte, disfrutar y compartir tus talentos.', 'es un año para crear, mostrarte y disfrutar. Ideal para lanzar algo tuyo, estudiar arte o animarte a hablar.'],
+  ['plata', 'Tu riqueza', ['pjae', 'jjae'], 'Tenés buena relación con lo material: sabés generar, mover y administrar recursos.', 'trae oportunidades de dinero y movimiento. Es buen momento para negocios, ventas y ordenar tus finanzas.'],
+  ['poder', 'Tu camino y tu lugar', ['pgwan', 'jgwan'], 'La vida te pone desafíos y responsabilidades que te hacen crecer: tu carrera y tu reputación importan.', 'trae responsabilidades, desafíos y reconocimiento. Te pide disciplina, y a cambio te da un lugar más firme.'],
+  ['sabe', 'Tu sabiduría', ['pin', 'jin'], 'Recibís mucho de lo invisible y de tu linaje: estudio, intuición, protección y vida interior.', 'es un año para estudiar, recibir ayuda, mirar hacia adentro y desarrollar tu espiritualidad.']];
+const SJ_PILAR = [
+  ['Año', 'Tus raíces', 'Tu linaje, tu familia de origen, tu infancia y cómo te ve la sociedad.'],
+  ['Mes', 'Tu entorno', 'Tu juventud, tus padres, tu trabajo y la estación que te formó. Es el pilar con más peso en tu balance.'],
+  ['Día', 'Vos', 'Tu esencia y tu vida íntima: arriba estás vos y abajo, el lugar de tu pareja.'],
+  ['Hora', 'Tus frutos', 'Tus sueños, tus proyectos, tus hijes y tu madurez. Lo que vas a dejar.']];
+
+function sjDios(dm, o){
+  const a = SJ_T[dm], b = SJ_T[o], d = (b.el - a.el + 5) % 5, igual = a.yang === b.yang;
+  return [['bi', 'geop'], ['sik', 'sang'], ['pjae', 'jjae'], ['pgwan', 'jgwan'], ['pin', 'jin']][d][igual ? 0 : 1];
+}
+function sjPilares(diaMes, anio, horaTxt, lugar, coord){
+  const m = String(diaMes || '').match(/(\d{2})\/(\d{2})/); if (!m || !anio) return null;
+  const hh = horaDe(horaTxt), cd = lugarCoord(lugar, coord), lon = isFinite(+cd[2]) ? +cd[2] : -64.29;
+  const utc = Date.UTC(+anio, +m[2] - 1, +m[1], (hh ? hh[0] : 12) + 3, hh ? hh[1] : 0);
+  const L = longSolar(utc / 86400000 + 2440587.5);
+  // hora solar verdadera del lugar (el Saju se calcula con el Sol, no con el reloj)
+  const loc = new Date(hh ? utc + lon / 15 * 3600000 : Date.UTC(+anio, +m[2] - 1, +m[1], 12));
+  let dia = Date.UTC(loc.getUTCFullYear(), loc.getUTCMonth(), loc.getUTCDate());
+  const hLoc = loc.getUTCHours() + loc.getUTCMinutes() / 60;
+  if (hh && hLoc >= 23) dia += 86400000; // la hora de la Rata (23 h) ya pertenece al día siguiente
+  let ys = +anio; if (+m[2] <= 2 && L >= 270 && L < 315) ys--;
+  const yi = ((ys - 4) % 60 + 60) % 60, yS = yi % 10, yB = yi % 12;
+  const mi = Math.floor(nrm2(L - 315) / 30), mS = ((yS % 5) * 2 + 2 + mi) % 10, mB = (mi + 2) % 12;
+  const jdn = Math.floor(dia / 86400000 + 2440588), di = (jdn + 49) % 60, dS = di % 10, dB = di % 12;
+  const p = [{ s: yS, b: yB }, { s: mS, b: mB }, { s: dS, b: dB }];
+  if (hh) { const hb = Math.floor(((hLoc + 1) % 24) / 2); p.push({ s: ((dS % 5) * 2 + hb) % 10, b: hb }); }
+  return { p, dm: dS, hora: !!hh, anio: ys };
+}
+function sjAnalisis(sj){
+  const cnt = [0, 0, 0, 0, 0], dm = SJ_T[sj.dm];
+  sj.p.forEach(x => { cnt[SJ_T[x.s].el]++; cnt[SJ_R[x.b].el]++; });
+  // fuerza del maestro del día: lo que lo apoya (su elemento y el que lo nutre), con el mes valiendo doble
+  let apoyo = 0, total = 0;
+  sj.p.forEach((x, i) => {
+    if (i !== 2) { total++; if ([dm.el, (dm.el + 4) % 5].includes(SJ_T[x.s].el)) apoyo++; }
+    const w = i === 1 ? 2 : 1; total += w; if ([dm.el, (dm.el + 4) % 5].includes(SJ_R[x.b].el)) apoyo += w;
+  });
+  const fuerte = apoyo > total / 2, equil = Math.abs(apoyo - total / 2) <= .5;
+  const cand = fuerte ? [(dm.el + 1) % 5, (dm.el + 2) % 5, (dm.el + 3) % 5] : [(dm.el + 4) % 5, dm.el];
+  const aliado = cand.slice().sort((a, b) => cnt[a] - cnt[b])[0];
+  const faltan = cnt.map((c, i) => c ? -1 : i).filter(i => i > -1);
+  const max = Math.max(...cnt), exceso = cnt[cnt.indexOf(max)] >= 4 ? cnt.indexOf(max) : -1;
+  const dioses = [];
+  sj.p.forEach((x, i) => { if (i !== 2) dioses.push({ pos: i, arriba: 1, d: sjDios(sj.dm, x.s) }); dioses.push({ pos: i, arriba: 0, d: sjDios(sj.dm, SJ_R[x.b].oc[0]) }); });
+  const grupos = SJ_GRUPO.map(g => ({ g, n: dioses.filter(d => g[2].includes(d.d)).length }));
+  return { cnt, apoyo, total, fuerte, equil, aliado, faltan, exceso, dioses, grupos };
+}
+function sajuDe(){ try { return P.diaMes && P.anioNac ? sjPilares(P.diaMes, P.anioNac, P.horaNac, P.lugarNac, P.coordNac) : null; } catch (e) { console.error(e); return null; } }
+function sjAnioDe(fecha){
+  const L = longSolar(jdDe(fecha)); let y = fecha.getFullYear(); if (fecha.getMonth() <= 1 && L >= 270 && L < 315) y--;
+  const i = ((y - 4) % 60 + 60) % 60; return { y, s: i % 10, b: i % 12 };
+}
+function sjMesesDe(y){
+  // los 12 meses del Saju empiezan cuando el Sol llega a 315°, 345°, 15°… (desde principios de febrero)
+  const out = []; let d = new Date(y, 0, 25, 12), prev = nrm2(longSolar(jdDe(d)) - 315);
+  const yS = ((y - 4) % 10 + 10) % 10;
+  for (let k = 0; k < 400 && out.length < 13; k++) {
+    d = new Date(d.getTime() + 86400000); const l = nrm2(longSolar(jdDe(d)) - 315);
+    if (Math.floor(l / 30) !== Math.floor(prev / 30)) { const mi = Math.floor(l / 30); out.push({ ini: new Date(d), mi, s: ((yS % 5) * 2 + 2 + mi) % 10, b: (mi + 2) % 12 }); }
+    prev = l;
+  }
+  return out.filter(x => x.ini.getFullYear() === y || (x.ini.getFullYear() === y + 1 && x.ini.getMonth() === 0)).slice(0, 12);
+}
+const sjNomP = x => SJ_EL[SJ_T[x.s].el] + '-' + SJ_R[x.b].an;
+const sjLista = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' y ' + a[a.length - 1];
+function sjRelRamas(a, b){
+  if (a === b) return 'Se repite tu propio animal: lo que viviste vuelve con más fuerza para que lo mires de frente.';
+  if ((a + 6) % 12 === b) return 'Choca con tu pilar del día (tu casa y tu vida íntima): puede traer mudanzas, cambios en la pareja o en tu rutina. Lo que se sacude, se acomoda mejor.';
+  if ([[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]].some(([x, y]) => (x === a && y === b) || (x === b && y === a))) return 'Se une en armonía con tu pilar del día: buen tiempo para los vínculos, la pareja y los acuerdos.';
+  if (a % 4 === b % 4) return 'Forma un triángulo de alianza con tu pilar del día: la energía del año te acompaña y te abre puertas.';
+  return 'Es neutral con tu pilar del día: lo que pase depende más de tus elecciones que del cielo.';
+}
+
+/* ── Gratis: tu elemento esencial (en Vos) ── */
+function sajuGratisHTML(){
+  const sj = sajuDe(); if (!sj) return '';
+  const d = SJ_DM[sj.dm], T = SJ_T[sj.dm], ver = P.premium && !VISTA_GRATIS;
+  let h = `<h3>Tu Saju · 사주</h3><div class="sj-caja" style="--sjc:${SJ_COL[T.el]}">
+    <p class="ag-ayuda" style="margin-top:0">El Saju coreano lee los cuatro pilares de tu nacimiento. Tu <b>elemento esencial</b> sale del día en que naciste: es quién sos en lo más profundo.</p>
+    <div class="sj-vivo"><canvas class="sj-canvas" width="432" height="768" data-sjvivo aria-label="Tu elemento esencial en movimiento"></canvas></div>
+    <div class="sj-tit"><span class="sj-han">${T.h}</span><div><small>${SJ_EL[T.el]} ${T.yang ? 'yang' : 'yin'}</small><b>${esc(d.img)}</b></div></div>
+    <p class="sj-pal">${d.pal.map(esc).join(' · ')}</p>
+    <p>${esc(d.es)}</p>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-sjshare>✨ Compartir mi Saju (video o imagen)</button></p>`;
+  if (ver) h += `<button class="btn-sec oro" type="button" data-sjver>☯️ Ver mi Saju completo</button>`;
+  else {
+    const a = sjAnalisis(sj);
+    h += `<div class="teaser-velo"><p>Tus cuatro pilares: ${sj.p.map(sjNomP).join(', ')}. Tu balance: ${a.cnt.map((c, i) => SJ_EL[i] + ' ' + c).join(', ')}. ${a.faltan.length ? 'Te falta ' + sjLista(a.faltan.map(i => SJ_EL[i])) + '.' : ''} Tu elemento aliado es ${SJ_EL[a.aliado]}.</p><span>🔒 Premium</span></div>
+      <p class="ag-ayuda">En Premium: tus cuatro pilares, tu balance de los 5 elementos y el que te falta, cómo equilibrarte (colores, rituales y piedras), tus diez dioses y tu año mes a mes.</p>
+      <button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu Saju completo ✨</button>`;
+  }
+  return h + '</div>';
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-sjver]')) { irTab('premium'); PREM_ABIERTA = 'saju'; repintarPrem(); setTimeout(() => { const d = document.querySelector('details[data-premsec="saju"]'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 150); }
+  const b = e.target.closest('[data-sjshare]'); if (b) compartirSaju(b);
+});
+
+/* ── Premium: el Saju completo ── */
+function sjCelda(x, i, sj){
+  const T = SJ_T[x.s], R = SJ_R[x.b], dios = i === 2 ? null : SJ_DIOS[sjDios(sj.dm, x.s)], diosR = SJ_DIOS[sjDios(sj.dm, R.oc[0])];
+  return `<div class="sj-pil${i === 2 ? ' yo' : ''}"><small>${SJ_PILAR[i][0]}</small><em>${SJ_PILAR[i][1]}</em>
+    <div class="sj-c" style="--c:${SJ_COL[T.el]}"><b>${T.h}</b><span>${T.k} · ${SJ_EL[T.el]} ${T.yang ? 'yang' : 'yin'}</span><i>${dios ? esc(dios[0]) : 'Vos ✦'}</i></div>
+    <div class="sj-c" style="--c:${SJ_COL[R.el]}"><b>${R.h}</b><span>${R.ic} ${R.an} · ${SJ_EL[R.el]}</span><i>${esc(diosR[0])}</i></div></div>`;
+}
+function premSaju(){
+  const sj = sajuDe(); if (!sj) return faltaFecha;
+  const a = sjAnalisis(sj), d = SJ_DM[sj.dm], T = SJ_T[sj.dm], max = Math.max(...a.cnt, 1);
+  let h = `<p>El <b>Saju</b> (사주, "cuatro pilares") es el sistema coreano para leer el destino con la fecha y la hora de nacimiento. Cada pilar tiene un elemento arriba (el cielo) y un animal abajo (la tierra): en total, ocho caracteres que cuentan tu historia.</p>`;
+  if (!sj.hora) h += `<p class="ag-ayuda">No tenemos tu hora de nacimiento, así que lo calculamos con tres pilares. Si la conseguís, pasánosla y se completa solo ✨</p>`;
+  h += `<p class="sub">Tus cuatro pilares</p><div class="sj-pilares">${sj.p.map((x, i) => sjCelda(x, i, sj)).join('')}</div>
+    <ul class="num-lista sj-expl">${sj.p.map((x, i) => `<li><b>${SJ_PILAR[i][0]}</b><div><span>${sjNomP(x)}</span>${SJ_PILAR[i][2]}</div></li>`).join('')}</ul>`;
+  h += `<div class="sj-esencia" style="--sjc:${SJ_COL[T.el]}"><small>Tu elemento esencial · ${T.h} ${T.k}</small><b>${SJ_EL[T.el]} ${T.yang ? 'yang' : 'yin'}: ${esc(d.img.toLowerCase())}</b><p>${esc(d.es)}</p></div>
+    <ul class="num-lista"><li><b>✦</b><div><span>Tu don</span>${esc(d.don)}</div></li><li><b>☾</b><div><span>Tu sombra</span>${esc(d.som)}</div></li><li><b>💞</b><div><span>En el amor</span>${esc(d.amor)}</div></li><li><b>💼</b><div><span>En el trabajo</span>${esc(d.trab)}</div></li></ul>`;
+  h += `<p class="sub">La fuerza de tu esencia</p><p>${a.equil ? `Tu esencia de ${SJ_EL[T.el]} está <b>en equilibrio</b>: tenés tanto apoyo como desafío. Es una carta armoniosa, que se adapta bien a los cambios.` : a.fuerte ? `Tu esencia de ${SJ_EL[T.el]} es <b>fuerte</b>: en tu carta hay mucha energía que te sostiene. Tenés carácter y resistencia, y te hace bien canalizar esa fuerza hacia afuera (crear, trabajar, dar).` : `Tu esencia de ${SJ_EL[T.el]} es <b>sensible</b>: en tu carta hay más energías que te piden que las que te nutren. El entorno te afecta mucho, y te hace bien rodearte de lo que te recarga.`}</p>`;
+  h += `<p class="sub">Tu balance de los 5 elementos</p><div class="sj-bal">${a.cnt.map((c, i) => `<div class="sj-bar${c ? '' : ' cero'}"><span>${SJ_ELH[i]} ${SJ_EL[i]}</span><i><em style="width:${Math.max(c / max * 100, 2)}%;background:${SJ_COL[i]}"></em></i><b>${c}</b></div>`).join('')}</div>`;
+  if (a.faltan.length) h += `<p>${a.faltan.length === 1 ? `<b>Te falta ${SJ_EL[a.faltan[0]]}</b>, que representa ${SJ_ELTXT[a.faltan[0]]}. No es un defecto: es la energía que tu alma vino a buscar afuera, y la que más te equilibra cuando la sumás a tu vida.` : `<b>Te faltan ${sjLista(a.faltan.map(i => SJ_EL[i]))}</b>: ${a.faltan.map(i => SJ_ELTXT[i]).join('; ')}. Son las energías que tu alma vino a buscar afuera.`}</p>`;
+  else h += `<p><b>Tenés los cinco elementos.</b> Es una carta completa, con recursos para cada situación.</p>`;
+  if (a.exceso > -1) h += `<p>Tenés mucho <b>${SJ_EL[a.exceso]}</b> (${a.cnt[a.exceso]} de ${sj.p.length * 2}): es tu gran fuerza, pero cuando se desborda puede volverse tu sombra.</p>`;
+  const al = a.aliado, foco = a.faltan.length ? a.faltan[0] : al, R = SJ_REM[foco], RA = SJ_REM[al];
+  h += `<div class="sj-aliado" style="--sjc:${SJ_COL[foco]}"><small>${a.faltan.length ? 'Lo que viniste a sumar' : 'Tu elemento aliado'}</small><b>${SJ_ELH[foco]} ${SJ_EL[foco]}</b><p>${a.faltan.length ? `Es el elemento que no aparece en tu carta. Sumarlo a tu vida te abre ${SJ_ELTXT[foco]}.` : `Es el que más equilibra tu carta. Trae ${SJ_ELTXT[foco]}.`}</p></div>
+    <ul class="num-lista"><li><b>🎨</b><div><span>Colores</span>Usá ${R.col} en tu ropa, tu casa o tus accesorios.</div></li>
+    <li><b>🧭</b><div><span>Dirección y estación</span>Esta energía vive en ${R.dir}, y su estación es ${R.est}.</div></li>
+    ${R.hab.map((x, i) => `<li><b>${['🌱', '✨', '🌀'][i]}</b><div><span>${['Para tu día a día', 'Para tu energía', 'Para tu cuerpo'][i]}</span>${x}</div></li>`).join('')}
+    <li><b>🕯️</b><div><span>Ritual</span>${R.rit}</div></li>
+    <li><b>💎</b><div><span>Tus piedras</span>${R.pied.join(', ')}.</div></li></ul>`;
+  if (foco !== al) h += `<div class="sj-aliado" style="--sjc:${SJ_COL[al]}"><small>Lo que te recarga · tu elemento aliado</small><b>${SJ_ELH[al]} ${SJ_EL[al]}</b><p>Tu esencia de ${SJ_EL[T.el]} es ${a.fuerte ? 'fuerte' : 'sensible'}, y el ${SJ_EL[al]} es el que mejor la sostiene: trae ${SJ_ELTXT[al]}. Cuando estés sin energía, buscá ${RA.col} y piedras como ${sjLista(RA.pied.slice(0, 3).map(x => x.toLowerCase()))}.</p></div>`;
+  const prods = (P.productos || []).filter(x => !x.agotado && (R.rx.test((x.nombre || '') + ' ' + (x.categoria || '')) || RA.rx.test((x.nombre || '') + ' ' + (x.categoria || '')))).slice(0, 4);
+  if (prods.length) h += `<p class="sub">En nuestra tienda, para tu equilibrio</p><div class="sj-prods">${prods.map(x => `<button type="button" class="sj-prod" data-irtab="productos">${x.imagen ? `<img src="${esc(x.imagen)}" alt="" loading="lazy">` : '<span>💎</span>'}<b>${esc(x.nombre)}</b>${x.precio ? `<small>$${Number(x.precio).toLocaleString('es-AR')}</small>` : ''}</button>`).join('')}</div>`;
+  else h += `<p class="ag-ayuda">¿Querés una piedra para tu ${SJ_EL[foco]}? Escribinos y te la conseguimos 💜</p>`;
+  // diez dioses
+  const gr = a.grupos.slice().sort((x, y) => y.n - x.n), top = gr[0], nada = a.grupos.filter(g => !g.n);
+  h += `<p class="sub">Tus diez dioses (십성)</p><p class="ag-ayuda" style="margin-top:0">En el Saju, cada carácter de tu carta se relaciona con tu elemento esencial de una forma distinta. Esas relaciones se llaman los diez dioses, y muestran dónde está puesta tu energía.</p>
+    <p><b>Tu fuerza dominante: ${top.g[1]}.</b> ${top.g[3]}</p>${nada.length ? `<p><b>Lo que vas a aprender:</b> no tenés energía de ${sjLista(nada.map(g => g.g[1].toLowerCase()))} en tu carta. Eso no significa que te falte en la vida: significa que lo vas construyendo con conciencia, y que llega a través de otras personas y de los años que lo activan.</p>` : ''}
+    <ul class="num-lista">${a.dioses.map(x => { const D = SJ_DIOS[x.d]; return `<li><b>${SJ_PILAR[x.pos][0].slice(0, 1)}${x.arriba ? '↑' : '↓'}</b><div><span>${esc(D[0])} · ${D[1]}</span>En tu pilar del ${SJ_PILAR[x.pos][0].toLowerCase()} (${x.arriba ? 'cielo' : 'tierra'}): ${D[2]}.</div></li>`; }).join('')}</ul>`;
+  // energías escondidas
+  const oc = []; sj.p.forEach(x => SJ_R[x.b].oc.forEach(s => oc.push(s)));
+  const ocC = [0, 0, 0, 0, 0]; oc.forEach(s => ocC[SJ_T[s].el]++);
+  const ocNuevos = ocC.map((c, i) => c && !a.cnt[i] ? i : -1).filter(i => i > -1);
+  h += `<p class="sub">Tus energías escondidas</p><p>Dentro de cada animal de tu carta hay elementos guardados, como semillas. ${ocNuevos.length ? `Aunque no se vea a simple vista, guardás <b>${sjLista(ocNuevos.map(i => SJ_EL[i]))}</b> en tu interior: está ahí, esperando que lo despiertes.` : `Tus energías escondidas refuerzan lo que ya se ve en tu carta: sos coherente por dentro y por fuera.`}</p>`;
+  // el año
+  const hoy = new Date(), ya = sjAnioDe(hoy), dY = sjDios(sj.dm, ya.s), gY = SJ_GRUPO.find(g => g[2].includes(dY));
+  h += `<div class="anio-chino"><small>Tu año en el Saju · ${ya.y}-${ya.y + 1}</small><h4>${SJ_T[ya.s].h}${SJ_R[ya.b].h} ${SJ_EL[SJ_T[ya.s].el]}-${SJ_R[ya.b].an} · ${esc(SJ_DIOS[dY][0])}</h4>
+    <p>Para tu ${SJ_EL[T.el]}, este año ${gY[4]}</p><p>${sjRelRamas(ya.b, sj.p[2].b)}</p>${SJ_T[ya.s].el === al || SJ_R[ya.b].el === al ? '<p>✨ Además, el año trae tu elemento aliado: es un tiempo que te equilibra.</p>' : ''}</div>`;
+  const meses = sjMesesDe(ya.y), act = meses.filter(x => x.ini <= hoy).pop();
+  h += `<p class="sub">Mes a mes</p><ul class="sj-meses">${meses.map(x => { const dd = sjDios(sj.dm, x.s), g = SJ_GRUPO.find(gg => gg[2].includes(dd)); return `<li${x === act ? ' class="ahora"' : x.ini > hoy ? ' class="futuro"' : ''}><small>Desde el ${fechaConAnio(x.ini, ya.y)}${x === act ? ' · ahora ✦' : ''}</small><b>${SJ_T[x.s].h}${SJ_R[x.b].h} ${SJ_EL[SJ_T[x.s].el]}-${SJ_R[x.b].an} · ${esc(SJ_DIOS[dd][0])}</b><p>Un mes de ${g[1].toLowerCase()}: ${SJ_DIOS[dd][2]}.</p></li>`; }).join('')}</ul>`;
+  const yn = { y: ya.y + 1, s: (ya.s + 1) % 10, b: (ya.b + 1) % 12 }, dN = sjDios(sj.dm, yn.s), gN = SJ_GRUPO.find(g => g[2].includes(dN));
+  h += `<div class="anio-chino prox"><small>Lo que viene · ${yn.y}</small><h4>${SJ_T[yn.s].h}${SJ_R[yn.b].h} ${SJ_EL[SJ_T[yn.s].el]}-${SJ_R[yn.b].an} · ${esc(SJ_DIOS[dN][0])}</h4><p>Para tu ${SJ_EL[T.el]}, el año que viene ${gN[4]}</p></div>`;
+  return h + `<p class="ag-ayuda">Calculado con la hora solar verdadera de ${esc(lugarCoord(P.lugarNac, P.coordNac)[0])}. El año y los meses del Saju cambian con el Sol (alrededor del 4 de febrero), no el 1° de enero.</p>
+    <p class="fila-comp"><button class="btn-sec comp" type="button" data-sjshare>✨ Compartir mi Saju</button></p>`;
+}
+PREM_FN.saju = () => premSaju();
+(function(){
+  const i = PREMIUM_LISTA.findIndex(x => x[0] === 'chino');
+  if (!PREMIUM_LISTA.some(x => x[0] === 'saju')) PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, ['saju', '☯️', 'Tu Saju coreano', 'Tus cuatro pilares, tu balance de los 5 elementos, cómo equilibrarte, tus diez dioses y tu año mes a mes.']);
+  PREM_VENTA.saju = 'Los cuatro pilares de tu destino: tu balance de elementos y el que te falta, cómo equilibrarte con colores, rituales y piedras, tus diez dioses y tu año mes a mes.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'trad'); if (g) { g[3] = 'Matriz, horóscopo chino, Saju y animal'; if (!g[4].includes('saju')) g[4].splice(g[4].indexOf('chino') + 1, 0, 'saju'); }
+})();
+const _serSaju = serHTML;
+serHTML = function(){ return _serSaju() + sajuGratisHTML(); };
+
+/* ── La tarjeta viva: imagen hiperrealista + el elemento en movimiento ── */
+const SJ_FALLBACK = ['fondo-bosque.jpg', 'fondo-bosque.jpg', 'fondo-fuego.jpg', 'fondo-fuego.jpg', 'fondo-altar.jpg', 'fondo-altar.jpg', 'fondo-cristales.jpg', 'fondo-cristales.jpg', 'fondo-luna.jpg', 'fondo-luna.jpg'];
+const SJ_IMG = {};
+function sjImagen(dm){
+  if (!SJ_IMG[dm]) SJ_IMG[dm] = new Promise(ok => {
+    const prueba = (L) => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; };
+    prueba(['saju-' + (dm + 1) + '.jpg', SJ_FALLBACK[dm]]);
+  });
+  return SJ_IMG[dm];
+}
+function sjRand(seed){ let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+function sjBrillo(col){ const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, col); r.addColorStop(.25, col.replace(/[\d.]+\)$/, '.55)')); r.addColorStop(1, col.replace(/[\d.]+\)$/, '0)')); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; }
+function sjLineas(c, txt, maxW){ const w = String(txt).split(' '), L = []; let l = ''; w.forEach(p => { const t = l ? l + ' ' + p : p; if (c.measureText(t).width > maxW && l) { L.push(l); l = p; } else l = t; }); if (l) L.push(l); return L; }
+function sjEscena(dm, img, nombre){
+  const T = SJ_T[dm], D = SJ_DM[dm], el = T.el, rnd = sjRand(dm * 97 + 13);
+  const spr = { oro: sjBrillo('rgba(255,236,190,1)'), fuego: sjBrillo('rgba(255,170,90,1)'), verde: sjBrillo('rgba(200,255,170,1)'), azul: sjBrillo('rgba(190,220,255,1)'), blanco: sjBrillo('rgba(255,255,255,1)') };
+  const N = el === 4 ? 150 : 60, P2 = Array.from({ length: N }, () => ({ x: rnd(), y: rnd(), v: .4 + rnd() * .8, r: rnd(), f: rnd() * 6.28, z: .4 + rnd() * .9 }));
+  const ond = Array.from({ length: 9 }, () => ({ x: .1 + rnd() * .8, y: .74 + rnd() * .22, f: rnd() * 3 }));
+  function texto(c, W, H, t){
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.save(); c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText('MI SAJU · 사주', W / 2, 150 * s); c.letterSpacing = '0px';
+    if (nombre) { c.fillStyle = '#FFF4DA'; c.font = `${96 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(nombre, W / 2, 265 * s); c.shadowBlur = 0; }
+    // anillo de los cinco elementos
+    const cx = W / 2, cy = 690 * s, R = 250 * s;
+    c.strokeStyle = 'rgba(243,220,160,.45)'; c.lineWidth = 2 * s; c.setLineDash([3 * s, 12 * s]); c.beginPath(); c.arc(cx, cy, R, t * .15, t * .15 + 6.283); c.stroke(); c.setLineDash([]);
+    c.strokeStyle = 'rgba(243,220,160,.22)'; c.beginPath(); c.arc(cx, cy, R * .78, 0, 6.283); c.stroke();
+    SJ_ELH.forEach((ch, i) => { const a = -Math.PI / 2 + i * 1.2566 + t * .15, x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R, yo = i === el;
+      c.fillStyle = yo ? SJ_COL[i] : 'rgba(20,8,36,.65)'; c.beginPath(); c.arc(x, y, (yo ? 40 : 30) * s, 0, 6.283); c.fill();
+      c.strokeStyle = SJ_COL[i]; c.lineWidth = 2 * s; c.stroke(); c.fillStyle = yo ? '#1C0B2E' : SJ_COL[i]; c.font = `600 ${(yo ? 40 : 30) * s}px serif`; c.textBaseline = 'middle'; c.fillText(ch, x, y + 2 * s); c.textBaseline = 'alphabetic'; });
+    const g = c.createRadialGradient(cx, cy, 0, cx, cy, R * .8); g.addColorStop(0, `rgba(255,236,190,${.22 + .16 * pul})`); g.addColorStop(1, 'rgba(255,236,190,0)'); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, R * .8, 0, 6.283); c.fill();
+    c.font = `600 ${250 * s}px serif`; c.textBaseline = 'middle'; c.shadowColor = SJ_COL[el]; c.shadowBlur = (30 + 30 * pul) * s; c.fillStyle = '#FFF7E4'; c.fillText(T.h, cx, cy + 8 * s); c.shadowBlur = 0; c.textBaseline = 'alphabetic';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${34 * s}px Jost, sans-serif`; c.letterSpacing = 10 * s + 'px'; c.fillText((SJ_EL[el] + (T.yang ? ' YANG' : ' YIN')).toUpperCase(), W / 2, 1060 * s); c.letterSpacing = '0px';
+    c.fillStyle = '#FFFFFF'; c.font = `600 ${92 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 20 * s;
+    sjLineas(c, D.img, 940 * s).forEach((l, i) => c.fillText(l, W / 2, (1165 + i * 92) * s));
+    c.shadowBlur = 0; c.fillStyle = '#E8A0B4'; c.font = `500 ${34 * s}px Jost, sans-serif`; c.fillText(D.pal.join('  ·  '), W / 2, 1290 * s);
+    c.fillStyle = '#F1ECF7'; c.font = `italic ${50 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 14 * s;
+    sjLineas(c, '“' + D.frase + '”', 860 * s).forEach((l, i) => c.fillText(l, W / 2, (1420 + i * 62) * s));
+    c.shadowBlur = 0; c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
+    c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+    c.restore();
+  }
+  function particulas(c, W, H, t){
+    const s = W / 1080; c.save();
+    if (el === 4) { // agua: lluvia (yin) u oleaje plateado (yang) + ondas
+      c.globalCompositeOperation = 'lighter';
+      if (!T.yang) { c.strokeStyle = 'rgba(210,225,255,.26)'; c.lineWidth = 1.6 * s; c.beginPath();
+        P2.forEach(p => { const y = ((p.y + t * p.v * .55) % 1) * H, x = (p.x * W + y * .12) % W, l = (30 + 40 * p.z) * s; c.moveTo(x, y); c.lineTo(x + l * .12, y + l); }); c.stroke(); }
+      ond.forEach(o => { const ph = ((t * .45 + o.f) % 1.6) / 1.6, r = ph * 120 * s; c.strokeStyle = `rgba(220,235,255,${.45 * (1 - ph)})`; c.lineWidth = 2 * s; c.beginPath(); c.ellipse(o.x * W, o.y * H, r, r * .28, 0, 0, 6.283); c.stroke(); });
+      P2.slice(0, 40).forEach(p => { const al = Math.max(0, Math.sin(t * 2.5 * p.v + p.f)); c.globalAlpha = al * .9; const z = (14 + 26 * p.z) * s; c.drawImage(spr.azul, p.x * W - z / 2, (.62 + p.y * .36) * H - z / 2, z, z); });
+    } else if (el === 1) { // fuego: brasas que suben
+      c.globalCompositeOperation = 'lighter';
+      P2.forEach(p => { const y = (1 - ((p.y + t * p.v * .12) % 1)) * H, x = p.x * W + Math.sin(t * 1.5 + p.f) * 30 * s, al = .4 + .6 * Math.abs(Math.sin(t * 4 * p.v + p.f)), z = (10 + 30 * p.z) * s * (y / H + .3);
+        c.globalAlpha = al * Math.min(1, (y / H) * 1.6); c.drawImage(p.r > .5 ? spr.fuego : spr.oro, x - z / 2, y - z / 2, z, z); });
+    } else if (el === 0) { // madera: hojas que caen y luciérnagas
+      P2.forEach((p, i) => { const y = ((p.y + t * p.v * .06) % 1) * H, x = p.x * W + Math.sin(t * .9 + p.f) * 50 * s;
+        if (i % 2) { c.globalCompositeOperation = 'source-over'; c.globalAlpha = .75; c.save(); c.translate(x, y); c.rotate(t * p.v + p.f); c.fillStyle = p.r > .5 ? 'rgba(160,215,140,.85)' : 'rgba(240,190,220,.85)'; c.beginPath(); c.ellipse(0, 0, 13 * s * p.z, 6 * s * p.z, 0, 0, 6.283); c.fill(); c.restore(); }
+        else { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.max(0, Math.sin(t * 2 * p.v + p.f)); const z = 34 * s * p.z; c.drawImage(spr.verde, x - z / 2, (p.y * .9 + .05) * H - z / 2, z, z); } });
+    } else if (el === 2) { // tierra: polvo dorado y rayos de luz
+      c.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 5; i++) { const a = .35 + i * .12 + Math.sin(t * .3 + i) * .03; c.globalAlpha = .07 + .04 * Math.sin(t * .8 + i * 2); c.fillStyle = '#FFE6A8'; c.beginPath(); c.moveTo(W * .5, -60 * s); c.lineTo(W * .5 + Math.cos(a) * H * 1.4 - 70 * s, Math.sin(a) * H * 1.4); c.lineTo(W * .5 + Math.cos(a) * H * 1.4 + 70 * s, Math.sin(a) * H * 1.4); c.closePath(); c.fill(); }
+      P2.forEach(p => { const y = ((p.y - t * p.v * .025) % 1 + 1) % 1 * H, x = (p.x * W + Math.sin(t * .5 + p.f) * 40 * s), z = (8 + 22 * p.z) * s; c.globalAlpha = .35 + .5 * Math.abs(Math.sin(t * 1.2 * p.v + p.f)); c.drawImage(spr.oro, x - z / 2, y - z / 2, z, z); });
+    } else { // metal: destellos y un barrido de luz
+      c.globalCompositeOperation = 'lighter';
+      const ph = (t % 3.2) / 3.2, bx = (ph * 1.8 - .4) * W, g = c.createLinearGradient(bx - 160 * s, 0, bx + 160 * s, H * .25);
+      g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,250,235,.16)'); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      P2.forEach(p => { const al = Math.pow(Math.max(0, Math.sin(t * 2.2 * p.v + p.f)), 3), x = p.x * W, y = p.y * H, z = (10 + 40 * p.z) * s * al; if (z < 1) return;
+        c.globalAlpha = al; c.drawImage(spr.blanco, x - z, y - z, z * 2, z * 2); c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(x, y - z * 1.6); c.lineTo(x + z * .12, y); c.lineTo(x, y + z * 1.6); c.lineTo(x - z * .12, y); c.closePath(); c.moveTo(x - z * 1.6, y); c.lineTo(x, y + z * .12); c.lineTo(x + z * 1.6, y); c.lineTo(x, y - z * .12); c.closePath(); c.fill(); });
+    }
+    c.restore();
+  }
+  return function dibujar(c, W, H, t){
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
+    if (img) { const k = 1.1 + .05 * Math.sin(t * .25), iw = img.width, ih = img.height, esc2 = Math.max(W / iw, H / ih) * k, dw = iw * esc2, dh = ih * esc2;
+      c.drawImage(img, (W - dw) / 2 + Math.sin(t * .2) * W * .015, (H - dh) / 2 + Math.cos(t * .17) * H * .01, dw, dh); }
+    else { const g = c.createRadialGradient(W / 2, H * .35, 10, W / 2, H / 2, H); g.addColorStop(0, '#4a1f7c'); g.addColorStop(1, '#0b0414'); c.fillStyle = g; c.fillRect(0, 0, W, H); }
+    const v = c.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.55)'); v.addColorStop(.18, 'rgba(18,8,32,.1)'); v.addColorStop(.5, 'rgba(18,8,32,.25)'); v.addColorStop(.62, 'rgba(18,8,32,.7)'); v.addColorStop(1, 'rgba(12,5,22,.92)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+    particulas(c, W, H, t); texto(c, W, H, t);
+  };
+}
+async function sjFuentes(){ try { await document.fonts.ready; await Promise.all(['96px "Great Vibes"', '600 92px "Cormorant Garamond"', 'italic 50px "Cormorant Garamond"', '500 34px Jost'].map(f => document.fonts.load(f))); } catch (e) {} }
+const sjNombre = () => String(P.nombreElegido || P.nombre || '').split(' ')[0];
+// vista previa viva (solo se anima cuando está a la vista)
+let SJ_VIVO = null;
+function sjActivarVivo(){
+  const cv = document.querySelector('canvas[data-sjvivo]'); if (!cv || cv.dataset.on) return; cv.dataset.on = '1';
+  const sj = sajuDe(); if (!sj) return;
+  Promise.all([sjImagen(sj.dm), sjFuentes()]).then(([img]) => {
+    const dib = sjEscena(sj.dm, img, sjNombre()), c = cv.getContext('2d'), t0 = performance.now(); let visible = true;
+    try { new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv); } catch (e) {}
+    const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const frame = now => { if (!cv.isConnected) return; if (visible && !document.hidden) dib(c, cv.width, cv.height, quieto ? 2 : (now - t0) / 1000); if (!quieto) requestAnimationFrame(frame); };
+    requestAnimationFrame(frame);
+  });
+}
+SJ_VIVO = new MutationObserver(() => { if (document.querySelector('canvas[data-sjvivo]:not([data-on])')) sjActivarVivo(); });
+SJ_VIVO.observe(document.body, { childList: true, subtree: true });
+setTimeout(sjActivarVivo, 500);
+async function sjImagenPNG(sj){
+  const [img] = await Promise.all([sjImagen(sj.dm), sjFuentes()]), cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920;
+  sjEscena(sj.dm, img, sjNombre())(cv.getContext('2d'), 1080, 1920, 2.4);
+  return new Promise(ok => cv.toBlob(ok, 'image/png'));
+}
+async function sjVideo(sj){
+  const [img] = await Promise.all([sjImagen(sj.dm), sjFuentes()]), W = 720, H = 1280, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const c = cv.getContext('2d'), dib = sjEscena(sj.dm, img, sjNombre()); dib(c, W, H, 0);
+  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: VIDEO_MIME, videoBitsPerSecond: 7000000 }), partes = [];
+  rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); };
+  rec.start(200); const t0 = performance.now(), DUR = 8000;
+  await new Promise(fin => { const f = now => { dib(c, W, H, (now - t0) / 1000); if (now - t0 < DUR) requestAnimationFrame(f); else fin(); }; requestAnimationFrame(f); });
+  await new Promise(ok => { rec.onstop = ok; rec.stop(); });
+  return new Blob(partes, { type: VIDEO_MIME.split(';')[0] });
+}
+async function compartirSaju(btn){
+  const sj = sajuDe(); if (!sj) return;
+  const D = SJ_DM[sj.dm], T = SJ_T[sj.dm], texto = `Mi elemento esencial en el Saju: ${SJ_EL[T.el]} ${T.yang ? 'yang' : 'yin'}, ${D.img.toLowerCase()} ✨ · Mi Luz, Luz Guía`;
+  evento('Compartió', 'Saju');
+  const formato = VIDEO_MIME ? await elegirFormato() : 'imagen'; if (!formato) return;
+  if (formato === 'imagen') { const o = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…'; try { await compartirArchivo(await sjImagenPNG(sj), 'mi-saju-luz-guia.png', texto); } catch (e) {} btn.disabled = false; btn.textContent = o; return; }
+  $('dlg-titulo').textContent = 'Creando tu video ✨'; $('dlg-texto').textContent = 'Dejá esta pantalla abierta unos segundos…';
+  $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:9s"></i></div>';
+  try {
+    const blob = await sjVideo(sj), nom = 'mi-saju-luz-guia' + (/mp4/.test(blob.type) ? '.mp4' : '.webm');
+    $('dlg-titulo').textContent = '¡Tu video está listo! ✨'; $('dlg-texto').textContent = 'Tocá compartir y elegí Instagram (historia o reel).';
+    $('dlg-cuerpo').innerHTML = `<video src="${URL.createObjectURL(blob)}" autoplay loop muted playsinline style="width:100%;max-height:46vh;border-radius:12px;border:1px solid var(--linea)"></video><div class="fila-bt"><button class="btn-sec" type="button" id="vid-no">Cerrar</button><button class="btn" type="button" id="vid-si">Compartir</button></div>`;
+    $('vid-no').onclick = () => $('dlg').close();
+    $('vid-si').onclick = async () => { try { await compartirArchivo(blob, nom, texto); } catch (e) {} $('dlg').close(); };
+  } catch (e) { console.error(e); $('dlg-texto').textContent = 'Tu celular no pudo crear el video. Probá con la imagen.'; $('dlg-cuerpo').innerHTML = '<div class="fila-bt"><button class="btn-sec" type="button" onclick="document.getElementById(\'dlg\').close()">Cerrar</button></div>'; }
+}
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
