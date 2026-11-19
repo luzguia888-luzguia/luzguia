@@ -6503,7 +6503,7 @@ function sajuGratisHTML(){
   return h + '</div>';
 }
 document.addEventListener('click', e => {
-  if (e.target.closest('[data-sjver]')) { irTab('premium'); PREM_ABIERTA = 'saju'; repintarPrem(); setTimeout(() => { const d = document.querySelector('details[data-premsec="saju"]'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 150); }
+  if (e.target.closest('[data-sjver]')) abrirPremium('saju');
   const b = e.target.closest('[data-sjshare]'); if (b) compartirSaju(b);
 });
 
@@ -7139,7 +7139,7 @@ function hdGratisHTML(){
     <div class="hd-tit"><span>${T[1]}</span><div><small>Tu tipo · ${T[2]}% de las personas</small><b>${T[0]}</b></div></div>
     <p>${T[7]}</p><p><b>Tu estrategia:</b> ${T[3]}. ${T[9]}</p>${H.hora ? '' : '<p class="ag-ayuda">⚠️ Sin tu hora de nacimiento, tu Diseño Humano puede variar. Si la conseguís, se vuelve exacto.</p>'}
     <p class="fila-comp"><button class="btn-sec comp" type="button" data-hdshare>✨ Compartir mi Diseño Humano (video o imagen)</button></p>`;
-  if (ver) h += `<button class="btn-sec oro" type="button" data-premir="hd">🧬 Ver mi Diseño Humano completo</button>`;
+  if (ver) h += `<button class="btn-sec oro" type="button" data-premabrir="hd">🧬 Ver mi Diseño Humano completo</button>`;
   else h += `<div class="teaser-velo"><p>Tu autoridad interna es ${HD_AUT[H.aut][0]}. Tu perfil es ${H.perfil.join('/')}. Tenés ${H.def.size} centros definidos y ${H.canales.length} canales.</p><span>🔒 Premium</span></div>
     <p class="ag-ayuda">En Premium: tu bodygraph completo, cómo tomar decisiones según tu autoridad, tu perfil, tus 9 centros, tus canales y tus puertas del Sol y la Tierra.</p><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu Diseño Humano completo ✨</button>`;
   return h + '</div>';
@@ -7250,6 +7250,13 @@ document.addEventListener('click', e => {
   compartirEscena(b, async () => { const [img] = await Promise.all([hdImagen(H.tipo), sjFuentes()]); return { dib: hdEscena(H, img, sjNombre()) }; }, 'mi-diseno-humano-luz-guia', `Soy ${T[0]} ${H.perfil.join('/')} en Diseño Humano ${T[1]} · Mi Luz, Luz Guía`, 'Diseño Humano');
 });
 
+
+/* Ir a una sección de Premium desde cualquier pestaña (abre el grupo y la sección, y baja hasta ella) */
+function abrirPremium(k){
+  irTab('premium'); PREM_ABIERTA = k; repintarPrem();
+  setTimeout(() => { const d = document.querySelector('details[data-premsec="' + k + '"]'); if (!d) return; d.open = true; const g = d.closest('details.prem-grupo'); if (g) g.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-premabrir]'); if (b) { e.preventDefault(); abrirPremium(b.dataset.premabrir); } });
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
 </script>
