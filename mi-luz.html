@@ -857,6 +857,13 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .kua-e{margin:8px 0}.nm-chk.on{background:rgba(212,175,106,.25);border-color:#F3DCA0;color:#F3DCA0}
 .nak-caja,.arbol-caja{border:1px solid rgba(212,175,106,.4);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(91,42,134,.35),rgba(20,8,36,.65));margin:10px 0 18px}
 .ogham{font-family:"Segoe UI Symbol","Noto Sans Ogham",serif;color:#F3DCA0;text-shadow:0 0 14px rgba(243,220,160,.6)}
+.energia-hoy{padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.55);background:linear-gradient(150deg,rgba(212,175,106,.16),rgba(91,42,134,.35) 45%,rgba(28,11,46,.7));box-shadow:0 0 26px rgba(212,175,106,.15);margin:14px 0}
+.energia-hoy>small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}
+.energia-hoy>b{display:block;font-family:var(--serif);font-size:1.3rem;color:#F3DCA0;margin:2px 0 8px}
+.energia-hoy ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.energia-hoy li{display:flex;gap:10px;align-items:flex-start}.energia-hoy li>span{font-size:1.15rem;line-height:1.4}.energia-hoy li p{margin:0;font-size:.92rem;line-height:1.5}
+.glos-buscar{padding:0 16px 6px;display:flex;flex-direction:column;gap:4px}.glos-buscar input{width:100%;box-sizing:border-box}.glos-buscar small{color:#BDB2CF;font-size:.78rem}
+.glos-item[hidden]{display:none}.glos-item.glos-top dt{color:#FFE3A0}
 </style>
 </head>
 <body>
@@ -7519,6 +7526,87 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-escshare]'); if (!b) return; const f = ESCENAS[b.dataset.escshare]; if (!f) return;
   f().then(E => { if (E) compartirEscena(b, async () => { await sjFuentes(); return { dib: E.dib }; }, E.arch, E.texto, E.ev); });
 });
+
+
+/* ───── v43: tu energía de hoy (todas las tradiciones en un solo lugar) · diccionario con buscador ───── */
+const SJ_DIA_TXT = { yo: 'un día para hacer las cosas a tu manera y apoyarte en tu gente', exp: 'un día para crear, expresarte y disfrutar', plata: 'un buen día para moverte con el dinero, vender o negociar', poder: 'un día para cumplir, ordenar y asumir responsabilidades', sabe: 'un día para estudiar, escuchar tu intuición y dejarte ayudar' };
+function sjDiaHoy(){ const h = new Date(), jdn = Math.floor(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate()) / 864e5 + 2440588), i = (jdn + 49) % 60; return { s: i % 10, b: i % 12 }; }
+function energiaHoyHTML(){
+  const L = [];
+  try { const sj = sajuDe(); if (sj) { const d = sjDiaHoy(), dd = sjDios(sj.dm, d.s), g = SJ_GRUPO.find(x => x[2].includes(dd)); L.push(['☯️', `En tu Saju, hoy es un día de <b>${esc(SJ_DIOS[dd][0])}</b>: ${SJ_DIA_TXT[g[0]]}.`]); } } catch (e) {}
+  try { const yo = kinNacimiento(), h = new Date(), K = kinDe(kinNum(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate())));
+    if (yo) { const rel = K.s === yo.s ? 'es tu mismo sello: un día de poder' : K.s === yo.guia ? 'trae tu sello guía: escuchá las señales' : K.s === yo.analogo ? 'trae tu sello aliado: todo fluye más fácil' : K.s === yo.antipoda ? 'trae tu sello desafío: paciencia, que te fortalece' : K.s === yo.oculto ? 'trae tu poder oculto: animate a lo que no te animás' : K.t === yo.t ? 'tiene tu mismo tono: estás en sintonía' : '';
+      L.push(['🌀', `El kin de hoy es ${esc(K.nombre)}${rel ? `, y <b>${rel}</b>` : `: trae ${K.S[4]}`}.`]); } } catch (e) {}
+  try { const { N, nak } = naksHoy(), V = vedicaDe(); L.push(['🪷', `La Luna pasa por <b>${nak[0]}</b>${V && V.N.i === N.i ? ', ¡tu propia mansión lunar! Un día muy tuyo' : ': energía de ' + nak[6].toLowerCase()}.`]); } catch (e) {}
+  try { const sj = sajuDe(), ma = sjMesActual(); if (sj && ma) { const dd = sjDios(sj.dm, ma.m.s); L.push(['🗓️', `Estás en tu mes de <b>${esc(SJ_DIOS[dd][0])}</b> del Saju.`]); } } catch (e) {}
+  try { const V = vedicaDe(); if (V && V.act) L.push(['🪐', `Y en tu gran período de <b>${V.act.d[0]}</b>${V.sub ? ', con un toque de ' + V.sub.d[0] : ''}.`]); } catch (e) {}
+  try { const m = String(P.diaMes || '').match(/(\d{2})\/(\d{2})/), h = new Date(); if (m && arbolDe(h.getDate(), h.getMonth() + 1) === arbolDe(+m[1], +m[2])) L.push(['🌳', 'Además, <b>es la luna de tu árbol celta</b>: un tiempo de poder para vos.']); } catch (e) {}
+  if (L.length < 2) return '';
+  const nom = sjNombre();
+  return `<div class="energia-hoy"><small>Tu energía de hoy${nom ? ', ' + esc(nom) : ''}</small><b>Lo que te dicen todas las tradiciones</b><ul>${L.map(([i, t]) => `<li><span>${i}</span><p>${t}</p></li>`).join('')}</ul><p class="ag-ayuda" style="margin:8px 0 0">Cambia todos los días. ¿Alguna palabra rara? Buscala en el 📖 diccionario.</p></div>`;
+}
+(function(){
+  const _h = hoyHTML;
+  hoyHTML = function(){ const h = _h(); try { const x = energiaHoyHTML(); if (!x) return h; const i = h.indexOf('<div class="kin-hoy">'); const j = i > -1 ? i : h.indexOf('<details class="mas-hoy"'); return j > -1 ? h.slice(0, j) + x + h.slice(j) : h + x; } catch (e) { console.error(e); return h; } };
+})();
+
+// ── El diccionario crece con todo lo nuevo ──
+GLOSARIO.push(
+  ['Saju', 'El sistema coreano de los "cuatro pilares del destino". Lee tu año, mes, día y hora de nacimiento como ocho caracteres con elementos y animales.'],
+  ['Cuatro pilares', 'Los cuatro bloques del Saju: año (tus raíces), mes (tu entorno), día (vos) y hora (tus frutos). Cada uno tiene un elemento arriba y un animal abajo.'],
+  ['Elemento esencial (Maestro del Día)', 'En el Saju, el elemento del día en que naciste. Es quién sos en lo más profundo, por ejemplo Agua yin (la lluvia) o Fuego yang (el sol).'],
+  ['Cinco elementos', 'Madera, Fuego, Tierra, Metal y Agua. Se nutren y se controlan entre sí. Tu balance muestra qué tenés de más y qué te falta.'],
+  ['Yin y yang', 'Las dos polaridades de la energía: yin es receptiva, suave e interior; yang es activa, expansiva y exterior. No son buenas ni malas: se complementan.'],
+  ['Elemento aliado', 'En el Saju, el elemento que mejor equilibra tu carta y te recarga.'],
+  ['Diez dioses', 'En el Saju, las relaciones entre tu elemento esencial y el resto de tu carta. Hablan de 5 áreas de tu vida: vos y tu gente, tu expresión, tu dinero, tu camino y tu sabiduría.'],
+  ['Energías escondidas', 'En el Saju, los elementos guardados dentro de cada animal de tu carta, como semillas que podés despertar.'],
+  ['Diseño Humano', 'Un sistema que une astrología, I Ching, Cábala y chakras en un mapa de tu energía: cómo está diseñada para decidir, trabajar y vincularte.'],
+  ['Bodygraph', 'El dibujo del Diseño Humano: 9 centros (como chakras) unidos por canales. Los pintados son tu energía fija; los blancos, donde absorbés la de los demás.'],
+  ['Tipo (Diseño Humano)', 'Las 5 formas de energía: Manifestador, Generador, Generador Manifestante, Proyector y Reflector. Cada uno tiene su estrategia para vivir con menos resistencia.'],
+  ['Estrategia', 'En el Diseño Humano, la forma correcta de moverte en la vida según tu tipo: informar, responder, esperar la invitación o esperar un ciclo lunar.'],
+  ['Autoridad interna', 'En el Diseño Humano, la parte de tu cuerpo en la que podés confiar para tomar decisiones: tus emociones, tu panza, tu intuición, tu corazón…'],
+  ['Perfil', 'En el Diseño Humano, dos números (como 5/1 o 3/5) que describen el "disfraz" con el que vivís tu propósito.'],
+  ['Centros definidos y abiertos', 'En el bodygraph, los centros pintados (definidos) son tu energía estable. Los abiertos son donde amplificás lo que traen otras personas: ahí está tu sabiduría.'],
+  ['Canales', 'En el Diseño Humano, las líneas que unen dos centros. Cada canal definido es un talento fijo tuyo.'],
+  ['Cruz de encarnación', 'En el Diseño Humano, tu propósito de vida, formado por las puertas de tu Sol y tu Tierra al nacer y en tu diseño.'],
+  ['Kin maya', 'En el Sincronario de las 13 Lunas, cada día tiene un kin (del 1 al 260) formado por un sello y un tono. El de tu nacimiento es tu firma galáctica.'],
+  ['Sincronario de las 13 Lunas', 'Un calendario inspirado en la cuenta maya de 260 días, con 13 lunas de 28 días. Cada día tiene su propia energía.'],
+  ['Sello y tono', 'Las dos partes de un kin: el sello (uno de 20, como Dragón o Perro) es la energía; el tono (del 1 al 13) es su forma de moverse.'],
+  ['Oráculo de destino', 'En el kin maya, los cuatro sellos que te acompañan: tu guía, tu aliado, tu desafío y tu poder oculto.'],
+  ['Ángel cabalístico', 'Según la Cábala, 72 ángeles acompañan el recorrido del Sol en el año. El de tus días de nacimiento te cuida desde siempre.'],
+  ['Coro angelical', 'Los 72 ángeles se agrupan en 9 coros (Serafines, Querubines, Tronos…), cada uno guiado por un arcángel.'],
+  ['Número Kua', 'En el Feng Shui, tu número personal (del 1 al 9) según tu año de nacimiento. Muestra qué direcciones de tu casa te favorecen.'],
+  ['Feng Shui', 'El arte chino de armonizar los espacios para que la energía (el chi) fluya a tu favor.'],
+  ['Nakshatra', 'En la astrología védica, cada una de las 27 mansiones lunares. La tuya es donde estaba la Luna cuando naciste.'],
+  ['Pada', 'Cada Nakshatra se divide en 4 partes llamadas padas. Tu pada le da un matiz a tu mansión lunar.'],
+  ['Astrología védica (Jyotish)', 'La astrología tradicional de la India. Usa el zodíaco de las estrellas fijas, por eso tus signos védicos pueden ser distintos a los occidentales.'],
+  ['Zodíaco sideral', 'El zodíaco medido según las estrellas fijas (el que usa la astrología védica). Hoy está corrido unos 24° respecto del zodíaco occidental.'],
+  ['Dasha', 'En la astrología védica, los grandes períodos planetarios de tu vida. El mahadasha es el período mayor y el antardasha, el subperíodo dentro de él.'],
+  ['Árbol celta', 'Los celtas asociaban cada luna del año a un árbol sagrado. El de tu nacimiento es tu guardián.'],
+  ['Ogham', 'El alfabeto mágico de los antiguos celtas. Cada letra está unida a un árbol.'],
+  ['Nodo Sur', 'El punto opuesto al Nodo Norte. Muestra lo que tu alma ya sabe de otras vidas y lo que te toca soltar.'],
+  ['Dones espirituales', 'Las habilidades sutiles que traés: clarividencia (ver), clarisentencia (sentir), canalización (recibir mensajes), sanación y otras.'],
+  ['Registros Akáshicos', 'La memoria del alma: un registro de todo lo que viviste en esta y otras vidas. Mey los abre para leer tu historia y tus dones.'],
+  ['Zona de dinero', 'Cómo te llega la abundancia según tu casa 2 (tus ingresos), tu Júpiter (tu suerte), tu Matriz y tu Saju.']
+);
+function glosarioHTML(){
+  const L = GLOSARIO.slice().sort((a, b) => a[0].localeCompare(b[0], 'es'));
+  return `<details class="glosario"><summary>📖 Diccionario: ¿qué significa cada palabra?</summary><div class="glos-buscar"><input type="search" class="campo-codigo" data-glosbuscar placeholder="Buscá una palabra… (ej: Saju)" aria-label="Buscar en el diccionario" autocomplete="off"><small data-gloscuenta>${L.length} palabras</small></div><dl>${L.map(([t, d]) => `<div class="glos-item" data-q="${esc(sinT(t + ' ' + d))}"><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl><p class="ag-ayuda glos-nada" hidden>No encontramos esa palabra. Escribinos y la sumamos 💜</p></details>`;
+}
+document.addEventListener('input', e => {
+  const i = e.target.closest('[data-glosbuscar]'); if (!i) return;
+  const box = i.closest('.glosario'), q = sinT(i.value.trim()); let n = 0;
+  box.querySelectorAll('.glos-item').forEach(x => { const t = sinT(x.querySelector('dt').textContent), ok = !q || x.dataset.q.includes(q); x.hidden = !ok; x.classList.toggle('glos-top', !!q && t.includes(q)); if (ok) n++; });
+  // primero las palabras cuyo nombre coincide, después las que lo mencionan
+  if (q) { const dl = box.querySelector('dl'); [...dl.querySelectorAll('.glos-item.glos-top')].forEach(x => dl.prepend(x)); }
+  box.querySelector('[data-gloscuenta]').textContent = q ? (n === 1 ? '1 resultado' : n + ' resultados') : n + ' palabras';
+  box.querySelector('.glos-nada').hidden = n > 0;
+});
+// el diccionario también en Vos y en Hoy
+(function(){
+  const _a = arcanosHTML; arcanosHTML = function(){ return _a() + glosarioHTML(); };
+  const _h = hoyHTML; hoyHTML = function(){ return _h() + glosarioHTML(); };
+})();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
