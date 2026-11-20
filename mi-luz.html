@@ -883,6 +883,20 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .fi-hoy-mini{width:100%;box-sizing:border-box;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .fi-gancho{border:1px solid rgba(232,160,180,.45);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(140,30,70,.22),rgba(20,8,36,.65));margin:10px 0 18px}
 .fi-18{font-size:.7rem;vertical-align:middle;border:1px solid #E8A0B4;color:#E8A0B4;border-radius:999px;padding:2px 7px;font-family:Jost,sans-serif}
+.oi-opc{display:grid;gap:8px;margin:8px 0 12px}
+.oi-mesa{display:flex;justify-content:center;margin:10px 0;perspective:900px}
+.oi-carta{position:relative;width:min(240px,70vw);aspect-ratio:2/3;cursor:pointer;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,.7,.3,1)}
+.oi-carta.abierta{transform:rotateY(180deg)}
+.oi-dorso,.oi-frente{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;text-align:center;border:1px solid #F3DCA0}
+.oi-dorso{background:radial-gradient(circle at 50% 40%,rgba(232,160,180,.45),transparent 60%),linear-gradient(160deg,#5a1530,#1c0b2e);box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 24px rgba(232,160,180,.25)}
+.oi-dorso span{font-size:3rem}.oi-dorso small{margin-top:10px;color:#F3DCA0;font-size:.8rem}
+.oi-frente{transform:rotateY(180deg);background:linear-gradient(160deg,#2a1246,#120a1e);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.oi-frente small{color:#E8A0B4;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}.oi-frente p{font-family:var(--serif);font-size:1.2rem;line-height:1.4;color:#F1ECF7;margin:10px 0 0}
+.mv-rit{border:1px solid rgba(232,160,180,.35);border-radius:14px;margin:8px 0;background:rgba(255,255,255,.03)}
+.mv-rit.ahora{border-color:#F3DCA0;box-shadow:0 0 18px rgba(212,175,106,.2)}
+.mv-rit>summary{display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;list-style:none}.mv-rit>summary::-webkit-details-marker{display:none}
+.mv-rit>summary>span{font-size:1.5rem}.mv-rit summary b{display:block;color:#F3DCA0;font-family:var(--serif);font-size:1.08rem}.mv-rit summary small{color:#E8A0B4;font-size:.78rem}
+.mv-rit>p,.mv-rit>ol{margin:0 14px 10px;font-size:.9rem;line-height:1.55}.mv-rit>ol{padding-left:20px}.mv-rit li{margin-bottom:5px}
 </style>
 </head>
 <body>
@@ -7839,6 +7853,75 @@ function fuegoGratisHTML(){
   } catch (e) { console.error(e); return ''; }
 }
 (function(){ const _s = serHTML; serHTML = function(){ let h = _s(); try { h += fuegoGratisHTML(); } catch (e) {} return h; }; })();
+
+
+/* ───── v47: oráculo íntimo y magia de Venus (Premium, +18, privado) ───── */
+const OI_NIVELES = { suave: ['🌸 Suave', 'Ternura, recuerdos y complicidad'], profundo: ['🌙 Profundo', 'Deseos, miedos y límites'], atrevido: ['🔥 Atrevido', 'Fantasías y juego, sin vueltas'] };
+const OI_CARTAS = {
+  vos: {
+    suave: ['¿Qué parte de tu cuerpo te gusta acariciar cuando nadie te ve?', '¿Cuál es el recuerdo más tierno que guardás de un beso?', '¿Qué canción te hace sentir sensual?', '¿Qué te regalarías hoy para mimar tu cuerpo?', '¿Qué textura te da placer: seda, agua tibia, sábanas limpias, piel?', '¿Cuándo fue la última vez que te gustó cómo te veías, sin hacer nada especial?', '¿Qué aroma te despierta?', '¿Qué te dirías al espejo si te miraras con ojos de amante?'],
+    profundo: ['¿Qué aprendiste sobre el deseo que hoy querés soltar?', '¿Qué te cuesta pedir y por qué?', '¿Cuál es tu límite más importante y cómo lo cuidás?', '¿Qué herida te frena a entregarte?', '¿Qué creencia de tu familia sobre el placer ya no es tuya?', '¿En qué momento sentiste que tu cuerpo era completamente tuyo?', '¿Qué necesitás escuchar para soltarte?', '¿Cómo sería amarte sin culpa?'],
+    atrevido: ['¿Qué fantasía volvés a imaginar una y otra vez?', '¿Qué te atrae y nunca te animaste a probar?', '¿En qué lugar inesperado te gustaría un beso apasionado?', '¿Qué te gustaría que te susurren al oído?', '¿Qué parte tuya salvaje querés dejar salir?', '¿Cómo sería tu noche perfecta, sin límites de tiempo ni de pudor?', '¿Qué te gustaría pedir que todavía no pediste?', '¿Qué te hace sentir tu poder en la intimidad?'] },
+  pareja: {
+    suave: ['Contale a tu pareja cuál fue el primer momento en que te gustó.', '¿Cuál es el abrazo que más recordás de los dos?', 'Decile tres cosas de su cuerpo que te encantan.', '¿Qué gesto cotidiano suyo te parece irresistible?', 'Desafío: mírense a los ojos en silencio durante un minuto.', '¿Qué cita les gustaría repetir?', 'Desafío: denle un beso lento, como si fuera el primero.', '¿Qué canción es "de ustedes"?'],
+    profundo: ['¿Qué necesitás de mí para sentirte más cerca?', '¿Hay algo que te dé miedo decirme sobre lo íntimo?', '¿Cómo te gusta que te cuide después de un encuentro?', '¿Qué cambió en nuestro deseo desde que nos conocimos?', '¿Qué límite tuyo quiero conocer y respetar mejor?', '¿Qué te hace sentir que te elijo cada día?', '¿Cuál es nuestra mejor noche y por qué?', 'Desafío: cada persona dice algo que le gustaría que el otro haga más seguido.'],
+    atrevido: ['Contame una fantasía que tengas conmigo.', '¿Qué te gustaría que te haga esta noche?', '¿Adónde te gustaría que nos escapemos a solas?', 'Desafío: elegí una parte de mi cuerpo y besala sin apuro.', '¿Qué te gustaría probar juntos que nunca probamos?', '¿Qué palabra mía te enciende?', 'Desafío: susurrame al oído lo que pensás de mí ahora.', '¿Cómo empezaría nuestra noche perfecta?'] } };
+function oiHTML(){
+  return `<p class="intro">Un oráculo para conocerte y para conocerse. Elegí con quién jugar y el nivel, sacá una carta y respondé con el corazón. Lo que sale en el oráculo, queda entre ustedes.</p>
+    <div class="oi-opc"><div class="pron-opc" data-oigrupo>${[['vos', '🪞 Para vos'], ['pareja', '💞 En pareja']].map(([k, t], i) => `<button type="button" class="nm-chk${i === 0 ? ' on' : ''}" data-oimodo="${k}">${t}</button>`).join('')}</div>
+    <div class="pron-opc" data-oigrupo>${Object.entries(OI_NIVELES).map(([k, v], i) => `<button type="button" class="nm-chk${i === 0 ? ' on' : ''}" data-oinivel="${k}">${v[0]}</button>`).join('')}</div></div>
+    <div class="oi-mesa"><div class="oi-carta" data-oicarta tabindex="0" role="button" aria-label="Sacar una carta"><div class="oi-dorso"><span>🔥</span><small>Tocá para sacar una carta</small></div><div class="oi-frente"><small data-oietq></small><p data-oitxt></p></div></div></div>
+    <p class="fila-comp"><button class="btn-sec" type="button" data-oiotra>🔄 Otra carta</button></p>
+    <p class="ag-ayuda">En pareja: túrnense para sacar cartas. Cualquiera puede decir "paso" sin dar explicaciones: el juego es más lindo cuando hay confianza.</p>`;
+}
+let OI_ESTADO = { modo: 'vos', nivel: 'suave', ult: -1 };
+function oiSacar(){
+  const c = document.querySelector('[data-oicarta]'); if (!c) return;
+  const L = OI_CARTAS[OI_ESTADO.modo][OI_ESTADO.nivel]; let i; do { i = Math.floor(Math.random() * L.length); } while (L.length > 1 && i === OI_ESTADO.ult); OI_ESTADO.ult = i;
+  c.classList.remove('abierta'); void c.offsetWidth;
+  setTimeout(() => { c.querySelector('[data-oietq]').textContent = OI_NIVELES[OI_ESTADO.nivel][0] + ' · ' + (OI_ESTADO.modo === 'vos' ? 'Para vos' : 'En pareja'); c.querySelector('[data-oitxt]').textContent = L[i]; c.classList.add('abierta'); }, 120);
+  evento('Oráculo íntimo', OI_ESTADO.modo + ' · ' + OI_ESTADO.nivel);
+}
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-oimodo]'), n = e.target.closest('[data-oinivel]');
+  if (m || n) { const b = m || n; b.closest('[data-oigrupo]').querySelectorAll('.nm-chk').forEach(x => x.classList.toggle('on', x === b)); if (m) OI_ESTADO.modo = m.dataset.oimodo; else OI_ESTADO.nivel = n.dataset.oinivel; OI_ESTADO.ult = -1; const c = document.querySelector('[data-oicarta]'); if (c) c.classList.remove('abierta'); return; }
+  if (e.target.closest('[data-oicarta]') || e.target.closest('[data-oiotra]')) oiSacar();
+});
+// ── Magia de Venus: rituales en pareja (y uno para vos) ──
+const MV_RITUALES = [
+  ['nueva', '🌑', 'Ritual de la intención compartida', 'Luna nueva · para manifestar juntos', 'Una vela roja o rosada, un papel, un cuarzo rosa.', ['Escriban juntos, en presente, lo que quieren crear como pareja (un proyecto, una casa, un viaje, más pasión).', 'Enciendan la vela y sostengan el cuarzo entre las manos de los dos.', 'Respiren al mismo ritmo, mirándose a los ojos, mientras leen la intención en voz baja.', 'Dejen que el encuentro íntimo que sigue sea la "firma" de esa intención: la energía del deseo la carga de fuerza.', 'Guarden el papel debajo del colchón hasta la próxima Luna nueva.']],
+  ['creciente', '🌒', 'Ritual de reconexión', 'Luna creciente · para volver a encontrarse', 'Música suave, una manta, una vela.', ['Siéntense frente a frente, con las rodillas tocándose.', 'Apoyen la mano derecha en el pecho del otro y la izquierda sobre la mano del otro.', 'Respiren juntos diez veces: uno inhala mientras el otro exhala, como una ola.', 'Díganse una cosa que agradecen del otro y una que desean vivir juntos.', 'Terminen con un abrazo largo, de al menos un minuto, sin apuro.']],
+  ['llena', '🌕', 'Ritual para encender el fuego', 'Luna llena · para la pasión', 'Aceite de almendras con unas gotas de canela o ylang ylang, velas, pétalos.', ['Consagren el aceite: sosténganlo juntos y díganle en voz alta qué quieren encender.', 'Preparen el espacio con velas y pétalos: el clima también es parte del hechizo.', 'Por turnos, regálense un masaje lento, sin objetivo, solo para despertar la piel.', 'El que recibe solo siente y respira; el que da, pone toda su atención en las manos.', 'Lo que pase después es un regalo, no una obligación.']],
+  ['menguante', '🌘', 'Ritual para sanar el vínculo', 'Luna menguante · para soltar', 'Dos papeles, un cuenco con agua y sal, una vela blanca.', ['Cada persona escribe en su papel lo que quiere soltar del vínculo (un enojo, un miedo, una rutina).', 'Léanselo con ternura, sin discutir: solo escuchar.', 'Rompan los papeles y pónganlos en el agua con sal.', 'Abrácense en silencio mientras la vela se consume un rato.', 'Al día siguiente, tiren el agua a la tierra: lo que se suelta, abona lo nuevo.']],
+  ['vos', '🪞', 'Ritual de Venus para vos', 'Cualquier viernes · amor propio sensual', 'Una vela rosa, tu aceite favorito, música que te guste.', ['Prepará tu espacio como si esperaras a alguien muy especial: sos vos.', 'Encendé la vela y poné la música.', 'Recorré tu cuerpo con el aceite, despacio, agradeciendo cada parte.', 'Mirate al espejo y decí: "mi deseo es sagrado y me pertenece".', 'Quedate en esa sensación todo el tiempo que quieras.']]];
+function faseHoy(){ try { const t = posTodas(jdDe(new Date())), e = nrm2(t.Luna - t.Sol); return e < 22 || e >= 337 ? 'nueva' : e < 157 ? 'creciente' : e < 202 ? 'llena' : 'menguante'; } catch (e) { return ''; } }
+function mvHTML(){
+  const f = faseHoy(), rec = MV_RITUALES.find(r => r[0] === f);
+  let h = `<p class="intro">La magia de Venus (lo que muchas tradiciones llaman magia sexual) usa la energía del deseo como fuerza creadora. En el tantra, en la alquimia y en muchas tradiciones antiguas, el encuentro íntimo es un acto sagrado: dos energías que se unen pueden crear, sanar y manifestar.</p>
+    <p class="sub">Por qué funciona</p><p>El deseo es la energía más potente que tenemos: es la misma fuerza que crea la vida. Cuando se une a una intención clara y compartida, esa energía se vuelve un motor para manifestar. Por eso es tan poderosa, y por eso hay que usarla con conciencia.</p>
+    <p class="sub">Los tres pilares</p><ul class="num-lista"><li><b>🤝</b><div><span>Consentimiento</span>Sin un sí entusiasta de las dos partes, no hay ritual. Cualquiera puede parar en cualquier momento.</div></li><li><b>🎯</b><div><span>Intención</span>Decidan juntos qué quieren crear, sanar o encender. La intención tiene que ser buena para los dos.</div></li><li><b>🕯️</b><div><span>Presencia</span>Sin celulares, sin apuro, sin metas. La magia está en la atención.</div></li></ul>
+    <p class="ag-ayuda">Nunca se hace magia de Venus sobre otra persona sin que lo sepa, ni para atar o controlar a nadie: eso no es amor, y la energía vuelve.</p>`;
+  if (rec) h += `<p class="sub">✨ El ritual de esta Luna</p>`;
+  const orden = rec ? [rec, ...MV_RITUALES.filter(r => r !== rec)] : MV_RITUALES;
+  h += orden.map((r, i) => `<details class="mv-rit${r === rec ? ' ahora' : ''}"${r === rec ? ' open' : ''}><summary><span>${r[1]}</span><div><b>${r[2]}</b><small>${r[3]}${r === rec ? ' · recomendado hoy' : ''}</small></div></summary><p><b>Vas a necesitar:</b> ${r[4]}</p><ol>${r[5].map(p => `<li>${p}</li>`).join('')}</ol></details>${i === 0 && rec ? '<p class="sub">Los otros rituales</p>' : ''}`).join('');
+  return h + '<p class="ag-ayuda">Nunca dejes una vela encendida sin supervisión. Cada ritual se adapta a lo que les haga bien a los dos.</p>';
+}
+const gate18 = f => () => lsGet('luzguia_18', '') === 'si' ? f() : premFuego();
+PREM_FN.oraculoint = gate18(oiHTML);
+PREM_FN.magiavenus = gate18(mvHTML);
+(function(){
+  const add = (desp, it) => { if (PREMIUM_LISTA.some(x => x[0] === it[0])) return; const i = PREMIUM_LISTA.findIndex(x => x[0] === desp); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, it); };
+  add('fuego', ['oraculoint', '🃏', 'Oráculo íntimo', 'Cartas con preguntas para vos o para jugar en pareja, en tres niveles. (+18)']);
+  add('oraculoint', ['magiavenus', '🌹', 'Magia de Venus', 'Qué es la magia sexual, por qué funciona y rituales en pareja según la Luna. (+18)']);
+  PREM_VENTA.oraculoint = 'Un oráculo de preguntas íntimas para conocerte o para jugar en pareja, en tres niveles: suave, profundo y atrevido. Privado, +18.';
+  PREM_VENTA.magiavenus = 'Qué es la magia sexual y por qué es tan poderosa, sus tres pilares y rituales en pareja para manifestar, reconectar, encender y sanar, según la fase de la Luna. Privado, +18.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'amor'); if (g) ['oraculoint', 'magiavenus'].forEach((k, j) => { if (!g[4].includes(k)) g[4].splice(g[4].indexOf('fuego') + 1 + j, 0, k); });
+})();
+GLOSARIO.push(['Magia de Venus', 'Lo que muchas tradiciones llaman magia sexual: usar la energía del deseo, con consentimiento e intención compartida, para crear, sanar o manifestar.'], ['Oráculo íntimo', 'Un mazo de preguntas para conocerte o para jugar en pareja, en tres niveles: suave, profundo y atrevido.']);
+GLOS_SEC['Magia de Venus'] = 'magiavenus'; GLOS_SEC['Oráculo íntimo'] = 'oraculoint'; SEC_NOM.magiavenus = 'la magia de Venus'; SEC_NOM.oraculoint = 'el oráculo íntimo';
+
+// al confirmar los 18 desde cualquier sección íntima, se queda en esa sección
+document.addEventListener('click', e => { if (!e.target.closest('[data-fi18]')) return; e.stopImmediatePropagation(); lsSet('luzguia_18', 'si'); evento('Sección', 'Íntimo +18'); repintarPrem(); }, true);
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
