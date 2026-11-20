@@ -897,6 +897,16 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .mv-rit>summary{display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;list-style:none}.mv-rit>summary::-webkit-details-marker{display:none}
 .mv-rit>summary>span{font-size:1.5rem}.mv-rit summary b{display:block;color:#F3DCA0;font-family:var(--serif);font-size:1.08rem}.mv-rit summary small{color:#E8A0B4;font-size:.78rem}
 .mv-rit>p,.mv-rit>ol{margin:0 14px 10px;font-size:.9rem;line-height:1.55}.mv-rit>ol{padding-left:20px}.mv-rit li{margin-bottom:5px}
+.fi-accesos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.tt-chip-deseo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 14px;border-radius:14px;border:1px solid rgba(232,160,180,.5);background:linear-gradient(150deg,rgba(160,40,70,.25),rgba(28,11,46,.6));color:inherit;font:inherit;text-align:left;cursor:pointer}
+.tt-chip-deseo span{font-size:1.4rem}.tt-chip-deseo b{color:#F3DCA0;font-family:var(--serif);font-size:1.05rem}.tt-chip-deseo small{color:#E3D6F2;font-size:.78rem;line-height:1.35}
+.di-nuevo{padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.45);background:rgba(255,255,255,.03);margin:10px 0}
+.di-nuevo>small{color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.di-nuevo>p[data-dipreg]{font-family:var(--serif);font-size:1.1rem;color:#F3DCA0;margin:4px 0 10px}
+.di-nuevo textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:110px}
+.di-entrada{border:1px solid rgba(212,175,106,.25);border-radius:12px;margin:6px 0;padding:0 12px}
+.di-entrada>summary{padding:10px 0;cursor:pointer;list-style:none}.di-entrada>summary::-webkit-details-marker{display:none}.di-entrada summary small{display:block;color:#E8A0B4;font-size:.74rem}.di-entrada summary b{font-weight:500;font-size:.92rem}
+.di-entrada>p{font-size:.92rem;line-height:1.55;white-space:normal}.di-entrada>button{margin-bottom:10px}
+.tt-sig{margin-top:12px;padding-top:10px;border-top:1px solid rgba(212,175,106,.25)}
 </style>
 </head>
 <body>
@@ -7922,6 +7932,113 @@ GLOS_SEC['Magia de Venus'] = 'magiavenus'; GLOS_SEC['Oráculo íntimo'] = 'oracu
 
 // al confirmar los 18 desde cualquier sección íntima, se queda en esa sección
 document.addEventListener('click', e => { if (!e.target.closest('[data-fi18]')) return; e.stopImmediatePropagation(); lsSet('luzguia_18', 'si'); evento('Sección', 'Íntimo +18'); repintarPrem(); }, true);
+
+
+/* ───── v48: tirada del deseo · diario íntimo · química de pareja · nada es al azar ───── */
+// Las cartas nunca salen al azar: se calculan con tus datos de nacimiento, tu código, el día y el cielo de hoy
+function hashMix(t){ let x = hashTxt(t); x ^= x >>> 16; x = Math.imul(x, 0x45d9f3b); x ^= x >>> 16; x = Math.imul(x, 0x45d9f3b); x ^= x >>> 16; return x >>> 0; }
+function semillaPersonal(extra){ let luna = ''; try { luna = Math.floor(nrm2(posTodas(jdDe(new Date())).Luna) / 30); } catch (e) {} return [CODIGO, P.diaMes || '', P.anioNac || '', P.horaNac || '', claveDia(), luna, extra || ''].join('|'); }
+cartasDeTirada = function(tema){ const out = []; let i = 0; while (out.length < 3 && i < 60) { const n = (hashMix(semillaPersonal(tema + ':' + i)) % 22) + 1; if (!out.includes(n)) out.push(n); i++; } return out; };
+const NADA_AZAR = 'Ninguna carta sale al azar: se calcula con tus datos de nacimiento, tu código personal, el día y la posición de la Luna hoy. Es una lectura hecha solo para vos.';
+(function(){
+  const _at = abrirTirada;
+  const EXTRA = { deseo: ['🔥', 'Tirada del deseo', 'Para mirar tu deseo con honestidad y sin culpa.', [['Lo que deseo', a => 'Tu deseo hoy busca ' + minus(a.luz) + '.'], ['Lo que me frena', a => 'Lo que te frena es ' + minus(a.sombra) + '. Miralo con ternura: también te cuida.'], ['Cómo abrirme', a => a.a[0]]]] };
+  abrirTirada = function(tema){
+    if (EXTRA[tema]) TIRADAS[tema] = EXTRA[tema];
+    try { _at(tema); } finally { if (EXTRA[tema]) delete TIRADAS[tema]; }
+    const ay = document.querySelector('#tt-lect .ag-ayuda'); if (ay && !ay.dataset.azar) { ay.dataset.azar = '1'; ay.textContent = ay.textContent + ' ' + NADA_AZAR; }
+    if (tema === 'deseo') { const l = $('tt-lect'); if (l && !l.querySelector('.tt-sig')) l.insertAdjacentHTML('beforeend', `<div class="tt-sig"><p class="ag-ayuda">¿Querés ir más profundo? Hacele tu pregunta a Belu y te responde con una tirada hecha a mano, en video.</p><button class="btn-sec oro" type="button" data-premabrir="pregunta">💌 Hacer mi pregunta</button></div>`); }
+  };
+})();
+document.addEventListener('click', e => { const b = e.target.closest('[data-ttdeseo]'); if (b) abrirTirada('deseo'); });
+// el oráculo íntimo también deja de ser aleatorio: cada persona tiene su propio orden de cartas para hoy
+oiSacar = function(){
+  const c = document.querySelector('[data-oicarta]'); if (!c) return;
+  const L = OI_CARTAS[OI_ESTADO.modo][OI_ESTADO.nivel], k = OI_ESTADO.modo + OI_ESTADO.nivel;
+  OI_ESTADO.vistas = OI_ESTADO.vistas || {}; const vistas = OI_ESTADO.vistas[k] = OI_ESTADO.vistas[k] || [];
+  if (vistas.length >= L.length) vistas.length = 0;
+  let j = 0, i; do { i = hashMix(semillaPersonal('oi:' + k + ':' + vistas.length + ':' + j)) % L.length; j++; } while (vistas.includes(i) && j < 200);
+  if (vistas.includes(i)) i = [...L.keys()].find(x => !vistas.includes(x)); vistas.push(i);
+  c.classList.remove('abierta'); void c.offsetWidth;
+  setTimeout(() => { c.querySelector('[data-oietq]').textContent = OI_NIVELES[OI_ESTADO.nivel][0] + ' · ' + (OI_ESTADO.modo === 'vos' ? 'Para vos' : 'En pareja'); c.querySelector('[data-oitxt]').textContent = L[i]; c.classList.add('abierta');
+    const b = document.querySelector('[data-oidiario]'); if (b) { b.hidden = false; b.dataset.preg = L[i]; } }, 120);
+  evento('Oráculo íntimo', OI_ESTADO.modo + ' · ' + OI_ESTADO.nivel);
+};
+(function(){
+  const _oi = oiHTML;
+  oiHTML = function(){ return _oi().replace('<p class="ag-ayuda">En pareja:', `<p class="fila-comp"><button class="btn-sec" type="button" data-oidiario hidden>📓 Responder en mi diario íntimo</button></p><p class="ag-ayuda">✨ ${NADA_AZAR.replace('Es una lectura hecha solo para vos.', 'El orden de las cartas de hoy es solo tuyo.')}</p><p class="ag-ayuda">En pareja:`); };
+  PREM_FN.oraculoint = gate18(oiHTML);
+})();
+
+// ── Diario íntimo: vive solo en el celular de la persona ──
+const DI_KEY = 'luzguia_diario_intimo';
+const diLeer = () => { try { return JSON.parse(leerLS(DI_KEY) || '[]'); } catch (e) { return []; } };
+const diGuardar = L => { try { localStorage.setItem(DI_KEY, JSON.stringify(L.slice(0, 200))); return true; } catch (e) { return false; } };
+function diPreguntaSemana(){ const hoy = new Date(), sn = Math.floor((hoy - new Date(hoy.getFullYear(), 0, 1)) / (7 * 864e5)); return FI_PREG[(sn + hoy.getFullYear()) % FI_PREG.length]; }
+function diarioIntHTML(preg){
+  const L = diLeer(), p = preg || diPreguntaSemana();
+  return `<p class="intro">Tu espacio para escribir sobre tu deseo, tus fantasías y lo que vas descubriendo. <b>Se guarda solo en este celular:</b> no llega a Belu ni a Mey, ni a ningún otro lugar.</p>
+    <div class="di-nuevo"><small>Para responder</small><p data-dipreg>${esc(p)}</p><textarea class="campo-codigo" data-ditxt rows="5" maxlength="3000" placeholder="Escribí lo que sientas, sin filtro…"></textarea><div class="fila-bt" style="justify-content:flex-start"><button class="btn" type="button" data-diguardar>Guardar en mi diario</button><button class="btn-sec" type="button" data-dilibre>✍️ Escribir sin pregunta</button></div><p class="ag-ayuda" data-diest></p></div>
+    ${L.length ? `<p class="sub">Lo que escribiste (${L.length})</p>${L.map((x, i) => `<details class="di-entrada"><summary><small>${new Date(x.f).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })}</small><b>${esc(x.p || 'Escritura libre')}</b></summary><p>${esc(x.t).replace(/\n/g, '<br>')}</p><button class="btn-sec" type="button" data-diborrar="${i}">🗑 Borrar</button></details>`).join('')}` : ''}
+    <p class="ag-ayuda">Si borrás los datos del navegador o cambiás de celular, lo escrito se pierde: es parte de su privacidad.</p>`;
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-diguardar]'), lib = e.target.closest('[data-dilibre]'), bo = e.target.closest('[data-diborrar]'), od = e.target.closest('[data-oidiario]');
+  if (lib) { const p = document.querySelector('[data-dipreg]'); if (p) p.textContent = ''; const t = document.querySelector('[data-ditxt]'); if (t) t.focus(); }
+  if (g) { const t = document.querySelector('[data-ditxt]'), txt = t ? t.value.trim() : ''; if (!txt) { t && t.focus(); return; }
+    const L = diLeer(); L.unshift({ f: Date.now(), p: (document.querySelector('[data-dipreg]') || {}).textContent || '', t: txt });
+    if (!diGuardar(L)) { document.querySelector('[data-diest]').textContent = 'No se pudo guardar en este navegador.'; return; }
+    evento('Sección', 'Diario íntimo'); repintarPrem(); }
+  if (bo && confirm('¿Borrar esta entrada? No se puede recuperar.')) { const L = diLeer(); L.splice(+bo.dataset.diborrar, 1); diGuardar(L); repintarPrem(); }
+  if (od) { DI_PREG_PEND = od.dataset.preg || ''; abrirPremium('diarioint'); }
+});
+let DI_PREG_PEND = '';
+PREM_FN.diarioint = gate18(() => { const p = DI_PREG_PEND; DI_PREG_PEND = ''; return diarioIntHTML(p); });
+
+// ── En tu fuego íntimo: la tirada del deseo y el acceso al diario ──
+(function(){
+  const _pf = premFuego;
+  premFuego = function(){ const h = _pf(); if (lsGet('luzguia_18', '') !== 'si' || !natal()) return h;
+    const x = `<div class="fi-accesos"><button type="button" class="tt-chip-deseo" data-ttdeseo><span>🔥</span><b>Tirada del deseo</b><small>Lo que deseo · lo que me frena · cómo abrirme</small></button><button type="button" class="tt-chip-deseo" data-premabrir="diarioint"><span>📓</span><b>Mi diario íntimo</b><small>Respondé la pregunta de la semana</small></button></div>`;
+    const k = h.indexOf('<p class="sub">📅'); return k > -1 ? h.slice(0, k) + x + h.slice(k) : h + x; };
+  PREM_FN.fuego = () => premFuego();
+})();
+
+// ── Química de pareja, dentro de Compatibilidad ──
+const QP_TXT = { arm: 'Fluyen naturalmente: el deseo de uno despierta el del otro sin esfuerzo.', conj: 'Se funden: hay un magnetismo intenso, casi inmediato.', opos: 'Se atraen como imanes opuestos: mucha chispa, y aprenden a equilibrar los ritmos.', tenso: 'Hay fricción, y la fricción también enciende: hablen de lo que cada uno necesita.', neutro: 'Se van descubriendo de a poco: la química crece con el tiempo y la confianza.' };
+const QP_EL = ['la espontaneidad y la aventura', 'los sentidos, el tiempo y el contacto', 'las palabras, el juego y la risa', 'la ternura, la mirada y la fusión emocional'];
+(function(){
+  const _ps = premSinastria;
+  premSinastria = function(){
+    const h = _ps(); let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
+    if (!o || !o.fecha || !P.diaMes || !P.anioNac) return h;
+    if (lsGet('luzguia_18', '') !== 'si') return h + `<div class="fi-velo" style="margin-top:14px"><p class="fi-tit">🔥 Su química íntima</p><p>Cómo se combinan sus deseos según el Venus y el Marte de cada persona. Es privado y solo para mayores de 18.</p><button class="btn-sec oro" type="button" data-fi18>Soy mayor de 18 años · Ver</button></div>`;
+    try {
+      const [yy, mm, dd] = o.fecha.split('-'), A = posiciones(jdNac(P.diaMes, P.anioNac, P.horaNac)), B = posiciones(jdNac(dd + '/' + mm, yy, o.hora)), nom = esc(o.nombre || 'tu persona');
+      const cat = (a, b) => { const d = Math.abs(((a - b + 540) % 360) - 180); return d <= 8 ? 'conj' : Math.abs(d - 180) <= 8 ? 'opos' : (Math.abs(d - 120) <= 7 || Math.abs(d - 60) <= 6) ? 'arm' : Math.abs(d - 90) <= 7 ? 'tenso' : 'neutro'; };
+      const pares = [['Tu Venus y su Marte', cat(A.Venus, B.Marte)], ['Tu Marte y su Venus', cat(A.Marte, B.Venus)], ['Sus Martes (el ritmo del deseo)', cat(A.Marte, B.Marte)], ['Tu Luna y su Venus (la ternura)', cat(A.Luna, B.Venus)]];
+      const sc = pares.reduce((s, p) => s + { conj: 3, arm: 2, opos: 2, tenso: 1, neutro: 1 }[p[1]], 0), nivel = sc >= 9 ? 'un fuego muy intenso' : sc >= 6 ? 'una química que se enciende fácil' : 'una química que crece con la confianza';
+      const eA = Math.floor(nrm2(A.Venus) / 30) % 4, eB = Math.floor(nrm2(B.Venus) / 30) % 4, tensos = pares.filter(p => p[1] === 'tenso');
+      const rit = MV_RITUALES.find(r => r[0] === (tensos.length >= 2 ? 'menguante' : sc >= 9 ? 'llena' : 'creciente'));
+      return h + `<div class="fi-hoy" style="margin-top:16px"><small>🔥 Su química íntima</small><p>Entre vos y ${nom} hay <b>${nivel}</b>.</p></div>
+        <ul class="num-lista">${pares.map(p => `<li><b>${{ conj: '☌', arm: '△', tenso: '□', opos: '☍', neutro: '·' }[p[1]]}</b><div><span>${p[0]}</span>${QP_TXT[p[1]]}</div></li>`).join('')}</ul>
+        <p class="sub">💫 Lo que los enciende juntos</p><p>A vos te enciende ${QP_EL[eA]}${eA === eB ? ', y a ' + nom + ' también: hablan el mismo idioma del deseo.' : `; a ${nom}, ${QP_EL[eB]}. Si se turnan para darle a cada uno lo suyo, el fuego no se apaga.`}</p>
+        ${tensos.length ? `<p class="sub">⚠️ Dónde pueden chocar</p><p>${cap1(tensos.map(p => p[0].toLowerCase()).join(' y '))}: sus ritmos o sus formas de desear son distintos. No es incompatibilidad: es una invitación a hablar, preguntar y escucharse.</p>` : ''}
+        <p class="sub">🌹 El ritual que les conviene</p><p><b>${rit[2]}</b> (${rit[3].toLowerCase()}). Lo encontrás completo en Magia de Venus.</p><div class="fila-bt" style="justify-content:flex-start"><button class="btn-sec oro" type="button" data-premabrir="magiavenus">Ver el ritual 🌹</button><button class="btn-sec" type="button" data-premabrir="oraculoint">🃏 Jugar al oráculo en pareja</button></div>`;
+    } catch (e) { console.error(e); return h; }
+  };
+  PREM_FN.sinastria = () => premSinastria();
+})();
+
+(function(){
+  const add = (desp, it) => { if (PREMIUM_LISTA.some(x => x[0] === it[0])) return; const i = PREMIUM_LISTA.findIndex(x => x[0] === desp); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, it); };
+  add('magiavenus', ['diarioint', '📓', 'Tu diario íntimo', 'Escribí sobre tu deseo con preguntas que cambian cada semana. Se guarda solo en tu celular. (+18)']);
+  PREM_VENTA.diarioint = 'Un diario privado para escribir sobre tu deseo, con una pregunta nueva cada semana y las cartas del oráculo. Se guarda solo en tu celular. +18.';
+  PREM_VENTA.fuego = 'Tu sensualidad según tu carta, tu fuego de cada día, tus noches más encendidas del mes, la tirada del deseo (tarot hecho para vos) y cómo pedir lo que querés. Privado, +18.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'amor'); if (g && !g[4].includes('diarioint')) g[4].splice(g[4].indexOf('magiavenus') + 1, 0, 'diarioint');
+})();
+GLOSARIO.push(['Tirada del deseo', 'Una tirada de tarot de tres cartas (lo que deseo, lo que me frena, cómo abrirme), calculada con tus datos y el cielo del día. No sale al azar.']);
+GLOS_SEC['Tirada del deseo'] = 'fuego';
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
