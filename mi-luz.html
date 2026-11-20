@@ -875,6 +875,14 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .fi-dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
 .fi-dos>div{padding:12px;border-radius:12px;border:1px solid rgba(212,175,106,.3);background:rgba(255,255,255,.04)}.fi-dos ul{margin:6px 0 0;padding-left:18px}.fi-dos li{font-size:.88rem;line-height:1.5}
 .fi-frases{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}.fi-frases li{padding:8px 12px;border-radius:12px;background:rgba(232,160,180,.1);border-left:3px solid #E8A0B4;font-style:italic;font-size:.92rem}
+.fi-hoy{padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.55);background:linear-gradient(150deg,rgba(160,40,70,.28),rgba(28,11,46,.7));margin:10px 0 14px}
+.fi-hoy>small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.fi-hoy>p{margin:6px 0 0;font-size:.92rem;line-height:1.5}
+.fi-llamas{font-size:1.35rem;letter-spacing:2px}.fi-off{opacity:.18;filter:grayscale(1)}
+.fi-semana{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}.fi-semana>div{text-align:center;padding:6px 0;border-radius:8px;background:rgba(255,255,255,.05)}.fi-semana>div.alto{background:rgba(232,160,180,.25);box-shadow:0 0 10px rgba(232,160,180,.3)}
+.fi-semana small{display:block;font-size:.68rem;color:#BDB2CF}.fi-semana span{font-weight:600;color:#F3DCA0}
+.fi-hoy-mini{width:100%;box-sizing:border-box;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.fi-gancho{border:1px solid rgba(232,160,180,.45);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(140,30,70,.22),rgba(20,8,36,.65));margin:10px 0 18px}
+.fi-18{font-size:.7rem;vertical-align:middle;border:1px solid #E8A0B4;color:#E8A0B4;border-radius:999px;padding:2px 7px;font-family:Jost,sans-serif}
 </style>
 </head>
 <body>
@@ -5503,7 +5511,7 @@ function reordenarVos(h){
   const chip = (id, t) => `<button type="button" class="chip-vos" data-vosir="${id}">${t}</button>`;
   const idDe = (g2, re) => { const x = B[g2].find(e => e.tagName === 'H3' && re.test(e.textContent)); return x ? x.id : ''; };
   const chips = [
-    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /diseño humano/i), 'Diseño Humano'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel'], [idDe('quien', /kua/i), 'Feng Shui'], [idDe('quien', /nakshatra/i), 'Nakshatra'], [idDe('quien', /árbol celta/i), 'Árbol celta']]],
+    ['Quién sos', [['vos-arcano', 'Tu arcano'], [idDe('quien', /nombre/i), 'Tu nombre'], [idDe('quien', /numerolog/i), 'Numerología'], [idDe('quien', /cualidades/i), 'Cualidades'], [idDe('quien', /sobrenatural/i), 'Ser sobrenatural'], [idDe('quien', /animal/i), 'Animal de poder'], [idDe('quien', /saju/i), 'Tu Saju ☯️'], [idDe('quien', /diseño humano/i), 'Diseño Humano'], [idDe('quien', /kin maya/i), 'Tu Kin maya'], [idDe('quien', /ángel/i), 'Tu ángel'], [idDe('quien', /kua/i), 'Feng Shui'], [idDe('quien', /nakshatra/i), 'Nakshatra'], [idDe('quien', /árbol celta/i), 'Árbol celta'], [idDe('quien', /fuego íntimo/i), 'Fuego íntimo']]],
     ['Tu año', [['vos-anual', 'Energía del año'], [idDe('anio', /ciclo/i), 'Tu ciclo'], [idDe('anio', /ámbitos|ambitos/i), 'Por ámbitos']]],
     ['Para compartir', [[idDe('comp', /fondos/i), 'Fondos'], ['vos-hist', 'Historias']]]];
   const idx = `<p class="gratis-nota">✓ Esta pestaña es gratis para vos, para siempre. Lo poquito que es Premium tiene un 🔒.</p><nav class="vos-idx" aria-label="Índice">${chips.map(([t, L]) => `<div><small>${t}</small>${L.filter(x => x[0] && box.querySelector('#' + CSS.escape(x[0]))).map(x => chip(x[0], x[1])).join('')}</div>`).join('')}</nav>`;
@@ -7774,6 +7782,63 @@ PREM_FN.fuego = () => premFuego();
 })();
 GLOSARIO.push(['Lilith (Luna Negra)', 'Un punto de la órbita de la Luna que, en astrología, guarda los deseos escondidos, lo instintivo y lo que a veces da pudor mostrar.'], ['Flor del durazno (도화살)', 'En el Saju coreano, la estrella de la seducción y el magnetismo. Quien la tiene atrae miradas de forma natural.']);
 GLOS_SEC['Lilith (Luna Negra)'] = 'fuego'; GLOS_SEC['Flor del durazno (도화살)'] = 'fuego'; SEC_NOM.fuego = 'tu fuego íntimo';
+
+
+/* ───── v46: el fuego íntimo se renueva (día, semana, mes) y tiene su gancho gratis ───── */
+const FI_EL_NOM = ['Fuego', 'Tierra', 'Aire', 'Agua'], FI_EL_PAL = ['audacia · chispa · conquista', 'sentidos · calma · piel', 'palabras · juego · risa', 'ternura · misterio · fusión'];
+const FI_NIVEL = ['', 'Fuego bajito: un día para mimarte y descansar el cuerpo. El deseo también necesita pausa.', 'Brasas tibias: ideal para la ternura, los abrazos largos y la charla íntima.', 'Llama encendida: buen día para la complicidad y para animarte a un gesto que sorprenda.', 'Fuego alto: tu magnetismo está despierto. Un día para seducir y dejarte seducir.', 'Fuego intenso: el cielo enciende tu deseo. Aprovechalo para decir lo que querés.'];
+const FI_VENUS_MES = ['Venus en Aries enciende las ganas de lo nuevo: animate a tomar la iniciativa.', 'Venus en Tauro despierta los sentidos: es tiempo de placer lento y de cuidar el cuerpo.', 'Venus en Géminis pone el deseo en las palabras: mensajes, juego y coqueteo.', 'Venus en Cáncer pide ternura: la intimidad crece donde hay hogar.', 'Venus en Leo trae brillo: dejate admirar y celebrá tu sensualidad.', 'Venus en Virgo invita a los detalles: lo pequeño se vuelve muy sensual.', 'Venus en Libra trae romance: citas, belleza y armonía.', 'Venus en Escorpio intensifica todo: deseo profundo, misterio y entrega.', 'Venus en Sagitario trae aventura: algo espontáneo, un viaje, una risa.', 'Venus en Capricornio pide compromiso: lo que se construye con calma, enciende.', 'Venus en Acuario trae lo distinto: animate a romper la rutina.', 'Venus en Piscis trae fantasía: música, agua y una conexión casi mágica.'];
+const FI_PREG = ['¿Qué parte de tu cuerpo te gusta más y cuándo fue la última vez que la celebraste?', '¿Qué deseo nunca dijiste en voz alta?', '¿Qué despierta tu deseo sin que nadie te toque?', '¿Qué aprendiste sobre el placer que hoy querés desaprender?', '¿Con qué música te sentís más sensual?', '¿Qué te gustaría que tu pareja supiera de vos sin tener que explicarlo?', '¿Cuál es tu recuerdo más tierno de intimidad?', '¿Qué límite tuyo querés cuidar más?', '¿Qué te da pudor y por qué creés que es así?', '¿Cómo te gusta que te miren?', '¿Qué fantasía te da curiosidad, aunque no la vayas a cumplir?', '¿Qué necesitás para sentir seguridad y soltarte?', '¿Qué gesto pequeño te enciende más que cualquier cosa?', '¿Cómo es tu cita ideal, de principio a fin?', '¿Qué palabra te gustaría escuchar más seguido?', '¿Qué te gustaría pedir esta semana?', '¿En qué momento del día sentís más tu magnetismo?', '¿Qué aroma te conecta con tu sensualidad?', '¿Qué parte tuya querés mostrar más?', '¿Qué creencia sobre el deseo heredaste de tu familia?', '¿Cómo te cuidás después de un encuentro íntimo?', '¿Qué te hace reír en la intimidad?', '¿Qué te gustaría explorar en tu propio cuerpo?', '¿Qué significa para vos la palabra entrega?', '¿Cuándo te sentiste más libre en tu sensualidad?', '¿Qué le dirías a tu yo de hace diez años sobre el placer?'];
+function fiNivel(fecha){
+  const n = natal(); if (!n) return 0;
+  const f = new Date(fecha); f.setHours(21, 0, 0, 0); const jd = jdDe(f), t = posTodas(jd);
+  const sg = l => Math.floor(nrm2(l) / 30), d = (a, b) => Math.abs(((a - b + 540) % 360) - 180), arm = (a, b, o) => [0, 60, 120].some(x => Math.abs(d(a, b) - x) <= o);
+  let s = 1;
+  if ([sg(n.pos.Venus), sg(n.pos.Marte), sg(lilithLon(n.jd))].includes(sg(t.Luna))) s++;
+  if (n.hora && [4, 7].includes(n.casa(t.Luna))) s++;
+  if (arm(t.Luna, n.pos.Venus, 6) || arm(t.Luna, n.pos.Marte, 6)) s++;
+  if (arm(t.Venus, n.pos.Marte, 3) || arm(t.Marte, n.pos.Venus, 3) || d(t.Venus, n.pos.Venus) <= 3) s++;
+  return Math.min(5, s);
+}
+const llamas = k => '🔥'.repeat(k) + '<span class="fi-off">' + '🔥'.repeat(5 - k) + '</span>';
+function fiDiasTop(){ const hoy = new Date(), L = []; for (let i = 0; i < 30; i++) { const f = new Date(hoy.getTime() + i * 864e5); L.push({ f, k: fiNivel(f) }); } return L.filter(x => x.k >= 3).sort((a, b) => b.k - a.k || a.f - b.f).slice(0, 4).sort((a, b) => a.f - b.f); }
+function fiVenusHoy(){ const h = new Date(), j = jdDe(h), v = posTodas(j).Venus, v0 = posTodas(j - 1).Venus; return { s: Math.floor(nrm2(v) / 30), retro: ((v - v0 + 540) % 360) - 180 < 0 }; }
+function fiRenuevaHTML(){
+  try {
+    const hoy = new Date(), k = fiNivel(hoy), sem = Array.from({ length: 7 }, (_, i) => { const f = new Date(hoy.getTime() + i * 864e5); return { f, k: fiNivel(f) }; }), top = fiDiasTop(), V = fiVenusHoy();
+    const sn = Math.floor((hoy - new Date(hoy.getFullYear(), 0, 1)) / (7 * 864e5)), preg = FI_PREG[(sn + hoy.getFullYear()) % FI_PREG.length];
+    return `<div class="fi-hoy"><small>Tu fuego hoy</small><b class="fi-llamas">${llamas(k)}</b><p>${FI_NIVEL[k]}</p>
+      <div class="fi-semana">${sem.map(x => `<div${x.k >= 4 ? ' class="alto"' : ''}><small>${'DLMMJVS'[x.f.getDay()]}</small><span>${x.k}</span></div>`).join('')}</div><p class="ag-ayuda" style="margin:4px 0 0">Tu fuego de los próximos 7 días (del 1 al 5). Se calcula con la Luna y Venus pasando por tu carta.</p></div>
+      ${top.length ? `<p class="sub">📅 Tus noches más encendidas del mes</p><ul class="fi-frases">${top.map(x => `<li>${diaTxt(x.f)} de ${MESES[x.f.getMonth()]} · ${'🔥'.repeat(x.k)}</li>`).join('')}</ul>` : ''}
+      <p class="sub">💫 El clima del mes</p><p>${FI_VENUS_MES[V.s]}${V.retro ? ' <b>Ojo: Venus está retrógrada</b>, un tiempo para revisar vínculos y reencontrarte con tu deseo más que para empezar algo nuevo.' : ''}</p>
+      <div class="fi-ritual"><small>🖋️ Tu pregunta íntima de la semana</small><p>${preg}</p><p class="ag-ayuda" style="margin:6px 0 0">Respondela en tu diario, solo para vos. Cambia cada semana.</p></div>`;
+  } catch (e) { console.error(e); return ''; }
+}
+(function(){
+  const _pf = premFuego;
+  premFuego = function(){ const h = _pf(); if (lsGet('luzguia_18', '') !== 'si' || !natal()) return h; const k = h.indexOf('<p class="sub">💋'); const x = fiRenuevaHTML(); return k > -1 ? h.slice(0, k) + x + h.slice(k) : h + x; };
+  PREM_FN.fuego = () => premFuego();
+  PREM_VENTA.fuego = 'Tu sensualidad según tu carta: qué te seduce, cómo deseás, lo que te atrae y no te animás y cómo pedir lo que querés. Y cada día: tu fuego de hoy, tus noches más encendidas del mes y una pregunta íntima por semana. Privado, +18.';
+})();
+// En Hoy (Premium que ya entró a la sección): la temperatura del día, discreta
+(function(){
+  const _h = hoyHTML;
+  hoyHTML = function(){ const h = _h(); try { if (!(P.premium && !VISTA_GRATIS) || lsGet('luzguia_18', '') !== 'si' || !natal()) return h; const k = fiNivel(new Date());
+    const x = `<button type="button" class="kin-hoy fi-hoy-mini" data-premabrir="fuego"><span>🔥</span><div><small>Tu fuego íntimo hoy</small><b class="fi-llamas">${llamas(k)}</b><p>${FI_NIVEL[k].split(':')[0]}. Ver tu semana ›</p></div></button>`;
+    const i = h.indexOf('<details class="mas-hoy"'); return i > -1 ? h.slice(0, i) + x + h.slice(i) : h + x; } catch (e) { console.error(e); return h; } };
+})();
+// Gancho gratis en Vos: solo el estilo (sin intimidades) y la temperatura del día, el resto con candado
+function fuegoGratisHTML(){
+  try {
+    if (P.premium && !VISTA_GRATIS) return '';
+    const n = natal(); if (!n) return ''; const e = Math.floor(nrm2(n.pos.Venus) / 30) % 4, k = fiNivel(new Date());
+    return `<h3>Tu fuego íntimo <span class="fi-18">+18</span></h3><div class="fi-gancho"><p>Tu forma de seducir es de <b>${FI_EL_NOM[e]}</b>: ${FI_EL_PAL[e]}.</p>
+      <p>Hoy tu fuego está en <b class="fi-llamas">${llamas(k)}</b></p>
+      <div class="teaser-velo"><p>Qué te seduce de verdad, cómo deseás, lo que te atrae y no te animás, cómo pedir lo que querés y tus noches más encendidas del mes.</p><span>🔒 Premium</span></div>
+      <button class="btn-sec oro" type="button" data-irtab="premium">Descubrí por qué y tu lectura completa 🔥</button></div>`;
+  } catch (e) { console.error(e); return ''; }
+}
+(function(){ const _s = serHTML; serHTML = function(){ let h = _s(); try { h += fuegoGratisHTML(); } catch (e) {} return h; }; })();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
