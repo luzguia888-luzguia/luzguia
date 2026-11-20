@@ -907,6 +907,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .di-entrada>summary{padding:10px 0;cursor:pointer;list-style:none}.di-entrada>summary::-webkit-details-marker{display:none}.di-entrada summary small{display:block;color:#E8A0B4;font-size:.74rem}.di-entrada summary b{font-weight:500;font-size:.92rem}
 .di-entrada>p{font-size:.92rem;line-height:1.55;white-space:normal}.di-entrada>button{margin-bottom:10px}
 .tt-sig{margin-top:12px;padding-top:10px;border-top:1px solid rgba(212,175,106,.25)}
+.tt-azar{margin:-4px 0 10px;color:#E3D6F2}.tt-azar-modal{text-align:center;margin:0 auto 10px;max-width:46ch}
 </style>
 </head>
 <body>
@@ -7289,8 +7290,8 @@ async function grabarEscena(dib, dur){
 async function compartirEscena(btn, hacer, nombreArch, texto, evNom){
   evento('Compartió', evNom);
   const formato = VIDEO_MIME ? await elegirFormato() : 'imagen'; if (!formato) return;
-  const { dib } = await hacer();
-  if (formato === 'imagen') { const o = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…'; try { const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; dib(cv.getContext('2d'), 1080, 1920, 2.4); await compartirArchivo(await new Promise(ok => cv.toBlob(ok, 'image/png')), nombreArch + '.png', texto); } catch (e) {} btn.disabled = false; btn.textContent = o; return; }
+  const E0 = await hacer(), dib = E0.dib;
+  if (formato === 'imagen') { const o = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando tu imagen…'; try { const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; dib(cv.getContext('2d'), 1080, 1920, E0.tImg || 2.4); await compartirArchivo(await new Promise(ok => cv.toBlob(ok, 'image/png')), nombreArch + '.png', texto); } catch (e) {} btn.disabled = false; btn.textContent = o; return; }
   $('dlg-titulo').textContent = 'Creando tu video ✨'; $('dlg-texto').textContent = 'Dejá esta pantalla abierta unos segundos…';
   $('dlg-cuerpo').innerHTML = '<div class="medita-barra" style="margin:14px 0"><i style="animation-duration:9s"></i></div>';
   if (!$('dlg').open) $('dlg').showModal();
@@ -8039,6 +8040,60 @@ const QP_EL = ['la espontaneidad y la aventura', 'los sentidos, el tiempo y el c
 })();
 GLOSARIO.push(['Tirada del deseo', 'Una tirada de tarot de tres cartas (lo que deseo, lo que me frena, cómo abrirme), calculada con tus datos y el cielo del día. No sale al azar.']);
 GLOS_SEC['Tirada del deseo'] = 'fuego';
+
+
+/* ───── v49: la aclaración de "nada es al azar" antes de tirar · compartir tu tirada en video ───── */
+const NADA_AZAR_CORTO = '✨ Ninguna carta sale al azar: se calculan con tus datos de nacimiento y el cielo de hoy. Cada día te esperan cartas nuevas.';
+(function(){
+  const _c = calmaHTML;
+  calmaHTML = function(){ return _c().replace('<div class="tt-chips">', `<p class="ag-ayuda tt-azar">${NADA_AZAR_CORTO}</p><div class="tt-chips">`); };
+  const _at = abrirTirada;
+  abrirTirada = function(tema){
+    _at(tema);
+    const cal = document.querySelector('.tirada-mes.tt'); if (cal && !document.querySelector('.tt-azar-modal')) cal.insertAdjacentHTML('beforebegin', `<p class="ag-ayuda tt-azar tt-azar-modal">${NADA_AZAR_CORTO.replace(' Cada día te esperan cartas nuevas.', ' Esta tirada es solo tuya.')}</p>`);
+    if (tema !== 'deseo') { const l = $('tt-lect'); if (l && !l.querySelector('[data-ttshare]')) l.insertAdjacentHTML('beforeend', `<p class="fila-comp"><button class="btn-sec comp" type="button" data-ttshare="${tema}">✨ Compartir mi tirada (video o imagen)</button></p>`); }
+  };
+})();
+const TT_FONDO = { soltar: 'fondo-luna.jpg', sembrar: 'fondo-bosque.jpg', decision: 'fondo-cristales.jpg', amor: 'fondo-altar.jpg' };
+function ttRect(c, x, y, w, h, r){ c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function ttEscena(tema, cs, fondo, cartas, nombre){
+  const T = TIRADAS[tema], rnd = sjRand(cs.join('') * 1 + 5), spr = sjBrillo('rgba(255,236,190,1)'), mot = Array.from({ length: 60 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd() }));
+  return function(c, W, H, t){
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
+    if (fondo) { const k = 1.12 + .05 * Math.sin(t * .25), e = Math.max(W / fondo.width, H / fondo.height) * k; c.drawImage(fondo, (W - fondo.width * e) / 2 + Math.sin(t * .2) * W * .015, (H - fondo.height * e) / 2, fondo.width * e, fondo.height * e); }
+    const v = c.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.7)'); v.addColorStop(.35, 'rgba(18,8,32,.45)'); v.addColorStop(.7, 'rgba(18,8,32,.75)'); v.addColorStop(1, 'rgba(12,5,22,.95)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+    c.save(); c.globalCompositeOperation = 'lighter'; mot.forEach(p => { const y = ((p.y - t * p.v * .03) % 1 + 1) % 1 * H, x = p.x * W + Math.sin(t * .6 + p.f) * 30 * s, z = (8 + 22 * p.z) * s; c.globalAlpha = .25 + .55 * Math.abs(Math.sin(t * 1.3 * p.v + p.f)); c.drawImage(spr, x - z / 2, y - z / 2, z, z); }); c.restore();
+    c.textAlign = 'center';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText('MI TIRADA DE HOY', W / 2, 150 * s); c.letterSpacing = '0px';
+    if (nombre) { c.fillStyle = '#FFF4DA'; c.font = `${88 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(nombre, W / 2, 255 * s); c.shadowBlur = 0; }
+    c.fillStyle = '#fff'; c.font = `600 ${78 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 18 * s; c.fillText(T[0] + ' ' + T[1], W / 2, 380 * s); c.shadowBlur = 0;
+    // las tres cartas, que se dan vuelta una por una
+    const cw = 300 * s, ch = cw * 1.72, gap = 26 * s, x0 = (W - (cw * 3 + gap * 2)) / 2, y0 = 470 * s;
+    cs.forEach((n, i) => {
+      const t0 = .8 + i * .9, p = Math.min(1, Math.max(0, (t - t0) / .7)), giro = Math.cos(p * Math.PI), frente = p >= .5, cx = x0 + i * (cw + gap) + cw / 2, cy = y0 + ch / 2;
+      const flota = Math.sin(t * 1.2 + i) * 6 * s, esc = Math.max(.02, Math.abs(giro));
+      c.save(); c.translate(cx, cy + flota); c.scale(esc, 1);
+      if (frente && p >= 1) { c.shadowColor = '#F3DCA0'; c.shadowBlur = (16 + 14 * pul) * s; }
+      ttRect(c, -cw / 2, -ch / 2, cw, ch, 18 * s); c.fillStyle = '#1c0b2e'; c.fill(); c.shadowBlur = 0;
+      if (frente) { c.save(); ttRect(c, -cw / 2 + 6 * s, -ch / 2 + 6 * s, cw - 12 * s, ch - 12 * s, 14 * s); c.clip(); const im = cartas[i]; if (im) { const e = Math.max((cw - 12 * s) / im.width, (ch - 12 * s) / im.height); c.drawImage(im, -im.width * e / 2, -im.height * e / 2, im.width * e, im.height * e); } c.restore(); }
+      else { const g = c.createLinearGradient(0, -ch / 2, 0, ch / 2); g.addColorStop(0, '#5B2A86'); g.addColorStop(1, '#1C0B2E'); ttRect(c, -cw / 2 + 6 * s, -ch / 2 + 6 * s, cw - 12 * s, ch - 12 * s, 14 * s); c.fillStyle = g; c.fill(); c.fillStyle = '#F3DCA0'; c.font = `${110 * s}px serif`; c.textBaseline = 'middle'; c.fillText('✦', 0, 0); c.textBaseline = 'alphabetic'; }
+      ttRect(c, -cw / 2, -ch / 2, cw, ch, 18 * s); c.strokeStyle = '#F3DCA0'; c.lineWidth = 3 * s; c.stroke();
+      c.restore();
+      c.globalAlpha = p >= 1 ? 1 : .55; c.fillStyle = '#E8A0B4'; c.font = `500 ${26 * s}px Jost, sans-serif`; sjLineas(c, T[3][i][0], cw + 20 * s).forEach((l, j) => c.fillText(l, cx, y0 + ch + (48 + j * 30) * s));
+      if (p >= 1) { c.fillStyle = '#F3DCA0'; c.font = `600 ${34 * s}px "Cormorant Garamond", serif`; const ln = sjLineas(c, NOM[n], cw + 20 * s); ln.forEach((l, j) => c.fillText(l, cx, y0 + ch + (112 + j * 34) * s)); const lect = String(T[3][i][1](ARC[n]) || ''); c.fillStyle = 'rgba(241,236,247,.92)'; c.font = `400 ${24 * s}px Jost, sans-serif`; sjLineas(c, lect, cw).slice(0, 5).forEach((l, j) => c.fillText(l, cx, y0 + ch + (112 + ln.length * 34 + 22 + j * 30) * s)); }
+      c.globalAlpha = 1;
+    });
+    if (t > 3.6) { const a = Math.min(1, (t - 3.6) / .8); c.globalAlpha = a; c.fillStyle = '#F1ECF7'; c.font = `italic ${52 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 14 * s; sjLineas(c, '“' + ARC[cs[2]].af + '”', 880 * s).slice(0, 3).forEach((l, i) => c.fillText(l, W / 2, (1600 + i * 62) * s)); c.shadowBlur = 0; c.globalAlpha = 1; }
+    c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
+    c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+  };
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ttshare]'); if (!b) return; const tema = b.dataset.ttshare, T = TIRADAS[tema]; if (!T) return; const cs = cartasDeTirada(tema);
+  compartirEscena(b, async () => { const [fondo, ...cartas] = await Promise.all([imgCon([TT_FONDO[tema] || 'fondo-cielo.jpg', 'fondo-cielo.jpg']), ...cs.map(n => imgCon([cartaSrc(n)])), sjFuentes()]); return { dib: ttEscena(tema, cs, fondo, cartas.slice(0, 3), sjNombre()), tImg: 5 }; },
+    'mi-tirada-luz-guia', `Mi ${T[1].toLowerCase()} de hoy: ${cs.map(n => NOM[n]).join(', ')} ✨ · Mi Luz, Luz Guía`, 'Tirada: ' + T[1]);
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
