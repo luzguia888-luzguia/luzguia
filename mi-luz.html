@@ -867,6 +867,14 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .glos-link{background:none;border:0;padding:0;font:inherit;font-weight:600;color:#F3DCA0;text-decoration:underline dotted rgba(243,220,160,.7);text-underline-offset:3px;cursor:pointer;text-align:inherit}
 .glos-lista{max-height:60vh;overflow-y:auto;overscroll-behavior:contain}
 .prem-gratis{box-sizing:border-box;max-width:100%}
+.fi-velo{padding:18px;border-radius:16px;border:1px solid rgba(232,160,180,.5);background:linear-gradient(150deg,rgba(160,40,70,.25),rgba(28,11,46,.7));text-align:center}
+.fi-velo .fi-tit{font-family:var(--serif);font-size:1.25rem;color:#F3DCA0;margin:0 0 6px}.fi-velo p{font-size:.92rem;line-height:1.55}
+.fi-lilith,.fi-ritual{padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.45);background:linear-gradient(150deg,rgba(140,30,70,.22),rgba(28,11,46,.65));margin:12px 0}
+.fi-lilith small,.fi-ritual small,.fi-dos small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.fi-lilith p,.fi-ritual p{margin:6px 0 0;font-size:.92rem;line-height:1.55}
+.fi-dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
+.fi-dos>div{padding:12px;border-radius:12px;border:1px solid rgba(212,175,106,.3);background:rgba(255,255,255,.04)}.fi-dos ul{margin:6px 0 0;padding-left:18px}.fi-dos li{font-size:.88rem;line-height:1.5}
+.fi-frases{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}.fi-frases li{padding:8px 12px;border-radius:12px;background:rgba(232,160,180,.1);border-left:3px solid #E8A0B4;font-style:italic;font-size:.92rem}
 </style>
 </head>
 <body>
@@ -7676,6 +7684,96 @@ energiaHoyHTML = function(){
   const _g = glosarioHTML;
   glosarioHTML = function(){ return _g().replace('<dl>', '<dl class="glos-lista">'); };
 })();
+
+
+/* ───── v45: Tu fuego íntimo y tu deseo (Premium, +18, privado) ───── */
+const FI_VENUS = [
+  'Te seduce la chispa del primer momento: una mirada directa, la audacia, alguien que se anima. Te enciende sentir que te desean sin rodeos.',
+  'Te seduce lo que entra por los sentidos: un perfume, la piel, una música lenta, una comida compartida. Para vos, el placer no se apura.',
+  'Te seduce la palabra: una conversación ingeniosa, un mensaje que provoca, el juego y la risa. Tu deseo empieza en la mente.',
+  'Te seduce sentirte en casa: la ternura, la intimidad sin máscaras, el abrazo que se queda un rato más.',
+  'Te seduce brillar: que te admiren, que te elijan, que te celebren. Te encienden los gestos grandes y sentirte protagonista.',
+  'Te seduce el detalle: la delicadeza, la atención a lo pequeño, alguien que aprende exactamente lo que te gusta.',
+  'Te seduce la belleza: un clima cuidado, la elegancia, el equilibrio justo entre dar y recibir.',
+  'Te seduce la intensidad: las miradas que atraviesan, el misterio, la entrega total. Lo superficial no te alcanza.',
+  'Te seduce la aventura: lo espontáneo, lo inesperado, la risa compartida. La rutina te apaga.',
+  'Te seduce una presencia firme: alguien con palabra, que sabe lo que quiere. Detrás de tu calma hay un fuego lento.',
+  'Te seduce lo distinto: lo original, la amistad que se enciende de golpe, la libertad de ser sin etiquetas.',
+  'Te seduce la magia: la fantasía, la música, la fusión del alma con el cuerpo. Para vos, el deseo es casi espiritual.'];
+const FI_MARTE = [
+  'Tu deseo es fuego rápido: directo, espontáneo y con iniciativa. Te gusta dar el primer paso.',
+  'Tu deseo es lento y sostenido: te gusta tomarte tu tiempo, sin apuro, con todos los sentidos despiertos.',
+  'Tu deseo es juguetón y curioso: la variedad, las palabras y la sorpresa mantienen viva tu llama.',
+  'Tu deseo nace de la confianza: tu fuego crece a medida que crece el vínculo.',
+  'Tu deseo es generoso y apasionado: disfrutás el juego de la seducción y que se note.',
+  'Tu deseo es atento y entregado: disfrutás dar placer y perfeccionar cada gesto.',
+  'Tu deseo busca el ida y vuelta: te encienden el romance, la estética y la reciprocidad.',
+  'Tu deseo es profundo y magnético: todo o nada, con una intensidad que transforma.',
+  'Tu deseo es libre y aventurero: te enciende explorar, probar y reírte en el medio.',
+  'Tu deseo es paciente y poderoso: arranca despacio y tiene una resistencia enorme.',
+  'Tu deseo es inesperado: te enciende lo nuevo, lo que rompe la regla, la libertad compartida.',
+  'Tu deseo es fluido y romántico: te dejás llevar y entrás en otro plano.'];
+const FI_LILITH = [
+  'tomar el control y llevar la iniciativa de principio a fin, aunque a veces te frene el miedo a "ser demasiado".',
+  'entregarte al placer sin culpa, por completo, sin pensar en nada más que en lo que sentís.',
+  'decir en voz alta lo que fantaseás: jugar con las palabras y con lo prohibido de la conversación.',
+  'mostrarte vulnerable y dejar que te cuiden, sin defenderte ni controlar nada.',
+  'que te miren y te admiren: mostrar tu poder de seducción sin pedir permiso.',
+  'soltar la perfección: dejar que todo sea imperfecto, espontáneo y salvaje.',
+  'animarte a pedir lo que querés, aunque rompa la armonía o el "qué dirán".',
+  'explorar lo intenso y lo misterioso: los límites de la entrega y de la confianza.',
+  'la aventura sin reglas: lugares nuevos, lo espontáneo, salir de lo conocido.',
+  'dejar de ser la persona responsable y permitirte el puro disfrute, sin estructura.',
+  'lo poco convencional: las fantasías que nadie imagina que tenés.',
+  'la fantasía y el juego: perderte por completo en otra realidad, como en un sueño.'];
+const FI_ENTREGA = ['Te entregás cuando hay juego, pasión y admiración: necesitás sentir que el fuego es mutuo.', 'Te entregás cuando hay confianza, tiempo y presencia física: tu cuerpo necesita sentirse en un lugar seguro.', 'Te entregás cuando hay complicidad, palabras y libertad: si podés hablar de todo, podés soltar todo.', 'Te entregás cuando hay conexión emocional profunda: para vos, la intimidad es fusión.'];
+const FI_SOLTAR = ['diversión, espontaneidad y sentir que nada es tan serio', 'un espacio cómodo, el cuerpo relajado y nada de apuro', 'charlar, reírte y sentir que hay libertad', 'sentir contención, seguridad y cercanía emocional'];
+const FI_ENCIENDE = [['la iniciativa', 'la espontaneidad', 'el juego de la conquista', 'sentir que te desean'], ['los aromas y las texturas', 'las caricias lentas', 'la música suave', 'un clima cuidado'], ['las palabras al oído', 'los mensajes que provocan', 'la sorpresa', 'la risa compartida'], ['las miradas largas', 'la ternura', 'la intimidad emocional', 'el abrazo de después']];
+const FI_APAGA = ['la rutina y la falta de pasión', 'el apuro y la desconexión del cuerpo', 'el silencio y la falta de juego', 'la frialdad y la falta de cuidado emocional'];
+const FI_PEDIR = [
+  ['"Me encanta cuando tomás la iniciativa."', '"Esta noche quiero que me sorprendas."', '"Hoy quiero ser yo quien te busque."'],
+  ['"Me encanta cuando nos tomamos todo el tiempo del mundo."', '"Me gusta cuando me acariciás despacio."', '"Armemos una noche solo para los sentidos."'],
+  ['"Contame qué te imaginás conmigo."', '"Me gustaría probar algo nuevo. ¿Jugamos?"', '"Me encanta cuando me decís lo que te gusta."'],
+  ['"Necesito sentirte cerca antes."', '"Quiero que me mires a los ojos."', '"Me gusta cuando nos quedamos abrazados después."']];
+const FI_RITUAL = [
+  'Un viernes (el día de Venus), encendé una vela roja y bailá a solas una canción que te haga sentir tu poder. Mirate al espejo y decí: "mi deseo es sagrado".',
+  'Prepará un baño con sal, pétalos de rosa y unas gotas de aceite. Recorré tu piel despacio, con atención, como si fuera la primera vez. Tu cuerpo es tu templo.',
+  'Escribí en un papel tres deseos que nunca dijiste en voz alta. Leelos, respiralos y guardalos debajo de tu almohada una semana.',
+  'En Luna llena, poné un cuarzo rosa sobre tu pecho, cerrá los ojos y respirá hacia tu vientre. Visualizá una luz cálida que se expande por todo tu cuerpo.'];
+const FI_ALMA = { 1: 'deseás que te elijan con decisión', 2: 'deseás una fusión tierna y cómplice', 3: 'deseás el juego, la risa y la seducción con palabras', 4: 'deseás un vínculo seguro donde soltarte de a poco', 5: 'deseás libertad y experiencias nuevas', 6: 'deseás un amor que te cuide y te haga sentir en casa', 7: 'deseás una conexión profunda y casi mística', 8: 'deseás intensidad y un vínculo poderoso', 9: 'deseás un amor que trascienda lo físico', 11: 'deseás una conexión de alma, casi telepática', 22: 'deseás construir una intimidad sólida y para siempre', 33: 'deseás un amor que sane' };
+function lilithLon(jd){ const T = (jd - 2451545) / 36525; return nrm2(83.3532465 + 4069.0137287 * T - .01032 * T * T + 180); }
+function dohwa(sj){ const g = [[8, 0, 4], [2, 6, 10], [5, 9, 1], [11, 3, 7]], flor = [9, 3, 6, 0]; const ramas = sj.p.map(x => x.b), base = [sj.p[0].b, sj.p[2].b];
+  return base.some(b => { const i = g.findIndex(x => x.includes(b)); return i > -1 && ramas.includes(flor[i]); }); }
+function premFuego(){
+  if (lsGet('luzguia_18', '') !== 'si') return `<div class="fi-velo"><p class="fi-tit">🔥 Un espacio íntimo, solo para vos</p><p>Esta lectura habla de tu sensualidad, de tu deseo y de cómo vivís la intimidad, según tu carta. Es privada: no se comparte ni aparece en ningún otro lugar.</p><button class="btn-sec oro" type="button" data-fi18>Soy mayor de 18 años · Entrar</button></div>`;
+  const n = natal(); if (!n) return faltaFecha;
+  const sg = l => Math.floor(nrm2(l) / 30), el = s => s % 4; // 0 fuego, 1 tierra, 2 aire, 3 agua
+  const ve = sg(n.pos.Venus), ma = sg(n.pos.Marte), li = sg(lilithLon(n.jd)), lu = sg(n.pos.Luna), c8 = sg(n.cus[7]), eV = el(ve);
+  let h = `<p class="intro">Tu sensualidad también es parte de quién sos. Conocerla te ayuda a disfrutar más, a pedir lo que querés y a vivir la intimidad con libertad y sin culpa. Esto es lo que dice tu carta, para que lo explores a tu ritmo, con la persona que elijas.</p>`;
+  if (!n.hora) h += '<p class="ag-ayuda">Sin tu hora de nacimiento, la parte de la entrega (casa 8) es aproximada.</p>';
+  h += `<p class="sub">💋 Qué te seduce · Venus en ${ZOD[ve]}</p><p>${FI_VENUS[ve]}</p>`;
+  h += `<p class="sub">🔥 Cómo deseás · Marte en ${ZOD[ma]}</p><p>${FI_MARTE[ma]}</p>`;
+  h += `<div class="fi-lilith"><small>🌑 Lo que te atrae y no te animás · Lilith en ${ZOD[li]}</small><p>Lilith, la Luna Negra, guarda tus deseos escondidos, lo que a veces da pudor. A vos te atrae <b>${FI_LILITH[li]}</b></p><p class="ag-ayuda" style="margin:6px 0 0">No es algo para forzar: es una puerta que podés abrir cuando sientas que es el momento y con quien te dé confianza.</p></div>`;
+  h += `<p class="sub">🌊 Cómo te entregás · casa 8 en ${ZOD[c8]}</p><p>${FI_ENTREGA[el(c8)]} Y para soltarte de verdad, tu Luna en ${ZOD[lu]} necesita ${FI_SOLTAR[el(lu)]}.</p>`;
+  h += `<div class="fi-dos"><div><small>Te enciende</small><ul>${[...new Set([...FI_ENCIENDE[eV].slice(0, 3), ...FI_ENCIENDE[el(ma)].slice(1, 3)])].slice(0, 5).map(x => `<li>${x}</li>`).join('')}</ul></div><div><small>Te apaga</small><ul>${[...new Set([FI_APAGA[eV], FI_APAGA[el(ma)]])].map(x => `<li>${x}</li>`).join('')}</ul></div></div>`;
+  h += `<p class="sub">💬 Cómo pedirle a tu pareja lo que querés</p><p>Pedir es un acto de confianza, no de exigencia. Elegí un momento tranquilo y hablá desde lo que te gusta, no desde lo que falta. Algunas frases hechas para tu Venus:</p><ul class="fi-frases">${FI_PEDIR[eV].map(x => `<li>${x}</li>`).join('')}</ul><p>Y lo más sensual de todo: preguntar y escuchar. <i>"¿Y a vos qué te gustaría?"</i> Lo que se habla con cuidado, se disfruta el doble. Los límites de cada persona siempre se respetan.</p>`;
+  const extra = [];
+  try { const num = numerologia(P.diaMes, P.anioNac, P.nombreCompleto || P.nombre); if (num.alma && FI_ALMA[num.alma]) extra.push(['🔢', `Tu número del alma, el ${num.alma}`, `En lo más íntimo, ${FI_ALMA[num.alma]}.`]); } catch (e) {}
+  try { const sj = sajuDe(); if (sj && dohwa(sj)) extra.push(['🌸', 'Tenés la flor del durazno (도화살)', 'En el Saju coreano, es la estrella de la seducción: tenés un magnetismo natural que atrae miradas aunque no hagas nada. Usala a tu favor.']); } catch (e) {}
+  try { const H = hdDe(); if (H) { if (H.canales.some(c => c[0] === 6 && c[2] === 59)) extra.push(['🧬', 'Canal de la Intimidad (6-59)', 'En tu Diseño Humano tenés el canal de la intimidad: tu energía abre puertas y crea vínculos muy profundos. Elegí bien con quién.']); else if (H.puertas.has(59)) extra.push(['🧬', 'Puerta 59: la unión', 'En tu Diseño Humano tenés la puerta que derriba barreras: tu calidez acerca a las personas.']); if (H.aut === 'emocional') extra.push(['🌊', 'Tu deseo va en olas', 'Tu autoridad emocional te pide no apurarte: el deseo verdadero aparece cuando la ola se calma.']); } } catch (e) {}
+  if (extra.length) h += `<p class="sub">✨ Lo que suman otras tradiciones</p><ul class="num-lista">${extra.map(x => `<li><b>${x[0]}</b><div><span>${x[1]}</span>${x[2]}</div></li>`).join('')}</ul>`;
+  h += `<div class="fi-ritual"><small>🕯️ Tu ritual de sensualidad</small><p>${FI_RITUAL[eV]}</p></div>`;
+  return h + '<p class="ag-ayuda">Esta sección es privada y no tiene botón para compartir. Interpretación de Luz Guía a partir de tu Venus, tu Marte, tu Lilith, tu casa 8, tu Luna, tu numerología, tu Saju y tu Diseño Humano.</p>';
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-fi18]')) { lsSet('luzguia_18', 'si'); evento('Sección', 'Fuego íntimo'); PREM_ABIERTA = 'fuego'; repintarPrem(); } });
+PREM_FN.fuego = () => premFuego();
+(function(){
+  if (!PREMIUM_LISTA.some(x => x[0] === 'fuego')) { const i = PREMIUM_LISTA.findIndex(x => x[0] === 'amor'); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, ['fuego', '🔥', 'Tu fuego íntimo y tu deseo', 'Qué te seduce, cómo deseás, lo que te atrae y no te animás y cómo pedir lo que querés. (+18)']); }
+  PREM_VENTA.fuego = 'Tu sensualidad según tu carta: qué te seduce, cómo deseás, lo que te atrae y no te animás (tu Lilith) y cómo pedirle a tu pareja lo que querés. Privado y solo para mayores de 18.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'amor'); if (g && !g[4].includes('fuego')) { g[4].splice(g[4].indexOf('amor') + 1, 0, 'fuego'); g[3] = 'Cómo amás, tu deseo y con quién'; }
+})();
+GLOSARIO.push(['Lilith (Luna Negra)', 'Un punto de la órbita de la Luna que, en astrología, guarda los deseos escondidos, lo instintivo y lo que a veces da pudor mostrar.'], ['Flor del durazno (도화살)', 'En el Saju coreano, la estrella de la seducción y el magnetismo. Quien la tiene atrae miradas de forma natural.']);
+GLOS_SEC['Lilith (Luna Negra)'] = 'fuego'; GLOS_SEC['Flor del durazno (도화살)'] = 'fuego'; SEC_NOM.fuego = 'tu fuego íntimo';
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
