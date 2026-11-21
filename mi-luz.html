@@ -917,6 +917,12 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .jorg{border-color:#F3DCA0!important}
 .jorg-yo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05)}.jorg-yo p{margin:0;flex:1 1 200px;font-size:.88rem}
 .jorg details>p,.jorg details>.juego-ok{padding:0 12px}.jorg details>.juego{margin:8px}
+.lg-enl{border:1px solid rgba(243,220,160,.55);border-radius:18px;background:linear-gradient(150deg,rgba(212,175,106,.14),rgba(28,11,46,.7));margin:0 0 14px;padding:0 14px}
+.lg-enl>summary{display:flex;gap:10px;align-items:center;padding:14px 0;cursor:pointer;list-style:none}.lg-enl>summary::-webkit-details-marker{display:none}.lg-enl>summary>span{font-size:1.5rem}.lg-enl summary b{display:block;color:#F3DCA0;font-family:var(--serif);font-size:1.15rem}.lg-enl summary small{color:#E8A0B4;font-size:.76rem}
+.lg-enl-lista{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:8px}
+.lg-enl-lista li{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,106,.2)}
+.lg-enl-lista .ic{font-size:1.3rem}.lg-enl-lista b{display:block;font-size:.95rem}.lg-enl-lista small{color:#BDB2CF;font-size:.75rem;word-break:break-all}
+.lg-enl-lista .bts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}.lg-enl-lista .bts button{flex:1 1 120px;font-size:.85rem;padding:8px 10px}.lg-enl-lista button.ok{border-color:#8FD69B;color:#8FD69B}
 </style>
 </head>
 <body>
@@ -8264,6 +8270,36 @@ document.addEventListener('click', async e => {
   if (en.yoJuego) en.jugadores.push({ nombre: sjNombre() || 'Yo', diaMes: P.diaMes, anio: +P.anioNac, org: true, yo: true });
   const y = window.scrollY; pintar(); window.scrollTo(0, y);
 });
+
+
+/* ───── v53: enlaces para enviar (solo organizadoras) ───── */
+const LG_ENLACES = [
+  ['🔮', 'Encuentros de tarot', 'https://luzguia.com.ar/encuentros.html', '¡Hola! 💜 Te paso toda la info de nuestros encuentros de tarot (qué incluyen, cómo es la lectura y cómo reservar):'],
+  ['📜', 'Registros Akáshicos con Mey', 'https://luzguia.com.ar/akashicos.html', '¡Hola! 💜 Te paso la info de la lectura de Registros Akáshicos con Mey, cómo es y cómo se reserva:'],
+  ['🕯️', 'Limpieza energética', 'https://luzguia.com.ar/limpiezas.html', '¡Hola! 💜 Te paso la info de la limpieza energética a distancia con Mey:'],
+  ['✨', 'Web de Luz Guía', 'https://luzguia.com.ar/', 'Acá podés conocer todo lo que hacemos en Luz Guía 💜'],
+  ['📸', 'Instagram', 'https://www.instagram.com/luzguia2020', 'Seguinos en Instagram, ahí compartimos fechas, rituales y mucho más ✨'],
+  ['👍', 'Facebook', 'https://facebook.com/luzguia2020', 'También estamos en Facebook 💜'],
+  ['🗝️', 'Newsletter Detrás del Velo', 'https://luzguia.substack.com', 'Te dejo nuestro newsletter gratuito, Detrás del Velo: misterios, leyendas y todo lo oculto, cada 15 días 🌙'],
+  ['💬', 'WhatsApp para reservas', 'https://wa.me/542954467810', 'Para reservar o consultar, escribinos por WhatsApp acá:'],
+  ['🔒', 'Política de privacidad', 'https://luzguia.com.ar/privacidad.html', 'Acá está nuestra política de privacidad:']];
+function enlacesOrgHTML(){
+  if (!P.organizadora) return '';
+  return `<details class="lg-enl"><summary><span>🔗</span><div><b>Enlaces para enviar</b><small>Solo lo ven las organizadoras</small></div></summary>
+    <p class="ag-ayuda" style="margin:0 0 8px">Tocá "Copiar link" para pegarlo en WhatsApp o en Instagram. "Con mensaje" copia también un saludo listo.</p>
+    <ul class="lg-enl-lista">${LG_ENLACES.map(([ic, t, u, m], i) => `<li><span class="ic">${ic}</span><div><b>${esc(t)}</b><small>${esc(u.replace(/^https:\/\//, ''))}</small></div><div class="bts"><button class="btn-sec" type="button" data-copiarenl="${i}">📋 Copiar link</button><button class="btn-sec" type="button" data-copiarenl="${i}" data-conmsj="1">💬 Con mensaje</button></div></li>`).join('')}</ul></details>`;
+}
+async function copiarTexto(t){
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try { const a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); const ok = document.execCommand('copy'); a.remove(); return ok; } catch (e) { return false; }
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-copiarenl]'); if (!b) return;
+  const [ic, t, u, m] = LG_ENLACES[+b.dataset.copiarenl], txt = b.dataset.conmsj ? m + '\n' + u : u, orig = b.textContent;
+  const ok = await copiarTexto(txt); b.textContent = ok ? '✅ ¡Copiado!' : '⚠️ No se pudo'; b.classList.toggle('ok', ok);
+  setTimeout(() => { b.textContent = orig; b.classList.remove('ok'); }, 1800);
+});
+(function(){ const _n = novedadesHTML; novedadesHTML = function(){ const h = _n(); try { return enlacesOrgHTML() + h; } catch (e) { return h; } }; })();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
