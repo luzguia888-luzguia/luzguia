@@ -908,6 +908,12 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .di-entrada>p{font-size:.92rem;line-height:1.55;white-space:normal}.di-entrada>button{margin-bottom:10px}
 .tt-sig{margin-top:12px;padding-top:10px;border-top:1px solid rgba(212,175,106,.25)}
 .tt-azar{margin:-4px 0 10px;color:#E3D6F2}.tt-azar-modal{text-align:center;margin:0 auto 10px;max-width:46ch}
+.fm-caja{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:18px;border:1px solid rgba(212,175,106,.45);background:linear-gradient(150deg,rgba(91,42,134,.4),rgba(28,11,46,.7));margin:12px 0}
+.fm-caja.hoy{border-color:#F3DCA0;box-shadow:0 0 26px rgba(212,175,106,.25)}
+.fm-caja>span{font-size:2rem}.fm-caja small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.fm-caja b{display:block;font-family:var(--serif);font-size:1.25rem;color:#F3DCA0}.fm-caja p{margin:4px 0 10px;font-size:.9rem;line-height:1.5}
+.fm-btn{cursor:pointer;display:inline-flex;align-items:center}
+.fm-prev{display:block;width:100%;max-width:280px;height:auto;margin:10px auto;border-radius:12px;border:1px solid rgba(243,220,160,.4)}
+.fm-est{justify-content:center}
 </style>
 </head>
 <body>
@@ -8107,6 +8113,87 @@ document.addEventListener('click', e => {
   compartirEscena(b, async () => { const [fondo, ...cartas] = await Promise.all([imgCon([TT_FONDO[tema] || 'fondo-cielo.jpg', 'fondo-cielo.jpg']), ...cs.map(n => imgCon([cartaSrc(n)])), sjFuentes()]); return { dib: ttEscena(tema, cs, fondo, cartas.slice(0, 3), sjNombre()), tImg: 5 }; },
     'mi-tirada-luz-guia', `Mi ${T[1].toLowerCase()} de hoy: ${cs.map(n => NOM[n]).join(', ')} ✨ · Mi Luz, Luz Guía`, 'Tirada: ' + T[1]);
 });
+
+
+/* ───── v50: foto del encuentro con marco de Luz Guía (para historias) ───── */
+function encuentroHoy(){
+  const h = new Date();
+  return (P.encuentros || []).find(e => { const m = String(e.fecha || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m && +m[1] === h.getDate() && +m[2] === h.getMonth() + 1 && +m[3] === h.getFullYear(); }) || null;
+}
+const FM_ESTILOS = [['dorado', '✨ Dorado'], ['polaroid', '📷 Polaroid'], ['luna', '🌙 Luna']];
+let FM = { img: null, estilo: 'dorado', logo: null };
+function fmFotoHTML(destacado){
+  const e = encuentroHoy();
+  return `<div class="fm-caja${destacado ? ' hoy' : ''}"><span>📸</span><div><small>${e ? 'Hoy es el encuentro' : 'Foto con marco'}</small><b>${e ? 'Sacate una foto en ' + esc(e.nombre) : 'Tu foto con el marco de Luz Guía'}</b><p>Elegí uno de los tres marcos y compartila en tus historias. ¡Etiquetanos en @luzguia2020! 💜</p>
+    <div class="fila-bt" style="justify-content:flex-start"><label class="btn fm-btn">📸 Sacar foto<input type="file" accept="image/*" capture data-fmfoto hidden></label><label class="btn-sec fm-btn">🖼️ Elegir de la galería<input type="file" accept="image/*" data-fmfoto hidden></label></div></div></div>`;
+}
+(function(){
+  const _h = hoyHTML; hoyHTML = function(){ const h = _h(); try { if (!encuentroHoy()) return h; const x = fmFotoHTML(true), i = h.indexOf('<div class="energia-hoy">'); return i > -1 ? h.slice(0, i) + x + h.slice(i) : x + h; } catch (e) { return h; } };
+  const _n = novedadesHTML; novedadesHTML = function(){ const h = _n(); try { return fmFotoHTML(false) + h; } catch (e) { return h; } };
+})();
+document.addEventListener('change', e => {
+  const i = e.target.closest('[data-fmfoto]'); if (!i || !i.files || !i.files[0]) return;
+  const f = i.files[0], url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { FM.img = achicarImg ? achicarImg(im) : im; i.value = ''; fmAbrir(); evento('Sección', 'Foto del encuentro'); };
+  im.onerror = () => { alert('No pudimos abrir esa foto. Probá con otra.'); };
+  im.src = url;
+});
+function fmAbrir(){
+  $('dlg-titulo').textContent = '📸 Tu foto del encuentro'; $('dlg-texto').textContent = 'Elegí el marco que más te guste.';
+  $('dlg-cuerpo').innerHTML = `<div class="pron-opc fm-est">${FM_ESTILOS.map(([k, t]) => `<button type="button" class="nm-chk${FM.estilo === k ? ' on' : ''}" data-fmest="${k}">${t}</button>`).join('')}</div>
+    <canvas id="fm-prev" width="540" height="960" class="fm-prev"></canvas>
+    <div class="fila-bt"><button class="btn-sec" type="button" id="fm-no">Cerrar</button><button class="btn" type="button" id="fm-si">Compartir ✨</button></div>`;
+  if (!$('dlg').open) $('dlg').showModal();
+  $('fm-no').onclick = () => $('dlg').close();
+  $('fm-si').onclick = async () => { const b = $('fm-si'); b.disabled = true; b.textContent = 'Preparando…'; try { const cv = document.createElement('canvas'); cv.width = 1080; cv.height = 1920; await fmDibujar(cv); const e = encuentroHoy(); await compartirArchivo(await new Promise(ok => cv.toBlob(ok, 'image/jpeg', .92)), 'luz-guia-encuentro.jpg', `${e ? e.nombre : 'Encuentro de Luz Guía'} ✨ @luzguia2020 · Mi Luz`); evento('Compartió', 'Foto encuentro · ' + FM.estilo); } catch (er) {} b.disabled = false; b.textContent = 'Compartir ✨'; };
+  fmDibujar($('fm-prev'));
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-fmest]'); if (!b) return; FM.estilo = b.dataset.fmest; document.querySelectorAll('[data-fmest]').forEach(x => x.classList.toggle('on', x === b)); const c = $('fm-prev'); if (c) fmDibujar(c); });
+function fmFoto(c, im, x, y, w, h){ const e = Math.max(w / im.width, h / im.height), dw = im.width * e, dh = im.height * e; c.drawImage(im, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh); }
+function fmEstrellas(c, W, H, n, sem){ const r = sjRand(sem); for (let i = 0; i < n; i++) { c.globalAlpha = .3 + r() * .7; c.fillStyle = r() > .75 ? '#F3DCA0' : '#fff'; c.beginPath(); c.arc(r() * W, r() * H, r() * 2.2 + .5, 0, 6.283); c.fill(); } c.globalAlpha = 1; }
+async function fmDibujar(cv){
+  if (!FM.img) return; await sjFuentes();
+  if (!FM.logo) FM.logo = await imgCon(['icono-192.png']);
+  const c = cv.getContext('2d'), W = cv.width, H = cv.height, s = W / 1080, im = FM.img, e = encuentroHoy(), nom = e ? e.nombre : 'Encuentro de Luz Guía', hoy = new Date();
+  const fecha = hoy.getDate() + ' de ' + MESES[hoy.getMonth()] + ' de ' + hoy.getFullYear();
+  c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.shadowBlur = 0; c.textAlign = 'center';
+  const pie = (y, col) => { if (FM.logo) c.drawImage(FM.logo, W / 2 - 40 * s, y - 92 * s, 80 * s, 80 * s); c.fillStyle = col || 'rgba(243,220,160,.95)'; c.font = `500 ${26 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('DESDE LA APP MI LUZ · LUZ GUÍA', W / 2, y + 10 * s); c.letterSpacing = '0px'; c.font = `400 ${24 * s}px Jost, sans-serif`; c.fillStyle = 'rgba(241,236,247,.75)'; c.fillText('luzguia.com.ar · @luzguia2020', W / 2, y + 46 * s); };
+  if (FM.estilo === 'dorado') {
+    fmFoto(c, im, 0, 0, W, H);
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(18,8,32,.75)'); g.addColorStop(.16, 'rgba(18,8,32,0)'); g.addColorStop(.72, 'rgba(18,8,32,0)'); g.addColorStop(1, 'rgba(18,8,32,.9)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    c.strokeStyle = '#E3B864'; c.lineWidth = 6 * s; c.strokeRect(36 * s, 36 * s, W - 72 * s, H - 72 * s); c.lineWidth = 2 * s; c.strokeStyle = 'rgba(243,220,160,.8)'; c.strokeRect(54 * s, 54 * s, W - 108 * s, H - 108 * s);
+    c.fillStyle = '#F3DCA0'; c.font = `${46 * s}px serif`; [[54, 54], [W / s - 54, 54], [54, H / s - 54], [W / s - 54, H / s - 54]].forEach(([x, y]) => { c.textBaseline = 'middle'; c.fillText('✦', x * s, y * s); }); c.textBaseline = 'alphabetic';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 7 * s + 'px'; c.fillText('✦ ESTOY EN EL ENCUENTRO ✦', W / 2, 150 * s); c.letterSpacing = '0px';
+    c.fillStyle = '#fff'; c.font = `600 ${72 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 16 * s; sjLineas(c, nom, 900 * s).slice(0, 2).forEach((l, i) => c.fillText(l, W / 2, (235 + i * 74) * s)); c.shadowBlur = 0;
+    c.fillStyle = '#E8A0B4'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.fillText(fecha, W / 2, H - 260 * s);
+    pie(H - 150 * s);
+  } else if (FM.estilo === 'polaroid') {
+    const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#3B1760'); g.addColorStop(1, '#120a1e'); c.fillStyle = g; c.fillRect(0, 0, W, H); fmEstrellas(c, W, H, 260, 11);
+    c.save(); c.translate(W / 2, 860 * s); c.rotate(-.045); const pw = 860 * s, ph = 1060 * s;
+    c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 40 * s; c.shadowOffsetY = 18 * s; c.fillStyle = '#FBF6EC'; c.fillRect(-pw / 2, -ph / 2, pw, ph); c.shadowBlur = 0; c.shadowOffsetY = 0;
+    c.save(); c.beginPath(); c.rect(-pw / 2 + 40 * s, -ph / 2 + 40 * s, pw - 80 * s, ph - 230 * s); c.clip(); fmFoto(c, im, -pw / 2 + 40 * s, -ph / 2 + 40 * s, pw - 80 * s, ph - 230 * s); c.restore();
+    c.fillStyle = '#3B1760'; c.font = `${76 * s}px "Great Vibes", cursive`; c.fillText(nom.length > 28 ? 'Encuentro de Luz Guía' : nom, 0, ph / 2 - 92 * s); c.fillStyle = '#8a6a9e'; c.font = `500 ${26 * s}px Jost, sans-serif`; c.fillText(fecha, 0, ph / 2 - 44 * s);
+    c.restore();
+    c.save(); c.translate(W - 200 * s, 300 * s); c.rotate(.18); c.fillStyle = '#F3DCA0'; c.beginPath(); c.arc(0, 0, 92 * s, 0, 6.283); c.fill(); c.fillStyle = '#3B1760'; c.font = `600 ${34 * s}px "Cormorant Garamond", serif`; c.fillText('Mi Luz', 0, -4 * s); c.font = `500 ${22 * s}px Jost, sans-serif`; c.fillText('✨ estuve ahí', 0, 30 * s); c.restore();
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 7 * s + 'px'; c.fillText('ESTA NOCHE EN LUZ GUÍA', W / 2, 150 * s); c.letterSpacing = '0px';
+    pie(H - 150 * s);
+  } else {
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H); fmEstrellas(c, W, H, 320, 23);
+    const aw = 820 * s, ah = 1060 * s, ax = (W - aw) / 2, ay = 330 * s;
+    c.save(); c.beginPath(); c.moveTo(ax, ay + aw / 2); c.arc(W / 2, ay + aw / 2, aw / 2, Math.PI, 0); c.lineTo(ax + aw, ay + ah); c.lineTo(ax, ay + ah); c.closePath(); c.clip(); fmFoto(c, im, ax, ay, aw, ah); c.restore();
+    c.strokeStyle = '#F3DCA0'; c.lineWidth = 4 * s; c.beginPath(); c.moveTo(ax - 14 * s, ay + aw / 2); c.arc(W / 2, ay + aw / 2, aw / 2 + 14 * s, Math.PI, 0); c.lineTo(ax + aw + 14 * s, ay + ah + 14 * s); c.lineTo(ax - 14 * s, ay + ah + 14 * s); c.closePath(); c.stroke();
+    // la Luna de esta noche, con su fase real
+    let fase = 'creciente', sig = ''; try { const t = posTodas(jdDe(hoy)), el = nrm2(t.Luna - t.Sol); fase = faseHoy(); sig = ZOD[Math.floor(nrm2(t.Luna) / 30)];
+      const mx = W / 2, my = 200 * s, r = 62 * s, k = Math.cos(el * Math.PI / 180), crec = el < 180, izq = crec; // hemisferio sur: la Luna creciente se ilumina del lado izquierdo
+      c.fillStyle = '#2a1a3e'; c.beginPath(); c.arc(mx, my, r, 0, 6.283); c.fill();
+      c.shadowColor = '#F3DCA0'; c.shadowBlur = 26 * s; c.fillStyle = '#FFF2CC'; c.beginPath(); c.arc(mx, my, r, Math.PI / 2, -Math.PI / 2, !izq); c.closePath(); c.fill(); c.shadowBlur = 0;
+      c.fillStyle = k > 0 ? '#2a1a3e' : '#FFF2CC'; c.beginPath(); c.ellipse(mx, my, Math.abs(k) * r + .5, r + .5, 0, 0, 6.283); c.fill(); } catch (er) {}
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${26 * s}px Jost, sans-serif`; c.letterSpacing = 6 * s + 'px'; c.fillText(('LUNA ' + fase + (sig ? ' EN ' + sig : '')).toUpperCase(), W / 2, 312 * s); c.letterSpacing = '0px';
+    c.fillStyle = '#fff'; c.font = `600 ${60 * s}px "Cormorant Garamond", serif`; sjLineas(c, nom, 900 * s).slice(0, 2).forEach((l, i) => c.fillText(l, W / 2, (1470 + i * 64) * s));
+    c.fillStyle = '#E8A0B4'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.fillText(fecha, W / 2, (1470 + (sjLineas(c, nom, 900 * s).length > 1 ? 128 : 64)) * s);
+    pie(H - 150 * s);
+  }
+}
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
