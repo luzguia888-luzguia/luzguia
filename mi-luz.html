@@ -914,6 +914,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .fm-btn{cursor:pointer;display:inline-flex;align-items:center}
 .fm-prev{display:block;width:100%;max-width:280px;height:auto;margin:10px auto;border-radius:12px;border:1px solid rgba(243,220,160,.4)}
 .fm-est{justify-content:center}
+.jorg{border-color:#F3DCA0!important}
 </style>
 </head>
 <body>
@@ -8194,6 +8195,36 @@ async function fmDibujar(cv){
     pie(H - 150 * s);
   }
 }
+
+
+/* ───── v51: el panel del juego de la noche para las organizadoras ───── */
+function juegoOrgHTML(){
+  if (!P.organizadora || !Array.isArray(P.juegoOrg) || !P.juegoOrg.length) return '';
+  return P.juegoOrg.map(e => {
+    const J = e.jugadores || [];
+    let h = `<section class="juego jorg"><small>🍷 Panel del juego · solo para organizadoras</small><h4>${esc(e.nombre)}</h4><p><b>${J.length} de ${e.anotadas}</b> personas anotadas se sumaron al juego.${J.length < e.anotadas ? ' Recordale al resto: Mi Luz → Luz Guía → tildar "Quiero participar del juego de la noche".' : ' ¡Están todas! ✨'}</p>`;
+    if (J.length < 2) return h + '<p class="ag-ayuda">Cuando se sumen al menos dos personas, acá vas a ver las afinidades de la mesa.</p></section>';
+    const pares = [];
+    for (let i = 0; i < J.length; i++) for (let k = i + 1; k < J.length; k++) { try { const a = afinidad(J[i].diaMes, J[i].anio, '', J[k].diaMes, J[k].anio); pares.push({ a: J[i], b: J[k], pct: a.pct, favor: a.favor, sa: a.solA, sb: a.solB }); } catch (er) {} }
+    pares.sort((x, y) => y.pct - x.pct);
+    const mejor = J.map(p => { const L = pares.filter(x => x.a === p || x.b === p); const m = L[0]; return { p, con: m ? (m.a === p ? m.b : m.a) : null, pct: m ? m.pct : 0 }; });
+    h += `<p class="sub">💫 Las duplas con más afinidad</p><ul class="juego-lista">${pares.slice(0, 5).map((x, i) => `<li><b class="jp">${x.pct}%</b><div><span>${i === 0 ? '👑 ' : ''}${esc(x.a.nombre)} y ${esc(x.b.nombre)} · ${x.sa} + ${x.sb}</span>${x.favor.length ? 'Conectan en: ' + x.favor[0].replace(/\b(tu|tus|su|sus)\s+/g, '') + '.' : 'Se complementan: cada una trae lo que a la otra le falta.'}</div></li>`).join('')}</ul>`;
+    h += `<details class="mas"><summary>Con quién conecta más cada persona <span aria-hidden="true">✦</span></summary><ul class="juego-lista">${mejor.map(x => `<li><b class="jp">${x.pct}%</b><div><span>${esc(x.p.nombre)}</span>${x.con ? 'Su mayor afinidad: ' + esc(x.con.nombre) : ''}</div></li>`).join('')}</ul></details>`;
+    h += `<details class="mas"><summary>Todas las combinaciones (${pares.length}) <span aria-hidden="true">✦</span></summary><ul class="juego-lista">${pares.map(x => `<li><b class="jp">${x.pct}%</b><div><span>${esc(x.a.nombre)} y ${esc(x.b.nombre)}</span></div></li>`).join('')}</ul></details>`;
+    const el = sinT => { try { return ELEM_SIGNO[signosPersona(sinT.diaMes, sinT.anio, '').Sol % 4]; } catch (er) { return 'Agua'; } };
+    const cuenta = {}; J.forEach(p => { const e2 = el(p); cuenta[e2] = (cuenta[e2] || 0) + 1; }); const dom = Object.entries(cuenta).sort((a, b) => b[1] - a[1])[0][0];
+    h += `<p class="sub">🎙️ Ideas para comandar el juego</p><ul class="num-lista">
+      <li><b>1</b><div><span>Revelación de duplas</span>Leé en voz alta la dupla con más afinidad y pediles que adivinen quiénes son antes de decir los nombres.</div></li>
+      <li><b>2</b><div><span>Encontrá tu match</span>Cada persona mira en su Mi Luz con quién conecta más y tiene que ir a sentarse o brindar con esa persona.</div></li>
+      <li><b>3</b><div><span>La energía de la mesa</span>Esta noche predomina el elemento <b>${dom}</b>. Pregunta para todas: <i>"${ROMPEHIELO[dom] ? ROMPEHIELO[dom][0] : '¿Qué te trajo hasta acá?'}"</i></div></li></ul>
+      <p class="ag-ayuda">Solo aparecen quienes aceptaron participar. Cada persona ve en su app su propia mesa.</p></section>`;
+    return h;
+  }).join('');
+}
+(function(){
+  const _h = hoyHTML;
+  hoyHTML = function(){ const h = _h(); try { const j = juegoOrgHTML(); if (!j) return h; const i = h.indexOf('<div class="energia-hoy">'); return i > -1 ? h.slice(0, i) + j + h.slice(i) : j + h; } catch (e) { console.error(e); return h; } };
+})();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
