@@ -915,6 +915,8 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .fm-prev{display:block;width:100%;max-width:280px;height:auto;margin:10px auto;border-radius:12px;border:1px solid rgba(243,220,160,.4)}
 .fm-est{justify-content:center}
 .jorg{border-color:#F3DCA0!important}
+.jorg-yo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05)}.jorg-yo p{margin:0;flex:1 1 200px;font-size:.88rem}
+.jorg details>p,.jorg details>.juego-ok{padding:0 12px}.jorg details>.juego{margin:8px}
 </style>
 </head>
 <body>
@@ -8225,6 +8227,43 @@ function juegoOrgHTML(){
   const _h = hoyHTML;
   hoyHTML = function(){ const h = _h(); try { const j = juegoOrgHTML(); if (!j) return h; const i = h.indexOf('<div class="energia-hoy">'); return i > -1 ? h.slice(0, i) + j + h.slice(i) : j + h; } catch (e) { console.error(e); return h; } };
 })();
+
+
+/* ───── v52: las organizadoras pueden sumarse o salirse del juego, y ven cómo lo ven las participantes ───── */
+function mesaListaHTML(lista){
+  const L = lista.map(x => { const a = afinidad(P.diaMes, P.anioNac, P.horaNac, x.diaMes, x.anio); return Object.assign({ n: x.nombre + (x.org ? ' ✦' : '') }, a); }).sort((a, b) => b.pct - a.pct);
+  return `<ul class="juego-lista">${L.map((x, i) => `<li><b class="jp">${x.pct}%</b><div><span>${i === 0 ? '💫 ' : ''}${esc(x.n)} · ${x.solB}, ${x.chinoB}</span>${x.favor.length ? (/^sus /.test(x.favor[0]) ? 'Las unen ' : 'Las une ') + x.favor[0] + '.' : 'Se complementan: cada persona trae lo que a la otra le falta.'} <i>Preguntale: "${ROMPEHIELO[x.e2][(hashTxt(x.n) + i) % 2]}"</i></div></li>`).join('')}</ul>`;
+}
+(function(){
+  const _jo = juegoOrgHTML;
+  juegoOrgHTML = function(){
+    let h = _jo(); if (!h) return h;
+    (P.juegoOrg || []).forEach(e => {
+      const J = e.jugadores || [], part = J.filter(x => !x.org).length, otras = J.filter(x => !x.yo);
+      const marca = '<h4>' + esc(e.nombre) + '</h4>', i = h.indexOf(marca); if (i < 0) return;
+      const j = h.indexOf('</p>', i) + 4;
+      const extra = `<div class="jorg-yo"><p>${e.yoJuego ? '✅ <b>Estás jugando:</b> las participantes te ven en su mesa (con un ✦ al lado del nombre).' : '🙈 <b>No estás en el juego:</b> las participantes no te ven en su mesa.'}</p><button class="btn-sec${e.yoJuego ? '' : ' oro'}" type="button" data-jorgyo="${esc(e.id)}|${e.yoJuego ? '0' : '1'}">${e.yoJuego ? 'Salirme del juego' : '✨ Sumarme al juego'}</button></div>
+        <details class="mas"><summary>👀 Así lo ven las participantes <span aria-hidden="true">✦</span></summary>
+          <p class="ag-ayuda">1. En Mi Luz → Luz Guía, en la tarjeta del encuentro, les aparece esta casilla:</p>
+          <label class="juego-ok"><input type="checkbox" disabled checked> ✨ Quiero participar del juego de la noche <small>(se comparte tu nombre y tu fecha de nacimiento solo con quienes también participen de este encuentro)</small></label>
+          <p class="ag-ayuda">2. Hoy, en Hoy, ven "Tu mesa de hoy". Así se vería la tuya:</p>
+          <section class="juego"><small>🍷 Juego de la noche · ${esc(e.nombre)}</small><h4>Tu mesa de hoy</h4><p>Así se combina tu energía con la de quienes se sumaron al juego:</p>${otras.length ? mesaListaHTML(otras) : '<p class="ag-ayuda">Todavía no se sumó nadie más.</p>'}<p class="ag-ayuda">Solo aparecen quienes aceptaron participar. Lo demás… se descubre en la mesa ✦</p></section></details>`;
+      h = h.slice(0, j) + extra + h.slice(j);
+      h = h.replace(`<b>${J.length} de ${e.anotadas}</b> personas anotadas se sumaron al juego.`, `<b>${part} de ${e.anotadas}</b> personas anotadas se sumaron al juego${J.length > part ? ` (y ${J.length - part === 1 ? 'una organizadora' : (J.length - part) + ' organizadoras'})` : ''}.`);
+    });
+    return h;
+  };
+})();
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-jorgyo]'); if (!b) return;
+  const [id, si] = b.dataset.jorgyo.split('|'), en = (P.juegoOrg || []).find(x => x.id === id); if (!en) return;
+  b.disabled = true; b.textContent = 'Guardando…';
+  let d = {}; try { const r = await fetch(API, { method: 'POST', body: JSON.stringify({ accion: 'juego', codigo: CODIGO, encuentro: id, participa: si === '1' }) }); d = await r.json(); } catch (x) {}
+  if (!d.ok) { b.disabled = false; b.textContent = 'No se pudo guardar. Probá de nuevo'; return; }
+  en.yoJuego = si === '1'; en.jugadores = (en.jugadores || []).filter(x => !x.yo);
+  if (en.yoJuego) en.jugadores.push({ nombre: sjNombre() || 'Yo', diaMes: P.diaMes, anio: +P.anioNac, org: true, yo: true });
+  const y = window.scrollY; pintar(); window.scrollTo(0, y);
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
