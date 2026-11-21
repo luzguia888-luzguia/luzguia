@@ -6643,7 +6643,7 @@ function sjImagen(dm){
     const prueba = (L) => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; };
     prueba(['saju-' + (dm + 1) + '.jpg', SJ_FALLBACK[dm]]);
   });
-  return SJ_IMG[dm];
+  return SJ_IMG[dm] = SJ_IMG[dm].then(im => typeof achicarImg === 'function' ? achicarImg(im) : im);
 }
 function sjRand(seed){ let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
 function sjBrillo(col){ const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, col); r.addColorStop(.25, col.replace(/[\d.]+\)$/, '.55)')); r.addColorStop(1, col.replace(/[\d.]+\)$/, '0)')); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c; }
@@ -7237,7 +7237,7 @@ serHTML = function(){ let h = _serHD(); try { const k = h.indexOf('<h3>Tu Kin ma
 const HD_ORDEN = ['M', 'G', 'MG', 'P', 'R'], HD_FALLBACK = { M: 'fondo-fuego.jpg', G: 'fondo-bosque.jpg', MG: 'fondo-fuego.jpg', P: 'fondo-cristales.jpg', R: 'fondo-luna.jpg' }, HD_IMG = {};
 function hdImagen(t){
   if (!HD_IMG[t]) HD_IMG[t] = new Promise(ok => { const prueba = L => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; }; prueba(['hd-' + (HD_ORDEN.indexOf(t) + 1) + '.jpg', HD_FALLBACK[t]]); });
-  return HD_IMG[t];
+  return HD_IMG[t] = HD_IMG[t].then(im => typeof achicarImg === 'function' ? achicarImg(im) : im);
 }
 function hdEscena(H, img, nombre){
   const T = HD_TIPOS[H.tipo], rnd = sjRand(H.perfil[0] * 7 + H.def.size), spr = sjBrillo('rgba(255,236,190,1)');
@@ -7518,33 +7518,46 @@ hoyHTML = function(){ const h = _hoyNak(); try { const { N, nak } = naksHoy(), V
 
 /* ── Tarjetas vivas del Nakshatra y del árbol ── */
 const ESC_IMG = {};
-function imgCon(lista){ const k = lista.join('|'); if (!ESC_IMG[k]) ESC_IMG[k] = new Promise(ok => { const prueba = L => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; }; prueba(lista); }); return ESC_IMG[k]; }
+function achicarImg(im){ if (!im || im.width <= 1100) return im; const e = 1080 / im.width, k = document.createElement('canvas'); k.width = 1080; k.height = Math.round(im.height * e); k.getContext('2d').drawImage(im, 0, 0, k.width, k.height); return k; }
+function imgCon(lista){ const k = lista.join('|'); if (!ESC_IMG[k]) ESC_IMG[k] = new Promise(ok => { const prueba = L => { if (!L.length) return ok(null); const im = new Image(); im.onload = () => ok(im); im.onerror = () => prueba(L.slice(1)); im.src = L[0]; }; prueba(lista); }).then(achicarImg); return ESC_IMG[k]; }
 function escenaFoto(o){
+  // versión fluida: el fondo, el velo y los textos se dibujan una sola vez; en cada cuadro solo se mueve lo liviano
   const rnd = sjRand(o.semilla || 7), spr = sjBrillo(o.hojas ? 'rgba(220,255,180,1)' : 'rgba(255,240,210,1)');
-  const pt = Array.from({ length: 70 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd(), r: rnd() }));
-  return function(c, W, H, t){
-    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
-    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
-    if (o.img) { const k = 1.1 + .05 * Math.sin(t * .25), e = Math.max(W / o.img.width, H / o.img.height) * k; c.drawImage(o.img, (W - o.img.width * e) / 2 + Math.sin(t * .2) * W * .015, (H - o.img.height * e) / 2, o.img.width * e, o.img.height * e); }
-    const v = c.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.55)'); v.addColorStop(.2, 'rgba(18,8,32,.15)'); v.addColorStop(.5, 'rgba(18,8,32,.3)'); v.addColorStop(.62, 'rgba(18,8,32,.72)'); v.addColorStop(1, 'rgba(12,5,22,.94)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
-    c.save();
-    pt.forEach((p, i) => {
-      if (o.hojas && i % 2) { const y = ((p.y + t * p.v * .05) % 1) * H, x = p.x * W + Math.sin(t * .9 + p.f) * 50 * s; c.globalCompositeOperation = 'source-over'; c.globalAlpha = .7; c.save(); c.translate(x, y); c.rotate(t * p.v + p.f); c.fillStyle = p.r > .5 ? 'rgba(170,215,140,.85)' : 'rgba(235,200,120,.85)'; c.beginPath(); c.ellipse(0, 0, 13 * s * p.z, 6 * s * p.z, 0, 0, 6.283); c.fill(); c.restore(); }
-      else { c.globalCompositeOperation = 'lighter'; const al = o.hojas ? Math.max(0, Math.sin(t * 2 * p.v + p.f)) : Math.pow(Math.max(0, Math.sin(t * 1.8 * p.v + p.f)), 2); c.globalAlpha = al; const z = (o.hojas ? 34 : 26) * s * p.z; c.drawImage(spr, p.x * W - z / 2, (o.hojas ? p.y : p.y * .6) * H - z / 2, z, z); }
-    });
-    c.restore();
-    c.textAlign = 'center';
+  const pt = Array.from({ length: 60 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd(), r: rnd() }));
+  let cW = 0, cH = 0, bg = null, ov = null, tx = null, gl = null, halo = null;
+  const lienzo = (w, h) => { const k = document.createElement('canvas'); k.width = Math.round(w); k.height = Math.round(h); return k; };
+  function prep(W, H){
+    cW = W; cH = H; const s = W / 1080;
+    if (o.img) { bg = lienzo(W * 1.12, H * 1.12); const b = bg.getContext('2d'), e = Math.max(bg.width / o.img.width, bg.height / o.img.height); b.drawImage(o.img, (bg.width - o.img.width * e) / 2, (bg.height - o.img.height * e) / 2, o.img.width * e, o.img.height * e); } else bg = null;
+    ov = lienzo(W, H); const v0 = ov.getContext('2d'), v = v0.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.55)'); v.addColorStop(.2, 'rgba(18,8,32,.15)'); v.addColorStop(.5, 'rgba(18,8,32,.3)'); v.addColorStop(.62, 'rgba(18,8,32,.72)'); v.addColorStop(1, 'rgba(12,5,22,.94)'); v0.fillStyle = v; v0.fillRect(0, 0, W, H);
+    tx = lienzo(W, H); const c = tx.getContext('2d'); c.textAlign = 'center';
     c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText(o.kicker, W / 2, 150 * s); c.letterSpacing = '0px';
     if (o.nombre) { c.fillStyle = '#FFF4DA'; c.font = `${92 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(o.nombre, W / 2, 262 * s); c.shadowBlur = 0; }
-    const g = c.createRadialGradient(W / 2, 690 * s, 0, W / 2, 690 * s, 230 * s); g.addColorStop(0, `rgba(255,236,190,${.25 + .15 * pul})`); g.addColorStop(1, 'rgba(255,236,190,0)'); c.fillStyle = g; c.beginPath(); c.arc(W / 2, 690 * s, 230 * s, 0, 6.283); c.fill();
-    c.strokeStyle = 'rgba(243,220,160,.45)'; c.lineWidth = 2 * s; c.setLineDash([3 * s, 12 * s]); c.beginPath(); c.arc(W / 2, 690 * s, 210 * s, t * .15, t * .15 + 6.283); c.stroke(); c.setLineDash([]);
-    c.textBaseline = 'middle'; c.font = `${230 * s}px serif`; c.shadowColor = '#F3DCA0'; c.shadowBlur = (20 + 25 * pul) * s; c.fillStyle = '#FFF7E4'; c.fillText(o.glifo, W / 2, 700 * s); c.shadowBlur = 0; c.textBaseline = 'alphabetic';
     c.fillStyle = '#F3DCA0'; c.font = `500 ${32 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText(o.sub.toUpperCase(), W / 2, 1060 * s); c.letterSpacing = '0px';
     c.fillStyle = '#fff'; c.font = `600 ${92 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 20 * s; sjLineas(c, o.titulo, 940 * s).forEach((l, i) => c.fillText(l, W / 2, (1165 + i * 92) * s)); c.shadowBlur = 0;
     c.fillStyle = '#E8A0B4'; c.font = `500 ${34 * s}px Jost, sans-serif`; c.fillText(o.pal, W / 2, 1290 * s);
     c.fillStyle = '#F1ECF7'; c.font = `italic ${50 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 14 * s; sjLineas(c, '“' + o.frase + '”', 860 * s).slice(0, 4).forEach((l, i) => c.fillText(l, W / 2, (1420 + i * 62) * s)); c.shadowBlur = 0;
     c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
     c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+    const G = 520 * s; gl = lienzo(G, G); const g = gl.getContext('2d'); g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `${230 * s}px serif`; g.shadowColor = '#F3DCA0'; g.shadowBlur = 40 * s; g.fillStyle = '#FFF7E4'; g.fillText(o.glifo, G / 2, G / 2 + 10 * s); g.shadowBlur = 0; g.fillText(o.glifo, G / 2, G / 2 + 10 * s);
+    halo = lienzo(G, G); const hh = halo.getContext('2d'), rg = hh.createRadialGradient(G / 2, G / 2, 0, G / 2, G / 2, 230 * s); rg.addColorStop(0, 'rgba(255,236,190,.4)'); rg.addColorStop(1, 'rgba(255,236,190,0)'); hh.fillStyle = rg; hh.fillRect(0, 0, G, G);
+  }
+  return function(c, W, H, t){
+    if (W !== cW || H !== cH) prep(W, H);
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
+    if (bg) { const k = 1 + .035 * Math.sin(t * .25), dw = bg.width * k, dh = bg.height * k; c.drawImage(bg, (W - dw) / 2 + Math.sin(t * .2) * W * .012, (H - dh) / 2, dw, dh); }
+    c.drawImage(ov, 0, 0);
+    pt.forEach((p, i) => {
+      if (o.hojas && i % 2) { const y = ((p.y + t * p.v * .05) % 1) * H, x = p.x * W + Math.sin(t * .9 + p.f) * 50 * s, a = t * p.v + p.f, ca = Math.cos(a), sa = Math.sin(a); c.globalCompositeOperation = 'source-over'; c.globalAlpha = .7; c.setTransform(ca, sa, -sa, ca, x, y); c.fillStyle = p.r > .5 ? 'rgba(170,215,140,.85)' : 'rgba(235,200,120,.85)'; c.beginPath(); c.ellipse(0, 0, 13 * s * p.z, 6 * s * p.z, 0, 0, 6.283); c.fill(); c.setTransform(1, 0, 0, 1, 0, 0); }
+      else { c.globalCompositeOperation = 'lighter'; c.globalAlpha = o.hojas ? Math.max(0, Math.sin(t * 2 * p.v + p.f)) : Math.pow(Math.max(0, Math.sin(t * 1.8 * p.v + p.f)), 2); const z = (o.hojas ? 34 : 26) * s * p.z; c.drawImage(spr, p.x * W - z / 2, (o.hojas ? p.y : p.y * .6) * H - z / 2, z, z); }
+    });
+    c.globalCompositeOperation = 'source-over';
+    const G = gl.width; c.globalAlpha = .6 + .4 * pul; c.drawImage(halo, W / 2 - G / 2, 690 * s - G / 2); c.globalAlpha = 1;
+    c.strokeStyle = 'rgba(243,220,160,.45)'; c.lineWidth = 2 * s; c.setLineDash([3 * s, 12 * s]); c.beginPath(); c.arc(W / 2, 690 * s, 210 * s, t * .15, t * .15 + 6.283); c.stroke(); c.setLineDash([]);
+    c.globalAlpha = .8 + .2 * pul; c.drawImage(gl, W / 2 - G / 2, 690 * s - G / 2); c.globalAlpha = 1;
+    c.drawImage(tx, 0, 0);
   };
 }
 const ESCENAS = {
