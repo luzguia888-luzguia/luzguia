@@ -410,6 +410,11 @@ nav.lateral .pestana[aria-selected="true"] svg{opacity:1;filter:drop-shadow(0 0 
 .link-vendidas{background:none;border:0;color:var(--oro);font:inherit;cursor:pointer;padding:2px 4px;border-bottom:1px dashed var(--oro-suave)}
 .link-vendidas:hover{color:var(--luna)}
 .chico-dep{padding:3px 9px;font-size:.8rem}
+.filtros-crm{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}.filtros-crm .campo{flex:1 1 200px;min-width:0;max-width:100%}
+.chips-filtro{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.chips-filtro .chip.on{background:var(--oro,#D4AF6A);color:#1C0B2E;border-color:var(--oro,#D4AF6A)}
+.mz-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}.mz-nav span{color:var(--lila);font-size:.88rem}.mz-nav button[disabled]{opacity:.4;cursor:default}
+.mz-scroll{overflow-x:auto}.matriz td:last-child,.matriz th:last-child{position:sticky;right:0;background:var(--ciruela);z-index:1}.matriz th:last-child{background:var(--violeta)}
+.fp-cuenta .enlace,[data-fplimpiar]{background:none;border:0;color:var(--oro,#D4AF6A);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
 </style>
 </head>
 <body>
@@ -3091,6 +3096,112 @@ document.addEventListener('click', async e => {
 });
 const _miluzPrecio = V.miluz;
 V.miluz = () => { const h = _miluzPrecio(); try { const i = h.indexOf('<h3'); return i > -1 ? h.slice(0, i) + precioPreguntaHTML() + h.slice(i) : h + precioPreguntaHTML(); } catch (e) { console.error(e); return h; } };
+
+/* v25: buscador y filtros en "Quién vino a cada encuentro" y en "Todas las personas" */
+const MZ = { q: '', ver: 'ult6', pag: 0, per: 'todas' };
+const FP = { q: '', enc: '', canal: '', cat: 'todas' };
+const sinTil = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const encOrden = () => H('Encuentros').filter(t => t['Estado'] !== 'Cancelado' && fecha(t['Fecha'])).sort((a, b) => fecha(a['Fecha']) - fecha(b['Fecha']));
+const asisDe = pid => H('Asistencias').filter(a => a['ID Persona'] === pid);
+const vecesVino = pid => asisDe(pid).filter(a => a['Asistencia'] === 'Asistió').length;
+const debeDe = pid => asisDe(pid).reduce((x, a) => x + num(a['Pendiente']), 0);
+function mzEncuentros(){
+  const ts = encOrden();
+  if (MZ.ver === 'todos') return { ts, total: ts.length, ini: 0 };
+  if (/^anio-/.test(MZ.ver)) { const y = +MZ.ver.slice(5), L = ts.filter(t => fecha(t['Fecha']).getFullYear() === y); return { ts: L, total: L.length, ini: 0 }; }
+  const n = MZ.ver === 'ult12' ? 12 : 6, fin = Math.max(n, ts.length - MZ.pag * n), ini = Math.max(0, fin - n);
+  return { ts: ts.slice(ini, fin), total: ts.length, ini, fin, n };
+}
+matrizAsistencia = function(){
+  const anios = [...new Set(encOrden().map(t => fecha(t['Fecha']).getFullYear()))].sort((a, b) => b - a);
+  return `<div class="filtros-crm"><input class="campo" type="search" id="mz-q" placeholder="Buscar persona…" value="${esc(MZ.q)}">
+    <select class="campo" id="mz-ver"><option value="ult6">Últimos 6 encuentros</option><option value="ult12">Últimos 12 encuentros</option>${anios.map(y => `<option value="anio-${y}">Encuentros de ${y}</option>`).join('')}<option value="todos">Todos los encuentros</option></select>
+    <select class="campo" id="mz-per"><option value="todas">Todas las personas</option><option value="vinieron">Vinieron al menos una vez</option><option value="nunca">Nunca vinieron</option><option value="anotadas">Anotadas en los encuentros que se ven</option><option value="deben">Deben plata</option></select></div>
+    <div id="mz-caja">${mzTabla()}</div>`.replace(`value="${MZ.ver}"`, `value="${MZ.ver}" selected`).replace(`value="${MZ.per}"`, `value="${MZ.per}" selected`);
+};
+function mzTabla(){
+  const { ts, total, ini, fin, n } = mzEncuentros();
+  if (!ts.length) return '<p class="ayuda">No hay encuentros en este rango.</p>';
+  const idx = {}; H('Asistencias').forEach(a => { const k = a['ID Persona'] + '|' + a['ID Encuentro']; (idx[k] = idx[k] || []).push(a); });
+  const q = sinTil(MZ.q), ids = new Set(ts.map(t => t['ID Encuentro']));
+  const ps = participantes().slice().sort((a, b) => String(a['Nombre completo']).localeCompare(b['Nombre completo'])).filter(p => {
+    if (q && !sinTil(p['Nombre completo']).includes(q)) return false;
+    const pid = p['ID Persona'];
+    if (MZ.per === 'vinieron') return vecesVino(pid) > 0;
+    if (MZ.per === 'nunca') return vecesVino(pid) === 0;
+    if (MZ.per === 'anotadas') return ts.some(t => idx[pid + '|' + t['ID Encuentro']]);
+    if (MZ.per === 'deben') return debeDe(pid) > 0;
+    return true;
+  });
+  const nav = n && total > n ? `<div class="mz-nav"><button class="btn-sec" type="button" data-mzpag="1"${ini <= 0 ? ' disabled' : ''}>◀ Anteriores</button><span>Encuentros ${ini + 1} a ${fin} de ${total}</span><button class="btn-sec" type="button" data-mzpag="-1"${MZ.pag <= 0 ? ' disabled' : ''}>Más recientes ▶</button></div>` : `<p class="ayuda" style="margin:0 0 8px">${ts.length} ${ts.length === 1 ? 'encuentro' : 'encuentros'}.</p>`;
+  if (!ps.length) return nav + '<p class="ayuda">Nadie coincide con la búsqueda.</p>';
+  const filas = ps.map(p => {
+    let vino = 0;
+    const celdas = ts.map(t => {
+      const l = idx[p['ID Persona'] + '|' + t['ID Encuentro']];
+      if (!l) return `<td><button type="button" class="celda" title="${esc(p['Nombre completo'])} no está anotada en ${esc(t['Nombre / temática'])}. Tocá para marcar sus asistencias." data-enencuentros="${esc(p['ID Persona'])}">·</button></td>`;
+      const a = l[0], est = a['Asistencia']; if (est === 'Asistió') vino++;
+      const cl = est === 'Asistió' ? 'si' : /No vino|Canceló/.test(est) ? 'no' : 'conf', ico = est === 'Asistió' ? '✓' : est === 'Canceló' ? '⊘' : est === 'No vino' ? '✗' : '○';
+      const tip = t['Nombre / temática'] + ': ' + est + (a['Motivo de ausencia'] ? ' (' + a['Motivo de ausencia'] + ')' : '') + ' · pagó ' + (a['Total pagado'] || '$0') + (l.length > 1 ? ' · ¡repetida ' + l.length + ' veces!' : '');
+      return `<td><button type="button" class="celda ${cl}${l.length > 1 ? ' dup' : ''}" title="${esc(tip)}" data-enencuentros="${esc(p['ID Persona'])}">${ico}${l.length > 1 ? '×' + l.length : ''}</button></td>`;
+    }).join('');
+    return `<tr><td><button class="chip" type="button" data-enencuentros="${esc(p['ID Persona'])}" title="Marcar asistencia y pagos de todos sus encuentros">${esc(p['Nombre completo'])}</button></td>${celdas}<td class="num"><b>${vecesVino(p['ID Persona'])}</b></td></tr>`;
+  }).join('');
+  return nav + `<div class="tabla-caja mz-scroll"><table class="matriz"><thead><tr><th>Persona · ${ps.length}</th>${ts.map(t => `<th title="${esc(t['Nombre / temática'])}">${ddmm(fecha(t['Fecha']))}<small>${esc(recortar(t['Nombre / temática'], 14))}</small></th>`).join('')}<th>Vino a<small>en total</small></th></tr></thead><tbody>${filas}</tbody></table></div>
+    <div class="leyenda" style="margin-top:10px"><span>✓ asistió</span><span>✗ no vino</span><span>⊘ canceló</span><span>○ confirmada</span><span>· no anotada (tocá para anotarla)</span></div>`;
+}
+// ── Personas ──
+function fpFiltrar(){
+  const q = sinTil(FP.q), mes = HOY.getMonth();
+  return H('Personas').filter(p => {
+    const pid = p['ID Persona'];
+    if (q && !sinTil([p['Nombre completo'], p['Arcano nacimiento'], p['Arcano anual'], p['Teléfono'], p['Canal de llegada'], p['Cómo llegó a Mi Luz'], p['Referida por'], p['Email']].join(' ')).includes(q)) return false;
+    if (FP.enc && !asisDe(pid).some(a => a['ID Encuentro'] === FP.enc)) return false;
+    if (FP.canal && String(p['Canal de llegada'] || '') !== FP.canal) return false;
+    const c = FP.cat;
+    if (c === 'deben') return debeDe(pid) > 0;
+    if (c === 'nunca') return !esOrg(p) && vecesVino(pid) === 0;
+    if (c === 'frecuentes') return vecesVino(pid) >= (+D.params.frecuente || 3);
+    if (c === 'cumple') { const f = fecha(p['Fecha de nacimiento']); return f && f.getMonth() === mes; }
+    if (c === 'premium') return /premium/i.test(p['Plan'] || '') && (!fecha(p['Premium hasta']) || fecha(p['Premium hasta']) >= HOY);
+    if (c === 'gratis') return !/premium/i.test(p['Plan'] || '') && !esOrg(p);
+    if (c === 'miluz') return !!p['Código portal'];
+    return true;
+  });
+}
+function fpTabla(){ const L = fpFiltrar(), tot = H('Personas').length; return `<p class="ayuda fp-cuenta">${L.length === tot ? 'Mostrando las ' + tot + ' personas.' : 'Mostrando ' + L.length + ' de ' + tot + ' personas.'}${L.length !== tot ? ' <button class="enlace" type="button" data-fplimpiar>Quitar filtros</button>' : ''}</p>` + tablaPersonas(L); }
+function fpBarra(){
+  const encs = encOrden().slice().reverse(), canales = [...new Set(H('Personas').map(p => String(p['Canal de llegada'] || '').trim()).filter(Boolean))].sort();
+  const CATS = [['todas', 'Todas'], ['deben', '💸 Deben'], ['nunca', '🌱 Nunca vinieron'], ['frecuentes', '⭐ Frecuentes'], ['cumple', '🎂 Cumplen este mes'], ['premium', '💎 Premium'], ['gratis', 'Gratis'], ['miluz', '🌙 Con Mi Luz']];
+  return `<div class="filtros-crm"><input class="campo" id="fp-q" type="search" placeholder="Buscar por nombre, arcano, teléfono, canal…" value="${esc(FP.q)}">
+    <select class="campo" id="fp-enc"><option value="">Todos los encuentros</option>${encs.map(t => `<option value="${esc(t['ID Encuentro'])}"${FP.enc === t['ID Encuentro'] ? ' selected' : ''}>Anotadas en: ${ddmm(fecha(t['Fecha']))} · ${esc(recortar(t['Nombre / temática'], 30))}</option>`).join('')}</select>
+    <select class="campo" id="fp-canal"><option value="">Cualquier canal de llegada</option>${canales.map(c => `<option${FP.canal === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+    <div class="chips-filtro">${CATS.map(([k, t]) => `<button type="button" class="chip${FP.cat === k ? ' on' : ''}" data-fpcat="${k}">${t}</button>`).join('')}</div>`;
+}
+(function(){
+  const _vp = V.personas;
+  V.personas = () => _vp()
+    .replace('<div class="herramientas"><input class="campo buscador" id="buscar" type="search" placeholder="Buscar por nombre o arcano"></div>', fpBarra())
+    .replace('<div id="tabla-personas">' + tablaPersonas(H('Personas')) + '</div>', () => '<div id="tabla-personas">' + fpTabla() + '</div>');
+})();
+const fpRepintar = () => { const t = $('tabla-personas'); if (t) t.innerHTML = fpTabla(); };
+const mzRepintar = () => { const t = $('mz-caja'); if (t) t.innerHTML = mzTabla(); };
+document.addEventListener('input', e => {
+  if (e.target.id === 'fp-q') { FP.q = e.target.value; fpRepintar(); }
+  if (e.target.id === 'mz-q') { MZ.q = e.target.value; mzRepintar(); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id;
+  if (id === 'fp-enc') { FP.enc = e.target.value; fpRepintar(); }
+  if (id === 'fp-canal') { FP.canal = e.target.value; fpRepintar(); }
+  if (id === 'mz-ver') { MZ.ver = e.target.value; MZ.pag = 0; mzRepintar(); }
+  if (id === 'mz-per') { MZ.per = e.target.value; mzRepintar(); }
+});
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-fpcat]'); if (c) { FP.cat = c.dataset.fpcat; document.querySelectorAll('[data-fpcat]').forEach(x => x.classList.toggle('on', x === c)); fpRepintar(); return; }
+  if (e.target.closest('[data-fplimpiar]')) { Object.assign(FP, { q: '', enc: '', canal: '', cat: 'todas' }); pintar(); return; }
+  const p = e.target.closest('[data-mzpag]'); if (p) { MZ.pag = Math.max(0, MZ.pag + +p.dataset.mzpag); mzRepintar(); }
+});
 </script>
 </body>
 </html>
