@@ -1206,6 +1206,7 @@ function abrirPago(a){
   pagos.forEach(x => hist.push({ f: x['Fecha'], m: x['Monto'], q: x['Cobró'], t: 'Pago', r: x }));
   modal('Registrar pago de ' + esc(String(a['Nombre']).split(' ')[0]),
     `<p class="ayuda" style="margin-top:0">${esc(a['Encuentro'])}</p>
+     ${invConPago(a) ? `<div class="aviso" style="margin:0 0 12px"><p><b>🎁 Está marcada como invitada, pero figura que pagó ${esc(a['Total pagado'])}.</b> Si en realidad no pagó, tocá "Borrar sus pagos" y esa plata deja de contar como cobrada y repartida.</p><button class="btn" type="button" id="pg-sinpago">🎁 Borrar sus pagos: no pagó nada</button></div>` : ''}
      <div class="resumen-pago"><div><span>Precio</span><b>${esc(a['Precio'] || '—')}</b></div><div><span>Pagado</span><b>${esc(a['Total pagado'] || '$0')}</b></div><div><span>Falta</span><b style="color:${falta > 0 ? 'var(--oro)' : 'var(--ok)'}">${falta > 0 ? esc(a['Pendiente']) : 'Nada ✓'}</b></div></div>
      <div class="form"><label>Monto que pagó ahora *<input class="campo" type="number" id="pg-monto" min="0" step="100" inputmode="numeric" value="${falta || ''}"></label>
      <label>Lo cobró<select class="campo" id="pg-quien">${optCobro().map(x => `<option${x === QUIEN ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
@@ -1213,6 +1214,15 @@ function abrirPago(a){
      <label>Fecha<input class="campo" type="date" id="pg-fecha" value="${iso(HOY)}"></label></div>
      ${hist.length ? '<h3 style="margin:22px 0 8px">Pagos anteriores</h3><ul class="tareas">' + hist.map(h2 => `<li class="tarea"><div class="txt">${esc(h2.m)} · ${esc(h2.t)}<small>${esc(h2.f || '')}${h2.q ? ' · cobró ' + esc(h2.q) : ''}</small></div>${h2.r ? `<div class="bt">${acciones('Pagos', h2.r)}</div>` : ''}</li>`).join('') + '</ul>' : ''}`,
     `${falta > 0 && !num(a['Total pagado']) ? '<button class="btn-sec" type="button" id="pg-invitada">🎁 Era invitada (no paga)</button>' : ''}${falta > 0 ? '<button class="btn-sec" type="button" id="pg-perdonar">No le cobramos el resto</button>' : ''}<button class="btn-sec" type="button" data-cerrar>Cancelar</button><button class="btn" type="button" id="pg-ok">Guardar pago</button>`);
+  if ($('pg-sinpago')) $('pg-sinpago').onclick = async ev => {
+    if (!confirm('¿Borrar todos los pagos de ' + String(a['Nombre']).split(' ')[0] + ' en este encuentro? Queda como invitada, sin pagar y sin deber.')) return;
+    ev.target.disabled = true; ev.target.textContent = 'Borrando…';
+    try {
+      for (const x of pagos.slice().sort((u, v) => v._fila - u._fila)) await enviar({ accion: 'borrar', hoja: 'Pagos', fila: x._fila, original: x['ID Persona'] });
+      if (num(a['Seña']) || num(a['Resto pagado'])) await enviar({ accion: 'editar', hoja: 'Asistencias', fila: a._fila, original: a['ID Encuentro'], datos: { 'Seña': '', 'Cobró seña': '', 'Resto pagado': '', 'Cobró resto': '' } });
+      $('modal').close(); toast('🎁 Listo: quedó como invitada, sin pagos ✓'); await cargar(true);
+    } catch (err) { toast(err.message, true); ev.target.disabled = false; }
+  };
   if ($('pg-invitada')) $('pg-invitada').onclick = async ev => {
     if (!confirm('¿Marcar a ' + String(a['Nombre']).split(' ')[0] + ' como invitada? No paga nada y deja de figurar como deuda. Sigue contando como que vino.')) return;
     ev.target.disabled = true;
@@ -1234,7 +1244,7 @@ function abrirPago(a){
     } catch (err) { toast(err.message, true); ev.target.disabled = false; ev.target.textContent = 'Guardar pago'; }
   };
 }
-const btnPago = a => num(a['Pendiente']) > 0 ? `<button class="ic" type="button" title="Registrar pago" data-pago="${a._fila}">💰</button>` : '';
+const btnPago = a => num(a['Pendiente']) > 0 || invConPago(a) ? `<button class="ic" type="button" title="Registrar pago" data-pago="${a._fila}">💰</button>` : '';
 
 function filaPago(o){
   // o: { pid, tid, titulo, sub, precio, pasado }
@@ -1697,7 +1707,7 @@ function tabla(cols, datos, vacio){
 }
 const acciones = (hoja, r) => `<button class="ic" type="button" title="Editar" data-editar="${hoja}|${r._fila}">✎</button><button class="ic" type="button" title="Borrar" data-borrar="${hoja}|${r._fila}">🗑</button>`;
 const colAcc = hoja => ({ t:'', acc:1, f: r => acciones(hoja, r) });
-function estadoPago(e){ if (e === 'Invitada') return '<span class="estado e-inv">🎁 Invitada</span>'; const c = e === 'Pagó total' ? 'e-ok' : e === 'Señado' ? 'e-sena' : e === 'Debe' ? 'e-debe' : 'e-neutro'; return e ? `<span class="estado ${c}">${esc(e)}</span>` : ''; }
+function estadoPago(e){ if (e === 'Invitada con pago') return '<span class="estado e-debe">⚠️ Invitada con pago</span>'; if (e === 'Invitada') return '<span class="estado e-inv">🎁 Invitada</span>'; const c = e === 'Pagó total' ? 'e-ok' : e === 'Señado' ? 'e-sena' : e === 'Debe' ? 'e-debe' : 'e-neutro'; return e ? `<span class="estado ${c}">${esc(e)}</span>` : ''; }
 function barras(pares, fmt){
   if (!pares.length) return '<p class="ayuda">Todavía no hay datos para mostrar.</p>';
   const max = Math.max(...pares.map(p => p[1])) || 1;
@@ -3285,8 +3295,9 @@ function intEncChips(t){
 })();
 
 /* v26c: personas invitadas (no pagan y no deben) */
+const invConPago = a => !!a && num(a['Precio']) > 0 && num(a['Descuento']) >= num(a['Precio']) && num(a['Total pagado']) > 0;
 const esInvitada = a => !!a && num(a['Precio']) > 0 && num(a['Descuento']) >= num(a['Precio']) && num(a['Total pagado']) <= 0 && a['Asistencia'] !== 'Canceló';
-function marcarInvitadas(){ H('Asistencias').forEach(a => { if (esInvitada(a)) a['Estado de pago'] = 'Invitada'; }); }
+function marcarInvitadas(){ H('Asistencias').forEach(a => { if (esInvitada(a)) a['Estado de pago'] = 'Invitada'; else if (invConPago(a)) a['Estado de pago'] = 'Invitada con pago'; }); }
 (function(){ const st = document.createElement('style'); st.textContent = '.estado.e-inv{background:rgba(185,138,230,.18);color:#d9c2f5;border:1px solid rgba(185,138,230,.45)}'; document.head.appendChild(st); })();
 </script>
 </body>
