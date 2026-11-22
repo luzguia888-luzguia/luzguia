@@ -415,6 +415,7 @@ nav.lateral .pestana[aria-selected="true"] svg{opacity:1;filter:drop-shadow(0 0 
 .mz-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}.mz-nav span{color:var(--lila);font-size:.88rem}.mz-nav button[disabled]{opacity:.4;cursor:default}
 .mz-scroll{overflow-x:auto}.matriz td:last-child,.matriz th:last-child{position:sticky;right:0;background:var(--ciruela);z-index:1}.matriz th:last-child{background:var(--violeta)}
 .fp-cuenta .enlace,[data-fplimpiar]{background:none;border:0;color:var(--oro,#D4AF6A);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+.int-enc{padding:12px 14px;border-radius:14px;border:1px solid rgba(212,175,106,.4);background:rgba(255,255,255,.03);margin:0 0 12px}.int-enc>b{display:block}.int-enc>span{display:block;font-size:.85rem;color:var(--bruma);margin:2px 0 8px}.int-bts{display:flex;flex-wrap:wrap;gap:6px}.int-bts .chip.on{background:var(--oro,#D4AF6A);color:#1C0B2E;border-color:var(--oro,#D4AF6A)}
 </style>
 </head>
 <body>
@@ -3201,6 +3202,59 @@ document.addEventListener('click', e => {
   const c = e.target.closest('[data-fpcat]'); if (c) { FP.cat = c.dataset.fpcat; document.querySelectorAll('[data-fpcat]').forEach(x => x.classList.toggle('on', x === c)); fpRepintar(); return; }
   if (e.target.closest('[data-fplimpiar]')) { Object.assign(FP, { q: '', enc: '', canal: '', cat: 'todas' }); pintar(); return; }
   const p = e.target.closest('[data-mzpag]'); if (p) { MZ.pag = Math.max(0, MZ.pag + +p.dataset.mzpag); mzRepintar(); }
+});
+
+/* v26: interruptores por encuentro (fotos con marco, marcos navideños, juego), promos que vencen solas y decoración navideña */
+(function(){
+  const E = ESQ.Encuentros.campos;
+  if (!E.some(c => c.k === 'Fotos con marco')) E.splice(E.findIndex(c => c.k === 'Notas'), 0,
+    { k: 'Fotos con marco', t: 'sel', o: () => ['Sí', 'No'], def: 'Sí', lab: '📸 Fotos con marco en Mi Luz (el día del encuentro y el siguiente)' },
+    { k: 'Marcos navideños', t: 'sel', o: () => ['Automático', 'Sí', 'No'], def: 'Automático', lab: '🎄 Marcos navideños (Automático = solo en diciembre)' },
+    { k: 'Juego de la noche', t: 'sel', o: () => ['Sí', 'No'], def: 'Sí', lab: '🍷 Juego de la noche en Mi Luz' });
+  const Pr = ESQ.Promociones.campos;
+  if (!Pr.some(c => c.k === 'Hasta')) Pr.splice(Pr.findIndex(c => c.k === 'Activa') + 1, 0, { k: 'Hasta', t: 'date', lab: '⏳ Se oculta sola después de esta fecha (opcional; las de "Nuevas fechas" también se ocultan cuando pasa el encuentro)' });
+})();
+const siNo = v => !/^no/i.test(String(v || ''));
+// Hoy: en el día del encuentro, los interruptores a mano
+(function(){
+  const _vh = V.hoy;
+  V.hoy = () => {
+    let h = _vh();
+    try {
+      const L = encuentrosParaEscanear(); if (!L.length) return h;
+      const caja = L.map(t => `<div class="int-enc"><b>🎛️ ${esc(t['Nombre / temática'])}</b><span>Lo que ven las participantes en Mi Luz (tocá cada botón para prenderlo o apagarlo):</span><div class="int-bts">
+        <button class="chip${siNo(t['Fotos con marco']) ? ' on' : ''}" type="button" data-intenc="${t._fila}|Fotos con marco|${siNo(t['Fotos con marco']) ? 'No' : 'Sí'}">📸 Fotos con marco: ${siNo(t['Fotos con marco']) ? 'Sí' : 'No'}</button>
+        <button class="chip${siNo(t['Juego de la noche']) ? ' on' : ''}" type="button" data-intenc="${t._fila}|Juego de la noche|${siNo(t['Juego de la noche']) ? 'No' : 'Sí'}">🍷 Juego: ${siNo(t['Juego de la noche']) ? 'Sí' : 'No'}</button>
+        <button class="chip${/^s[ií]/i.test(t['Marcos navideños'] || '') || (!/^no/i.test(t['Marcos navideños'] || '') && HOY.getMonth() === 11) ? ' on' : ''}" type="button" data-intenc="${t._fila}|Marcos navideños|${/^s[ií]/i.test(t['Marcos navideños'] || '') ? 'No' : /^no/i.test(t['Marcos navideños'] || '') ? 'Automático' : 'Sí'}">🎄 Navideños: ${esc(t['Marcos navideños'] || 'Automático')}</button></div></div>`).join('');
+      const i = h.indexOf('<ul class="tareas">'); return i > -1 ? h.slice(0, i) + caja + h.slice(i) : h + caja;
+    } catch (e) { console.error(e); return h; }
+  };
+})();
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-intenc]'); if (!b) return;
+  const [fila, campo, val] = b.dataset.intenc.split('|'), rec = H('Encuentros').find(t => String(t._fila) === fila); if (!rec) return;
+  b.disabled = true; try { await guardarCambios('Encuentros', rec, { [campo]: val }, campo + ': ' + val); } catch (er) { toast(er.message, true); b.disabled = false; }
+});
+// Promociones: pausar o activar con un toque, y ver si venció
+(function(){
+  const _vm = V.miluz;
+  V.miluz = () => {
+    let h = _vm();
+    try {
+      h = h.replace(/<button class="ic" type="button" title="Editar" data-editar="Promociones\|(\d+)">/g, (m, f) => { const r = H('Promociones').find(x => String(x._fila) === f); if (!r) return m; const on = si(r['Activa']); return `<button class="ic" type="button" title="${on ? 'Pausar' : 'Activar'}" data-promotog="${f}">${on ? '⏸' : '▶️'}</button>` + m; });
+      h = h.replace('<h3 style="margin-top:8px">Promociones</h3>', `<h3 style="margin-top:8px">Promociones</h3><p class="ayuda" style="margin-top:0">⏸ pausa una promoción y ▶️ la vuelve a activar. Las de "Nuevas fechas" se ocultan solas cuando pasa el encuentro, y cualquier promoción con fecha "Hasta" se oculta sola después de ese día.</p>`);
+      const deco = String(D.params.decoNavidad || 'Automático');
+      const caja = `<div class="tabla-caja" style="padding:14px 16px;margin-bottom:14px"><p style="margin:0 0 8px"><b>🎄 Decoración navideña en Mi Luz</b></p><p class="ayuda" style="margin:0 0 10px">Lucecitas, estrellas que caen y saludos de fiestas. "Automático" la prende del 1 al 31 de diciembre.</p><div class="int-bts">${['Automático', 'Sí', 'No'].map(v => `<button class="chip${deco === v ? ' on' : ''}" type="button" data-deco="${v}">${v === 'Sí' ? 'Encendida' : v === 'No' ? 'Apagada' : 'Automático'}</button>`).join('')}</div></div>`;
+      const i = h.indexOf('<h3'); h = i > -1 ? h.slice(0, i) + caja + h.slice(i) : h + caja;
+    } catch (e) { console.error(e); }
+    return h;
+  };
+})();
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-promotog]');
+  if (t) { const r = H('Promociones').find(x => String(x._fila) === t.dataset.promotog); if (!r) return; t.disabled = true; try { await guardarCambios('Promociones', r, { 'Activa': !si(r['Activa']) }, si(r['Activa']) ? 'Promoción pausada' : 'Promoción activada'); } catch (er) { toast(er.message, true); t.disabled = false; } return; }
+  const d = e.target.closest('[data-deco]');
+  if (d) { d.disabled = true; try { const r = await enviar({ accion: 'config', celda: 'B28', valor: d.dataset.deco }); D.params.decoNavidad = r.valor != null ? r.valor : d.dataset.deco; toast('Decoración navideña: ' + d.textContent); pintar(); } catch (er) { toast(er.message, true); d.disabled = false; } }
 });
 </script>
 </body>

@@ -923,6 +923,17 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .lg-enl-lista li{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,106,.2)}
 .lg-enl-lista .ic{font-size:1.3rem}.lg-enl-lista b{display:block;font-size:.95rem}.lg-enl-lista small{color:#BDB2CF;font-size:.75rem;word-break:break-all}
 .lg-enl-lista .bts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}.lg-enl-lista .bts button{flex:1 1 120px;font-size:.85rem;padding:8px 10px}.lg-enl-lista button.ok{border-color:#8FD69B;color:#8FD69B}
+
+/* v54: navidad */
+.nv-luces{position:relative;height:26px;margin:2px -6px -6px;pointer-events:none}.nv-luces svg{position:absolute;inset:0;width:100%;height:100%}
+.nv-luces i{position:absolute;width:7px;height:11px;margin-left:-3.5px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c);box-shadow:0 0 8px 2px var(--c);animation:nvBrillo 2.2s ease-in-out infinite}
+.nv-luces i::before{content:"";position:absolute;left:1.5px;top:-3px;width:4px;height:4px;background:#5b4a3a;border-radius:1px}
+@keyframes nvBrillo{0%,100%{opacity:1}50%{opacity:.35;box-shadow:0 0 2px 0 var(--c)}}
+.nv-nieve{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.nv-caja{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:18px;border:1px solid rgba(243,220,160,.55);background:radial-gradient(circle at 90% 0,rgba(200,36,60,.25),transparent 55%),linear-gradient(150deg,rgba(31,90,58,.35),rgba(28,11,46,.8));margin:14px 0;box-shadow:0 0 24px rgba(243,220,160,.12)}
+.nv-caja>span{font-size:2rem;line-height:1}.nv-caja small{display:block;color:#9BE3C4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.nv-caja b{display:block;font-family:var(--serif);font-size:1.35rem;color:#F3DCA0}.nv-caja p{margin:4px 0 8px;font-size:.92rem;line-height:1.5}
+.nv-bt{background:none;border:0;padding:4px 0;color:var(--bruma);font:inherit;font-size:.82rem;text-decoration:underline;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.nv-luces i{animation:none}}
 </style>
 </head>
 <body>
@@ -8300,6 +8311,212 @@ document.addEventListener('click', async e => {
   setTimeout(() => { b.textContent = orig; b.classList.remove('ok'); }, 1800);
 });
 (function(){ const _n = novedadesHTML; novedadesHTML = function(){ const h = _n(); try { return enlacesOrgHTML() + h; } catch (e) { return h; } }; })();
+
+/* ───── v54: fotos y juego solo cuando hay encuentro (se prenden desde el CRM), marcos navideños, promos que vencen solas y decoración navideña ───── */
+const FM_BASE = FM_ESTILOS.slice(), FM_NAV = [['estrella', '🌟 Estrella'], ['luces', '💡 Lucecitas'], ['navpolaroid', '🎄 Navideña']];
+function fechaDe(s){ const m = String(s || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; }
+// el encuentro "activo" para las fotos: el de hoy o el de ayer, si las organizadoras dejaron las fotos prendidas
+encuentroHoy = function(){
+  if (Array.isArray(P.fotosEnc)) return P.fotosEnc[0] || null;
+  const h = new Date(); // Code.gs viejo: solo el día del encuentro
+  return (P.encuentros || []).find(e => { const f = fechaDe(e.fecha); return f && f.toDateString() === h.toDateString(); }) || null;
+};
+const esHoyEnc = e => { const f = e && fechaDe(e.fecha); return !f || f.toDateString() === new Date().toDateString(); };
+function marcosNavOn(e){ const v = String((e && e.navidad) || 'Automático'); return /^s[ií]/i.test(v) || (!/^no/i.test(v) && new Date().getMonth() === 11); }
+function fmSyncEstilos(){
+  const e = encuentroHoy(), L = FM_BASE.concat(marcosNavOn(e) ? FM_NAV : []);
+  FM_ESTILOS.length = 0; L.forEach(x => FM_ESTILOS.push(x));
+  if (!FM_ESTILOS.some(x => x[0] === FM.estilo)) FM.estilo = FM_ESTILOS[0][0];
+}
+fmFotoHTML = function(destacado){
+  const e = encuentroHoy(); if (!e) return '';
+  fmSyncEstilos();
+  const hoy = esHoyEnc(e), nav = marcosNavOn(e);
+  return `<div class="fm-caja${destacado ? ' hoy' : ''}"><span>${nav ? '🎄' : '📸'}</span><div><small>${hoy ? 'Hoy es el encuentro' : 'Ayer fue el encuentro'}</small><b>${hoy ? 'Sacate una foto en ' + esc(e.nombre) : 'Compartí tu foto de ' + esc(e.nombre)}</b><p>Elegí uno de los ${FM_ESTILOS.length === 6 ? 'seis' : 'tres'} marcos${nav ? ' (¡hay tres navideños!)' : ''} y compartila en tus historias. ¡Etiquetanos en @luzguia2020! 💜</p>
+    <div class="fila-bt" style="justify-content:flex-start"><label class="btn fm-btn">📸 Sacar foto<input type="file" accept="image/*" capture data-fmfoto hidden></label><label class="btn-sec fm-btn">🖼️ Elegir de la galería<input type="file" accept="image/*" data-fmfoto hidden></label></div></div></div>`;
+};
+(function(){ const _fa = fmAbrir; fmAbrir = function(){ fmSyncEstilos(); return _fa.apply(this, arguments); }; })();
+
+// marcos navideños
+function fmPie(c, W, y, s){ if (FM.logo) c.drawImage(FM.logo, W / 2 - 40 * s, y - 92 * s, 80 * s, 80 * s); c.textAlign = 'center'; c.fillStyle = 'rgba(243,220,160,.95)'; c.font = `500 ${26 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('DESDE LA APP MI LUZ · LUZ GUÍA', W / 2, y + 10 * s); c.letterSpacing = '0px'; c.font = `400 ${24 * s}px Jost, sans-serif`; c.fillStyle = 'rgba(241,236,247,.75)'; c.fillText('luzguia.com.ar · @luzguia2020', W / 2, y + 46 * s); }
+function fmEstrella(c, x, y, R, r, puntas){ puntas = puntas || 5; c.beginPath(); for (let i = 0; i < puntas * 2; i++) { const a = -Math.PI / 2 + i * Math.PI / puntas, q = i % 2 ? r : R; c.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } c.closePath(); }
+function fmGuirnalda(c, x0, x1, y, caida, n, s, colores, fase){
+  // cable con caída (catenaria simple) y lamparitas encendidas
+  c.strokeStyle = 'rgba(40,24,20,.9)'; c.lineWidth = 3 * s; c.beginPath();
+  for (let i = 0; i <= 40; i++) { const t = i / 40, x = x0 + (x1 - x0) * t, yy = y + caida * 4 * t * (1 - t); i ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke();
+  for (let i = 0; i < n; i++) {
+    const t = (i + .5) / n, x = x0 + (x1 - x0) * t, yy = y + caida * 4 * t * (1 - t), col = colores[(i + (fase || 0)) % colores.length];
+    c.save(); c.translate(x, yy + 6 * s); c.rotate((t - .5) * .6);
+    c.fillStyle = '#5b4a3a'; c.fillRect(-5 * s, -4 * s, 10 * s, 9 * s);
+    c.shadowColor = col; c.shadowBlur = 26 * s; c.fillStyle = col; c.beginPath(); c.ellipse(0, 17 * s, 9 * s, 14 * s, 0, 0, 6.283); c.fill();
+    c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.ellipse(-3 * s, 12 * s, 2.5 * s, 5 * s, 0, 0, 6.283); c.fill(); c.restore();
+  }
+}
+function fmRama(c, x, y, largo, ang, s){
+  // rama de pino: un tallo con agujitas
+  c.save(); c.translate(x, y); c.rotate(ang); c.strokeStyle = '#3d2a1e'; c.lineWidth = 5 * s; c.beginPath(); c.moveTo(0, 0); c.lineTo(largo, 0); c.stroke();
+  for (let i = 8 * s; i < largo; i += 9 * s) { const k = 1 - i / largo * .45, l = 34 * s * k; ['#1f5a3a', '#2e7a4e', '#256a44'].forEach((col, j) => { c.strokeStyle = col; c.lineWidth = 2.4 * s; c.beginPath(); c.moveTo(i, 0); c.lineTo(i + l * .55, -l * (.7 + j * .08)); c.moveTo(i, 0); c.lineTo(i + l * .55, l * (.7 + j * .08)); c.stroke(); }); }
+  c.restore();
+}
+function fmBayas(c, x, y, s){ [[0, 0], [16, -6], [8, 13]].forEach(([dx, dy]) => { c.fillStyle = '#c8243c'; c.shadowColor = 'rgba(0,0,0,.4)'; c.shadowBlur = 6 * s; c.beginPath(); c.arc(x + dx * s, y + dy * s, 10 * s, 0, 6.283); c.fill(); c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,.6)'; c.beginPath(); c.arc(x + (dx - 3) * s, y + (dy - 3) * s, 2.6 * s, 0, 6.283); c.fill(); }); }
+function fmNieve(c, W, H, n, sem){ const r = sjRand(sem); for (let i = 0; i < n; i++) { c.globalAlpha = .25 + r() * .6; c.fillStyle = '#fff'; c.beginPath(); c.arc(r() * W, r() * H, r() * 3.2 + .8, 0, 6.283); c.fill(); } c.globalAlpha = 1; }
+(function(){
+  const _fd = fmDibujar;
+  fmDibujar = async function(cv){
+    if (!FM_NAV.some(x => x[0] === FM.estilo)) return _fd.apply(this, arguments);
+    if (!FM.img) return; await sjFuentes();
+    if (!FM.logo) FM.logo = await imgCon(['icono-192.png']);
+    const c = cv.getContext('2d'), W = cv.width, H = cv.height, s = W / 1080, im = FM.img, e = encuentroHoy(), nom = e ? e.nombre : 'Encuentro de Luz Guía';
+    const d = (e && fechaDe(e.fecha)) || new Date(), fecha = d.getDate() + ' de ' + MESES[d.getMonth()] + ' de ' + d.getFullYear();
+    const COL = ['#FFD86B', '#E8A0B4', '#B98AE6', '#9BE3C4', '#FFF2CC', '#F28C6B'];
+    c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.shadowBlur = 0; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    if (FM.estilo === 'estrella') {
+      fmFoto(c, im, 0, 0, W, H);
+      const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(18,8,32,.85)'); g.addColorStop(.22, 'rgba(18,8,32,0)'); g.addColorStop(.7, 'rgba(18,8,32,0)'); g.addColorStop(1, 'rgba(18,8,32,.92)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      fmNieve(c, W, H, 120, 41);
+      // guirnalda dorada de cuentas
+      [[-40 * s, W / 2], [W / 2, W + 40 * s]].forEach(([a, b]) => { const y = 26 * s, k = 90 * s, P2 = t => [a + (b - a) * t, y + k * 4 * t * (1 - t)];
+        c.strokeStyle = 'rgba(243,220,160,.85)'; c.lineWidth = 3 * s; c.beginPath(); for (let i = 0; i <= 40; i++) { const [x, yy] = P2(i / 40); i ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke();
+        for (let i = 1; i < 14; i++) { const [x, yy] = P2(i / 14); c.shadowColor = '#FFD86B'; c.shadowBlur = 14 * s; c.fillStyle = i % 3 ? '#F3DCA0' : '#E8A0B4'; c.beginPath(); c.arc(x, yy, (i % 3 ? 6 : 8) * s, 0, 6.283); c.fill(); } c.shadowBlur = 0; });
+      // la estrella
+      const sx = W / 2, sy = 150 * s; const gl = c.createRadialGradient(sx, sy, 0, sx, sy, 190 * s); gl.addColorStop(0, 'rgba(255,230,150,.55)'); gl.addColorStop(1, 'rgba(255,230,150,0)'); c.fillStyle = gl; c.fillRect(sx - 200 * s, sy - 200 * s, 400 * s, 400 * s);
+      c.shadowColor = '#FFD86B'; c.shadowBlur = 40 * s; const gs = c.createLinearGradient(sx, sy - 80 * s, sx, sy + 80 * s); gs.addColorStop(0, '#FFF2CC'); gs.addColorStop(1, '#D4AF6A'); c.fillStyle = gs; fmEstrella(c, sx, sy, 78 * s, 32 * s); c.fill(); c.shadowBlur = 0;
+      c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 2 * s; c.stroke();
+      c.fillStyle = '#F3DCA0'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 7 * s + 'px'; c.fillText('✦ ESTOY EN EL ENCUENTRO ✦', W / 2, 290 * s); c.letterSpacing = '0px';
+      c.fillStyle = '#fff'; c.font = `600 ${64 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 16 * s; sjLineas(c, nom, 900 * s).slice(0, 2).forEach((l, i) => c.fillText(l, W / 2, (360 + i * 66) * s)); c.shadowBlur = 0;
+      c.fillStyle = '#F3DCA0'; c.font = `${86 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 14 * s; c.fillText('Felices fiestas', W / 2, H - 300 * s); c.shadowBlur = 0;
+      c.fillStyle = '#E8A0B4'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.fillText(fecha, W / 2, H - 236 * s);
+      fmPie(c, W, H - 130 * s, s);
+    } else if (FM.estilo === 'luces') {
+      const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2a1048'); g.addColorStop(1, '#0e0718'); c.fillStyle = g; c.fillRect(0, 0, W, H); fmEstrellas(c, W, H, 200, 57);
+      const px = 90 * s, py = 300 * s, pw = W - 180 * s, ph = 1150 * s, rr = 40 * s;
+      c.save(); c.beginPath(); c.roundRect(px, py, pw, ph, rr); c.clip(); fmFoto(c, im, px, py, pw, ph); c.restore();
+      c.strokeStyle = 'rgba(243,220,160,.8)'; c.lineWidth = 3 * s; c.beginPath(); c.roundRect(px, py, pw, ph, rr); c.stroke();
+      // lucecitas alrededor de la foto
+      fmGuirnalda(c, px - 40 * s, W / 2, py - 30 * s, 70 * s, 7, s, COL, 0); fmGuirnalda(c, W / 2, px + pw + 40 * s, py - 30 * s, 70 * s, 7, s, COL, 3);
+      fmGuirnalda(c, px - 40 * s, W / 2, py + ph + 10 * s, 50 * s, 6, s, COL, 1); fmGuirnalda(c, W / 2, px + pw + 40 * s, py + ph + 10 * s, 50 * s, 6, s, COL, 4);
+      c.fillStyle = '#F3DCA0'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 7 * s + 'px'; c.fillText('ESTA NOCHE EN LUZ GUÍA', W / 2, 120 * s); c.letterSpacing = '0px';
+      c.fillStyle = '#fff'; c.font = `600 ${58 * s}px "Cormorant Garamond", serif`; sjLineas(c, nom, 880 * s).slice(0, 2).forEach((l, i, a) => c.fillText(l, W / 2, (a.length > 1 ? 180 : 205) * s + i * 58 * s));
+      c.fillStyle = '#F3DCA0'; c.font = `${70 * s}px "Great Vibes", cursive`; c.fillText('Que la luz te guíe', W / 2, H - 310 * s);
+      c.fillStyle = '#E8A0B4'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.fillText('en estas fiestas · ' + fecha, W / 2, H - 258 * s);
+      fmPie(c, W, H - 130 * s, s);
+    } else {
+      const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#173a2c'); g.addColorStop(.55, '#2a1048'); g.addColorStop(1, '#120a1e'); c.fillStyle = g; c.fillRect(0, 0, W, H); fmNieve(c, W, H, 220, 73);
+      c.save(); c.translate(W / 2, 880 * s); c.rotate(.035); const pw = 860 * s, ph = 1060 * s;
+      c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 40 * s; c.shadowOffsetY = 18 * s; c.fillStyle = '#FBF6EC'; c.fillRect(-pw / 2, -ph / 2, pw, ph); c.shadowBlur = 0; c.shadowOffsetY = 0;
+      c.save(); c.beginPath(); c.rect(-pw / 2 + 40 * s, -ph / 2 + 40 * s, pw - 80 * s, ph - 230 * s); c.clip(); fmFoto(c, im, -pw / 2 + 40 * s, -ph / 2 + 40 * s, pw - 80 * s, ph - 230 * s); c.restore();
+      c.fillStyle = '#2a5a3e'; c.font = `${72 * s}px "Great Vibes", cursive`; c.fillText('Felices fiestas', 0, ph / 2 - 100 * s); c.fillStyle = '#8a6a9e'; c.font = `500 ${25 * s}px Jost, sans-serif`; c.fillText((nom.length > 34 ? 'Encuentro de Luz Guía' : nom) + ' · ' + fecha, 0, ph / 2 - 50 * s);
+      c.restore();
+      // ramitas de pino con bayas en las esquinas de la polaroid
+      fmRama(c, 60 * s, 380 * s, 300 * s, -.35, s); fmRama(c, 60 * s, 380 * s, 260 * s, .25, s); fmBayas(c, 70 * s, 380 * s, s);
+      fmRama(c, W - 60 * s, 1390 * s, 300 * s, Math.PI + .35, s); fmRama(c, W - 60 * s, 1390 * s, 260 * s, Math.PI - .25, s); fmBayas(c, W - 90 * s, 1390 * s, s);
+      c.save(); c.translate(W - 190 * s, 260 * s); c.rotate(.18); c.fillStyle = '#c8243c'; c.beginPath(); c.arc(0, 0, 92 * s, 0, 6.283); c.fill(); c.strokeStyle = '#F3DCA0'; c.lineWidth = 3 * s; c.setLineDash([6 * s, 6 * s]); c.beginPath(); c.arc(0, 0, 80 * s, 0, 6.283); c.stroke(); c.setLineDash([]);
+      c.fillStyle = '#FFF2CC'; c.font = `600 ${32 * s}px "Cormorant Garamond", serif`; c.fillText('Mi Luz', 0, -4 * s); c.font = `500 ${21 * s}px Jost, sans-serif`; c.fillText('🎄 estuve ahí', 0, 30 * s); c.restore();
+      c.fillStyle = '#F3DCA0'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 7 * s + 'px'; c.fillText('NAVIDAD EN LUZ GUÍA', W / 2, 150 * s); c.letterSpacing = '0px';
+      fmPie(c, W, H - 130 * s, s);
+    }
+  };
+})();
+
+// juego de la noche: la casilla solo aparece si las organizadoras lo dejaron prendido
+(function(){
+  const _n = novedadesHTML;
+  novedadesHTML = function(){
+    let h = _n();
+    try { (P.encuentros || []).filter(e => e.juegoOn === false).forEach(e => { const k = h.indexOf(`data-juego="${esc(e.id)}"`); if (k < 0) return; const a = h.lastIndexOf('<label class="juego-ok">', k), b = h.indexOf('</label>', k); if (a > -1 && b > -1) h = h.slice(0, a) + h.slice(b + 8); }); } catch (e) { console.error(e); }
+    return h;
+  };
+})();
+
+// promos de "Nuevas fechas": se ocultan solas cuando pasa la fecha que anuncian (o si ya no hay encuentros próximos)
+const MES_RX = 'enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre';
+function fechasEnTexto(t){
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const L = [];
+  const mk = (d, m, y) => { if (!(d >= 1 && d <= 31 && m >= 1 && m <= 12)) return; let a = y ? (+y < 100 ? 2000 + +y : +y) : hoy.getFullYear(), f = new Date(a, m - 1, d); if (!y && f - hoy > 200 * 864e5) f = new Date(a - 1, m - 1, d); L.push(f); };
+  String(t || '').toLowerCase().replace(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/g, (x, d, m, y) => { mk(+d, +m, y); return x; })
+    .replace(new RegExp('\\b(\\d{1,2})\\s+de\\s+(' + MES_RX + ')(?:\\s+(?:de\\s+)?(\\d{4}))?', 'g'), (x, d, m, y) => { mk(+d, MESES.indexOf(m === 'setiembre' ? 'septiembre' : m) + 1, y); return x; });
+  return L;
+}
+function promoVencida(x){
+  if (!x || x.tipo !== 'Nuevas fechas') return false;
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const F = fechasEnTexto((x.titulo || '') + ' ' + (x.frase || ''));
+  if (F.length) return Math.max(...F) < hoy;
+  return !(P.encuentros || []).length;
+}
+function filtrarPromos(){ if (P && Array.isArray(P.promos)) P.promos = P.promos.filter(x => !promoVencida(x)); }
+(function(){ const _a = armarSlides; armarSlides = function(){ try { filtrarPromos(); } catch (e) { console.error(e); } return _a.apply(this, arguments); }; })();
+
+// decoración navideña: lucecitas, estrellas que caen y saludos de fiestas
+function navidadOn(){ const v = String((P && P.decoNavidad) || 'Automático'); if (/^s[ií]/i.test(v)) return true; if (/^no/i.test(v)) return false; return new Date().getMonth() === 11; }
+const sinMovimiento = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+const nieveOn = () => lsGet('luzguia_nieve') !== 'no' && !sinMovimiento();
+function guirnaldaHTML(){
+  const n = 17, COL = ['#FFD86B', '#E8A0B4', '#B98AE6', '#9BE3C4', '#FFF2CC'];
+  const lamp = Array.from({ length: n }, (_, i) => { const t = (i + .5) / n, f = (t * 3) % 1, y = 3 + 14 * 4 * f * (1 - f); return `<i style="left:${(t * 100).toFixed(2)}%;top:${y.toFixed(1)}px;--c:${COL[i % COL.length]};animation-delay:${(i * .37 % 2.2).toFixed(2)}s"></i>`; }).join('');
+  return `<div class="nv-luces" aria-hidden="true"><svg viewBox="0 0 300 30" preserveAspectRatio="none"><path d="M0 3 Q50 31 100 3 Q150 31 200 3 Q250 31 300 3" fill="none" stroke="rgba(243,220,160,.45)" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>${lamp}</div>`;
+}
+const NAV_TIPS = ['Diciembre cierra el ciclo: anotá una cosa que aprendiste este año.', 'Ordená un cajón y regalá lo que ya no usás: abre espacio a lo nuevo.', 'Prendé una vela dorada y agradecé tres momentos lindos del año.', 'Escribí una carta a quien eras en enero. ¿Qué le dirías?', 'Elegí una palabra que quieras que te acompañe el año que viene.', 'Sahumá tu casa con laurel o palo santo para despedir lo viejo.', 'Regalate un ratito de silencio: diez minutos solo para vos.', 'Llamá a alguien que te hizo bien este año y decíselo.'];
+function navidadHTML(){
+  if (!navidadOn()) return '';
+  const h = new Date(), d = h.getDate(), m = h.getMonth(), prox = m === 11 ? h.getFullYear() + 1 : h.getFullYear();
+  let ic = '🎄', k = 'Temporada de fiestas', t, p;
+  if (m === 11 && d === 24) { ic = '🌟'; t = 'Feliz Nochebuena'; p = 'Que esta noche haya paz en tu mesa y luz en tu corazón. Antes de brindar, prendé una vela dorada y agradecé tres cosas de este año.'; }
+  else if (m === 11 && d === 25) { ic = '🎄'; t = 'Feliz Navidad'; p = 'Hoy es un día para recibir: abrazos, descanso y todo lo bueno que sembraste. Que la luz te guíe. 💜'; }
+  else if (m === 11 && d === 31) { ic = '🥂'; t = 'Feliz año nuevo'; p = `Esta noche se cierra un ciclo. Antes de las 12, escribí en un papel tres deseos para ${prox} y guardalo en un sobre con una ramita de canela. ¡Que sea un año lleno de luz!`; }
+  else if (m === 0 && d === 1) { ic = '✨'; t = 'Feliz ' + h.getFullYear(); p = 'Arranca un año nuevo. Mirá tu arcano del año en la pestaña Arcanos: ahí está la energía que te acompaña.'; }
+  else if (m === 11 && d > 25) { ic = '🕯️'; k = 'Cerrando el año'; t = 'Tiempo de soltar'; p = `Escribí lo que no querés llevar a ${prox}, leelo en voz alta y rompé el papel. Lo que se suelta deja lugar.`; }
+  else if (m === 11) { const f = 24 - d; t = f === 1 ? '¡Mañana es Nochebuena!' : `Faltan ${f} días para Nochebuena`; p = NAV_TIPS[d % NAV_TIPS.length]; }
+  else { t = 'Luz Guía está de fiesta'; p = NAV_TIPS[d % NAV_TIPS.length]; }
+  const bt = sinMovimiento() ? '' : `<button class="nv-bt" type="button" data-nieve>${nieveOn() ? '❄️ Apagar las estrellitas que caen' : '✨ Prender las estrellitas que caen'}</button>`;
+  return `<section class="nv-caja"><span aria-hidden="true">${ic}</span><div><small>${k}</small><b>${t}</b><p>${p}</p>${bt}</div></section>`;
+}
+(function(){ const _h = hoyHTML; hoyHTML = function(){ const h = _h(); try { return navidadHTML() + h; } catch (e) { console.error(e); return h; } }; })();
+// estrellitas y nieve que caen (suaves, se pausan si la app no está a la vista)
+const NV = { cv: null, raf: 0, ps: [], t: 0 };
+function nieveArrancar(){
+  if (NV.cv || !navidadOn() || !nieveOn()) return;
+  const cv = document.createElement('canvas'); cv.className = 'nv-nieve'; cv.setAttribute('aria-hidden', 'true'); document.body.appendChild(cv); NV.cv = cv;
+  const c = cv.getContext('2d'), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const medir = () => { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; }; medir(); addEventListener('resize', medir);
+  const nuevo = y => ({ x: Math.random() * innerWidth, y: y == null ? -10 : y, v: 14 + Math.random() * 22, r: 1 + Math.random() * 2.2, a: .3 + Math.random() * .5, f: Math.random() * 6.28, est: Math.random() < .35 });
+  NV.ps = Array.from({ length: innerWidth < 600 ? 22 : 34 }, () => nuevo(Math.random() * innerHeight));
+  const paso = ts => {
+    NV.raf = requestAnimationFrame(paso);
+    if (document.hidden) { NV.t = ts; return; }
+    const dt = Math.min(.1, (ts - (NV.t || ts)) / 1000); if (dt < 1 / 32 && NV.t) return; NV.t = ts;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, innerWidth, innerHeight);
+    NV.ps.forEach((p, i) => {
+      p.y += p.v * dt; p.f += dt * .8; const x = p.x + Math.sin(p.f) * 14;
+      if (p.y > innerHeight + 10) NV.ps[i] = nuevo();
+      c.globalAlpha = p.a;
+      if (p.est) { c.fillStyle = '#F3DCA0'; c.beginPath(); const R = p.r * 2.6; c.moveTo(x, p.y - R); c.quadraticCurveTo(x, p.y, x + R, p.y); c.quadraticCurveTo(x, p.y, x, p.y + R); c.quadraticCurveTo(x, p.y, x - R, p.y); c.quadraticCurveTo(x, p.y, x, p.y - R); c.fill(); }
+      else { c.fillStyle = '#fff'; c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill(); }
+    });
+    c.globalAlpha = 1;
+  };
+  NV.raf = requestAnimationFrame(paso);
+}
+function nieveFrenar(){ cancelAnimationFrame(NV.raf); if (NV.cv) NV.cv.remove(); NV.cv = null; }
+(function(){
+  const _p = pintar;
+  pintar = function(){
+    const r = _p.apply(this, arguments);
+    try {
+      const on = navidadOn(); document.body.classList.toggle('navidad', on);
+      const m = document.querySelector('#portal .marca');
+      if (on && m && !document.querySelector('#portal .nv-luces')) m.insertAdjacentHTML('afterend', guirnaldaHTML());
+      if (on && nieveOn()) nieveArrancar(); else nieveFrenar();
+    } catch (e) { console.error(e); }
+    return r;
+  };
+})();
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-nieve]'); if (!b) return;
+  const on = !nieveOn(); lsSet('luzguia_nieve', on ? 'si' : 'no');
+  if (on) nieveArrancar(); else nieveFrenar();
+  b.textContent = on ? '❄️ Apagar las estrellitas que caen' : '✨ Prender las estrellitas que caen';
+});
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
