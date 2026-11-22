@@ -3256,6 +3256,28 @@ document.addEventListener('click', async e => {
   const d = e.target.closest('[data-deco]');
   if (d) { d.disabled = true; try { const r = await enviar({ accion: 'config', celda: 'B28', valor: d.dataset.deco }); D.params.decoNavidad = r.valor != null ? r.valor : d.dataset.deco; toast('Decoración navideña: ' + d.textContent); pintar(); } catch (er) { toast(er.message, true); d.disabled = false; } }
 });
+
+/* v26b: los interruptores de cada encuentro también en la vista Mi Luz */
+function intEncChips(t){
+  const nav = /^s[ií]/i.test(t['Marcos navideños'] || '') || (!/^no/i.test(t['Marcos navideños'] || '') && HOY.getMonth() === 11);
+  return `<div class="int-bts">
+    <button class="chip${siNo(t['Fotos con marco']) ? ' on' : ''}" type="button" data-intenc="${t._fila}|Fotos con marco|${siNo(t['Fotos con marco']) ? 'No' : 'Sí'}">📸 Fotos con marco: ${siNo(t['Fotos con marco']) ? 'Sí' : 'No'}</button>
+    <button class="chip${siNo(t['Juego de la noche']) ? ' on' : ''}" type="button" data-intenc="${t._fila}|Juego de la noche|${siNo(t['Juego de la noche']) ? 'No' : 'Sí'}">🍷 Juego: ${siNo(t['Juego de la noche']) ? 'Sí' : 'No'}</button>
+    <button class="chip${nav ? ' on' : ''}" type="button" data-intenc="${t._fila}|Marcos navideños|${/^s[ií]/i.test(t['Marcos navideños'] || '') ? 'No' : /^no/i.test(t['Marcos navideños'] || '') ? 'Automático' : 'Sí'}">🎄 Navideños: ${esc(t['Marcos navideños'] || 'Automático')}</button></div>`;
+}
+(function(){
+  const _vm = V.miluz;
+  V.miluz = () => {
+    let h = _vm();
+    try {
+      const L = H('Encuentros').map(t => ({ t, f: fecha(t['Fecha']) })).filter(x => x.f && diasEntre(HOY, x.f) >= -1 && !/Cancelado/.test(x.t['Estado'] || '')).sort((a, b) => a.f - b.f).slice(0, 6);
+      const caja = `<div class="tabla-caja" style="padding:14px 16px;margin-bottom:14px"><p style="margin:0 0 4px"><b>🎛️ Encuentros en Mi Luz</b></p><p class="ayuda" style="margin:0 0 10px">Tocá cada botón para prenderlo o apagarlo. Dorado = prendido. Las fotos con marco se ven el día del encuentro y el siguiente; el juego, solo para quienes están anotadas.</p>
+        ${L.length ? L.map(({ t, f }) => `<div class="int-enc" style="margin:8px 0"><b>${ddmm(f)} · ${esc(t['Nombre / temática'])}</b>${intEncChips(t)}</div>`).join('') : '<p class="ayuda">No hay encuentros próximos. Cuando agendes uno, aparece acá.</p>'}</div>`;
+      const i = h.indexOf('<h3'); h = i > -1 ? h.slice(0, i) + caja + h.slice(i) : h + caja;
+    } catch (e) { console.error(e); }
+    return h;
+  };
+})();
 </script>
 </body>
 </html>
