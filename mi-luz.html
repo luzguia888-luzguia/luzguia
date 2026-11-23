@@ -949,6 +949,19 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 /* v56: numerología de pareja */
 .np-caja{margin:16px 0;padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.4);background:linear-gradient(160deg,rgba(232,160,180,.08),rgba(28,11,46,.4))}.np-caja h4{font-family:var(--serif);color:#F3DCA0;font-size:1.3rem;margin:10px 0 4px}
 .np-nums{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0;text-align:center;font-variant-numeric:lining-nums}.np-nums>i{font-style:normal;color:#F3DCA0;font-size:1.2rem}.np-nums small{display:block;font-size:.72rem;color:#E8A0B4;line-height:1.2}.np-nums b{font-family:var(--serif);font-size:1.8rem;color:#F1ECF7}.np-par b{color:#F3DCA0;font-size:2.3rem;text-shadow:0 0 14px rgba(243,220,160,.5)}
+/* v57: velomancia */
+.vm-ints{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vm-int{display:flex;align-items:center;gap:8px;padding:12px;border-radius:14px;border:1px solid rgba(185,138,230,.35);background:rgba(0,0,0,.18);color:inherit;font:inherit;font-size:.92rem;text-align:left;cursor:pointer}.vm-int span{font-size:1.4rem}.vm-int:hover{border-color:#D4AF6A}
+.vm-prep{display:flex;gap:16px;align-items:center;margin:10px 0}.vm-prep small{color:#E8A0B4;font-size:.78rem}.vm-prep h4{font-family:var(--serif);font-size:1.4rem;color:#F3DCA0;margin:2px 0}.vm-prep p{margin:0;font-size:.88rem;color:var(--bruma)}
+.vm-vela{position:relative;width:46px;height:110px;flex:none}.vm-vela b{position:absolute;bottom:0;left:8px;width:30px;height:74px;border-radius:5px 5px 3px 3px;background:linear-gradient(90deg,color-mix(in srgb,var(--vc) 70%,#000),var(--vc) 45%,color-mix(in srgb,var(--vc) 80%,#fff))}
+.vm-vela i{position:absolute;left:15px;top:6px;width:16px;height:28px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff8d8,#ffcf6b 45%,rgba(255,140,40,.6) 70%,transparent 72%);box-shadow:0 0 22px 8px rgba(255,190,90,.35);animation:vmLlama 1.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes vmLlama{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.08,.94) rotate(3deg)}}
+.vm-ops{display:flex;flex-wrap:wrap;gap:6px}.vm-op{padding:8px 12px;border-radius:999px;border:1px solid rgba(185,138,230,.4);background:rgba(0,0,0,.2);color:var(--texto,#F1ECF7);font:inherit;font-size:.88rem;cursor:pointer}.vm-op.on{background:rgba(212,175,106,.22);border-color:#D4AF6A;color:#F3DCA0;box-shadow:0 0 10px rgba(212,175,106,.25)}
+.vm-res{text-align:center;padding:16px;border-radius:16px;border:1px solid rgba(212,175,106,.5);background:radial-gradient(circle at 50% 0,rgba(255,190,110,.18),transparent 65%);margin:10px 0}.vm-ver{font-size:2rem}.vm-res small{display:block;color:#E8A0B4;font-size:.8rem}.vm-res h4{font-family:var(--serif);font-size:1.5rem;color:#F3DCA0;margin:4px 0}.vm-res p{margin:0}
+.vm-carta{display:flex;gap:12px;align-items:flex-start}.vm-carta .mini{width:74px;flex:none;aspect-ratio:2/3.3;border:1px solid var(--oro);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:var(--oro);background:var(--violeta)}.vm-carta .mini.con-img{padding:3px;overflow:hidden}.vm-carta .mini.con-img img{width:100%;height:100%;object-fit:cover;border-radius:5px}.vm-carta .mini.con-img span{display:none}.vm-carta b{font-family:var(--serif);font-size:1.2rem;color:#F3DCA0}.vm-carta p{margin:4px 0 0}
+.vm-hist{list-style:none;padding:0;margin:6px 0}.vm-hist button{display:flex;width:100%;align-items:center;gap:10px;padding:10px;border:0;border-bottom:1px solid rgba(185,138,230,.18);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}.vm-hist span{font-size:1.3rem}.vm-hist div{flex:1}.vm-hist small{display:block;color:var(--bruma);font-size:.8rem}.vm-hist i{font-style:normal;color:#F3DCA0}
+.vm-colores{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}.vm-colores li{display:flex;gap:10px;align-items:center}.vm-colores i{width:14px;height:34px;border-radius:4px;flex:none;box-shadow:0 0 10px rgba(255,255,255,.15)}.vm-colores b{display:block;font-size:.92rem}.vm-colores span{font-size:.85rem;color:var(--bruma)}
+.vm-hoy{margin:14px 0;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,190,110,.4);background:linear-gradient(160deg,rgba(255,190,110,.1),rgba(28,11,46,.5))}.vm-hoy summary{display:flex;gap:10px;align-items:center;cursor:pointer;list-style:none}.vm-hoy summary::-webkit-details-marker{display:none}.vm-hoy summary>span{font-size:1.6rem}.vm-hoy summary b{display:block}.vm-hoy summary small{color:var(--bruma);font-size:.82rem}
+@media (prefers-reduced-motion:reduce){.vm-vela i{animation:none}}
 </style>
 </head>
 <body>
@@ -8832,6 +8845,125 @@ function parejaNumHTML(o){
   };
   PREM_VENTA.sinastria = (PREM_VENTA.sinastria ? PREM_VENTA.sinastria + ' ' : '') + 'Y su numerología de pareja: el número y el arcano que acompañan siempre al vínculo, su año en pareja y el mes a mes con obstáculos y aprendizajes.';
   const L = PREMIUM_LISTA.find(x => x[0] === 'sinastria'); if (L) L[3] = 'La compatibilidad con tu pareja o con quien quieras: astrología, numerología de pareja (su número, su año y el mes a mes) y horóscopo chino.';
+})();
+
+/* ───── v57: Velomancia · el arte de leer tu vela (Premium, con guía de colores gratis en Hoy) ───── */
+const VM_INT = {
+  amor: { ic: '💗', t: 'Amor', color: ['rosa', '#F2A7C3'], alt: 'roja si es pasión', hierba: 'pétalos de rosa, canela o lavanda', aceite: 'aceite de rosa o de jazmín', dia: 'viernes (día de Venus)', luna: 'creciente', frase: 'Abro mi corazón a un amor que me haga bien.' },
+  dinero: { ic: '💰', t: 'Dinero y trabajo', color: ['verde', '#7BC88F'], alt: 'dorada para el éxito', hierba: 'laurel, canela o albahaca', aceite: 'aceite de canela o de pachulí', dia: 'jueves (día de Júpiter)', luna: 'creciente', frase: 'La abundancia llega a mí por caminos claros y bendecidos.' },
+  proteccion: { ic: '🛡️', t: 'Protección', color: ['blanca', '#F5F1E8'], alt: 'negra para cortar lo negativo', hierba: 'romero, ruda o sal gruesa alrededor', aceite: 'aceite de romero o de eucalipto', dia: 'sábado (día de Saturno)', luna: 'menguante', frase: 'Estoy en mi luz y nada que no sea amor puede tocarme.' },
+  limpieza: { ic: '🌿', t: 'Limpieza energética', color: ['blanca', '#F5F1E8'], alt: 'violeta para transmutar', hierba: 'salvia, romero o palo santo', aceite: 'aceite de lavanda o de salvia', dia: 'lunes o sábado', luna: 'menguante', frase: 'Suelto todo lo que no es mío y vuelvo a mi centro.' },
+  salud: { ic: '🌱', t: 'Salud y bienestar', color: ['celeste', '#9CC9F0'], alt: 'verde para sanar', hierba: 'eucalipto, menta o manzanilla', aceite: 'aceite de eucalipto o de menta', dia: 'domingo (día del Sol)', luna: 'creciente', frase: 'Mi cuerpo sabe sanar y yo lo acompaño con amor.' },
+  claridad: { ic: '🔮', t: 'Claridad para decidir', color: ['amarilla', '#F3D36B'], alt: 'violeta para la intuición', hierba: 'romero, menta o anís estrellado', aceite: 'aceite de limón o de menta', dia: 'miércoles (día de Mercurio)', luna: 'llena', frase: 'Veo con claridad y elijo desde mi verdad.' },
+  deseo: { ic: '✨', t: 'Manifestar un deseo', color: ['dorada', '#E9C46A'], alt: 'naranja para la energía', hierba: 'canela, naranja seca o laurel', aceite: 'aceite de naranja o de vainilla', dia: 'domingo (día del Sol)', luna: 'nueva para sembrarlo, creciente para impulsarlo', frase: 'Lo que deseo ya está en camino hacia mí.' },
+  soltar: { ic: '🍂', t: 'Soltar y cerrar ciclos', color: ['violeta', '#B98AE6'], alt: 'negra para cortar lazos', hierba: 'salvia, ruda o pimienta negra', aceite: 'aceite de ciprés o de mirra', dia: 'sábado (día de Saturno)', luna: 'menguante', frase: 'Agradezco lo vivido y lo dejo ir con amor.' }
+};
+const VM_COLORES = [['Blanca', '#F5F1E8', 'paz, limpieza, protección; reemplaza a cualquier otra'], ['Rosa', '#F2A7C3', 'amor propio, ternura, reconciliación'], ['Roja', '#E0565B', 'pasión, deseo, coraje'], ['Verde', '#7BC88F', 'dinero, trabajo, salud'], ['Dorada', '#E9C46A', 'éxito, abundancia, manifestar'], ['Amarilla', '#F3D36B', 'claridad, estudio, alegría'], ['Naranja', '#F2A65A', 'energía, creatividad, vitalidad'], ['Celeste', '#9CC9F0', 'calma, salud, comunicación'], ['Violeta', '#B98AE6', 'espiritualidad, intuición, transmutar'], ['Negra', '#3a3446', 'cortar lo negativo, absorber, cerrar']];
+const VM_OBS = {
+  llama: { t: '🔥 ¿Cómo está la llama?', o: {
+    alta: ['Alta y firme', 2, 'La energía está fuerte y tu pedido tiene mucha fuerza. Hay buen camino para lo que pediste.'],
+    baja: ['Baja o débil', -1, 'Hay poca energía disponible o algo que frena. Tu pedido va a necesitar más acción de tu parte, o más tiempo.'],
+    baila: ['Titila o baila', 1, 'Hay mucha emoción en juego y la energía se está moviendo. Si baila suave, los espíritus de luz acompañan; si baila nerviosa, hay ansiedad: respirá.'],
+    hacia: ['Se inclina hacia mí', 2, 'La energía viene hacia vos: lo que pediste se acerca.'],
+    lejos: ['Se inclina lejos de mí', 0, 'La energía sale hacia afuera: tu pedido necesita que lo muevas en el mundo (un mensaje, un paso concreto).'],
+    chispas: ['Chisporrotea', 0, 'Mensajes que quieren llegar: alguien piensa en vos o hay algo que todavía no se dijo. Prestá atención a tus sueños estos días.'],
+    espiral: ['Gira o hace espiral', 1, 'La energía está muy activa y tu intención se está elevando. Es una señal de que tu pedido fue escuchado.'],
+    doble: ['Se divide en dos', 0, 'Hay dos caminos o dos voluntades en juego. Puede que necesites decidir, o que otra persona esté involucrada en lo que pediste.'],
+    apaga: ['Se apagó sola', -2, 'El ciclo de este pedido se cortó por ahora. No es un "no" para siempre: limpiá el espacio, revisá tu intención y volvé a prenderla otro día.']
+  } },
+  humo: { t: '🌫️ ¿Y el humo?', o: {
+    nada: ['Casi no hay humo', 2, 'El camino está despejado: no hay obstáculos importantes.'],
+    blanco: ['Humo blanco', 2, 'Bendición y protección: tu pedido sube limpio.'],
+    gris: ['Humo gris', 0, 'Hay confusión o dudas en el camino: tomate tiempo para aclarar qué querés de verdad.'],
+    negro: ['Humo negro', -1, 'Hay obstáculos o energía densa que se está quemando. Es bueno que salga: hacé una limpieza de tu espacio y repetí el ritual con una vela blanca.'],
+    amí: ['El humo viene hacia mí', 1, 'La respuesta te involucra directamente: el cambio empieza por vos.']
+  } },
+  cera: { t: '🕯️ ¿Qué pasa con la cera?', o: {
+    pareja: ['Se consume pareja', 2, 'Equilibrio: tu pedido avanza de forma armónica, sin sobresaltos.'],
+    llora: ['Llora por un costado', 0, 'Hay emociones que necesitan salir. Si llora hacia vos, la emoción es tuya; si llora hacia afuera, es de otra persona o de la situación.'],
+    charco: ['Deja un charco limpio', 2, 'Tu deseo se cumplió en el plano espiritual: ahora toca esperar que baje a lo concreto.'],
+    formas: ['Deja formas o figuras', 1, 'La cera te deja un mensaje. Mirá qué ves: un corazón (amor), un camino (un viaje o un cambio), un círculo (un ciclo que se completa), una flor (algo que florece), un ojo (protección).'],
+    hollin: ['Deja hollín negro en el vaso', -1, 'La vela trabajó absorbiendo energía pesada. Limpiá el vaso, abrí las ventanas y repetí el ritual más adelante.'],
+    aun: ['Todavía no se consumió', 0, 'Cuando se termine de consumir, volvé a anotar cómo quedó la cera para completar tu lectura.']
+  } }
+};
+const VM = { paso: 0, int: null, sel: { llama: null, humo: null, cera: null }, ver: null };
+const vmHist = () => { const L = lsGet('luzguia_velas', []); return Array.isArray(L) ? L : []; };
+function vmCarta(int, sel){ return (hashMix(semillaPersonal('vela|' + int + '|' + sel.llama + '|' + sel.humo + '|' + sel.cera)) % 22) + 1; }
+function vmLectura(r){
+  const I = VM_INT[r.int], pts = ['llama', 'humo', 'cera'].reduce((s, k) => s + (r.sel[k] ? VM_OBS[k].o[r.sel[k]][1] : 0), 0), n = r.carta, a = ARC[n];
+  const ver = pts >= 4 ? ['🌕', 'Tu vela dice que sí', 'Las señales son muy favorables: tu pedido tiene fuerza y camino abierto.'] : pts >= 1 ? ['🌓', 'Tu vela dice: va en camino', 'Hay buena energía, con algunos puntos para trabajar. Acompañá tu pedido con acciones concretas.'] : ['🌑', 'Tu vela pide paciencia', 'Hay bloqueos o energía densa que se está liberando. No es un no: es un "todavía". Limpiá, ajustá la intención y volvé a intentarlo.'];
+  let h = `<div class="vm-res"><span class="vm-ver">${ver[0]}</span><small>${I.ic} ${I.t}${r.f ? ' · ' + r.f : ''}</small><h4>${ver[1]}</h4><p>${ver[2]}</p></div><ul class="num-lista">`;
+  ['llama', 'humo', 'cera'].forEach(k => { if (!r.sel[k]) return; const o = VM_OBS[k].o[r.sel[k]]; h += `<li><b>${VM_OBS[k].t.split(' ')[0]}</b><div><span>${o[0]}</span>${o[2]}</div></li>`; });
+  h += `</ul><p class="sub">🃏 La carta de tu vela</p><div class="vm-carta"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(n)}</span></div><div><b>${esc(NOM[n])}</b><p>${capa1(n)} Para tu pedido de ${I.t.toLowerCase()}: ${a.luz}. ${a.a[0]}</p></div></div>
+    <p class="ag-ayuda">Esta carta no sale al azar: se calcula con tus datos, el día, la luna y lo que viste en tu vela.</p>
+    <div class="cp-af">✨ “${esc(I.frase)}”</div>`;
+  return h;
+}
+function vmHTML(){
+  const L = vmHist();
+  if (VM.ver != null && L[VM.ver]) return `<button class="link" type="button" data-vm="volver">‹ Volver</button>${vmLectura(L[VM.ver])}`;
+  if (VM.paso === 0) {
+    let h = `<p class="sub" style="margin-top:0">1 · ¿Qué le querés pedir a tu vela?</p><div class="vm-ints">${Object.entries(VM_INT).map(([k, x]) => `<button type="button" class="vm-int" data-vmint="${k}"><span>${x.ic}</span>${x.t}</button>`).join('')}</div>`;
+    if (L.length) h += `<p class="sub">📖 Tus lecturas de velas</p><ul class="vm-hist">${L.slice().reverse().slice(0, 12).map((r, i) => { const j = L.length - 1 - i; return `<li><button type="button" data-vmver="${j}"><span>${VM_INT[r.int].ic}</span><div><b>${VM_INT[r.int].t}</b><small>${esc(r.f)} · ${esc(NOM[r.carta])}</small></div><i>›</i></button></li>`; }).join('')}</ul>`;
+    return h;
+  }
+  const I = VM_INT[VM.int], fase = faseHoy(), ok = I.luna.includes(fase);
+  if (VM.paso === 1) return `<button class="link" type="button" data-vm="volver">‹ Elegir otra intención</button>
+    <div class="vm-prep"><div class="vm-vela" style="--vc:${I.color[1]}" aria-hidden="true"><i></i><b></b></div><div><small>Tu vela para ${I.t.toLowerCase()}</small><h4>Una vela ${I.color[0]}</h4><p>(o ${I.alt})</p></div></div>
+    <ul class="num-lista"><li><b>🌙</b><div><span>Cuándo</span>Ideal en luna ${I.luna} y en ${I.dia}. ${ok ? '¡Hoy la luna acompaña! ✨' : 'Hoy la luna está ' + fase + ': igual podés hacerlo, la intención es lo más importante.'}</div></li>
+      <li><b>1</b><div><span>Limpiá tu vela</span>Pasala por humo de sahumerio o frotala con un paño y un poquito de sal, pidiendo que se vaya toda energía que no sea tuya.</div></li>
+      <li><b>2</b><div><span>Escribí tu intención</span>En un papel, en presente y en positivo. Podés grabar tu nombre o una palabra clave en la vela con un palillo.</div></li>
+      <li><b>3</b><div><span>Vestila</span>Untala con ${I.aceite} (de abajo hacia arriba para atraer, de arriba hacia abajo para soltar) y rodeala de ${I.hierba}.</div></li>
+      <li><b>4</b><div><span>Encendela</span>Con fósforo, si podés, y diciendo en voz alta: <i>"${esc(I.frase)}"</i>. Poné el papel debajo del plato o del vaso.</div></li>
+      <li><b>5</b><div><span>Observala</span>Quedate entre 10 y 15 minutos mirando la llama, el humo y la cera, en silencio. Después volvé acá y contanos qué viste.</div></li></ul>
+    <p class="ag-ayuda">🧯 Nunca dejes una vela encendida sin nadie cerca, ni cerca de cortinas, chicos o mascotas. Si tenés que irte, apagala con un apagavelas o con los dedos mojados (no la soples si es para atraer) y volvé a prenderla después.</p>
+    <div class="fila-bt"><button class="btn" type="button" data-vm="observar">🕯️ Ya la prendí: leer mi vela</button></div>`;
+  return `<button class="link" type="button" data-vm="prep">‹ Volver a la preparación</button><p class="intro" style="margin-top:6px">Marcá lo que ves. Si algo cambia (por ejemplo, la llama primero baila y después se estabiliza), elegí lo que más se repitió.</p>
+    ${['llama', 'humo', 'cera'].map(k => `<p class="sub">${VM_OBS[k].t}</p><div class="vm-ops">${Object.entries(VM_OBS[k].o).map(([v, o]) => `<button type="button" class="vm-op${VM.sel[k] === v ? ' on' : ''}" data-vmsel="${k}|${v}">${o[0]}</button>`).join('')}</div>`).join('')}
+    <div class="fila-bt"><button class="btn" type="button" data-vm="leer"${VM.sel.llama ? '' : ' disabled'}>✨ Ver lo que dice mi vela</button></div>${VM.sel.llama ? '' : '<p class="ag-ayuda" style="text-align:center">Elegí al menos cómo está la llama.</p>'}`;
+}
+function premVelomancia(){
+  return `<p class="intro">La velomancia es el arte antiguo de leer el fuego de una vela. La llama, el humo y la cera muestran cómo se mueve la energía de tu pedido: si tiene fuerza, si hay obstáculos y qué mensaje te deja. Elegí tu intención, prepará tu vela como te contamos y después marcá lo que viste.</p><div id="vm-caja">${vmHTML()}</div>
+    <details class="mas"><summary>🎨 Qué significa cada color de vela <span aria-hidden="true">✦</span></summary>${vmColoresHTML()}</details>`;
+}
+const vmColoresHTML = () => `<ul class="vm-colores">${VM_COLORES.map(([n, c, t]) => `<li><i style="background:${c}"></i><div><b>${n}</b><span>${t}</span></div></li>`).join('')}</ul>`;
+const vmPintar = () => { const c = $('vm-caja'); if (c) { c.innerHTML = vmHTML(); const y = c.getBoundingClientRect().top; if (y < 60) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
+document.addEventListener('click', e => {
+  const i = e.target.closest('[data-vmint]'); if (i) { VM.int = i.dataset.vmint; VM.paso = 1; VM.sel = { llama: null, humo: null, cera: null }; vmPintar(); return; }
+  const s = e.target.closest('[data-vmsel]'); if (s) { const [k, v] = s.dataset.vmsel.split('|'); VM.sel[k] = VM.sel[k] === v ? null : v; vmPintar(); return; }
+  const v = e.target.closest('[data-vmver]'); if (v) { VM.ver = +v.dataset.vmver; vmPintar(); return; }
+  const b = e.target.closest('[data-vm]'); if (!b) return; const a = b.dataset.vm;
+  if (a === 'volver') { VM.paso = 0; VM.ver = null; vmPintar(); }
+  if (a === 'prep') { VM.paso = 1; vmPintar(); }
+  if (a === 'observar') { VM.paso = 2; vmPintar(); }
+  if (a === 'leer' && VM.sel.llama) {
+    const h = new Date(), r = { int: VM.int, sel: Object.assign({}, VM.sel), f: h.getDate() + ' de ' + MESES[h.getMonth()] + ' de ' + h.getFullYear(), carta: vmCarta(VM.int, VM.sel) };
+    const L = vmHist(); L.push(r); lsSet('luzguia_velas', L.slice(-40)); evento('Velomancia', VM_INT[VM.int].t);
+    VM.paso = 0; VM.ver = L.slice(-40).length - 1; vmPintar();
+  }
+});
+PREM_FN.velomancia = () => premVelomancia();
+(function(){
+  if (!PREMIUM_LISTA.some(x => x[0] === 'velomancia')) { const i = PREMIUM_LISTA.findIndex(x => x[0] === 'oraculo'); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, ['velomancia', '🕯️', 'Velomancia', 'Leé tu vela: elegí tu intención, prepará tu vela paso a paso y descubrí qué te dicen la llama, el humo y la cera.']); }
+  PREM_VENTA.velomancia = 'El arte de leer el fuego: qué vela usar para cada pedido, cómo prepararla y encenderla, y la lectura de lo que te muestran la llama, el humo y la cera, con la carta de tu vela y tu historial de lecturas.';
+  const g = PREM_GRUPOS.find(x => x[0] === 'guia'); if (g && !g[4].includes('velomancia')) g[4].splice(Math.max(0, g[4].indexOf('oraculo') + 1), 0, 'velomancia');
+})();
+// en Hoy: la guía de colores (gratis) y la puerta a la velomancia
+(function(){
+  const _h = hoyHTML;
+  hoyHTML = function(){
+    const h = _h();
+    try {
+      const ver = P.premium && !VISTA_GRATIS;
+      const caja = `<details class="vm-hoy"><summary><span>🕯️</span><div><b>Velomancia: ¿qué te dice tu vela?</b><small>${ver ? 'Prepará tu vela y leé la llama, el humo y la cera' : 'Los colores de las velas y su significado'}</small></div></summary>
+        <p class="ag-ayuda">Cada color de vela trabaja una energía distinta:</p>${vmColoresHTML()}
+        ${ver ? '<button class="btn-sec oro" type="button" data-premabrir="velomancia">🕯️ Leer mi vela</button>' : '<div class="teaser-velo"><p>Qué vela usar para tu pedido, cómo prepararla, y qué significa lo que hace la llama, el humo y la cera.</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí la velomancia ✨</button>'}</details>`;
+      const i = Math.max(0, h.indexOf('Ritual de hoy</h'));
+      const r = h.indexOf('data-share="ritual"', i), e = r > -1 ? h.indexOf('</div>', r) : -1; if (e > -1) return h.slice(0, e + 6) + caja + h.slice(e + 6);
+      const j = h.indexOf('<h3', i + 5); return j > -1 ? h.slice(0, j) + caja + h.slice(j) : h + caja;
+    } catch (e) { console.error(e); return h; }
+  };
 })();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
