@@ -934,6 +934,18 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .nv-caja>span{font-size:2rem;line-height:1}.nv-caja small{display:block;color:#9BE3C4;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}.nv-caja b{display:block;font-family:var(--serif);font-size:1.35rem;color:#F3DCA0}.nv-caja p{margin:4px 0 8px;font-size:.92rem;line-height:1.5}
 .nv-bt{background:none;border:0;padding:4px 0;color:var(--bruma);font:inherit;font-size:.82rem;text-decoration:underline;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.nv-luces i{animation:none}}
+
+/* v55: numerología completa y año en capas */
+.cp-carta .mini{width:74px;aspect-ratio:2/3.3;border:1px solid var(--oro);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.4rem;color:var(--oro);background:var(--violeta)}.cp-carta .mini.con-img{padding:3px;overflow:hidden}.cp-carta .mini.con-img img{width:100%;height:100%;object-fit:cover;border-radius:5px;display:block}.cp-carta .mini.con-img span{display:none}
+.nc-karma{padding:10px 12px;border-left:3px solid #E8A0B4;background:rgba(232,160,180,.08);border-radius:0 12px 12px 0;margin:8px 0}.nc-karma b{color:#F3DCA0}.nc-karma p{margin:4px 0 0}
+.nc-etapas{display:grid;gap:8px;margin:10px 0}.nc-etapa{padding:10px 12px;border-radius:14px;border:1px solid rgba(185,138,230,.25);background:rgba(0,0,0,.15)}.nc-etapa.on{border-color:#D4AF6A;box-shadow:0 0 16px rgba(212,175,106,.18);background:rgba(212,175,106,.08)}
+.nc-etapa small{display:block;color:#E8A0B4;font-size:.78rem}.nc-etapa b{font-family:var(--serif);font-size:1.15rem;color:#F3DCA0}.nc-etapa p{margin:4px 0 0;font-size:.92rem}.nc-des span{color:#B98AE6;font-weight:500}
+.nc-meses li.on{background:rgba(212,175,106,.1);border-radius:12px}.nc-meses em{font-style:normal;color:#E8A0B4}
+.nc-gancho{margin:12px 0 0;padding:12px 14px;border-radius:14px;border:1px dashed rgba(212,175,106,.5);background:rgba(212,175,106,.05)}.nc-gancho p{margin:6px 0 8px}
+.cp-cartas{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 0 6px}.cp-cartas>i{font-style:normal;color:#F3DCA0;font-size:1.3rem}
+.cp-carta{flex:1;max-width:110px;text-align:center}.cp-carta .mini{margin:0 auto 6px}.cp-carta small{display:block;color:#E8A0B4;font-size:.72rem;line-height:1.2}.cp-carta b{display:block;font-family:var(--serif);font-size:.95rem;line-height:1.15;color:#F3DCA0}
+.cp-llave{margin:8px auto 10px;text-align:center;padding:10px;border-radius:14px;border:1px solid rgba(212,175,106,.45);background:radial-gradient(circle,rgba(212,175,106,.16),transparent 70%)}.cp-llave small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.cp-llave b{font-family:var(--serif);font-size:1.4rem;color:#F3DCA0}
+.cp-af{margin:12px 0;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:#F3DCA0}
 </style>
 </head>
 <body>
@@ -8516,6 +8528,225 @@ document.addEventListener('click', e => {
   const on = !nieveOn(); lsSet('luzguia_nieve', on ? 'si' : 'no');
   if (on) nieveArrancar(); else nieveFrenar();
   b.textContent = on ? '❄️ Apagar las estrellitas que caen' : '✨ Prender las estrellitas que caen';
+});
+
+/* ───── v55: tu numerología completa y tu año en capas (Premium, con adelanto gratis en Arcanos) ───── */
+const red22 = n => { n = Math.abs(+n || 0); while (n > 22) n = String(n).split('').reduce((a, c) => a + +c, 0); return n || 22; };
+const sumDig = n => String(n).split('').reduce((a, c) => a + (+c || 0), 0);
+const NUM_KARMA = {
+  13: ['La deuda del esfuerzo', 'En otras vidas se buscaron atajos. En esta, lo que se construye paso a paso es lo que queda: la constancia y el orden son tu liberación. Cuando sientas que todo cuesta el doble, recordá que estás saldando y que cada logro vale doble también.'],
+  14: ['La deuda de la libertad', 'En otras vidas la libertad se usó sin medida. En esta venís a aprender a moverte sin perderte: equilibrio, compromiso con lo que elegís y cuidado del cuerpo. Los excesos te pasan factura más rápido que al resto, y la moderación te abre puertas.'],
+  16: ['La deuda del ego', 'En otras vidas el orgullo o los vínculos se manejaron desde el ego. En esta pueden llegar caídas que parecen injustas, pero cada una te reconstruye más auténtica en tu centro. Tu camino es la humildad, la espiritualidad y el amor sin máscaras.'],
+  19: ['La deuda del poder', 'En otras vidas el poder se usó solo para sí. En esta venís a aprender a pedir y a recibir ayuda, a compartir lo que tenés y a liderar sin aislarte. Tu independencia es un don cuando no se vuelve soledad.']
+};
+const NUM_LECCION = {
+  1: 'Animarte a decidir y a ponerte primero sin culpa.', 2: 'La paciencia, los detalles y dejarte acompañar.', 3: 'Expresar lo que sentís y permitirte disfrutar.',
+  4: 'El orden, la constancia y terminar lo que empezás.', 5: 'Soltar el control y abrirte al cambio.', 6: 'Comprometerte en los vínculos y en el hogar.',
+  7: 'Confiar en tu intuición y darte tiempo a solas.', 8: 'Valorar tu trabajo y manejar el dinero con seguridad.', 9: 'Soltar, perdonar y pensar en algo más grande que vos.'
+};
+const NUM_PINACULO = {
+  1: 'Etapa de independencia: aprender a valerte por vos, tomar decisiones y abrir tu propio camino.', 2: 'Etapa de vínculos y paciencia: crecer de a dos, cooperar y aprender de la sensibilidad.',
+  3: 'Etapa de expresión: crear, comunicar, hacer amistades y mostrarte al mundo.', 4: 'Etapa de construcción: trabajo, orden, bases materiales y esfuerzo que rinde a largo plazo.',
+  5: 'Etapa de cambios y libertad: viajes, mudanzas, experiencias nuevas y aprender de lo inesperado.', 6: 'Etapa del amor y el hogar: familia, pareja, responsabilidades afectivas y cuidar a otras personas.',
+  7: 'Etapa de búsqueda interior: estudio, espiritualidad, introspección y encontrarte.', 8: 'Etapa de logros materiales: poder personal, dinero, reconocimiento y aprender a administrar.',
+  9: 'Etapa de cierre y servicio: soltar lo viejo, dar al mundo y vivir desde la compasión.', 11: 'Etapa maestra de inspiración: intuición muy despierta, guiar y canalizar; también mucha sensibilidad.',
+  22: 'Etapa maestra de construcción: concretar algo grande que trasciende lo personal.', 33: 'Etapa maestra del amor: sanar, enseñar y sostener desde el corazón.'
+};
+const NUM_DESAFIO = {
+  0: 'La elección: tenés todas las herramientas y el reto es animarte a usarlas sin esperar que alguien te marque el camino.', 1: 'La voluntad: hacerte valer sin imponerte, y sin dejarte pasar por encima.',
+  2: 'La sensibilidad: no tomarte todo a lo personal y confiar en tu valor sin depender de la aprobación ajena.', 3: 'La expresión: decir lo que sentís sin dispersarte ni esconderte detrás del humor.',
+  4: 'El orden: ni rigidez ni caos; encontrar una rutina que te sostenga.', 5: 'La libertad: no escaparte cuando algo se pone difícil, ni encerrarte por miedo al cambio.',
+  6: 'El amor: cuidar sin controlar, y aceptar a las personas como son.', 7: 'La confianza: abrirte a los demás y a la vida sin aislarte en tu mundo.',
+  8: 'El poder: tener una relación sana con el dinero y la autoridad, sin miedo ni ambición desmedida.'
+};
+const NUM_MES = {
+  1: ['Mes de arranque', 'Empezá eso que venís postergando. Lo que inicies ahora tiene fuerza.', 'la impaciencia y querer hacerlo todo sola'],
+  2: ['Mes de pausa y vínculos', 'Escuchá, acompañá, negociá. Lo que sembraste empieza a echar raíces despacio.', 'la susceptibilidad y dudar de vos'],
+  3: ['Mes social y creativo', 'Salí, mostrate, creá, juntate con gente. Tu palabra tiene magia.', 'dispersarte y gastar de más'],
+  4: ['Mes de trabajo y orden', 'Ordená papeles, casa y agenda. El esfuerzo de ahora rinde después.', 'el cansancio y la rigidez'],
+  5: ['Mes de movimiento', 'Cambios, viajes, propuestas inesperadas: decí que sí a lo nuevo.', 'la ansiedad y los impulsos'],
+  6: ['Mes del corazón y el hogar', 'Familia, pareja, embellecer tu casa, cuidar y dejarte cuidar.', 'cargar con problemas ajenos'],
+  7: ['Mes introspectivo', 'Bajá el ritmo, estudiá, meditá, escuchá tu intuición.', 'aislarte o desconfiar de todo'],
+  8: ['Mes de cosecha', 'Dinero, trámites, negocios y reconocimiento: pedí lo que te corresponde.', 'el control y el estrés por la plata'],
+  9: ['Mes de cierre', 'Terminá, limpiá, soltá y perdoná: estás preparando el terreno para lo nuevo.', 'aferrarte a lo que ya terminó']
+};
+function numCompleta(){
+  const mm = String(P.diaMes || '').match(/(\d{1,2})\/(\d{1,2})/); if (!mm || !P.anioNac) return null;
+  const d = +mm[1], mo = +mm[2], y = +P.anioNac, nombre = P.nombreCompleto || P.nombre || '', base = numerologia(P.diaMes, P.anioNac, nombre);
+  const kar = new Set(), mira = n => { let x = n; while (x > 9) { if (NUM_KARMA[x]) kar.add(x); if (x === 11 || x === 22 || x === 33) break; x = sumDig(x); } };
+  if (NUM_KARMA[d]) kar.add(d);
+  mira(sumDig(String(d) + mo + y));
+  const letras = sinTildes(nombre).replace(/[^A-Z]/g, ''), cuenta = {};
+  letras.split('').forEach(l => { const v = VAL_LETRA(l); if (v) cuenta[v] = (cuenta[v] || 0) + 1; });
+  if (letras) { const tot = f => letras.split('').filter(f).reduce((a, l) => a + VAL_LETRA(l), 0); mira(tot(() => true)); mira(tot(l => 'AEIOU'.includes(l))); mira(tot(l => !'AEIOU'.includes(l))); }
+  const faltan = letras ? [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(n => !cuenta[n]) : [];
+  const maxC = Math.max(0, ...Object.values(cuenta)), pasion = maxC ? Object.keys(cuenta).filter(k => cuenta[k] === maxC).map(Number) : [];
+  const r1 = n => reducirNum(n, false), rM = n => reducirNum(n, true), sin = n => n === 11 ? 2 : n === 22 ? 4 : n === 33 ? 6 : n;
+  const rm = r1(mo), rd = r1(d), ry = r1(sumDig(y));
+  const p1 = rM(rm + rd), p2 = rM(rd + ry), p3 = rM(sin(p1) + sin(p2)), p4 = rM(rm + ry);
+  const d1 = Math.abs(rm - rd), d2 = Math.abs(rd - ry), d3 = Math.abs(d1 - d2), d4 = Math.abs(rm - ry);
+  const fin1 = 36 - r1(base.camino || 0), hoy = new Date(); let edad = hoy.getFullYear() - y; if (hoy.getMonth() + 1 < mo || (hoy.getMonth() + 1 === mo && hoy.getDate() < d)) edad--;
+  const etapas = [[p1, d1, 0, fin1], [p2, d2, fin1 + 1, fin1 + 9], [p3, d3, fin1 + 10, fin1 + 18], [p4, d4, fin1 + 19, null]];
+  const actual = etapas.findIndex(e => edad >= e[2] && (e[3] == null || edad <= e[3]));
+  const madurez = base.camino && base.expresion ? rM(sin(base.camino) + sin(base.expresion)) : null;
+  const anioP = base.anio, meses = Array.from({ length: 12 }, (_, i) => r1(anioP + i + 1));
+  return Object.assign({}, base, { d, mo, y, diaNac: rM(d), madurez, karma: [...kar].sort((a, b) => a - b), faltan, pasion, etapas, actual: actual < 0 ? 0 : actual, edad, meses });
+}
+const ordinal = ['primera', 'segunda', 'tercera', 'cuarta'];
+function premNumCompleta(){
+  const N = numCompleta(); if (!N || !N.camino) return faltaFecha;
+  const T = n => (NUM_TXT[n] || NUM_TXT[reducirNum(n, false)] || ['', ''])[0], X = n => (NUM_TXT[n] || NUM_TXT[reducirNum(n, false)] || ['', ''])[1];
+  let h = `<p class="intro">La numerología pitagórica lee tu fecha de nacimiento y tu nombre completo como un mapa: quién sos, qué viniste a aprender, por qué etapas pasás y qué energía te acompaña cada año, cada mes y cada día. Acá está tu mapa completo.</p>`;
+  h += `<p class="sub">✦ Tus números principales</p><ul class="num-lista">
+    <li><b>${N.camino}</b><div><span>Camino de vida · tu misión</span>${T(N.camino)}. ${X(N.camino)}${[11, 22, 33].includes(N.camino) ? ' Es un número maestro: trae un potencial enorme y también una sensibilidad mayor. Cuando te sientas sin fuerza, vivís su versión simple, el ' + reducirNum(N.camino, false) + '.' : ''}</div></li>
+    ${N.expresion ? `<li><b>${N.expresion}</b><div><span>Expresión · tus talentos</span>${T(N.expresion)}. Es la forma en que te mostrás y lo que hacés naturalmente bien.</div></li>
+    <li><b>${N.alma}</b><div><span>Alma · tu deseo profundo</span>${T(N.alma)}. Lo que tu corazón necesita para sentirse en paz, aunque no siempre lo digas.</div></li>
+    <li><b>${N.personalidad}</b><div><span>Personalidad · tu primera impresión</span>${T(N.personalidad)}. Así te ven quienes todavía no te conocen.</div></li>` : ''}
+    <li><b>${N.diaNac}</b><div><span>Día de nacimiento · tu talento natural</span>${T(N.diaNac)}. Un don que te sale sin esfuerzo y que conviene usar en tu trabajo.</div></li>
+    ${N.madurez ? `<li><b>${N.madurez}</b><div><span>Madurez · hacia dónde vas</span>${T(N.madurez)}. Es la energía que florece después de los 35 a 40 años, cuando unís lo que viniste a hacer con lo que sabés hacer.</div></li>` : ''}</ul>`;
+  if (!N.expresion) h += '<p class="ag-ayuda">Para calcular tu expresión, tu alma y tu personalidad necesitamos tu nombre completo (como figura en tu documento). Pedíselo a Belu o a Mey.</p>';
+  h += `<p class="sub">🌀 Tus números kármicos</p>`;
+  h += N.karma.length ? N.karma.map(k => `<div class="nc-karma"><b>${k} · ${NUM_KARMA[k][0]}</b><p>${NUM_KARMA[k][1]}</p></div>`).join('') : '<p>No tenés deudas kármicas en tus números principales: venís con la mochila liviana y con libertad para elegir tu camino. ✨</p>';
+  if (N.expresion) {
+    h += `<p class="sub">📚 Tus lecciones kármicas</p>${N.faltan.length ? `<p>Son los números que no aparecen en tu nombre: lo que tu alma vino a aprender en esta vida.</p><ul class="num-lista">${N.faltan.map(n => `<li><b>${n}</b><div><span>${T(n)}</span>${NUM_LECCION[n]}</div></li>`).join('')}</ul>` : '<p>Tu nombre tiene todos los números del 1 al 9: traés recursos para cualquier aprendizaje. Tu tarea es elegir en qué enfocarte.</p>'}`;
+    if (N.pasion.length) h += `<p class="sub">🔥 Tu pasión oculta</p><p>El número que más se repite en tu nombre es el <b>${N.pasion.join(' y el ')}</b>: ${N.pasion.map(n => T(n).toLowerCase()).join(' y ')}. Es un talento que te empuja desde adentro y que se nota cuando hacés algo con ganas.</p>`;
+  }
+  h += `<p class="sub">⛰️ Tus 4 etapas de vida (pináculos y desafíos)</p><p>Tu vida se divide en cuatro grandes etapas. Cada una tiene un tema (el pináculo) y un aprendizaje (el desafío). Hoy, con ${N.edad} años, estás en tu <b>${ordinal[N.actual]} etapa</b>.</p>`;
+  h += `<div class="nc-etapas">${N.etapas.map(([p, ds, a, b], i) => `<div class="nc-etapa${i === N.actual ? ' on' : ''}"><small>${i === N.actual ? '✦ Estás acá · ' : ''}${b == null ? 'Desde los ' + a + ' años' : (a === 0 ? 'Hasta los ' + b : 'De los ' + a + ' a los ' + b) + ' años'}</small><b>Pináculo ${p}</b><p>${NUM_PINACULO[p] || NUM_PINACULO[reducirNum(p, false)]}</p><p class="nc-des"><span>Desafío ${ds} ·</span> ${NUM_DESAFIO[ds]}</p></div>`).join('')}</div>`;
+  if (N.actual < 3) { const sg = N.etapas[N.actual + 1]; h += `<p class="ag-ayuda">A los ${sg[2]} años empieza tu etapa del ${sg[0]}: ${String(NUM_PINACULO[sg[0]] || '').split(':')[0].toLowerCase()}.</p>`; }
+  const hoy = new Date(), mes = hoy.getMonth();
+  h += `<p class="sub">🗓️ Tu ${hoy.getFullYear()} mes a mes · año personal ${N.anio}</p><p>${ANIO_PERS[N.anio]}</p><ul class="num-lista nc-meses">${N.meses.map((m, i) => `<li${i === mes ? ' class="on"' : ''}><b>${m}</b><div><span>${MESES[i].charAt(0).toUpperCase() + MESES[i].slice(1)}${i === mes ? ' · este mes' : ''} · ${NUM_MES[m][0]}</span>${NUM_MES[m][1]} <i>Ojo con ${NUM_MES[m][2]}.</i></div></li>`).join('')}</ul>`;
+  h += `<p class="sub">☀️ Hoy</p><p>Tu día personal es el <b>${N.dia}</b>: un día para ${DIA_PERS[N.dia]}. Se renueva cada medianoche, y tu mes personal cada 1°.</p>`;
+  h += `<div class="fila-bt" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn-sec" type="button" data-premir="capas">🌀 Ver cómo se combina con tus arcanos: tu año en capas</button></div>`;
+  return h;
+}
+
+// ── Tu año en capas: tu arcano de nacimiento + tu arcano del año + el año universal ──
+function capasDe(anio){
+  if (!P.diaMes || !P.anioNac) return null;
+  anio = anio || new Date().getFullYear();
+  const nac = P.arcano && P.arcano.n ? +P.arcano.n : red22(sumDig(String(P.diaMes).replace(/\D/g, '') + P.anioNac));
+  const anual = arcanoDeAnio(P.diaMes, anio), univ = red22(sumDig(anio)), llave = red22(nac + anual + univ), num = numerologia(P.diaMes, P.anioNac, '');
+  return { nac, anual, univ, llave, anio, puente: red22(nac + anual), numAnio: num.anio, espejo: nac === anual, sinto: anual === univ, meses: Array.from({ length: 12 }, (_, i) => red22(anual + i + 1)) };
+}
+const capa1 = n => String(ARC[n].e).split('. ')[0] + '.';
+function capasLectura(C){
+  const L = [];
+  if (C.espejo) L.push(`<b>Este año es un año espejo.</b> Tu arcano del año es el mismo con el que naciste: ${NOM[C.nac]}. Pasa pocas veces en la vida, y significa que el año te devuelve tu propia esencia para que la mires de frente. Todo lo que tiene que ver con ${luzDe(C.nac)} se vuelve protagonista, y también tu sombra (${ARC[C.nac].sombra}) se hace más visible para que puedas transformarla. Es un año para elegirte y para definirte.`);
+  else L.push(`Tu esencia es <b>${NOM[C.nac]}</b> (${luzDe(C.nac)}), y este año la atravesás con la energía de <b>${NOM[C.anual]}</b>: ${capa1(C.anual).charAt(0).toLowerCase() + capa1(C.anual).slice(1)} Es como si tu forma de ser se pusiera una ropa nueva: el año te pide ${ARC[C.anual].luz}, desde quien ya sos. Cuando las dos energías se juntan aparece <b>${NOM[C.puente]}</b>, la carta puente: ${luzDe(C.puente)} es lo que se activa en vos cuando te animás al año.`);
+  if (C.sinto) L.push(`Además, tu año personal coincide con el año universal (${NOM[C.univ]}): vas en la misma dirección que el mundo. Es viento a favor: lo que empujes, avanza.`);
+  else L.push(`Mientras tanto, el mundo entero vive un año de <b>${NOM[C.univ]}</b>: ${capa1(C.univ).charAt(0).toLowerCase() + capa1(C.univ).slice(1)} Ese es el clima colectivo, lo que le pasa a todas las personas. Vos lo vivís desde la energía de ${NOM[C.anual]}: cuando afuera haya ${luzDe(C.univ)}, tu forma de surfearlo es ${luzDe(C.anual)}.`);
+  L.push(`Las tres capas juntas forman tu <b>carta llave del ${C.anio}: ${NOM[C.llave]}</b>. ${capa1(C.llave)} Es la clave para abrir este año: ${ARC[C.llave].a[0].charAt(0).toLowerCase() + ARC[C.llave].a[0].slice(1)}`);
+  return L;
+}
+function capasCartasHTML(C, ocultaLlave){
+  const c = (n, t) => `<div class="cp-carta"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(n)}</span></div><small>${t}</small><b>${esc(NOM[n])}</b></div>`;
+  return `<div class="cp-cartas">${c(C.nac, 'Tu esencia')}<i>+</i>${c(C.anual, 'Tu ' + C.anio)}<i>+</i>${c(C.univ, 'El mundo en ' + C.anio)}</div>
+    <div class="cp-llave${ocultaLlave ? ' velo' : ''}"><small>Tu carta llave del ${C.anio}</small><b>${ocultaLlave ? '🔒 ?' : esc(NOM[C.llave])}</b></div>`;
+}
+function premCapas(){
+  const C = capasDe(); if (!C) return faltaFecha;
+  const hoy = new Date(), mes = hoy.getMonth(), sig = capasDe(C.anio + 1);
+  let h = `<p class="intro">Cada año se forma con tres capas: tu arcano de nacimiento (quién sos), tu arcano personal del año (lo que estás atravesando) y el arcano del año universal (lo que vive el mundo entero). Leerlas juntas te muestra cómo se combina tu energía con la del momento.</p>`;
+  h += capasCartasHTML(C, false);
+  h += capasLectura(C).map(p => `<p>${p}</p>`).join('');
+  h += `<div class="cp-af">✨ “${esc(ARC[C.llave].af)}”</div>`;
+  h += `<p class="fila-comp"><button class="btn-sec comp" type="button" data-capasshare>✨ Compartir mi año en capas (video o imagen)</button></p>`;
+  h += `<p class="sub">🗓️ Tu ${C.anio} mes a mes</p><p>Cada mes tu arcano del año se combina con la energía del mes (y con tu mes personal en numerología). Esto es lo que trae cada uno:</p>`;
+  const nc = numCompleta();
+  h += `<ul class="num-lista nc-meses">${C.meses.map((n, i) => { const mp = nc ? nc.meses[i] : null, a = ARC[n];
+    return `<li${i === mes ? ' class="on"' : ''}><b>${romano(n)}</b><div><span>${cap1(MESES[i])}${i === mes ? ' · este mes' : ''} · ${esc(NOM[n])}${mp ? ' · mes ' + mp : ''}</span><em>Aprendizaje:</em> ${a.luz}. <em>Desafío:</em> ${a.sombra}. <em>Consejo:</em> ${a.a[(i + C.anio) % a.a.length]}</div></li>`; }).join('')}</ul>`;
+  if (sig) h += `<p class="sub">🔭 Lo que viene en ${sig.anio}</p><p>El año que viene tu arcano será <b>${NOM[sig.anual]}</b> y el mundo vivirá <b>${NOM[sig.univ]}</b>, con tu carta llave en <b>${NOM[sig.llave]}</b>. ${capa1(sig.anual)} Andá preparando el terreno: lo que cierres en ${C.anio} le deja lugar.</p>`;
+  h += `<div class="fila-bt" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn-sec" type="button" data-premir="numcompleta">🔢 Ver tu numerología completa</button></div>`;
+  return h;
+}
+PREM_FN.numcompleta = () => premNumCompleta();
+PREM_FN.capas = () => premCapas();
+(function(){
+  const add = (desp, it) => { if (PREMIUM_LISTA.some(x => x[0] === it[0])) return; const i = PREMIUM_LISTA.findIndex(x => x[0] === desp); PREMIUM_LISTA.splice(i > -1 ? i + 1 : PREMIUM_LISTA.length, 0, it); };
+  add('natal', ['numcompleta', '🔢', 'Tu numerología completa', 'Todos tus números: misión, talentos, alma, madurez, números kármicos, tus 4 etapas de vida y tu año mes a mes.']);
+  add('mes', ['capas', '🌀', 'Tu año en capas', 'Tu arcano de nacimiento, tu arcano del año y el del mundo, combinados: tu carta llave y tu año mes a mes.']);
+  PREM_VENTA.numcompleta = 'Tu mapa numerológico entero: tu misión, tus talentos, lo que desea tu alma, tus números kármicos, las lecciones que viniste a aprender, tus 4 grandes etapas de vida (y en cuál estás) y tu año mes a mes.';
+  PREM_VENTA.capas = 'Cómo se combina tu arcano de nacimiento con tu arcano del año y con la energía del mundo: tu carta llave del año, lo que trae cada mes (aprendizaje, desafío y consejo) y lo que viene el año que viene.';
+  const gc = PREM_GRUPOS.find(x => x[0] === 'carta'); if (gc && !gc[4].includes('numcompleta')) { gc[4].splice(gc[4].indexOf('natal') + 1, 0, 'numcompleta'); gc[2] = 'Tu carta y tus números'; gc[3] = 'Quién sos según el cielo y la numerología'; }
+  const gt = PREM_GRUPOS.find(x => x[0] === 'tiempo'); if (gt && !gt[4].includes('capas')) gt[4].splice(0, 0, 'capas');
+})();
+
+// adelantos gratis en la pestaña Arcanos
+(function(){
+  const _a = arcanosHTML;
+  arcanosHTML = function(){
+    let h = _a();
+    try {
+      const ver = P.premium && !VISTA_GRATIS, C = capasDe();
+      if (C) {
+        const caja = `<h3>Tu año en capas</h3><div class="num-caja cp-gratis"><p class="ag-ayuda" style="margin-top:0">Tu ${C.anio} no es solo tu arcano del año: es la suma de tu esencia, tu año y lo que vive el mundo.</p>${capasCartasHTML(C, !ver)}
+          <p>${C.espejo ? `✨ <b>Este año es un año espejo:</b> tu arcano del año es el mismo con el que naciste. Pasa pocas veces en la vida.` : `Tu esencia de ${esc(NOM[C.nac])} se combina este año con ${esc(NOM[C.anual])}${C.sinto ? ', y vas en sintonía con el mundo ✨' : `, mientras el mundo vive ${esc(NOM[C.univ])}`}.`}</p>
+          <p class="fila-comp"><button class="btn-sec comp" type="button" data-capasshare>✨ Compartir mi año en capas</button></p>
+          ${ver ? `<button class="btn-sec oro" type="button" data-premabrir="capas">🌀 Ver mi año en capas completo</button>` : `<div class="teaser-velo"><p>Tu carta llave del año, cómo se combinan las tres energías y lo que trae cada mes: el aprendizaje, el desafío y el consejo.</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu año en capas ✨</button>`}</div>`;
+        const i = h.indexOf('<h3>Tu nombre</h3>'); h = i > -1 ? h.slice(0, i) + caja + h.slice(i) : h + caja;
+      }
+      const N = numCompleta();
+      if (N && N.camino) {
+        const e = N.etapas[N.actual];
+        const caja = `<div class="nc-gancho"><b>🔢 Esto es solo una parte de tu numerología</b><p>Estás en tu ${ordinal[N.actual]} etapa de vida, la del <b>${e[0]}</b>${e[3] != null ? ` (hasta los ${e[3]} años)` : ''}. ${N.karma.length ? `Y tenés ${N.karma.length === 1 ? 'un número kármico' : N.karma.length + ' números kármicos'}: el ${N.karma.join(' y el ')}.` : 'Y no tenés deudas kármicas en tus números principales.'}</p>
+          ${ver ? `<button class="btn-sec oro" type="button" data-premabrir="numcompleta">🔢 Ver mi numerología completa</button>` : `<div class="teaser-velo"><p>Tu número de madurez, qué significan tus números kármicos, tus lecciones de vida, tus 4 etapas con sus desafíos y tu año mes a mes.</p><span>🔒 Premium</span></div><button class="btn-sec oro" type="button" data-irtab="premium">Descubrí tu numerología completa ✨</button>`}</div>`;
+        const k = h.indexOf('data-share="numeros"'), j = k > -1 ? h.indexOf('</p>', k) : -1;
+        if (j > -1) h = h.slice(0, j + 4) + caja + h.slice(j + 4);
+      }
+    } catch (e) { console.error(e); }
+    return h;
+  };
+})();
+
+// compartir: las tres cartas que se dan vuelta y la carta llave
+function capasEscena(C, fondo, cartas, nombre, oculta){
+  const rnd = sjRand(C.nac * 100 + C.anual + 7), spr = sjBrillo('rgba(255,236,190,1)'), mot = Array.from({ length: 60 }, () => ({ x: rnd(), y: rnd(), v: .3 + rnd() * .8, f: rnd() * 6.28, z: .4 + rnd() }));
+  const ET = ['Mi esencia', 'Mi ' + C.anio, 'El mundo'], cs = [C.nac, C.anual, C.univ];
+  return function(c, W, H, t){
+    const s = W / 1080, pul = .5 + .5 * Math.sin(t * 1.6);
+    c.fillStyle = '#120a1e'; c.fillRect(0, 0, W, H);
+    if (fondo) { const k = 1.12 + .05 * Math.sin(t * .25), e = Math.max(W / fondo.width, H / fondo.height) * k; c.save(); c.translate(W / 2, H / 2); c.rotate(t * .02); c.drawImage(fondo, -fondo.width * e / 2, -fondo.height * e / 2, fondo.width * e, fondo.height * e); c.restore(); }
+    const v = c.createLinearGradient(0, 0, 0, H); v.addColorStop(0, 'rgba(18,8,32,.72)'); v.addColorStop(.35, 'rgba(18,8,32,.45)'); v.addColorStop(.7, 'rgba(18,8,32,.78)'); v.addColorStop(1, 'rgba(12,5,22,.95)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+    c.save(); c.globalCompositeOperation = 'lighter'; mot.forEach(p => { const y = ((p.y - t * p.v * .03) % 1 + 1) % 1 * H, x = p.x * W + Math.sin(t * .6 + p.f) * 30 * s, z = (8 + 22 * p.z) * s; c.globalAlpha = .25 + .55 * Math.abs(Math.sin(t * 1.3 * p.v + p.f)); c.drawImage(spr, x - z / 2, y - z / 2, z, z); }); c.restore();
+    c.textAlign = 'center';
+    c.fillStyle = '#F3DCA0'; c.font = `500 ${30 * s}px Jost, sans-serif`; c.letterSpacing = 8 * s + 'px'; c.fillText('MI AÑO EN CAPAS · ' + C.anio, W / 2, 150 * s); c.letterSpacing = '0px';
+    if (nombre) { c.fillStyle = '#FFF4DA'; c.font = `${88 * s}px "Great Vibes", cursive`; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 18 * s; c.fillText(nombre, W / 2, 255 * s); c.shadowBlur = 0; }
+    c.fillStyle = '#fff'; c.font = `600 ${62 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 18 * s; c.fillText(C.espejo ? '✨ Un año espejo ✨' : 'Mi esencia + mi año + el mundo', W / 2, 365 * s); c.shadowBlur = 0;
+    const cw = 290 * s, ch = cw * 1.72, gap = 30 * s, x0 = (W - (cw * 3 + gap * 2)) / 2, y0 = 440 * s;
+    cs.forEach((n, i) => {
+      const t0 = .8 + i * .9, p = Math.min(1, Math.max(0, (t - t0) / .7)), giro = Math.cos(p * Math.PI), frente = p >= .5, cx = x0 + i * (cw + gap) + cw / 2, cy = y0 + ch / 2;
+      const flota = Math.sin(t * 1.2 + i) * 6 * s, esc2 = Math.max(.02, Math.abs(giro));
+      c.save(); c.translate(cx, cy + flota); c.scale(esc2, 1);
+      if (frente && p >= 1) { c.shadowColor = '#F3DCA0'; c.shadowBlur = (16 + 14 * pul) * s; }
+      ttRect(c, -cw / 2, -ch / 2, cw, ch, 18 * s); c.fillStyle = '#1c0b2e'; c.fill(); c.shadowBlur = 0;
+      if (frente) { c.save(); ttRect(c, -cw / 2 + 6 * s, -ch / 2 + 6 * s, cw - 12 * s, ch - 12 * s, 14 * s); c.clip(); const im = cartas[i]; if (im) { const e = Math.max((cw - 12 * s) / im.width, (ch - 12 * s) / im.height); c.drawImage(im, -im.width * e / 2, -im.height * e / 2, im.width * e, im.height * e); } else { c.fillStyle = '#3a1a5c'; c.fillRect(-cw / 2, -ch / 2, cw, ch); c.fillStyle = '#F3DCA0'; c.font = `600 ${90 * s}px "Cormorant Garamond", serif`; c.textBaseline = 'middle'; c.fillText(romano(n), 0, 0); c.textBaseline = 'alphabetic'; } c.restore(); }
+      else { const g = c.createLinearGradient(0, -ch / 2, 0, ch / 2); g.addColorStop(0, '#5B2A86'); g.addColorStop(1, '#1C0B2E'); ttRect(c, -cw / 2 + 6 * s, -ch / 2 + 6 * s, cw - 12 * s, ch - 12 * s, 14 * s); c.fillStyle = g; c.fill(); c.fillStyle = '#F3DCA0'; c.font = `${110 * s}px serif`; c.textBaseline = 'middle'; c.fillText('✦', 0, 0); c.textBaseline = 'alphabetic'; }
+      ttRect(c, -cw / 2, -ch / 2, cw, ch, 18 * s); c.strokeStyle = '#F3DCA0'; c.lineWidth = 3 * s; c.stroke();
+      c.restore();
+      if (i < 2) { c.globalAlpha = Math.min(1, Math.max(0, t - 1.2 - i * .9)); c.fillStyle = '#F3DCA0'; c.font = `500 ${46 * s}px Jost, sans-serif`; c.fillText('+', cx + cw / 2 + gap / 2, cy + 14 * s); c.globalAlpha = 1; }
+      c.globalAlpha = p >= 1 ? 1 : .55; c.fillStyle = '#E8A0B4'; c.font = `500 ${26 * s}px Jost, sans-serif`; c.fillText(ET[i], cx, y0 + ch + 48 * s);
+      if (p >= 1) { c.fillStyle = '#F3DCA0'; c.font = `600 ${34 * s}px "Cormorant Garamond", serif`; sjLineas(c, NOM[n], cw + 20 * s).forEach((l, j) => c.fillText(l, cx, y0 + ch + (96 + j * 34) * s)); }
+      c.globalAlpha = 1;
+    });
+    if (t > 3.6) {
+      const a = Math.min(1, (t - 3.6) / .8), yk = 1330 * s; c.globalAlpha = a;
+      const gl = c.createRadialGradient(W / 2, yk + 40 * s, 0, W / 2, yk + 40 * s, 360 * s); gl.addColorStop(0, `rgba(243,220,160,${.18 + .1 * pul})`); gl.addColorStop(1, 'rgba(243,220,160,0)'); c.fillStyle = gl; c.fillRect(0, yk - 300 * s, W, 700 * s);
+      if (oculta) { c.fillStyle = '#F3DCA0'; c.font = `600 ${64 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 16 * s; c.fillText('¿Y tu año en capas?', W / 2, yk + 40 * s); c.shadowBlur = 0; c.fillStyle = '#F1ECF7'; c.font = `italic ${44 * s}px "Cormorant Garamond", serif`; c.fillText('Descubrí tu carta llave en Mi Luz ✨', W / 2, yk + 120 * s); c.globalAlpha = 1; }
+      else {
+      c.fillStyle = '#E8A0B4'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 6 * s + 'px'; c.fillText('MI CARTA LLAVE DEL AÑO', W / 2, yk); c.letterSpacing = '0px';
+      c.fillStyle = '#F3DCA0'; c.font = `600 ${84 * s}px "Cormorant Garamond", serif`; c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 16 * s; c.fillText(romano(C.llave) + ' · ' + NOM[C.llave], W / 2, yk + 92 * s); c.shadowBlur = 0;
+      c.fillStyle = '#F1ECF7'; c.font = `italic ${46 * s}px "Cormorant Garamond", serif`; sjLineas(c, '“' + ARC[C.llave].af + '”', 900 * s).slice(0, 3).forEach((l, j) => c.fillText(l, W / 2, yk + (180 + j * 54) * s));
+      c.globalAlpha = 1; }
+    }
+    c.fillStyle = 'rgba(243,220,160,.9)'; c.font = `500 ${28 * s}px Jost, sans-serif`; c.letterSpacing = 4 * s + 'px'; c.fillText('MI LUZ · LUZ GUÍA', W / 2, 1790 * s); c.letterSpacing = '0px';
+    c.fillStyle = 'rgba(241,236,247,.7)'; c.font = `400 ${26 * s}px Jost, sans-serif`; c.fillText('luzguia.com.ar', W / 2, 1835 * s);
+  };
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-capasshare]'); if (!b) return; const C = capasDe(); if (!C) return;
+  compartirEscena(b, async () => { const [fondo, ...cartas] = await Promise.all([imgCon(['fondo-rueda.jpg', 'fondo-cielo.jpg']), ...[C.nac, C.anual, C.univ].map(n => imgCon([cartaSrc(n)])), sjFuentes()]); return { dib: capasEscena(C, fondo, cartas.slice(0, 3), sjNombre(), !(P.premium && !VISTA_GRATIS)), tImg: 5 }; },
+    'mi-anio-en-capas-luz-guia', `Mi ${C.anio} en capas: ${NOM[C.nac]} + ${NOM[C.anual]} + ${NOM[C.univ]}${P.premium && !VISTA_GRATIS ? ' = ' + NOM[C.llave] : ''} ✨ · Mi Luz, Luz Guía`, 'Año en capas');
 });
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
