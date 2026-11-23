@@ -945,7 +945,7 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .cp-cartas{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 0 6px}.cp-cartas>i{font-style:normal;color:#F3DCA0;font-size:1.3rem}
 .cp-carta{flex:1;max-width:110px;text-align:center}.cp-carta .mini{margin:0 auto 6px}.cp-carta small{display:block;color:#E8A0B4;font-size:.72rem;line-height:1.2}.cp-carta b{display:block;font-family:var(--serif);font-size:.95rem;line-height:1.15;color:#F3DCA0}
 .cp-llave{margin:8px auto 10px;text-align:center;padding:10px;border-radius:14px;border:1px solid rgba(212,175,106,.45);background:radial-gradient(circle,rgba(212,175,106,.16),transparent 70%)}.cp-llave small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.cp-llave b{font-family:var(--serif);font-size:1.4rem;color:#F3DCA0}
-.cp-af{margin:12px 0;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:#F3DCA0}
+.cp-cuenta{display:block;margin-top:4px;font-size:.8rem;color:var(--bruma);font-variant-numeric:lining-nums}.cp-af{margin:12px 0;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:#F3DCA0}
 </style>
 </head>
 <body>
@@ -8636,13 +8636,13 @@ function capasLectura(C){
   else L.push(`Tu esencia es <b>${NOM[C.nac]}</b> (${luzDe(C.nac)}), y este año la atravesás con la energía de <b>${NOM[C.anual]}</b>: ${capa1(C.anual).charAt(0).toLowerCase() + capa1(C.anual).slice(1)} Es como si tu forma de ser se pusiera una ropa nueva: el año te pide ${ARC[C.anual].luz}, desde quien ya sos. Cuando las dos energías se juntan aparece <b>${NOM[C.puente]}</b>, la carta puente: ${luzDe(C.puente)} es lo que se activa en vos cuando te animás al año.`);
   if (C.sinto) L.push(`Además, tu año personal coincide con el año universal (${NOM[C.univ]}): vas en la misma dirección que el mundo. Es viento a favor: lo que empujes, avanza.`);
   else L.push(`Mientras tanto, el mundo entero vive un año de <b>${NOM[C.univ]}</b>: ${capa1(C.univ).charAt(0).toLowerCase() + capa1(C.univ).slice(1)} Ese es el clima colectivo, lo que le pasa a todas las personas. Vos lo vivís desde la energía de ${NOM[C.anual]}: cuando afuera haya ${luzDe(C.univ)}, tu forma de surfearlo es ${luzDe(C.anual)}.`);
-  L.push(`Las tres capas juntas forman tu <b>carta llave del ${C.anio}: ${NOM[C.llave]}</b>. ${capa1(C.llave)} Es la clave para abrir este año: ${ARC[C.llave].a[0].charAt(0).toLowerCase() + ARC[C.llave].a[0].slice(1)}`);
+  L.push(`Si sumás los números de las tres capas (${C.nac} + ${C.anual} + ${C.univ}) aparece tu <b>carta llave del ${C.anio}: ${NOM[C.llave]}</b>. ${capa1(C.llave)} Es la clave para abrir este año: ${ARC[C.llave].a[0].charAt(0).toLowerCase() + ARC[C.llave].a[0].slice(1)}`);
   return L;
 }
 function capasCartasHTML(C, ocultaLlave){
   const c = (n, t) => `<div class="cp-carta"><div class="mini con-img" aria-hidden="true"><img src="${cartaSrc(n)}" alt="" onerror="this.parentNode.classList.remove('con-img'); this.remove()"><span>${romano(n)}</span></div><small>${t}</small><b>${esc(NOM[n])}</b></div>`;
   return `<div class="cp-cartas">${c(C.nac, 'Tu esencia')}<i>+</i>${c(C.anual, 'Tu ' + C.anio)}<i>+</i>${c(C.univ, 'El mundo en ' + C.anio)}</div>
-    <div class="cp-llave${ocultaLlave ? ' velo' : ''}"><small>Tu carta llave del ${C.anio}</small><b>${ocultaLlave ? '🔒 ?' : esc(NOM[C.llave])}</b></div>`;
+    <div class="cp-llave${ocultaLlave ? ' velo' : ''}"><small>Tu carta llave del ${C.anio}</small><b>${ocultaLlave ? '🔒 ?' : esc(NOM[C.llave])}</b>${ocultaLlave ? '' : (() => { const t = C.nac + C.anual + C.univ; return `<span class="cp-cuenta">${C.nac} + ${C.anual} + ${C.univ} = ${t}${t > 22 ? ' → ' + [...String(t)].join(' + ') + ' = ' + C.llave : ''}${C.llave === 22 ? ' · el 22 es El Loco, también conocido como el 0' : ''}</span>`; })()}</div>`;
 }
 function premCapas(){
   const C = capasDe(); if (!C) return faltaFecha;
