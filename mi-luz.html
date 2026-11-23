@@ -946,6 +946,9 @@ body:has(#mini-snd) #barra-carro-wrap{bottom:calc(136px + env(safe-area-inset-bo
 .cp-carta{flex:1;max-width:110px;text-align:center}.cp-carta .mini{margin:0 auto 6px}.cp-carta small{display:block;color:#E8A0B4;font-size:.72rem;line-height:1.2}.cp-carta b{display:block;font-family:var(--serif);font-size:.95rem;line-height:1.15;color:#F3DCA0}
 .cp-llave{margin:8px auto 10px;text-align:center;padding:10px;border-radius:14px;border:1px solid rgba(212,175,106,.45);background:radial-gradient(circle,rgba(212,175,106,.16),transparent 70%)}.cp-llave small{display:block;color:#E8A0B4;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}.cp-llave b{font-family:var(--serif);font-size:1.4rem;color:#F3DCA0}
 .cp-cuenta{display:block;margin-top:4px;font-size:.8rem;color:var(--bruma);font-variant-numeric:lining-nums}.cp-af{margin:12px 0;text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:#F3DCA0}
+/* v56: numerología de pareja */
+.np-caja{margin:16px 0;padding:14px;border-radius:16px;border:1px solid rgba(232,160,180,.4);background:linear-gradient(160deg,rgba(232,160,180,.08),rgba(28,11,46,.4))}.np-caja h4{font-family:var(--serif);color:#F3DCA0;font-size:1.3rem;margin:10px 0 4px}
+.np-nums{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0;text-align:center;font-variant-numeric:lining-nums}.np-nums>i{font-style:normal;color:#F3DCA0;font-size:1.2rem}.np-nums small{display:block;font-size:.72rem;color:#E8A0B4;line-height:1.2}.np-nums b{font-family:var(--serif);font-size:1.8rem;color:#F1ECF7}.np-par b{color:#F3DCA0;font-size:2.3rem;text-shadow:0 0 14px rgba(243,220,160,.5)}
 </style>
 </head>
 <body>
@@ -8748,6 +8751,88 @@ document.addEventListener('click', e => {
   compartirEscena(b, async () => { const [fondo, ...cartas] = await Promise.all([imgCon(['fondo-rueda.jpg', 'fondo-cielo.jpg']), ...[C.nac, C.anual, C.univ].map(n => imgCon([cartaSrc(n)])), sjFuentes()]); return { dib: capasEscena(C, fondo, cartas.slice(0, 3), sjNombre(), !(P.premium && !VISTA_GRATIS)), tImg: 5 }; },
     'mi-anio-en-capas-luz-guia', `Mi ${C.anio} en capas: ${NOM[C.nac]} + ${NOM[C.anual]} + ${NOM[C.univ]}${P.premium && !VISTA_GRATIS ? ' = ' + NOM[C.llave] : ''} ✨ · Mi Luz, Luz Guía`, 'Año en capas');
 });
+
+/* ───── v56: numerología de pareja (dentro de Sinastría) ───── */
+const NUM_PAREJA = {
+  1: ['Una pareja pionera', 'Como pareja son motor: se impulsan a empezar cosas, a animarse y a crecer cada persona por su lado sin perder el vínculo. El riesgo es competir o que ambas partes quieran tener la última palabra.', 'Respetar el espacio y los logros individuales: celebrarse en lugar de medirse.'],
+  2: ['Una pareja de alma', 'Su camino es la unión, la ternura y el compañerismo. Se leen sin hablar y se cuidan mucho. El riesgo es depender demasiado o callar lo que molesta para no romper la armonía.', 'Decir lo que sienten a tiempo, aunque incomode: la paz verdadera no es callarse.'],
+  3: ['Una pareja que disfruta', 'Su camino es la alegría, la comunicación, la vida social y la creatividad compartida. Se ríen muchísimo. El riesgo es quedarse en la superficie y evitar las charlas difíciles.', 'Animarse a la profundidad: además de divertirse, conversar de lo que duele.'],
+  4: ['Una pareja que construye', 'Su camino es la estabilidad: casa, proyectos, rutina, metas a largo plazo. Son un equipo sólido y confiable. El riesgo es caer en la rutina y olvidarse del romance.', 'Romper la rutina a propósito: una salida distinta, una sorpresa, un viaje corto.'],
+  5: ['Una pareja aventurera', 'Su camino es el movimiento: viajes, cambios, experiencias nuevas y mucha libertad. Nunca se aburren. El riesgo es la inestabilidad o escaparse cuando algo se complica.', 'Elegir un ancla en común (un ritual, un lugar, un proyecto) que sostenga al vínculo en medio del cambio.'],
+  6: ['Una pareja de hogar', 'Su camino es el amor, la familia y el cuidado: crear un hogar lindo y un vínculo de mucha entrega. El riesgo es cargar demasiado con lo ajeno o volverse sobreprotectoras.', 'Cuidarse también a sí mismas, no solo a la pareja y a la familia.'],
+  7: ['Una pareja espiritual', 'Su camino es la búsqueda interior: crecer, estudiar, compartir lo profundo y lo místico. Tienen una conexión casi telepática. El riesgo es la distancia emocional o encerrarse cada persona en su mundo.', 'Compartir en voz alta lo que piensan y sienten, aunque les cueste.'],
+  8: ['Una pareja de poder', 'Su camino es concretar: logros, dinero, proyectos ambiciosos. En equipo pueden mucho más que por separado. El riesgo son las luchas de poder y que el trabajo se coma el vínculo.', 'Hablar claro de plata y de roles, y reservar tiempo que no sea de "gestión".'],
+  9: ['Una pareja de alma vieja', 'Su camino es el amor compasivo: vinieron a sanarse y a ayudarse a crecer. Suelen sentir que se conocen de antes. El riesgo es la idealización o sostener lo que ya cumplió su ciclo.', 'Soltar viejas heridas y perdonar: cada cierre renueva el vínculo.'],
+  11: ['Una pareja maestra de la inspiración', 'Un número maestro: en pareja despiertan la intuición, la espiritualidad y una sensibilidad enorme. Pueden inspirar a mucha gente. El riesgo es la hipersensibilidad y los nervios.', 'Bajar a tierra: rutinas simples y descanso para que tanta energía no desborde.'],
+  22: ['Una pareja maestra constructora', 'Un número maestro: en pareja pueden crear algo grande que trasciende lo personal (un proyecto, una familia, una obra). El riesgo es la presión y la exigencia.', 'Recordar que el vínculo es más importante que lo que construyen.'],
+  33: ['Una pareja maestra del amor', 'Un número maestro: un vínculo de amor incondicional, de sanación y de servicio. El riesgo es el sacrificio excesivo.', 'Amar sin anularse: cuidar a la otra persona sin dejar de cuidarse.']
+};
+const NUM_ANIO_PAREJA = {
+  1: ['Un año de comienzos en pareja', 'Nuevo capítulo: proyectos en común, mudanzas, decisiones que abren una etapa. Lo que empiecen ahora marca los próximos nueve años.'],
+  2: ['Un año de intimidad y paciencia', 'Año para acercarse, escucharse y cuidar los detalles. Las cosas van más lento: no fuercen, dejen madurar.'],
+  3: ['Un año de alegría y vida social', 'Salidas, amistades, celebraciones y creatividad. Año para disfrutar en pareja y comunicarse mucho.'],
+  4: ['Un año de bases y trabajo', 'Ordenar la casa, la economía y los planes. Puede sentirse pesado, pero lo que construyan ahora dura.'],
+  5: ['Un año de cambios', 'Viajes, novedades, sorpresas. Año para refrescar el vínculo y salir de la rutina; también puede poner a prueba la libertad de cada persona.'],
+  6: ['Un año de compromiso y hogar', 'El año más romántico del ciclo: formalizar, convivir, agrandar la familia o renovar promesas.'],
+  7: ['Un año de introspección', 'Cada persona necesita su espacio para crecer por dentro. Bueno para viajes tranquilos, terapia, espiritualidad compartida.'],
+  8: ['Un año de logros', 'Proyectos materiales, inversiones, reconocimiento. Bueno para concretar en pareja; ojo con que el trabajo no los distancie.'],
+  9: ['Un año de cierre de ciclo', 'Soltar lo viejo del vínculo: hábitos, rencores, etapas. Lo que se limpia este año deja lugar a un comienzo nuevo.']
+};
+const NUM_MES_PAREJA = {
+  1: ['Iniciativa', 'tomar decisiones sin consultar o competir', 'empezar algo en equipo: un plan, una meta, un hábito nuevo'],
+  2: ['Ternura', 'susceptibilidades y silencios', 'escucharse sin interrumpir y tener detalles chiquitos'],
+  3: ['Disfrute', 'celos por la vida social o gastos de más', 'salir, reírse, crear algo en común'],
+  4: ['Orden', 'cansancio, rutina y discusiones por tareas', 'organizarse como equipo y repartir lo pesado'],
+  5: ['Movimiento', 'impaciencia, impulsividad o ganas de escaparse', 'hacer algo nuevo: un viaje, una actividad distinta'],
+  6: ['Amor', 'querer controlar o meterse en problemas ajenos', 'cuidarse, cocinar en pareja, embellecer la casa'],
+  7: ['Silencio', 'distancia emocional o desconfianza', 'respetar el espacio de cada persona y compartir lo profundo'],
+  8: ['Logros', 'luchas de poder o temas de plata', 'planificar en equipo y hablar claro de dinero'],
+  9: ['Soltar', 'reproches del pasado o nostalgia', 'cerrar temas pendientes y perdonarse']
+};
+const NUM_GRUPO = n => [1, 5, 7].includes(n) ? 'mente' : [2, 4, 8].includes(n) ? 'tierra' : 'corazon';
+const NUM_GRUPO_TXT = { mente: 'la mente y la independencia', tierra: 'lo concreto y la seguridad', corazon: 'las emociones y la expresión' };
+function parejaNum(o){
+  if (!o || !o.fecha || !P.diaMes || !P.anioNac) return null;
+  const [yy, mm, dd] = o.fecha.split('-'), dm2 = dd + '/' + mm, r1 = n => reducirNum(n, false), sin = n => n === 11 ? 2 : n === 22 ? 4 : n === 33 ? 6 : n;
+  const A = numerologia(P.diaMes, P.anioNac, ''), B = numerologia(dm2, yy, ''); if (!A.camino || !B.camino) return null;
+  const anio = new Date().getFullYear(), pareja = reducirNum(sin(A.camino) + sin(B.camino), true), univ = r1(sumDig(anio));
+  const anioPar = r1(r1(pareja) + univ), meses = Array.from({ length: 12 }, (_, i) => r1(anioPar + i + 1));
+  const arcA = P.arcano && P.arcano.n ? +P.arcano.n : red22(sumDig(String(P.diaMes).replace(/\D/g, '') + P.anioNac)), arcB = red22(sumDig(dd + mm + yy));
+  return { A, B, pareja, anioPar, meses, anio, arcA, arcB, arcPar: red22(arcA + arcB), arcAnio: red22(arcanoDeAnio(P.diaMes, anio) + arcanoDeAnio(dm2, anio)) };
+}
+function parejaNumHTML(o){
+  const N = parejaNum(o); if (!N) return '';
+  const nom = esc(o.nombre || 'tu persona'), T = NUM_PAREJA[N.pareja] || NUM_PAREJA[reducirNum(N.pareja, false)], Y = NUM_ANIO_PAREJA[N.anioPar], mes = new Date().getMonth();
+  const ca = reducirNum(N.A.camino, false), cb = reducirNum(N.B.camino, false), ga = NUM_GRUPO(ca), gb = NUM_GRUPO(cb);
+  const cruce = ca === cb ? `Tienen el mismo camino de vida (${ca}): se entienden de memoria y se reflejan. Lo lindo es que se acompañan sin explicaciones; el desafío es que también comparten los mismos puntos ciegos.`
+    : ga === gb ? `Sus caminos (${N.A.camino} y ${N.B.camino}) son de la misma familia, la de ${NUM_GRUPO_TXT[ga]}: fluyen naturalmente y suelen querer lo mismo de la vida.`
+    : `Sus caminos (${N.A.camino} y ${N.B.camino}) son distintos: el tuyo vibra con ${NUM_GRUPO_TXT[ga]} y el de ${nom} con ${NUM_GRUPO_TXT[gb]}. No es incompatibilidad: es complemento. Cada persona trae lo que a la otra le falta, y ahí está el aprendizaje del vínculo.`;
+  const ritmo = N.A.anio === N.B.anio ? `Además, este año ambas personas están en año personal ${N.A.anio}: van al mismo ritmo.`
+    : `Este año vos estás en año personal ${N.A.anio} (${ANIO_PERS[N.A.anio].split(':')[0].toLowerCase()}) y ${nom} en año ${N.B.anio} (${ANIO_PERS[N.B.anio].split(':')[0].toLowerCase()}). Cuando sientan que van a distinto ritmo, es eso: acuerden espacios para lo que necesita cada persona.`;
+  let h = `<div class="np-caja"><p class="sub" style="margin-top:0">🔢 Su numerología de pareja</p>
+    <div class="np-nums"><div><small>Tu camino</small><b>${N.A.camino}</b></div><i>+</i><div><small>Camino de ${nom}</small><b>${N.B.camino}</b></div><i>=</i><div class="np-par"><small>Número de la pareja</small><b>${N.pareja}</b></div></div>
+    <h4>${T[0]}</h4><p>${T[1]}</p><p><b>La clave del vínculo:</b> ${T[2]}</p>
+    <p class="sub">🃏 El arcano de la pareja</p><p>Tu arcano de nacimiento (${esc(NOM[N.arcA])}) y el de ${nom} (${esc(NOM[N.arcB])}) se suman en <b>${esc(NOM[N.arcPar])}</b>: ${capa1(N.arcPar).charAt(0).toLowerCase() + capa1(N.arcPar).slice(1)} Es la energía que acompaña siempre al vínculo. Este ${N.anio}, la pareja transita <b>${esc(NOM[N.arcAnio])}</b>: ${luzDe(N.arcAnio)}.</p>
+    <p class="sub">🤝 Cómo se cruzan sus números</p><p>${cruce} ${ritmo}</p>
+    <p class="sub">🗓️ Su ${N.anio}: año de pareja ${N.anioPar}</p><p><b>${Y[0]}.</b> ${Y[1]}</p>
+    <p class="sub">🌙 Mes a mes: el tema, el obstáculo y el aprendizaje</p>
+    <ul class="num-lista nc-meses">${N.meses.map((m, i) => `<li${i === mes ? ' class="on"' : ''}><b>${m}</b><div><span>${cap1(MESES[i])}${i === mes ? ' · este mes' : ''} · ${NUM_MES_PAREJA[m][0]}</span><em>Obstáculo:</em> ${NUM_MES_PAREJA[m][1]}. <em>Aprendizaje:</em> ${NUM_MES_PAREJA[m][2]}.</div></li>`).join('')}</ul>
+    <p class="ag-ayuda">Sirve igual para una pareja, una amistad, una socia o un familiar. El número de la pareja suma los dos caminos de vida; el año de pareja suma ese número con el año universal.</p></div>`;
+  return h;
+}
+(function(){
+  const _ps = premSinastria;
+  premSinastria = function(){
+    const h = _ps(); let o = null; try { o = JSON.parse(leerLS('luzguia_sin') || 'null'); } catch (e) {}
+    try {
+      const x = parejaNumHTML(o); if (!x) return h;
+      for (const m of ['<div class="fi-hoy" style="margin-top:16px">', '<div class="fi-velo" style="margin-top:14px">']) { const i = h.indexOf(m); if (i > -1) return h.slice(0, i) + x + h.slice(i); }
+      return h + x;
+    } catch (e) { console.error(e); return h; }
+  };
+  PREM_VENTA.sinastria = (PREM_VENTA.sinastria ? PREM_VENTA.sinastria + ' ' : '') + 'Y su numerología de pareja: el número y el arcano que acompañan siempre al vínculo, su año en pareja y el mes a mes con obstáculos y aprendizajes.';
+  const L = PREMIUM_LISTA.find(x => x[0] === 'sinastria'); if (L) L[3] = 'La compatibilidad con tu pareja o con quien quieras: astrología, numerología de pareja (su número, su año y el mes a mes) y horóscopo chino.';
+})();
 
 document.querySelectorAll('img[data-logo]').forEach(i => i.src = document.querySelector('link[rel=icon]').href);
 cargar();
